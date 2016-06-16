@@ -1,0 +1,161 @@
+.btn,a:link,button {
+	-webkit-tap-highlight-color: rgba(169, 3, 41, .5);
+}
+
+h3 {
+	display: block;
+	font-size: 26px;
+	font-weight: 400;
+	margin: 20px 0 30px;
+	line-height: normal;
+}
+
+h3.centered {
+	text-align: center;
+}
+
+#header {
+	display: block;
+	height: 60px;
+	position: relative;
+	margin: 0;
+	padding: 0 20px 0 0;
+	background-color: #f3f3f3;
+	border-bottom: 1px solid #ccc;
+}
+
+#header>div {
+	display: inline-block;
+	vertical-align: middle;
+	height: 60px;
+	float: left;
+}
+
+#header>:first-child {
+	width: 800px;
+}
+
+#logo-group * {
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+}
+
+#logo-group>span {
+	display: inline-block;
+	height: 62px;
+	float: left;
+}
+
+#logo {
+	display: inline-block;
+	margin-top: 5px;
+	margin-left: 20px;
+}
+
+#logo-group .navtitle {
+	font-size: 28px;
+	color: #555;
+	line-height: 60px;
+	margin-left: 8px;
+}
+
+#logo-group .navtitle sup {
+	font-size: 16px;
+	margin-left: 5px;
+}
+
+.btn-header.pull-right {
+	margin-left: 6px;
+}
+
+.btn-header>.btn-icon {
+	margin-left: 10px;
+	cursor: pointer;
+}
+
+.btn-header>.btn-icon>a {
+	border-radius: 2px;
+	cursor: default !important;
+	display: inline-block;
+	font-weight: 700;
+	height: 30px;
+	min-width: 30px;
+	padding: 2px;
+	text-align: center;
+	text-decoration: none !important;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	background-color: #f8f8f8;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8),
+		to(#f1f1f1));
+	background-image: -webkit-linear-gradient(top, #f8f8f8, #f1f1f1);
+	background-image: -webkit-gradient(linear, top left, bottom left, from(#f8f8f8),
+		to(#f1f1f1));
+	background-image: -webkit-linear-gradient(top, #f8f8f8, #f1f1f1);
+	background-image: linear-gradient(top, #f8f8f8, #f1f1f1);
+	border: 1px solid #bfbfbf;
+	color: #6D6A69;
+	font-size: 17px;
+	margin: 15px 0 0;
+}
+
+.btn-header>.btn-icon>a:hover {
+	border: 1px solid #bfbfbf;
+	color: #222;
+	-webkit-transition: all 0;
+	transition: all 0;
+	cursor: pointer;
+	-webkit-box-shadow: inset 0 0 4px 1px rgba(0, 0, 0, .08);
+	box-shadow: inset 0 0 4px 1px rgba(0, 0, 0, .08);
+}
+
+.btn-header>.btn-icon>a:active {
+	background-color: #e8e8e8;
+	background-image: linear-gradient(tobottom, #e8e8e80, #ededed100 %);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e8e8e8',
+		endColorstr='#ededed', GradientType=0);
+	-webkit-box-shadow: inset 0 0 3px 1px rgba(0, 0, 0, .15);
+	box-shadow: inset 0 0 3px 1px rgba(0, 0, 0, .15);
+}
+
+.btn-header .gravtar {
+	max-width: 30px;
+	max-height: 30px;
+	margin-top: -5px;
+	border-radius: 50%;
+}
+
+.input-group-addon .fa-lg {
+	font-size: 2em;
+}
+
+.themebox {
+	height: 400px;
+	
+	background: url(${res.img.local.img.bg_jpg}) no-repeat center top;
+	border-bottom: 1px solid #ccc;
+}
+
+.content-box {
+	border: 1px solid #ccc;
+	margin: -40px auto 20px;
+	padding: 10px 20px 40px;
+	width: 1120px;
+	overflow: hidden;
+	background: #fff;
+	box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+}
+
+.content-box  h3 {
+	color: #444;
+}
+
+#mainform .form-group {
+	margin-bottom: 20px;
+}
+
+#logo > img{
+	max-width:130px;
+	max-height:45px;
+}

@@ -1,0 +1,24 @@
+{
+ "name": "upgradeTask",
+ "commands": [
+ 	{"name":"gitfork", "commandClass":"org.ostara.cmd.impl.GitForkCmd"},
+ 	{"name":"gitclone", "commandClass":"org.ostara.cmd.impl.GitCloneCmd"}, 
+ 	{"name":"gitcheckout", "commandClass":"org.ostara.cmd.impl.GitCheckoutCmd"},
+ 	{"name":"gitbranch", "commandClass":"org.ostara.cmd.impl.GitBranchCmd"},
+ 	{"name":"upgradeVersion", "commandClass":"org.ostara.cmd.impl.VersionUpgradeCmd"},
+ 	{"name":"gitcommit", "commandClass":"org.ostara.cmd.impl.GitCommitCmd"},
+ 	{"name":"gitpush", "commandClass":"org.ostara.cmd.impl.GitPushCmd"},
+ 	{"name":"gitpullrequest", "commandClass":"org.ostara.cmd.impl.GitPullRequestCmd"}
+ 	],
+ "cmdParameterMapping":{
+ 	"gitfork.gitUrl":"gitUrl","gitfork.organization":"config.organization","gitfork.username":"config.username", "gitfork.password":"config.password",
+ 	"gitclone.gitUrl":"gitfork.forkedGitUrl",
+ 	"gitcheckout.gitDir":"gitclone.outputDir", "gitcheckout.gitBranch":"gitBranch",
+ 	"gitbranch.gitDir":"gitclone.outputDir", "gitbranch.gitBranch":"taskId",
+ 	"upgradeVersion.execDir":"gitclone.outputDir", "upgradeVersion.upgradeVersion":"upgradeVersion","upgradeVersion.parentPomPath":"parentPom",
+ 	"gitcommit.gitDir": "gitclone.outputDir", 
+ 	"gitpush.gitDir":"gitclone.outputDir", "gitpush.gitBranch":"taskId", "gitpush.username":"config.username", "gitpush.password":"config.password",
+ 	"gitpullrequest.sourceGitUrl": "gitUrl", "gitpullrequest.gitDestOrganization": "config.organization", "gitpullrequest.gitDestBranch": "gitBranch", "gitpullrequest.gitSourceBranch": "taskId", "gitpullrequest.username": "config.username", "gitpullrequest.password": "config.password"
+ 	} 
+ }
+ 

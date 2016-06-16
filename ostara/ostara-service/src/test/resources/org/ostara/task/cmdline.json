@@ -1,0 +1,10 @@
+{
+ "name": "cmdline",
+ "commands": [
+ 	{"name":"cl", "commandClass":"org.ostara.cmd.impl.CmdLineCmd"}
+ 	],
+ "cmdParameterMapping":{
+ 	"cl.cmdStr":"cmdStr"
+ 	} 
+ }
+ 
