@@ -43,7 +43,6 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader
 import org.codehaus.plexus.util.xml.Xpp3Dom
 import grizzled.slf4j.Logger
 import grizzled.slf4j.Logging
-import org.ebaysf.ostara.telemetry.mongodb._
 import org.ebaysf.ostara.upgrade.paths.UpgradeStep
 import org.ebaysf.ostara.upgrade.paths.UpgradeAddonRegistry
 import org.ebaysf.ostara.upgrade.paths.PreprocessResult
@@ -188,8 +187,6 @@ class UpgradeMain extends Logging {
         logger.info(s"Wrote upgrade report file to " + upgradeReportFile.getName())
         
         logger.info("""NOTE: You might need to re-import the projects into your IDE. In Eclipse/RIDE use the "Import / Maven / Existing Maven Projects" wizard.""")
-        
-        saveToTelemetry();
       } else {
         logger.error("FAILED")
         System.exit(3)
@@ -203,95 +200,7 @@ class UpgradeMain extends Logging {
   def platformGroupEmail():String = ""
   
   def buildUniqueFileSuffix():String = (if(taskid != null) ("-" + taskid) else "")
-  
-  def saveToTelemetry() {
-    if(taskid != null) {
-      info(s"Saving telemetry in DB for task id $taskid")
-      val data = new TelemetryData();
-      
-      data.setTaskId(taskid)
-      data.setMigrationToolVersion(R2U_VERSION)
-      
-      data.setDetectedAppType(platformAppTypes)
-      data.setOverrideAppType(platformAppTypeOverride)
-      data.setAppName(platformAppNames)
-      
-      data.setNewPlatformVersion(platformVersion)
-      data.setOldPlatformVersion(if(oldPlatformVersions.isEmpty) List(platformVersion) else oldPlatformVersions)
 
-      val reportedArtifacts = new scala.collection.mutable.ArrayBuffer[String]()
-      
-      for(change <- urb.changes) {
-        if(change._2.isInstanceOf[PomReport]) {
-          val pomReport = change._2.asInstanceOf[PomReport]
-          
-          for((dep, (missingType, message, repos)) <- pomReport.missingArtifacts) {
-            if(missingType != PomReport.NOT_MISSING) {
-              val key = dep.getGroupId + ":" + dep.getArtifactId
-              
-              if("ShipmentTrackingService".equals(dep.getArtifactId)) {
-                println("HERE")
-              }
-              
-              if(!reportedArtifacts.contains(key)) { // Insert missing artifact only once
-	              val ad = new ArtifactsData()
-	              ad.setTaskId(taskid)
-	              ad.setType(if(missingType == PomReport.MISSING_THIRDPARTY) "thirdparty" else "provider")
-	              ad.setGroupId(dep.getGroupId)
-	              ad.setArtifactId(dep.getArtifactId)
-	              
-	              reportedArtifacts += key
-	              
-	              if(repos != null) {
-	                for(repo <- repos) {
-	                  val props = 
-		                  if(!StringUtils.isEmpty(dep.getDependency.getVersion)) {
-		                    NexusUtils.extractBuildinfo(repo, dep.getDependency)
-		                  } else {
-		                    val depLatest = MigratorUtils.cloneDependency(dep.getDependency)
-		                    depLatest.setVersion(MigratorUtils.getLatestArtifactVersion(repo=repo,depLatest.getGroupId(), depLatest.getArtifactId()))
-		                    
-		                    info(s"Artifact $dep has no version so taking the latest available in $repo: ${depLatest.getVersion}")
-		                    
-		                    NexusUtils.extractBuildinfo(repo, depLatest)
-		                  }
-	                  
-	                  if(props != null) {
-	                    val gitUrl = NexusUtils.getGitUrl(props)
-	                    ad.setGitUrl(gitUrl)
-	                    ad.setBranch(NexusUtils.getGitBranch(props))
-	                    ad.setOwner(NexusUtils.getCommitter(props))
-	                    
-	                    ad.setGitCommitters(GitUtils.getListOfGitCommitters(gitUrl).mkString(", "))
-	                  }
-	                }
-	              }
-	              
-	              info(s"Storing artifact data for $dep")
-	              
-	              try {
-	            	  TelemetryDAO.getInstance().insertData(ad)
-	              } catch {
-	                case th:Throwable => warn("Could not save artifact data", th)
-	              }
-              }
-            }
-          }
-        }
-      }
-      
-      try {
-      	TelemetryDAO.getInstance().insertData(data)
-      } catch {
-        case th:Throwable => warn("Could not save telemetry", th)
-      }
-      
-      info("Save complete")
-    } else {
-      info("No telemetry saved as task ID is missing")
-    }
-  }
-  
   def buildCmdOptions():Options = {
     options	.addOption(INPUT_OPTION, "input", true, s"The project's root directory which contains the top-level pom or full path to the pom file. Defaults to pom.xml in current directory.")
             .addOption(HELP_OPTION, "help", false, s"Displays this help.")
@@ -426,9 +335,6 @@ class UpgradeMain extends Logging {
   
   def migrateProject(pomFile: File, parentPom:Model=null, doSavePom:Boolean=true, crtUpgradePaths:Array[UpgradeStep] = upgradePath): Model = {
     info(s"Processing POM: ${pomFile.getAbsolutePath}")
-    
-
-    import java.nio.file._
     
     val crtReport = new PomReport()
     urb.changes += (MigratorUtils.getRelativePathToParent(pomFile, parentPomFile) -> crtReport)
@@ -656,8 +562,6 @@ class UpgradeMain extends Logging {
   def processDependencyManagement(model:Model, crtReport:PomReport, bHasParent:Boolean, parentProperties:java.util.Properties, projectGroupId:String, projectType:String, crtUpgradePaths:Array[UpgradeStep] = upgradePath): DependencyManagement = {
     val dependencyManagement = new DependencyManagement();
     if (model.getDependencyManagement() != null) {
-
-      import scala.collection.JavaConversions
       
       dependencyManagement.setDependencies(processDependencies(model.getDependencyManagement.getDependencies().toList, crtReport, bHasParent, dependencyManagement=true, projectGroupId=projectGroupId, projectType=projectType, crtUpgradePaths=crtUpgradePaths));
       if(!disableArtifactsScanning) checkDependenciesAvailability(dependencyManagement.getDependencies(), forceLatestVersion, crtReport, projectArtifacts, true, List(MigratorUtils.extractModelProperties(model), parentProperties), projectGroupId, provider, platformModel.getDependencyManagement().getDependencies())
@@ -707,8 +611,6 @@ class UpgradeMain extends Logging {
     }
     
     afterProcessDependencies(tmpList)
-    
-    import scala.collection.JavaConversions._
     
     return toJavaList(tmpList)
   }
@@ -843,8 +745,9 @@ import NiceDependency.ImplicitConversions._
   def checkDependenciesAvailability(deps:java.util.List[Dependency], updateToLatest:Boolean = false, report:PomReport, projectArtifacts:java.util.List[(File, Dependency)], dependencyManagement:Boolean, properties:List[java.util.Properties], projectGroupId:String=null, provider:Boolean, platformManagedDeps:java.util.List[Dependency]) {
     var depsToRemove = Set[Dependency]()
     
-    import scala.collection.JavaConversions._
     import PomReport._
+
+    import scala.collection.JavaConversions._
     
     for(dep <- asScalaBuffer(deps)) {
       debug(s"Looking for artifact $dep")
