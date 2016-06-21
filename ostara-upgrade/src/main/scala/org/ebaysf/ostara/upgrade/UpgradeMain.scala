@@ -17,10 +17,8 @@
 package org.ebaysf.ostara.upgrade
 
 import java.io.File
-import java.io.FileReader
 import java.io.IOException
 import java.util.ArrayList
-import java.util.Properties
 import scala.collection.JavaConversions._
 import scala.collection.mutable.MutableList
 import org.apache.commons.cli.BasicParser
@@ -34,24 +32,20 @@ import org.apache.commons.lang.{SystemUtils, StringUtils}
 import org.apache.log4j.PropertyConfigurator
 import org.apache.maven.model.Dependency
 import org.apache.maven.model.DependencyManagement
-import org.apache.maven.model.DeploymentRepository
 import org.apache.maven.model.Model
 import org.apache.maven.model.Parent
 import org.apache.maven.model.Plugin
 import org.apache.maven.model.Repository
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader
 import org.codehaus.plexus.util.xml.Xpp3Dom
-import grizzled.slf4j.Logger
 import grizzled.slf4j.Logging
 import org.ebaysf.ostara.upgrade.paths.UpgradeStep
 import org.ebaysf.ostara.upgrade.paths.UpgradeAddonRegistry
 import org.ebaysf.ostara.upgrade.paths.PreprocessResult
 import org.ebaysf.ostara.upgrade.paths.PlatformVersionManager
 import org.ebaysf.ostara.upgrade.paths.DummyPlatformVersionManager
-import org.ebaysf.ostara.upgrade.util._
 import MigratorUtils._
 
-class UpgradeMain extends Logging {
+object UpgradeMain extends Logging {
   val APP_TYPE_MESSAGING = "messaging"
   val APP_TYPE_BATCH = "batch"
   val APP_TYPE_SERVICE = "service"

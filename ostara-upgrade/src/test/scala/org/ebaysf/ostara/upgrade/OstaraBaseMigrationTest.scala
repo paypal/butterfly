@@ -20,7 +20,7 @@ import org.ebaysf.ostara.upgrade.UpgradeMain
 trait OstaraBaseMigrationTest extends Logging {
   val dummyReport = new PomReport()
   val urb = new UpgradeReportBuilder()
-  val upgradeMain = new UpgradeMain()
+  val upgradeMain = UpgradeMain
   
   @Before def initialize() {
     PropertyConfigurator.configure(getClass().getResource("/config/log4jconfig.properties"))
