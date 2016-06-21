@@ -117,73 +117,80 @@ object UpgradeMain extends Logging {
   
   def main(arg: Array[String]) {
   try {
+    // And then we just zap the configuration and overwrite it with our own. Ours is better, always.
+    val log4jConfig = IOUtils.toString(getClass().getResourceAsStream("/config/log4jconfig.properties"))
+    val modifiedLog4jConfig = org.apache.commons.lang.text.StrSubstitutor.replace(log4jConfig, Map("logSuffix" -> buildUniqueFileSuffix()))
+
+    PropertyConfigurator.configure(new java.io.ByteArrayInputStream(modifiedLog4jConfig.getBytes()))
+
+
+
     line = new BasicParser parse (buildCmdOptions, arg)
     
     if(line.hasOption(HELP_OPTION)) {
       new HelpFormatter().printHelp(CMDLINE, options)
     } else {
-      if(line.hasOption(TASKID_OPTION)) {
-        taskid = line.getOptionValue(TASKID_OPTION)
-      }
-    
-		  // And then we just zap the configuration and overwrite it with our own. Ours is better, always.
-		  val log4jConfig = IOUtils.toString(getClass().getResourceAsStream("/config/log4jconfig.properties"))
-		  val modifiedLog4jConfig = org.apache.commons.lang.text.StrSubstitutor.replace(log4jConfig, Map("logSuffix" -> buildUniqueFileSuffix()))
-		  
-		  PropertyConfigurator.configure(new java.io.ByteArrayInputStream(modifiedLog4jConfig.getBytes()))
-      
-      val inputOptionValue = if(line.getOptionValue(INPUT_OPTION) == null) new File(".").getCanonicalPath() else line.getOptionValue(INPUT_OPTION)
-    
-      debug(s"Starting r2u version $R2U_VERSION...")
-      
-      val disabledAddonsCmdValue = line.getOptionValue(DISABLE_ADDONS_OPTION)
-      if(disabledAddonsCmdValue != null) {
-        UpgradeAddonRegistry.disable(disabledAddonsCmdValue.split(','))
-      }
-      
-      platformVersion=MigratorUtils.getLatestArtifactVersion(MAVEN_REPO_NEW_RELEASES, platformGroupId, platformArtifactId)
-      
-      if(platformVersion == null) {
-        platformVersion = defaultPlatformVersion
-        warn(s"Could not detect the latest version of the platform. Falling back to $platformVersion")
+      if (!line.hasOption(INPUT_OPTION)) {
+        info(s"Option -i is required. Please specify what project you want to upgrade. To see full option info use -h")
       } else {
-        info(s"Detected latest version of the platform: $platformVersion")
-      }
-      
-      val platformVersionOptionVal = line.getOptionValue(PLATFORM_VERSION_OPTION)
-      if (platformVersionOptionVal != null) {
-        platformVersion = platformVersionOptionVal
-        
-        info(s"Overriding platform version with $platformVersion")
-      }
-      
-      if(line.hasOption(APP_TYPE_OVERRIDE_OPTION)) {
-        platformAppTypeOverride = line.getOptionValue(APP_TYPE_OVERRIDE_OPTION)
-        warn(s"Platform app type is overridden to $platformAppTypeOverride")
-      }
-      
-      if(line.hasOption(DISABLE_BACKUP_OPTION)) {
-        disableBackup = true
-      }
-      
-      forceLatestVersion = line.hasOption(FORCE_LATEST_VERSION_OPTION)
-      
-      var inputLocation = new File(inputOptionValue)
-      
-      // Make input location an absolute path
-      if(!inputLocation.isAbsolute()) inputLocation = new File(".", inputOptionValue).getCanonicalFile()
-      
-      if(migrateAll(inputLocation)) {
-        info("DONE")
-        
-        val upgradeReportFile = new File("platform-upgrade-report" + buildUniqueFileSuffix() + ".md")
-        FileUtils.writeStringToFile(upgradeReportFile, urb.buildGitHubMarkdownReport(platformGroupEmail(), if(taskid != null) taskid else "N/A", inputOptionValue))
-        logger.info(s"Wrote upgrade report file to " + upgradeReportFile.getName())
-        
-        logger.info("""NOTE: You might need to re-import the projects into your IDE. In Eclipse/RIDE use the "Import / Maven / Existing Maven Projects" wizard.""")
-      } else {
-        logger.error("FAILED")
-        System.exit(3)
+        if (line.hasOption(TASKID_OPTION)) {
+          taskid = line.getOptionValue(TASKID_OPTION)
+        }
+
+
+        val inputOptionValue = if (line.getOptionValue(INPUT_OPTION) == null) new File(".").getCanonicalPath() else line.getOptionValue(INPUT_OPTION)
+
+        debug(s"Starting r2u version $R2U_VERSION...")
+
+        val disabledAddonsCmdValue = line.getOptionValue(DISABLE_ADDONS_OPTION)
+        if (disabledAddonsCmdValue != null) {
+          UpgradeAddonRegistry.disable(disabledAddonsCmdValue.split(','))
+        }
+
+        platformVersion = MigratorUtils.getLatestArtifactVersion(MAVEN_REPO_NEW_RELEASES, platformGroupId, platformArtifactId)
+
+        if (platformVersion == null) {
+          platformVersion = defaultPlatformVersion
+          warn(s"Could not detect the latest version of the platform. Falling back to $platformVersion")
+        } else {
+          info(s"Detected latest version of the platform: $platformVersion")
+        }
+
+        val platformVersionOptionVal = line.getOptionValue(PLATFORM_VERSION_OPTION)
+        if (platformVersionOptionVal != null) {
+          platformVersion = platformVersionOptionVal
+
+          info(s"Overriding platform version with $platformVersion")
+        }
+
+        if (line.hasOption(APP_TYPE_OVERRIDE_OPTION)) {
+          platformAppTypeOverride = line.getOptionValue(APP_TYPE_OVERRIDE_OPTION)
+          warn(s"Platform app type is overridden to $platformAppTypeOverride")
+        }
+
+        if (line.hasOption(DISABLE_BACKUP_OPTION)) {
+          disableBackup = true
+        }
+
+        forceLatestVersion = line.hasOption(FORCE_LATEST_VERSION_OPTION)
+
+        var inputLocation = new File(inputOptionValue)
+
+        // Make input location an absolute path
+        if (!inputLocation.isAbsolute()) inputLocation = new File(".", inputOptionValue).getCanonicalFile()
+
+        if (migrateAll(inputLocation)) {
+          info("DONE")
+
+          val upgradeReportFile = new File("platform-upgrade-report" + buildUniqueFileSuffix() + ".md")
+          FileUtils.writeStringToFile(upgradeReportFile, urb.buildGitHubMarkdownReport(platformGroupEmail(), if (taskid != null) taskid else "N/A", inputOptionValue))
+          logger.info(s"Wrote upgrade report file to " + upgradeReportFile.getName())
+
+          logger.info("""NOTE: You might need to re-import the projects into your IDE. In Eclipse/RIDE use the "Import / Maven / Existing Maven Projects" wizard.""")
+        } else {
+          logger.error("FAILED")
+          System.exit(3)
+        }
       }
     }
   } catch {
@@ -209,7 +216,10 @@ object UpgradeMain extends Logging {
         
     options
   }
-  
+
+
+
+
   /**
    * Migrates the project and its submodules.
    * 
