@@ -27,22 +27,6 @@ class MigrationUtilsTest extends OstaraBaseMigrationTest {
     assertEquals("pom.xml", MigratorUtils.getRelativePathToParent(pomFile, parentPomFile));
   }
 
-  @Test def verifyArtifactUnavailabilityOverall() {
-    val dep = MigratorUtils.createDependency("a", "b", null)
-    val result = upgradeMain.checkArtifactAvailability(dep, false, new PomReport())
-    
-    assertNull(result._1)
-    assertNull(result._2)
-  }
-  
-  @Test def verifyArtifactUnavailabilityInNew() {
-    val dep = MigratorUtils.createDependency("springframework", "spring", null)
-    val result = upgradeMain.checkArtifactAvailability(dep, false, new PomReport())
-    
-    assertNotNull(result._1)
-    assertNull(result._2)
-  }
-
   @Test def verifyBuildArtifactUrlWithPropertyVersion() {
     val props = new Properties()
     val ver = "3.1.4-RELEASE"
@@ -67,27 +51,6 @@ class MigrationUtilsTest extends OstaraBaseMigrationTest {
     val result = MigratorUtils.buildArtifactUrl(dep, true, List(props))
     
     assertTrue(result, result.contains(ver))
-  }
-  
-  @Test def verifyArtifactExists() {
-    val dep = MigratorUtils.createDependency("springframework", "spring", null)
-    assertTrue(MigratorUtils.artifactExists(upgradeMain.MAVEN_REPO_NEW_CENTRAL_PROXY + MigratorUtils.buildArtifactUrl(dep)))
-  }
-  
-   @Test def verifyArtifactExistsMavenCentral() {
-    val dep = MigratorUtils.createDependency("com.google.code.gson", "gson", "2.2.2")
-    val url = upgradeMain.MAVEN_REPO_NEW_CENTRAL_PROXY + MigratorUtils.buildArtifactUrl(dep, true)
-     
-    println(url)
-    assertTrue(MigratorUtils.artifactExists(url))
-  }
-
-   @Test def verifyArtifactNoVersionExistsMavenCentral() {
-    val dep = MigratorUtils.createDependency("com.google.code.gson", "gson")
-    val url = upgradeMain.MAVEN_REPO_NEW_CENTRAL_PROXY + MigratorUtils.buildArtifactUrl(dep, true)
-     
-    println(url)
-    assertTrue(MigratorUtils.artifactExists(url))
   }
 
   @Test def verifyFindProjectDependency() {
