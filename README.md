@@ -1,8 +1,8 @@
-# Mistica
+# Butterfly
 
-PayPal PD teams need a tool to automate Raptor upgrades and Helix to Raptor migrations, and that is exactly what Mistica is, an application transformation tool.
+PayPal PD teams need a tool to automate Raptor upgrades and Helix to Raptor migrations, and that is exactly what Butterfly is, an application transformation tool.
 
-## Mistica main goals
+## Butterfly main goals
 
 1. Perform project transformations based on transformation sets.
 1. Perform application code upgrades or application code migrations.
