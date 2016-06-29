@@ -12,7 +12,7 @@ The main class to be run is `com.paypal.butterfly.core.UpgradeMain`.
 To run it from a terminal, also just do as you would for any other Java project.
 To make it easier, you can actually rely on Maven exec plugin, as seen in the example below.
 
-Example: `mvn  exec:java -Dexec.mainClass=com.paypal.butterfly.core.UpgradeMain`
+Example running help: `mvn  exec:java -Dexec.mainClass=com.paypal.butterfly.core.UpgradeMain -Dexec.arguments=-h`
 
 ### Usage
 
