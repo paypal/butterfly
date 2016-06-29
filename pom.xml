@@ -4,13 +4,13 @@
          xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.ebaysf.ostara</groupId>
-    <artifactId>ostara-parent</artifactId>
+    <groupId>com.paypal.butterfly</groupId>
+    <artifactId>butterfly-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>ostara-upgrade</module>
+        <module>butterfly-core</module>
     </modules>
 
 </project>
