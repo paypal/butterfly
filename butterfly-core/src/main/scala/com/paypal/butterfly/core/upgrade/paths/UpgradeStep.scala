@@ -14,17 +14,16 @@
  * limitations under the License.
  *******************************************************************************/
 
-package org.ebaysf.ostara.upgrade.paths
+package com.paypal.butterfly.core.upgrade.paths
 
-import org.ebaysf.ostara.upgrade.NiceDependency
 import java.io.File
-import org.ebaysf.ostara.upgrade.PomReport
+
+import com.paypal.butterfly.core.upgrade.{NiceDependency, PomReport, UpgradeReportBuilder}
 import org.apache.maven.model.Plugin
 import org.apache.maven.model.Model
 import org.apache.commons.cli.CommandLine
 import org.apache.maven.model.Dependency
 import org.apache.maven.model.Parent
-import org.ebaysf.ostara.upgrade.UpgradeReportBuilder
 
 object PreprocessResult extends Enumeration {
   type Type = Value

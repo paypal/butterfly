@@ -14,11 +14,12 @@
  * limitations under the License.
  *******************************************************************************/
 
-package org.ebaysf.ostara.upgrade.paths
+package com.paypal.butterfly.core.upgrade.paths
 
 import java.io.File
+
+import com.paypal.butterfly.core.upgrade.UpgradeReportBuilder
 import grizzled.slf4j.Logging
-import org.ebaysf.ostara.upgrade.UpgradeReportBuilder
 
 /**
  * @author renyedi@ebay.com

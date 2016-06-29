@@ -14,7 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 
-package org.ebaysf.ostara.upgrade
+package com.paypal.butterfly.core.upgrade
 
 import org.apache.maven.model.Dependency
 

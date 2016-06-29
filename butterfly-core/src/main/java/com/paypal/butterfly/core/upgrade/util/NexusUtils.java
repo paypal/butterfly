@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package org.ebaysf.ostara.upgrade.util;
+package com.paypal.butterfly.core.upgrade.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.ebaysf.ostara.upgrade.MigratorUtils;
+import com.paypal.butterfly.core.upgrade.MigratorUtils;
 
 public class NexusUtils {
 	protected static final Logger LOG = Logger.getLogger(NexusUtils.class);

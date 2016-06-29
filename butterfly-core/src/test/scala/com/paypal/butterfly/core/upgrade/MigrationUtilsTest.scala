@@ -1,4 +1,4 @@
-package org.ebaysf.ostara.upgrade
+package com.paypal.butterfly.core.upgrade
 
 import java.io.File
 import java.util.ArrayList
@@ -6,15 +6,15 @@ import java.util.Properties
 import org.apache.maven.model.Dependency
 import org.apache.maven.model.Exclusion
 import org.apache.maven.model.Model
-import org.ebaysf.ostara.upgrade.MigratorUtils.{createDependency => d}
+import com.paypal.butterfly.core.upgrade.MigratorUtils.{createDependency => d}
 import org.junit.Assert._
 import org.junit.Test
 import org.codehaus.plexus.util.xml.Xpp3Dom
 import org.apache.maven.model.Plugin
-import org.ebaysf.ostara.upgrade.MigratorUtils.{createDependency => d}
+import com.paypal.butterfly.core.upgrade.MigratorUtils.{createDependency => d}
 import scala.collection.JavaConversions.seqAsJavaList
 
-class MigrationUtilsTest extends OstaraBaseMigrationTest {
+class MigrationUtilsTest extends ButterflyBaseMigrationTest {
   @Test def verifyGetRelativePath() {
     var pomFile=new File("c:/temp/basedir/dir1/pom.xml");
     var parentPomFile = new File("c:/temp/basedir/pom.xml");
