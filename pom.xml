@@ -11,6 +11,9 @@
 
     <modules>
         <module>butterfly-core</module>
+        <module>butterfly-cli</module>
+        <module>butterfly-bdm-api</module>
+        <module>butterfly-bdm-maven</module>
     </modules>
 
 </project>
