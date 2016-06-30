@@ -14,7 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 
-package org.ebaysf.ostara.upgrade
+package com.paypal.butterfly.core.upgrade
 
 import java.io.File
 import java.io.FileReader
@@ -22,6 +22,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.HashMap
 import java.util.Properties
+
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.SystemUtils.JAVA_IO_TMPDIR
@@ -31,13 +32,15 @@ import org.apache.maven.model.Model
 import org.apache.maven.model.Plugin
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader
 import org.codehaus.plexus.util.xml.Xpp3Dom
-import org.ebaysf.ostara.upgrade.util.POMModifierUtil.getLatestVersion
 import grizzled.slf4j.Logging
 import PomReport._
 import java.io.InputStreamReader
 import java.io.BufferedWriter
 import java.io.FileWriter
+
+import com.paypal.butterfly.core.upgrade.util.POMModifierUtil
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer
+
 import scala.collection.JavaConversions._
 import org.apache.maven.model.PluginManagement
 
@@ -249,7 +252,7 @@ object MigratorUtils extends Logging {
   
   def getLatestArtifactVersion(repo:String, gid:String, aid:String):String= {
 
-    import org.ebaysf.ostara.upgrade.util.POMModifierUtil._
+    import POMModifierUtil._
 
 import org.apache.commons.lang.SystemUtils._
 

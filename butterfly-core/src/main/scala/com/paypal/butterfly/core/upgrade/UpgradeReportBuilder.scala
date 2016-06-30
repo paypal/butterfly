@@ -14,7 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 
-package org.ebaysf.ostara.upgrade
+package com.paypal.butterfly.core.upgrade
 
 import grizzled.slf4j.Logging
 import org.apache.commons.io.FilenameUtils

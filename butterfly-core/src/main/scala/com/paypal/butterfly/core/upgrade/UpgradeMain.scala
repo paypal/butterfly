@@ -14,10 +14,13 @@
  * limitations under the License.
  *******************************************************************************/
 
-package org.ebaysf.ostara.upgrade
+package com.paypal.butterfly.core.upgrade
 
 import java.io.File
 import java.util.ArrayList
+
+import com.paypal.butterfly.core.upgrade.paths.{UpgradeAddonRegistry, UpgradeStep}
+
 import scala.collection.JavaConversions._
 import scala.collection.mutable.MutableList
 import org.apache.commons.cli.BasicParser
@@ -32,10 +35,8 @@ import org.apache.maven.model.Dependency
 import org.apache.maven.model.Model
 import org.apache.maven.model.Plugin
 import grizzled.slf4j.Logging
-import org.ebaysf.ostara.upgrade.paths.UpgradeStep
-import org.ebaysf.ostara.upgrade.paths.UpgradeAddonRegistry
-import org.ebaysf.ostara.upgrade.paths.PlatformVersionManager
-import org.ebaysf.ostara.upgrade.paths.DummyPlatformVersionManager
+import com.paypal.butterfly.core.upgrade.paths.PlatformVersionManager
+import com.paypal.butterfly.core.upgrade.paths.DummyPlatformVersionManager
 
 object UpgradeMain extends Logging {
 

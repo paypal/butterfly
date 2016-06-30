@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package org.ebaysf.ostara.upgrade.util;
+package com.paypal.butterfly.core.upgrade.util;
 
 import java.io.File;
 import java.io.FileInputStream;

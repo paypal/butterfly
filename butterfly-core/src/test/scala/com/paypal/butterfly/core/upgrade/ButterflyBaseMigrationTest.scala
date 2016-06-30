@@ -1,23 +1,24 @@
-package org.ebaysf.ostara.upgrade
+package com.paypal.butterfly.core.upgrade
 
 import org.junit.Assert._
 import org.junit.Before
 import org.apache.log4j.PropertyConfigurator
+
 import scala.collection.JavaConverters._
-import org.ebaysf.ostara.upgrade.NiceDependency
-import org.ebaysf.ostara.upgrade.NiceDependency._
+import com.paypal.butterfly.core.upgrade.NiceDependency
+import com.paypal.butterfly.core.upgrade.NiceDependency._
 import org.apache.maven.model.Plugin
 import org.codehaus.plexus.util.xml.Xpp3Dom
 import org.apache.commons.io.FileUtils
 import java.io.File
+
+import com.paypal.butterfly.core.upgrade.paths.UpgradeAddonRegistry
 import org.apache.commons.lang.SystemUtils
 import grizzled.slf4j.Logging
-import org.ebaysf.ostara.upgrade.PomReport
-import org.ebaysf.ostara.upgrade.paths.UpgradeAddonRegistry
-import org.ebaysf.ostara.upgrade.UpgradeReportBuilder
-import org.ebaysf.ostara.upgrade.UpgradeMain
+import com.paypal.butterfly.core.upgrade.UpgradeMain
 
-trait OstaraBaseMigrationTest extends Logging {
+
+trait ButterflyBaseMigrationTest extends Logging {
   val dummyReport = new PomReport()
   val urb = new UpgradeReportBuilder()
   val upgradeMain = UpgradeMain

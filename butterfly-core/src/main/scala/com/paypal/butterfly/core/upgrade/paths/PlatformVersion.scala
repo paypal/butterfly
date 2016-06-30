@@ -14,9 +14,9 @@
  * limitations under the License.
  *******************************************************************************/
 
-package org.ebaysf.ostara.upgrade.paths
+package com.paypal.butterfly.core.upgrade.paths
 
-import org.ebaysf.ostara.upgrade.PomReport
+import com.paypal.butterfly.core.upgrade.PomReport
 import org.apache.maven.model.Model
 import org.apache.maven.model.Parent
 
