@@ -3,6 +3,8 @@ package com.paypal.butterfly.cli;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -20,6 +22,8 @@ import static java.util.Arrays.asList;
 @SpringBootApplication
 public class ButterflyCliApp {
 
+    private static Logger logger = LoggerFactory.getLogger(ButterflyCliApp.class);
+
     public static void main(String... arguments) throws IOException {
         OptionParser optionParser = createOptionSet();
         OptionSet optionSet = optionParser.parse(arguments);
@@ -29,6 +33,11 @@ public class ButterflyCliApp {
         if(optionSet.has("h") || !optionSet.hasOptions()) {
             optionParser.printHelpOn(System.out);
             return;
+        }
+        if(optionSet.has("v")) {
+            VerboseConfigurator verboseConfigurator = applicationContext.getBean(VerboseConfigurator.class);
+            verboseConfigurator.verboseMode(true);
+            logger.debug("Verbose mode is ON");
         }
 
         File applicationFolder = (File) optionSet.valueOf("f");
@@ -61,6 +70,9 @@ public class ButterflyCliApp {
                 .ofType(String.class)
                 .describedAs("template")
                 .required();
+
+        // Verbose option
+        optionParser.accepts("v", "Runs Butterfly in verbose mode");
 
         return optionParser;
     }
