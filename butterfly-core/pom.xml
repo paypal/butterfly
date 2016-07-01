@@ -30,8 +30,21 @@
     <dependencies>
         <dependency>
             <groupId>com.paypal.butterfly</groupId>
+            <artifactId>butterfly-facade</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.paypal.butterfly</groupId>
             <artifactId>butterfly-extensions-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
         </dependency>
     </dependencies>
 

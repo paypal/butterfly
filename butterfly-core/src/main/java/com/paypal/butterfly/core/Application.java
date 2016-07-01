@@ -11,6 +11,14 @@ public class Application {
 
     private String name;
 
-    private File location;
+    private File folder;
 
+    public Application(File applicationFolder) {
+        setFolder(applicationFolder);
+    }
+
+    public void setFolder(File folder) {
+
+        this.folder = folder;
+    }
 }

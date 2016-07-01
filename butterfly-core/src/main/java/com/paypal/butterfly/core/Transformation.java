@@ -12,6 +12,10 @@ public class Transformation {
 
     private Application application;
 
-    private TransformationTemplate template;
+    private String templateId;
 
+    public Transformation(Application application, String templateId) {
+        this.application = application;
+        this.templateId = templateId;
+    }
 }

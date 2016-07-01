@@ -34,6 +34,11 @@
             <artifactId>jopt-simple</artifactId>
             <version>5.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.paypal.butterfly</groupId>
+            <artifactId>butterfly-facade</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
