@@ -39,6 +39,12 @@
             <artifactId>butterfly-facade</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.paypal.butterfly</groupId>
+            <artifactId>butterfly-core</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>

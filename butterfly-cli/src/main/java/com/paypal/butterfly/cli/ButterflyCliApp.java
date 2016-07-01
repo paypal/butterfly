@@ -36,6 +36,8 @@ public class ButterflyCliApp {
 
         ButterflyFacade butterflyFacade = applicationContext.getBean(ButterflyFacade.class);
         butterflyFacade.transform(applicationFolder, templateName);
+
+        System.out.println("Application has been transformed");
     }
 
     private static OptionParser createOptionSet() {

@@ -9,16 +9,15 @@ import java.io.File;
  */
 public class Application {
 
-    private String name;
-
     private File folder;
 
     public Application(File applicationFolder) {
-        setFolder(applicationFolder);
+        this.folder = applicationFolder;
     }
 
-    public void setFolder(File folder) {
-
-        this.folder = folder;
+    @Override
+    public String toString() {
+        return folder.getAbsolutePath();
     }
+
 }

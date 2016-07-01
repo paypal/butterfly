@@ -10,6 +10,8 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
  */
 public class Transformation {
 
+    private static final String TO_STRING_SYNTAX = "Transformation { \"application\" : {%s}, \"templateId\" : %s }";
+
     private Application application;
 
     private String templateId;
@@ -18,4 +20,10 @@ public class Transformation {
         this.application = application;
         this.templateId = templateId;
     }
+
+    @Override
+    public String toString() {
+        return String.format(TO_STRING_SYNTAX, application, templateId);
+    }
+
 }
