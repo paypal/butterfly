@@ -12,7 +12,6 @@ syntax: glob
 .classpath
 .project
 .manager
-.scala_dependencies
 
 # idea
 .idea
@@ -27,18 +26,3 @@ temp*
 dist
 test-output
 build.log
-
-# other scm
-.svn
-.CVS
-.hg*
-
-# switch to regexp syntax.
-#  syntax: regexp
-#  ^\.pc/
-
-#SHITTY output not in target directory
-build.log
-/.cache
-/platform-upgrade-debug.log
-/platform-upgrade-warn.log
