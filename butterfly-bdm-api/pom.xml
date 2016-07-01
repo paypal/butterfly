@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>butterfly-bdm-api</artifactId>
-    <name>${project.groupId}:${project.artifactId}</name>
 
     <licenses>
         <license>

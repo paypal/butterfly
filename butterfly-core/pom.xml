@@ -28,5 +28,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.paypal.butterfly</groupId>
+            <artifactId>butterfly-extensions-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
+
 </project>

@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>butterfly-cli</artifactId>
-    <name>${project.groupId}:${project.artifactId}</name>
 
     <licenses>
         <license>

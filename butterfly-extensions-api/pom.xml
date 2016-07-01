@@ -9,7 +9,7 @@
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>butterfly-bdm-maven</artifactId>
+    <artifactId>butterfly-extensions-api</artifactId>
 
     <licenses>
         <license>

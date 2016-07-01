@@ -10,9 +10,10 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>butterfly-extensions-api</module>
+        <module>butterfly-bdm-api</module>
         <module>butterfly-core</module>
         <module>butterfly-cli</module>
-        <module>butterfly-bdm-api</module>
         <module>butterfly-bdm-maven</module>
     </modules>
 
