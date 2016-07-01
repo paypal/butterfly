@@ -11,11 +11,18 @@ import java.util.List;
 public interface TransformationTemplate {
 
     /**
-     * Returns the name of this transformation template
+     * Returns the id of this transformation template
      *
-     * @return the name of this transformation template
+     * @return the id of this transformation template
      */
-    String getName();
+    String getId();
+
+    /**
+     * Returns the transformation template description
+     *
+     * @return the transformation template description
+     */
+    String getDescription();
 
     /**
      * Returns an ordered list of operations to be executed,

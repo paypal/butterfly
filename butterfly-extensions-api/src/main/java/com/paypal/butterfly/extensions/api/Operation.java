@@ -8,11 +8,11 @@ package com.paypal.butterfly.extensions.api;
 public interface Operation {
 
     /**
-     * Returns the transformation operation name
+     * Returns the transformation operation id
      *
-     * @return the transformation operation name
+     * @return the transformation operation id
      */
-    String getName();
+    String getId();
 
     /**
      * Returns a description about the transformation

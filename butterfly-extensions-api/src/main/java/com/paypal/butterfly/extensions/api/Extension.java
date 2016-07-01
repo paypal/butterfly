@@ -11,25 +11,32 @@ import java.util.Set;
 public interface Extension {
 
     /**
-     * Returns the extensio nname
+     * Returns the extension id
      *
-     * @return the extension name
+     * @return the extension id
      */
-    String getName();
+    String getId();
 
     /**
-     * Returns a set containing all transformation template names
+     * Returns the extension description
      *
-     * @return a set containing all transformation template names
+     * @return the extension description
      */
-    Set<String> getTemplateNames();
+    String getDescription();
 
     /**
-     * Returns a transformation template based on its name
+     * Returns a set containing all transformation template ids
      *
-     * @param templateName the transformation template name
+     * @return a set containing all transformation template ids
+     */
+    Set<String> getTemplateIds();
+
+    /**
+     * Returns a transformation template based on its id
+     *
+     * @param templateId the transformation template id
      * @return the transformation template
      */
-    TransformationTemplate getTemplate(String templateName);
+    TransformationTemplate getTemplate(String templateId);
 
 }
