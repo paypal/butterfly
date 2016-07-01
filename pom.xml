@@ -26,6 +26,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>butterfly-facade</module>
         <module>butterfly-extensions-api</module>
         <module>butterfly-bdm-api</module>
         <module>butterfly-core</module>
