@@ -28,6 +28,13 @@ public class ButterflyCliApp {
     private static final String VERSION = "1.0.0-SNAPSHOT";
     private static final String BANNER = "Butterfly application transformation tool (version " + VERSION + ")";
 
+    private static final String CLI_OPTION_HELP = "h";
+    private static final String CLI_OPTION_VERBOSE = "v";
+    private static final String CLI_OPTION_LIST_EXTENSIONS = "l";
+    private static final String CLI_OPTION_ORIGINAL_APP_FOLDER = "i";
+    private static final String CLI_OPTION_TRANSFORMED_APP_FOLDER = "o";
+    private static final String CLI_OPTION_TEMPLATE = "t";
+
     private static Logger logger = LoggerFactory.getLogger(ButterflyCliApp.class);
 
     public static void main(String... arguments) throws IOException {
@@ -38,24 +45,24 @@ public class ButterflyCliApp {
         OptionParser optionParser = createOptionSet();
         OptionSet optionSet = optionParser.parse(arguments);
 
-        if(optionSet.has("v")) {
+        if(optionSet.has(CLI_OPTION_VERBOSE)) {
             VerboseConfigurator verboseConfigurator = applicationContext.getBean(VerboseConfigurator.class);
             verboseConfigurator.verboseMode(true);
             logger.debug("Verbose mode is ON");
         }
 
-        if(optionSet.has("h") || !optionSet.hasOptions()) {
+        if(optionSet.has(CLI_OPTION_HELP) || !optionSet.hasOptions()) {
             logger.info("See CLI usage below\n");
             optionParser.printHelpOn(System.out);
             return;
         }
 
-        File applicationFolder = (File) optionSet.valueOf("f");
+        File applicationFolder = (File) optionSet.valueOf("i");
         String templateClassName = (String) optionSet.valueOf("t");
 
         ButterflyFacade butterflyFacade = applicationContext.getBean(ButterflyFacade.class);
 
-        if(optionSet.has("l")) {
+        if(optionSet.has(CLI_OPTION_LIST_EXTENSIONS)) {
             logger.info("See registered extensions below");
             printExtensionsList(butterflyFacade);
             return;
@@ -73,28 +80,34 @@ public class ButterflyCliApp {
         OptionParser optionParser = new OptionParser();
 
         // Help option
-        optionParser.acceptsAll(asList("h", "?"), "Show this help")
+        optionParser.acceptsAll(asList(CLI_OPTION_HELP, "?"), "Show this help")
                 .forHelp();
 
         // List extensions option
-        optionParser.accepts("l", "List all registered extensions");
+        optionParser.accepts(CLI_OPTION_LIST_EXTENSIONS, "List all registered extensions");
 
         // Application folder option
-        optionParser.accepts("f", "The folder location in the file system where the application to be transformed is")
-                .requiredUnless("l")
+        optionParser.accepts(CLI_OPTION_ORIGINAL_APP_FOLDER, "The folder location in the file system where the application to be transformed is")
+                .requiredUnless(CLI_OPTION_LIST_EXTENSIONS)
                 .withRequiredArg()
                 .ofType(File.class)
-                .describedAs("folder");
+                .describedAs("input");
 
         // Transformation template option
-        optionParser.accepts("t", "The Java class name of the transformation template to be executed")
-                .requiredUnless("l")
+        optionParser.accepts(CLI_OPTION_TEMPLATE, "The Java class name of the transformation template to be executed")
+                .requiredUnless(CLI_OPTION_LIST_EXTENSIONS)
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("template");
 
+        // Transformed application folder option
+        optionParser.accepts(CLI_OPTION_TRANSFORMED_APP_FOLDER, "The folder location in the file system where the transformed application should be placed. It defaults to same location where original application is. Transformed application is placed under a new folder whose named is same as original folder, plus \"-transformed-<timestamp>\" suffix")
+                .withRequiredArg()
+                .ofType(File.class)
+                .describedAs("output");
+
         // Verbose option
-        optionParser.accepts("v", "Runs Butterfly in verbose mode");
+        optionParser.accepts(CLI_OPTION_VERBOSE, "Runs Butterfly in verbose mode");
 
         return optionParser;
     }
