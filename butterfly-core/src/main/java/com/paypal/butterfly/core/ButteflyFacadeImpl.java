@@ -31,6 +31,9 @@ public class ButteflyFacadeImpl implements ButterflyFacade {
 
     @Override
     public void transform(@NotNull File applicationFolder, @NotNull String templateClassName) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        if(!applicationFolder.exists() || applicationFolder.isFile()) {
+            throw new IllegalArgumentException("Invalid application folder (" + applicationFolder.getAbsolutePath() + ")");
+        }
         Application application = new Application(applicationFolder);
         Class<TransformationTemplate> templateClass = (Class<TransformationTemplate>) Class.forName(templateClassName);
         TransformationTemplate template = (TransformationTemplate) templateClass.newInstance();
