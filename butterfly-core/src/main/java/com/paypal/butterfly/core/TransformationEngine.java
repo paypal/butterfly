@@ -17,7 +17,7 @@ public class TransformationEngine {
     private static Logger logger = LoggerFactory.getLogger(TransformationEngine.class);
 
     public void perform(Transformation transformation) {
-        logger.info("Transformation requested: " + transformation);
+        logger.debug("Transformation requested: " + transformation);
 
         // TODO
     }

@@ -1,6 +1,7 @@
 package com.paypal.butterfly.cli;
 
 import com.paypal.butterfly.extensions.api.Extension;
+import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -24,27 +25,29 @@ import static java.util.Arrays.asList;
 @SpringBootApplication
 public class ButterflyCliApp {
 
-    private static final String BANNER = "\nButterfly application transformation tool (version %s). %s.\n\n";
     private static final String VERSION = "1.0.0-SNAPSHOT";
+    private static final String BANNER = "Butterfly application transformation tool (version " + VERSION + ")";
 
     private static Logger logger = LoggerFactory.getLogger(ButterflyCliApp.class);
 
     public static void main(String... arguments) throws IOException {
-        OptionParser optionParser = createOptionSet();
-        OptionSet optionSet = optionParser.parse(arguments);
-
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ButterflyCliApp.class, arguments);
 
-        if(optionSet.has("h") || !optionSet.hasOptions()) {
-            printBanner("See CLI usage below");
-            optionParser.printHelpOn(System.out);
-            return;
-        }
+        logger.info(BANNER);
+
+        OptionParser optionParser = createOptionSet();
+        OptionSet optionSet = optionParser.parse(arguments);
 
         if(optionSet.has("v")) {
             VerboseConfigurator verboseConfigurator = applicationContext.getBean(VerboseConfigurator.class);
             verboseConfigurator.verboseMode(true);
             logger.debug("Verbose mode is ON");
+        }
+
+        if(optionSet.has("h") || !optionSet.hasOptions()) {
+            logger.info("See CLI usage below\n");
+            optionParser.printHelpOn(System.out);
+            return;
         }
 
         File applicationFolder = (File) optionSet.valueOf("f");
@@ -53,12 +56,8 @@ public class ButterflyCliApp {
         ButterflyFacade butterflyFacade = applicationContext.getBean(ButterflyFacade.class);
 
         if(optionSet.has("l")) {
-            printBanner("See registered extensions below");
-
-            Set<Extension> registeredExtensions = butterflyFacade.getRegisteredExtensions();
-            // TODO print properly all extensions and their templates on system out
-            System.out.println(registeredExtensions);
-
+            logger.info("See registered extensions below");
+            printExtensionsList(butterflyFacade);
             return;
         }
 
@@ -100,8 +99,18 @@ public class ButterflyCliApp {
         return optionParser;
     }
 
-    private static void printBanner(String subMessage) {
-        System.out.printf(BANNER, VERSION, subMessage);
+    private static void printExtensionsList(ButterflyFacade butterflyFacade) {
+        Set<Extension> registeredExtensions = butterflyFacade.getRegisteredExtensions();
+        Extension extension;
+        Class<? extends TransformationTemplate> template;
+        for(Object extensionObj : registeredExtensions.toArray()) {
+            extension = (Extension) extensionObj;
+            System.out.printf("\n- %s:\n", extension);
+            for(Object templateObj : extension.getTemplateClasses().toArray()) {
+                template = (Class<? extends TransformationTemplate>) templateObj;
+                System.out.printf("\t[T] %s\n", template.getName());
+            }
+        }
     }
 
 }

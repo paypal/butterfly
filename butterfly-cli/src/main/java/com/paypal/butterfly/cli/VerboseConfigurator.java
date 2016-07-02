@@ -1,6 +1,6 @@
 package com.paypal.butterfly.cli;
 
-import org.slf4j.ILoggerFactory;
+import org.slf4j.event.Level;
 
 /**
  * Allows Butterfly to run in verbose mode by
@@ -16,8 +16,24 @@ import org.slf4j.ILoggerFactory;
  *
  * @author facarvalho
  */
-public interface VerboseConfigurator {
+public abstract class VerboseConfigurator {
 
-    void verboseMode(boolean on);
+    VerboseConfigurator() {
+        setLoggerLevel(ButterflyCliApp.class, Level.INFO);
+    }
+
+    abstract void setLoggerLevel(String logger, Level level);
+
+    abstract void setLoggerLevel(Class logger, Level level);
+
+    void verboseMode(boolean on) {
+        if(on) {
+            setLoggerLevel("com.paypal.butterfly", Level.DEBUG);
+            setLoggerLevel(ButterflyCliApp.class, Level.DEBUG);
+        } else {
+            setLoggerLevel("com.paypal.butterfly", Level.ERROR);
+            setLoggerLevel(ButterflyCliApp.class, Level.INFO);
+        }
+    }
 
 }

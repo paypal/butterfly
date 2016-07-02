@@ -1,7 +1,6 @@
 package com.paypal.butterfly.cli;
 
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -14,22 +13,27 @@ import org.springframework.stereotype.Component;
  * @author facarvalho
  */
 @Component
-public class LogbackVerboseConfigurator implements VerboseConfigurator {
+public class LogbackVerboseConfigurator extends VerboseConfigurator {
 
-    private Logger butterflyLogger;
+    private static final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
-    public LogbackVerboseConfigurator() {
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        butterflyLogger = loggerContext.getLogger("com.paypal.butterfly");
+    @Override
+    void setLoggerLevel(String logger, org.slf4j.event.Level level) {
+        loggerContext.getLogger(logger).setLevel(getLogbackLogLevel(level));
     }
 
     @Override
-    public void verboseMode(boolean on) {
-        if(on) {
-            butterflyLogger.setLevel(Level.DEBUG);
-        } else {
-            butterflyLogger.setLevel(Level.ERROR);
-        }
+    void setLoggerLevel(Class logger, org.slf4j.event.Level level) {
+        loggerContext.getLogger(logger).setLevel(getLogbackLogLevel(level));
+    }
+
+    private Level getLogbackLogLevel(org.slf4j.event.Level slf4jLevel) {
+        if(slf4jLevel.equals(org.slf4j.event.Level.INFO)) return Level.INFO;
+        if(slf4jLevel.equals(org.slf4j.event.Level.DEBUG)) return Level.DEBUG;
+        if(slf4jLevel.equals(org.slf4j.event.Level.WARN)) return Level.WARN;
+        if(slf4jLevel.equals(org.slf4j.event.Level.ERROR)) return Level.ERROR;
+
+        throw new IllegalArgumentException("Unknown log level");
     }
 
 }

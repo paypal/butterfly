@@ -10,7 +10,7 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
  */
 public class Transformation {
 
-    private static final String TO_STRING_SYNTAX = "Transformation { \"application\" : {%s}, \"template\" : %s , \"templateClass\" : %s}";
+    private static final String TO_STRING_SYNTAX = "\n\nTransformation {\n\t\"application\" : {%s},\n\t\"template\" : %s,\n\t\"templateClass\" : %s\n}\n";
 
     private Application application;
 
