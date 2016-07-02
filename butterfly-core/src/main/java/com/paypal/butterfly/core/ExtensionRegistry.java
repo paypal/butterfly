@@ -9,9 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,11 +29,15 @@ public class ExtensionRegistry {
 
     private static Logger logger = LoggerFactory.getLogger(ExtensionRegistry.class);
 
-    private Set<Extension> extensions = new HashSet<Extension>();
+    private Set<Extension> extensions;
 
-    public ExtensionRegistry() {
+    private void setExtensions() {
+        logger.debug("Searching for extensions");
         Set<Class<? extends Extension>> extensionClasses = findExtensionClasses();
-        registryExtensions(extensionClasses);
+        logger.debug("Number of extensions found: " + extensionClasses.size());
+        logger.debug("Registering extensions");
+        registerExtensions(extensionClasses);
+        logger.debug("Extensions have been registered");
     }
 
     /**
@@ -76,18 +82,23 @@ public class ExtensionRegistry {
         return extensionClasses;
     }
 
-    private void registryExtensions(Set<Class<? extends Extension>> extensionClasses) {
+    private void registerExtensions(Set<Class<? extends Extension>> extensionClasses) {
         Class<? extends Extension> extensionClass;
         Extension extension;
+
+        Set<Extension> _extensions = new HashSet<Extension>();
+
         for(Object extensionClassObj : extensionClasses.toArray()) {
             extensionClass = (Class<? extends Extension>) extensionClassObj;
             try {
                 extension = extensionClass.newInstance();
-                extensions.add(extension);
+                _extensions.add(extension);
             } catch (Exception e) {
                 logger.error("Error when registering extension class " + extensionClass, e);
             }
         }
+
+        this.extensions = Collections.unmodifiableSet(_extensions);
     }
 
     /**
@@ -96,7 +107,9 @@ public class ExtensionRegistry {
      * @return an immutable set of all registered extensions
      */
     public Set<Extension> getExtensions() {
-        // TODO create an immutable clone of extensions, and return it here instead
+        if(extensions == null) {
+            setExtensions();
+        }
         return extensions;
     }
 
