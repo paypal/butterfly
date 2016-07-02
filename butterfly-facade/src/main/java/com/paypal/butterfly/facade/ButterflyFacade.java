@@ -1,6 +1,9 @@
 package com.paypal.butterfly.facade;
 
+import com.paypal.butterfly.extensions.api.Extension;
+
 import java.io.File;
+import java.util.Set;
 
 /**
  * Butterfly façade
@@ -8,6 +11,8 @@ import java.io.File;
  * @author facarvalho
  */
 public interface ButterflyFacade {
+
+    Set<Extension> getRegisteredExtensions();
 
     /**
      * Transform an application

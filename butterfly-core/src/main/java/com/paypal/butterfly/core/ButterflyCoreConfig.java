@@ -11,6 +11,6 @@ import org.springframework.context.annotation.Import;
  * @author facarvalho
  */
 @Configuration
-@Import({ButteflyFacadeImpl.class, TransformationEngine.class})
+@Import({ExtensionRegistry.class, ButteflyFacadeImpl.class, TransformationEngine.class})
 public class ButterflyCoreConfig {
 }

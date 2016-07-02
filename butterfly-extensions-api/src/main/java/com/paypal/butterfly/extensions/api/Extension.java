@@ -8,35 +8,25 @@ import java.util.Set;
  *
  * @author facarvalho
  */
-public interface Extension {
-
-    /**
-     * Returns the extension id
-     *
-     * @return the extension id
-     */
-    String getId();
+public abstract class Extension {
 
     /**
      * Returns the extension description
      *
      * @return the extension description
      */
-    String getDescription();
+    public abstract String getDescription();
 
     /**
-     * Returns a set containing all transformation template ids
+     * Returns a set containing all transformation template classes
      *
-     * @return a set containing all transformation template ids
+     * @return a set containing all transformation template classes
      */
-    Set<String> getTemplateIds();
+    public abstract Set<Class<? extends TransformationTemplate>> getTemplateClasses();
 
-    /**
-     * Returns a transformation template based on its id
-     *
-     * @param templateId the transformation template id
-     * @return the transformation template
-     */
-    TransformationTemplate getTemplate(String templateId);
+    @Override
+    public String toString() {
+        return getClass().getName();
+    }
 
 }

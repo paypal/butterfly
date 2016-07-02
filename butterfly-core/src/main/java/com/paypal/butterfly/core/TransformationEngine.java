@@ -14,15 +14,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class TransformationEngine {
 
-    Logger logger = LoggerFactory.getLogger(TransformationEngine.class);
-
-    @Autowired
-    private ExtensionRegistry extensionRegistry;
+    private static Logger logger = LoggerFactory.getLogger(TransformationEngine.class);
 
     public void perform(Transformation transformation) {
-        // TODO
+        logger.info("Transformation requested: " + transformation);
 
-        logger.debug("transformation requested: " + transformation);
+        // TODO
     }
 
 }

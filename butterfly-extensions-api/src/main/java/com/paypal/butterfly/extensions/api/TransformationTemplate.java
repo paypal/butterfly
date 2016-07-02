@@ -10,6 +10,17 @@ import java.util.List;
  */
 public abstract class TransformationTemplate {
 
+    private String name = getExtensionClass().getSimpleName() + "-" + getClass().getSimpleName();;
+
+    /**
+     * Returns the class of the extension this transformation
+     * template belongs to
+     *
+     * @return the class of the extension this transformation
+     *  template belongs to
+     */
+    public abstract Class<? extends Extension> getExtensionClass();
+
     /**
      * Returns the transformation template description
      *
@@ -27,9 +38,13 @@ public abstract class TransformationTemplate {
      */
     public abstract List<Operation> getInstructions();
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public String toString() {
-        return getClass().getName();
+        return getName();
     }
 
 }

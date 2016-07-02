@@ -10,7 +10,7 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
  */
 public class Transformation {
 
-    private static final String TO_STRING_SYNTAX = "Transformation { \"application\" : {%s}, \"templateClass\" : %s }";
+    private static final String TO_STRING_SYNTAX = "Transformation { \"application\" : {%s}, \"template\" : %s , \"templateClass\" : %s}";
 
     private Application application;
 
@@ -23,7 +23,7 @@ public class Transformation {
 
     @Override
     public String toString() {
-        return String.format(TO_STRING_SYNTAX, application, template);
+        return String.format(TO_STRING_SYNTAX, application, template, template.getClass());
     }
 
 }
