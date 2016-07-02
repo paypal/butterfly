@@ -1,6 +1,8 @@
 package com.paypal.butterfly.core;
 
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  * Spring Boot configuration class to automatically
@@ -8,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
  *
  * @author facarvalho
  */
-@ComponentScan("com.paypal.butterfly.core")
+@Configuration
+@Import({ButteflyFacadeImpl.class, TransformationEngine.class})
 public class ButterflyCoreConfig {
 }
