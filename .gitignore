@@ -17,8 +17,4 @@ test-output/
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-# upgrade report and temporary files
-platform-upgrade-debug.log
-platform-upgrade-report.md
-platform-upgrade-warn.log
-pom.xml.bak*
+.DS_Store
