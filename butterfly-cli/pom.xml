@@ -45,6 +45,17 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- FIXME
+	Remove this as soon as a deployment solution
+	for extensions is defined
+	-->
+        <dependency>
+            <groupId>com.test</groupId>
+            <artifactId>sample-extension</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>

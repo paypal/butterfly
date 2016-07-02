@@ -13,8 +13,8 @@ public interface ButterflyFacade {
      * Transform an application
      *
      * @param applicationFolder application folder
-     * @param templateId transformation template id
+     * @param templateClassName transformation template class name
      */
-    void transform(File applicationFolder, String templateId);
+    void transform(File applicationFolder, String templateClassName) throws IllegalAccessException, InstantiationException, ClassNotFoundException;
 
 }

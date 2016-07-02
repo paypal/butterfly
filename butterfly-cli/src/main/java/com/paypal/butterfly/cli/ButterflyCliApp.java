@@ -41,12 +41,16 @@ public class ButterflyCliApp {
         }
 
         File applicationFolder = (File) optionSet.valueOf("f");
-        String templateName = (String) optionSet.valueOf("t");
+        String templateClassName = (String) optionSet.valueOf("t");
 
         ButterflyFacade butterflyFacade = applicationContext.getBean(ButterflyFacade.class);
-        butterflyFacade.transform(applicationFolder, templateName);
 
-        System.out.println("Application has been transformed");
+        try {
+            butterflyFacade.transform(applicationFolder, templateClassName);
+            logger.info("Application has been transformed");
+        } catch (Exception e) {
+            logger.error("Transformation error has occurred", e);
+        }
     }
 
     private static OptionParser createOptionSet() {
@@ -64,7 +68,7 @@ public class ButterflyCliApp {
                 .required();
 
         // Transformation template option
-        optionParser.accepts("t", "The id of the transformation template to be executed")
+        optionParser.accepts("t", "The Java class name of the transformation template to be executed")
                 .requiredUnless("h")
                 .withRequiredArg()
                 .ofType(String.class)

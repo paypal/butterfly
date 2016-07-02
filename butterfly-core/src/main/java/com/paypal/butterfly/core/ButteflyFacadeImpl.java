@@ -1,5 +1,6 @@
 package com.paypal.butterfly.core;
 
+import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,9 +20,11 @@ public class ButteflyFacadeImpl implements ButterflyFacade {
     private TransformationEngine transformationEngine;
 
     @Override
-    public void transform(@NotNull File applicationFolder, @NotNull String templateId) {
+    public void transform(@NotNull File applicationFolder, @NotNull String templateClassName) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         Application application = new Application(applicationFolder);
-        Transformation transformation = new Transformation(application, templateId);
+        Class<TransformationTemplate> templateClass = (Class<TransformationTemplate>) Class.forName(templateClassName);
+        TransformationTemplate template = (TransformationTemplate) templateClass.newInstance();
+        Transformation transformation = new Transformation(application, template);
 
         transformationEngine.perform(transformation);
     }

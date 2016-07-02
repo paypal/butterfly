@@ -8,21 +8,14 @@ import java.util.List;
  *
  * @author facarvalho
  */
-public interface TransformationTemplate {
-
-    /**
-     * Returns the id of this transformation template
-     *
-     * @return the id of this transformation template
-     */
-    String getId();
+public abstract class TransformationTemplate {
 
     /**
      * Returns the transformation template description
      *
      * @return the transformation template description
      */
-    String getDescription();
+    public abstract String getDescription();
 
     /**
      * Returns an ordered list of operations to be executed,
@@ -32,6 +25,11 @@ public interface TransformationTemplate {
      * @return the instructions to transform the application,
      *  which is represented by a list of Operation
      */
-    List<Operation> getInstructions();
+    public abstract List<Operation> getInstructions();
+
+    @Override
+    public String toString() {
+        return getClass().getName();
+    }
 
 }
