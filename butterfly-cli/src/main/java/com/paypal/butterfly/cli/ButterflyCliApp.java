@@ -57,6 +57,8 @@ public class ButterflyCliApp {
             return;
         }
 
+        // TODO implement setting custom output folder
+
         File applicationFolder = (File) optionSet.valueOf("i");
         String templateClassName = (String) optionSet.valueOf("t");
 
@@ -101,7 +103,7 @@ public class ButterflyCliApp {
                 .describedAs("template");
 
         // Transformed application folder option
-        optionParser.accepts(CLI_OPTION_TRANSFORMED_APP_FOLDER, "The folder location in the file system where the transformed application should be placed. It defaults to same location where original application is. Transformed application is placed under a new folder whose named is same as original folder, plus \"-transformed-<timestamp>\" suffix")
+        optionParser.accepts(CLI_OPTION_TRANSFORMED_APP_FOLDER, "The folder location in the file system where the transformed application should be placed. It defaults to same location where original application is. Transformed application is placed under a new folder whose named is same as original folder, plus \"-transformed-yyyyMMddHHmmssSSS\" suffix")
                 .withRequiredArg()
                 .ofType(File.class)
                 .describedAs("output");

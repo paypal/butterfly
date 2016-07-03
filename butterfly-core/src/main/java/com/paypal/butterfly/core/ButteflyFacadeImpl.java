@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -30,7 +31,7 @@ public class ButteflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public void transform(@NotNull File applicationFolder, @NotNull String templateClassName) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+    public void transform(@NotNull File applicationFolder, @NotNull String templateClassName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, IOException {
         if(!applicationFolder.exists() || applicationFolder.isFile()) {
             throw new IllegalArgumentException("Invalid application folder (" + applicationFolder.getAbsolutePath() + ")");
         }

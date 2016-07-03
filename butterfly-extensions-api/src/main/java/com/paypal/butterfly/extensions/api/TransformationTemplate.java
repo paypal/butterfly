@@ -29,21 +29,19 @@ public abstract class TransformationTemplate {
     public abstract String getDescription();
 
     /**
-     * Returns an ordered list of operations to be executed,
-     * which defines the actual transformation offered by
-     * this template
+     * Returns an ordered list of transformation operations to be executed,
+     * which defines the actual transformation offered by this template
      *
-     * @return the instructions to transform the application,
-     *  which is represented by a list of Operation
+     * @return the list of operations to transform the application,
      */
-    public abstract List<Operation> getInstructions();
+    public abstract List<TransformationOperation> getTransformationOperationsList();
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return getName();
     }
 

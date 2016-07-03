@@ -27,12 +27,18 @@
                 <artifactId>validation-api</artifactId>
                 <version>1.1.0.Final</version>
             </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.4</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
         <module>butterfly-facade</module>
         <module>butterfly-extensions-api</module>
+        <module>butterfly-basic-operations</module>
         <module>butterfly-bdm-api</module>
         <module>butterfly-core</module>
         <module>butterfly-cli</module>

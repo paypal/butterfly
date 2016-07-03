@@ -3,6 +3,7 @@ package com.paypal.butterfly.facade;
 import com.paypal.butterfly.extensions.api.Extension;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -20,6 +21,6 @@ public interface ButterflyFacade {
      * @param applicationFolder application folder
      * @param templateClassName transformation template class name
      */
-    void transform(File applicationFolder, String templateClassName) throws IllegalAccessException, InstantiationException, ClassNotFoundException;
+    void transform(File applicationFolder, String templateClassName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, IOException;
 
 }

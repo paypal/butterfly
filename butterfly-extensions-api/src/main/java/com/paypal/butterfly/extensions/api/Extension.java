@@ -25,7 +25,7 @@ public abstract class Extension {
     public abstract Set<Class<? extends TransformationTemplate>> getTemplateClasses();
 
     @Override
-    public String toString() {
+    public final String toString() {
         return getClass().getName();
     }
 

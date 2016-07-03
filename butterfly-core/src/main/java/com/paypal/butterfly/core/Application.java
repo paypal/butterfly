@@ -15,6 +15,10 @@ public class Application {
         this.folder = applicationFolder;
     }
 
+    public File getFolder() {
+        return folder;
+    }
+
     @Override
     public String toString() {
         return folder.getAbsolutePath();

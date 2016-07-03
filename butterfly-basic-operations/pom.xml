@@ -9,7 +9,7 @@
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>butterfly-core</artifactId>
+    <artifactId>butterfly-basic-operations</artifactId>
 
     <licenses>
         <license>
@@ -27,36 +27,8 @@
     <dependencies>
         <dependency>
             <groupId>com.paypal.butterfly</groupId>
-            <artifactId>butterfly-facade</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.paypal.butterfly</groupId>
             <artifactId>butterfly-extensions-api</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.paypal.butterfly</groupId>
-            <artifactId>butterfly-basic-operations</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.10</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

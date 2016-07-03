@@ -21,6 +21,14 @@ public class Transformation {
         this.template = template;
     }
 
+    public Application getApplication() {
+        return application;
+    }
+
+    public TransformationTemplate getTemplate() {
+        return template;
+    }
+
     @Override
     public String toString() {
         return String.format(TO_STRING_SYNTAX, application, template, template.getClass());
