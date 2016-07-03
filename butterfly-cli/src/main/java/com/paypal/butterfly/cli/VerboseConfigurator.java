@@ -19,7 +19,7 @@ import org.slf4j.event.Level;
 public abstract class VerboseConfigurator {
 
     VerboseConfigurator() {
-        setLoggerLevel(ButterflyCliApp.class, Level.INFO);
+        setLoggerLevel("com.paypal.butterfly", Level.INFO);
     }
 
     abstract void setLoggerLevel(String logger, Level level);
@@ -29,10 +29,8 @@ public abstract class VerboseConfigurator {
     void verboseMode(boolean on) {
         if(on) {
             setLoggerLevel("com.paypal.butterfly", Level.DEBUG);
-            setLoggerLevel(ButterflyCliApp.class, Level.DEBUG);
         } else {
-            setLoggerLevel("com.paypal.butterfly", Level.ERROR);
-            setLoggerLevel(ButterflyCliApp.class, Level.INFO);
+            setLoggerLevel("com.paypal.butterfly", Level.INFO);
         }
     }
 
