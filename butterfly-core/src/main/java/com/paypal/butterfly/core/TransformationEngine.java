@@ -32,15 +32,17 @@ public class TransformationEngine {
         File transformedAppFolder = prepareOutputFolder(transformation.getApplication());
 
         int total = transformation.getTemplate().getTransformationOperationsList().size();
-        logger.debug("Beginning transformation (" + total + " operations to be performed)");
+        logger.info("Beginning transformation (" + total + " operations to be performed)");
         int n = 1;
 
-        for(TransformationOperation transformationOperation: transformation.getTemplate().getTransformationOperationsList()) {
+        TransformationOperation transformationOperation;
+        for(Object transformationOperationObj: transformation.getTemplate().getTransformationOperationsList()) {
+            transformationOperation = (TransformationOperation) transformationOperationObj;
             String result = transformationOperation.perform(transformedAppFolder);
-            logger.debug("\t" + n + " - " + result);
+            logger.info("\t" + n + " - " + result);
             n++;
         }
-        logger.debug("Transformation has been completed");
+        logger.info("Transformation has been completed");
     }
 
     private File prepareOutputFolder(Application application) throws IOException {

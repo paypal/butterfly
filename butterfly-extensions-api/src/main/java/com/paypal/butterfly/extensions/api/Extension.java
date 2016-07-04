@@ -1,5 +1,7 @@
 package com.paypal.butterfly.extensions.api;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -8,7 +10,21 @@ import java.util.Set;
  *
  * @author facarvalho
  */
-public abstract class Extension {
+public abstract class Extension<E> {
+
+    private Set<Class<? extends TransformationTemplate>> templateClasses = new HashSet<Class<? extends TransformationTemplate>>();
+
+    /**
+     * Adds a new transformation template class to the set
+     *
+     * @param templateClass
+     *
+     * @return this extension
+     */
+    protected final E add(Class<? extends TransformationTemplate> templateClass) {
+        templateClasses.add(templateClass);
+        return (E) this;
+    }
 
     /**
      * Returns the extension description
@@ -18,11 +34,13 @@ public abstract class Extension {
     public abstract String getDescription();
 
     /**
-     * Returns a set containing all transformation template classes
+     * Returns a read-only set containing all transformation template classes
      *
-     * @return a set containing all transformation template classes
+     * @return a read-only set containing all transformation template classes
      */
-    public abstract Set<Class<? extends TransformationTemplate>> getTemplateClasses();
+    public final Set<Class<? extends TransformationTemplate>> getTemplateClasses() {
+        return Collections.unmodifiableSet(templateClasses);
+    }
 
     @Override
     public final String toString() {
