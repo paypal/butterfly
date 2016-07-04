@@ -10,7 +10,8 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
  */
 public class Transformation {
 
-    private static final String TO_STRING_SYNTAX = "\n\nTransformation {\n\t\"application\" : {%s},\n\t\"template\" : %s,\n\t\"templateClass\" : %s\n}\n";
+    // TODO Replace this by an actual JSON object mapper
+    private static final String TO_STRING_SYNTAX = "\n\nTransformation {\n\t\"application\" : %s,\n\t\"template\" : %s,\n\t\"templateClass\" : %s\n}\n";
 
     private Application application;
 
@@ -31,7 +32,7 @@ public class Transformation {
 
     @Override
     public String toString() {
-        return String.format(TO_STRING_SYNTAX, application, template, template.getClass());
+        return String.format(TO_STRING_SYNTAX, application, template, template.getClass().getName());
     }
 
 }

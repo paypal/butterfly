@@ -66,7 +66,11 @@ public class ButterflyCliApp {
 
         if(optionSet.has(CLI_OPTION_LIST_EXTENSIONS)) {
             logger.info("See registered extensions below");
-            printExtensionsList(butterflyFacade);
+            try {
+                printExtensionsList(butterflyFacade);
+            } catch (Exception e) {
+                logger.error("An error when listing extensions has occurred", e);
+            }
             return;
         }
 
@@ -114,16 +118,16 @@ public class ButterflyCliApp {
         return optionParser;
     }
 
-    private static void printExtensionsList(ButterflyFacade butterflyFacade) {
+    private static void printExtensionsList(ButterflyFacade butterflyFacade) throws IllegalAccessException, InstantiationException {
         Set<Extension> registeredExtensions = butterflyFacade.getRegisteredExtensions();
         Extension extension;
         Class<? extends TransformationTemplate> template;
         for(Object extensionObj : registeredExtensions.toArray()) {
             extension = (Extension) extensionObj;
-            System.out.printf("\n- %s:\n", extension);
+            System.out.printf("\n- %s: %s\n", extension, extension.getDescription());
             for(Object templateObj : extension.getTemplateClasses().toArray()) {
                 template = (Class<? extends TransformationTemplate>) templateObj;
-                System.out.printf("\t[T] %s\n", template.getName());
+                System.out.printf("\t* [T] %s: %s\n", template.getName(), template.newInstance().getDescription());
             }
         }
     }
