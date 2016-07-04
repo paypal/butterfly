@@ -5,13 +5,17 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 
+/**
+ * Operation for single file deletion
+ *
+ * @author facarvalho
+ */
 public class DeleteFile extends TransformationOperation<DeleteFile> {
 
     private static final String DESCRIPTION = "Delete file %s.";
 
     /**
      * @see {@link #setRelativePath(String)}
-     *
      * @param relativePath
      */
     public DeleteFile(String relativePath) {
@@ -25,7 +29,7 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
 
     @Override
     protected String execution(File transformedAppFolder) {
-        File fileToBeRemoved = new File(transformedAppFolder, getRelativePath());
+        File fileToBeRemoved = getAbsoluteFile(transformedAppFolder);
         FileUtils.deleteQuietly(fileToBeRemoved);
 
         return "File " + getRelativePath() + " has been removed";

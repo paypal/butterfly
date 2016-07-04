@@ -16,9 +16,6 @@ public abstract class TransformationOperation<T> {
     private AtomicBoolean hasBeenPerformed = new AtomicBoolean(false);
     private boolean abortOnFailure = true;
 
-    protected TransformationOperation() {
-    }
-
     /**
      * @see {@link #setRelativePath(String)}
      *
@@ -79,8 +76,25 @@ public abstract class TransformationOperation<T> {
         return (T) this;
     }
 
+    /**
+     * Returns relative path (from the application root folder) to the
+     * file or folder the transformation operation is suppose to perform against
+     *
+     * @return
+     */
     protected final String getRelativePath() {
         return relativePath;
+    }
+
+    /**
+     * Returns an absolute path to the file or folder the transformation
+     * operation is suppose to perform against
+     *
+     * @param transformedAppFolder
+     * @return
+     */
+    protected final File getAbsoluteFile(File transformedAppFolder) {
+        return new File(transformedAppFolder, getRelativePath());
     }
 
     /**
@@ -115,7 +129,9 @@ public abstract class TransformationOperation<T> {
      * @param transformedAppFolder
      *
      * @return an specific status message about the operation
-     * execution result
+     * execution result. This message should state clearly, but shortly, the actual file
+     * being changed, and what change had been done. The file should be referred
+     * by its relative path (see {@link #getRelativePath()})
      */
 	 // TODO Should throw a specific checked exception in case of validation or execution errors.
 	 // TODO return stype should be something that state a successfull message,
