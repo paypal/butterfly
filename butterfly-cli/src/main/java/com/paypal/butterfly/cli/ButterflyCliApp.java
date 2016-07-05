@@ -2,6 +2,8 @@ package com.paypal.butterfly.cli;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradeTemplate;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -127,8 +129,26 @@ public class ButterflyCliApp {
             System.out.printf("\n- %s: %s\n", extension, extension.getDescription());
             for(Object templateObj : extension.getTemplateClasses().toArray()) {
                 template = (Class<? extends TransformationTemplate>) templateObj;
-                System.out.printf("\t* [T] %s: %s\n", template.getName(), template.newInstance().getDescription());
+                System.out.printf("\t* [%s] %s: %s\n", ExtensionTypeInitial.getFromClass(template), template.getName(), template.newInstance().getDescription());
             }
+        }
+    }
+
+    private enum ExtensionTypeInitial {
+        T, US, UP, V;
+
+        public static ExtensionTypeInitial getFromClass(Class<? extends TransformationTemplate> template) {
+            if(UpgradeStep.class.isAssignableFrom(template)) return US;
+
+            // TODO
+//            if(UpgradePath.class.isAssignableFrom(template)) return UP;
+
+            if(TransformationTemplate.class.isAssignableFrom(template)) return T;
+
+            // TODO
+//            if(Validation.class.isAssignableFrom(template)) return V;
+
+            throw new IllegalArgumentException("Class " + template.getName() + " is not recognized as an extension type");
         }
     }
 
