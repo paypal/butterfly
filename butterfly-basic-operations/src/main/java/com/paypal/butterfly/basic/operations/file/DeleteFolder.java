@@ -7,19 +7,19 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Operation for single directory deletion
+ * Operation for single folder deletion
  *
  * @author facarvalho
  */
-public class DeleteDirectory extends TransformationOperation<DeleteDirectory> {
+public class DeleteFolder extends TransformationOperation<DeleteFolder> {
 
-    private static final String DESCRIPTION = "Delete directory %s.";
+    private static final String DESCRIPTION = "Delete folder %s.";
 
     /**
      * @see {@link #setRelativePath(String)}
      * @param relativePath
      */
-    public DeleteDirectory(String relativePath) {
+    public DeleteFolder(String relativePath) {
         super(relativePath);
     }
 
@@ -35,7 +35,7 @@ public class DeleteDirectory extends TransformationOperation<DeleteDirectory> {
         File fileToBeRemoved = getAbsoluteFile(transformedAppFolder);
         try {
             FileUtils.deleteDirectory(fileToBeRemoved);
-            resultMessage = "Directory " + getRelativePath() + " has been removed";
+            resultMessage = "Folder " + getRelativePath() + " has been deleted";
         } catch (IOException e) {
             // TODO
             resultMessage = e.getMessage();
