@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author facarvalho
  */
-public abstract class TransformationTemplate<T> {
+public abstract class TransformationTemplate<TT> {
 
     private List<TransformationOperation> operationList = new ArrayList<TransformationOperation>();
 
@@ -39,9 +39,9 @@ public abstract class TransformationTemplate<T> {
      *
      * @return this transformation template
      */
-    protected final T add(TransformationOperation operation) {
+    protected final TT add(TransformationOperation operation) {
         operationList.add(operation);
-        return (T) this;
+        return (TT) this;
     }
 
     /**

@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author facarvalho
  */
-public abstract class TransformationOperation<O> {
+public abstract class TransformationOperation<TO> {
 
     private String relativePath;
     private AtomicBoolean hasBeenPerformed = new AtomicBoolean(false);
@@ -71,9 +71,9 @@ public abstract class TransformationOperation<O> {
      * @param relativePath from the application root folder
      *  to the file or folder the operation shoudl be performed against
      */
-    public final O setRelativePath(String relativePath) {
+    public final TO setRelativePath(String relativePath) {
         this.relativePath = relativePath;
-        return (O) this;
+        return (TO) this;
     }
 
     /**
@@ -184,10 +184,10 @@ public abstract class TransformationOperation<O> {
      * @param abort
      * @return
      */
-    protected O abortTransformationOnFailure(boolean abort) {
+    protected TO abortTransformationOnFailure(boolean abort) {
         // TODO implement this logic in perform method
         abortOnFailure = abort;
-        return (O) this;
+        return (TO) this;
     }
 
     /**
