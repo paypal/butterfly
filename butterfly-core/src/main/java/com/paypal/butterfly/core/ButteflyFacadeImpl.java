@@ -3,6 +3,7 @@ package com.paypal.butterfly.core;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.facade.ButterflyFacade;
+import com.paypal.butterfly.facade.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,11 @@ public class ButteflyFacadeImpl implements ButterflyFacade {
 
     @Override
     public void transform(@NotNull File applicationFolder, @NotNull String templateClassName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, IOException {
+        transform(applicationFolder, templateClassName, new Configuration());
+    }
+
+    @Override
+    public void transform(File applicationFolder, String templateClassName, Configuration configuration) throws IllegalAccessException, InstantiationException, ClassNotFoundException, IOException {
         if(!applicationFolder.exists() || applicationFolder.isFile()) {
             throw new IllegalArgumentException("Invalid application folder (" + applicationFolder.getAbsolutePath() + ")");
         }
