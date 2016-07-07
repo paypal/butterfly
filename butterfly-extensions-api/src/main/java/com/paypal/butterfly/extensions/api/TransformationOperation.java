@@ -84,15 +84,21 @@ public abstract class TransformationOperation<TO> {
     }
 
     /**
-     * Returns the relative path from the application root folder
+     * Sets the relative path from the application root folder
      * to the file or folder the operation should perform against.
-     * The File path separator should be based on java.io.File.separator
+     * Three options are valid when separating folders in the path:
+     * <ol>
+     * <li>1-File.separatorChar (e.g. setRelativePath("myFolder" + File.separator + "file.txt")</li>
+     * <li>2-Forward slash (e.g. setRelativePath("myFolder/file.txt")</li>
+     * <li>3-Two backward slashes (e.g. setRelativePath("myFolder\\file.txt")</li>
+     * </ol>
+     * The slashes are replaced by OS specific separator char in runtime.
      *
      * @param relativePath from the application root folder
-     *  to the file or folder the operation shoudl be performed against
+     *  to the file or folder the operation should be performed against
      */
     public final TO setRelativePath(String relativePath) {
-        this.relativePath = relativePath;
+        this.relativePath = relativePath.replace('/', File.separatorChar).replace('\\', File.separatorChar);
         return (TO) this;
     }
 

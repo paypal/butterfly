@@ -52,7 +52,7 @@ public class TransformationEngine {
                     throw new TransformationException("Operation " + transformationOperation.getName() + " failed when performing transformation", e);
                 } else {
                     // TODO
-                    // State/save warning and go on with transformation
+                    // State/save/log the exception, and go on with transformation
                 }
             }
             logger.info("\t" + n + " - " + result);
