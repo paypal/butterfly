@@ -4,7 +4,6 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Operation for single file renaming
@@ -36,18 +35,13 @@ public class RenameFile extends TransformationOperation<RenameFile> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder) {
+    protected String execution(File transformedAppFolder) throws Exception {
         String resultMessage;
 
         File fileToBeRenamed = getAbsoluteFile(transformedAppFolder);
         File newNameFile = new File(fileToBeRenamed.getParent(), newName);
-        try {
-            FileUtils.moveFile(fileToBeRenamed, newNameFile);
-            resultMessage = "File " + getRelativePath() + " has been renamed to " + newName;
-        } catch (IOException e) {
-            // TODO
-            resultMessage = e.getMessage();
-        }
+        FileUtils.moveFile(fileToBeRenamed, newNameFile);
+        resultMessage = "File " + getRelativePath() + " has been renamed to " + newName;
 
         return resultMessage;
     }

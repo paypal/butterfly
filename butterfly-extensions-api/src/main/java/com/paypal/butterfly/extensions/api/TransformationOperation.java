@@ -1,8 +1,9 @@
 package com.paypal.butterfly.extensions.api;
 
+
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -12,9 +13,28 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class TransformationOperation<TO> {
 
+    private static final String OPERATION_NAME_SYNTAX = "%s-%d-%s";
+
+    // This transformation operation instance name
+    private String name;
+
+    // The execution order for this operation on its template
+    // -1 means it has not been registered to any template yet
+    // 1 means first
+    private int order = -1;
+
+    // Relative path from the application root folder to the file or
+    // folder the operation should perform against
     private String relativePath;
+
+    // Indicates whether or not this operation has already been
+    // executed. Transformation operations are supposed to
+    // be executed ONLY ONCE
     private AtomicBoolean hasBeenPerformed = new AtomicBoolean(false);
+
+    // Abort the whole transformation if this operation fails
     private boolean abortOnFailure = true;
+    private TransformationTemplate template;
 
     /**
      * @see {@link #setRelativePath(String)}
@@ -104,17 +124,22 @@ public abstract class TransformationOperation<TO> {
      * @param transformedAppFolder
      * @return a message stating with details the operation that has been performed
      */
-    public final synchronized String perform(File transformedAppFolder) {
+    public final synchronized String perform(File transformedAppFolder) throws TransformationOperationException {
         if(hasBeenPerformed.get()) {
             throw new IllegalStateException("This transformation operation has already been performed");
         }
         if(!preExecutionValidation(transformedAppFolder)) {
-            throw new IllegalStateException("This transformation operation pre-execution validation has failed");
+            throw new TransformationOperationException(name + " pre-execution validation has failed");
             // TODO create a meta-data here with reasons for pre-validation failures, it should state the error
-            // Fail the whole transformation or not, depending on {@link #abortTransformationOnFailure}
         }
 
-        String resultMessage = execution(transformedAppFolder);
+        // TODO result should be a composite type, including potential warnings
+        String resultMessage;
+        try {
+            resultMessage = execution(transformedAppFolder);
+        } catch(Exception e) {
+            throw new TransformationOperationException(name + " has failed", e);
+        }
 
         hasBeenPerformed.set(true);
 
@@ -133,10 +158,9 @@ public abstract class TransformationOperation<TO> {
      * being changed, and what change had been done. The file should be referred
      * by its relative path (see {@link #getRelativePath()})
      */
-	 // TODO Should throw a specific checked exception in case of validation or execution errors.
 	 // TODO return stype should be something that state a successfull message,
 	 // but also warnings, if they happen
-    protected abstract String execution(File transformedAppFolder);
+    protected abstract String execution(File transformedAppFolder) throws Exception;
 
     /**
      *
@@ -192,13 +216,54 @@ public abstract class TransformationOperation<TO> {
 
     /**
      * Returns whether this operation aborts the transformation or not in
-     * case of an operation failure
+     * case of an operation failure. Notice that this method does NOT
+     * change the state this object in any ways, it is just a getter.
      *
      * @return true only if this operation aborts the transformation or not in
      * case of an operation failure
      */
-    public boolean getAbortTransformationOnFailure() {
+    public boolean abortTransformationOnFailure() {
         return abortOnFailure;
+    }
+
+    /**
+     * Register this operation to a template, and also assign it a name
+     * based on the template name and order of execution
+     *
+     * @param template
+     * @param order
+     */
+    final void setTemplate(TransformationTemplate template, int order) {
+        this.template = template;
+        this.order = order;
+
+        if(name == null) {
+            setName(String.format(OPERATION_NAME_SYNTAX, template.getName(), order, ((TO) this).getClass().getSimpleName()));
+        }
+    }
+
+    /**
+     * Returns the transformation template this operation instance belongs to
+     *
+     * @return the transformation template this operation instance belongs to
+     */
+    public TransformationTemplate getTemplate() {
+        return template;
+    }
+
+    /**
+     * Set this transformation operation instance name.
+     * If not set, a default name will be assigned at the
+     * time it is added to a template.
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public final String getName() {
+        return name;
     }
 
 }

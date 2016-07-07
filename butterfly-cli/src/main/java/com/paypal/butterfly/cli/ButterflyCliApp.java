@@ -2,9 +2,10 @@ package com.paypal.butterfly.cli;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.facade.exception.TransformationException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradeTemplate;
 import com.paypal.butterfly.facade.ButterflyFacade;
+import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.slf4j.Logger;
@@ -79,8 +80,10 @@ public class ButterflyCliApp {
         try {
             butterflyFacade.transform(applicationFolder, templateClassName);
             logger.info("Application has been transformed");
-        } catch (Exception e) {
-            logger.error("Transformation error has occurred", e);
+        } catch (TransformationException e) {
+            logger.error("A transformation error has occurred", e);
+        } catch (ButterflyException e) {
+            logger.error("An error has occurred", e);
         }
     }
 

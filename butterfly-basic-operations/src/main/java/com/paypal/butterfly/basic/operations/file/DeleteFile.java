@@ -28,7 +28,7 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder) {
+    protected String execution(File transformedAppFolder) throws Exception {
         File fileToBeRemoved = getAbsoluteFile(transformedAppFolder);
         FileUtils.deleteQuietly(fileToBeRemoved);
 

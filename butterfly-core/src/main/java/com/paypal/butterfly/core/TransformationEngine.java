@@ -1,6 +1,9 @@
 package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.core.exception.InternalException;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.facade.exception.TransformationException;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +29,7 @@ public class TransformationEngine {
 
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIMESTAMP_SUFFIX_FORMAT);
 
-    public void perform(Transformation transformation) throws IOException, IllegalAccessException, InstantiationException {
+    public void perform(Transformation transformation) throws TransformationException {
         logger.debug("Transformation requested: " + transformation);
 
         File transformedAppFolder = prepareOutputFolder(transformation.getApplication());
@@ -38,14 +41,27 @@ public class TransformationEngine {
         TransformationOperation transformationOperation;
         for(Object transformationOperationObj: transformation.getTemplate().getTransformationOperationsList()) {
             transformationOperation = (TransformationOperation) transformationOperationObj;
-            String result = transformationOperation.perform(transformedAppFolder);
+            String result = null;
+            try {
+                result = transformationOperation.perform(transformedAppFolder);
+            } catch (TransformationOperationException e) {
+                if(transformationOperation.abortTransformationOnFailure()) {
+                    logger.error("*** Transformation will be aborted due to failed operation ***");
+                    logger.error("*** Operation: \t" + transformationOperation.getDescription());
+                    logger.error("*** Cause: \t" + e.getCause());
+                    throw new TransformationException("Operation " + transformationOperation.getName() + " failed when performing transformation", e);
+                } else {
+                    // TODO
+                    // State/save warning and go on with transformation
+                }
+            }
             logger.info("\t" + n + " - " + result);
             n++;
         }
         logger.info("Transformation has been completed");
     }
 
-    private File prepareOutputFolder(Application application) throws IOException {
+    private File prepareOutputFolder(Application application) {
         logger.debug("Preparing output folder");
         logger.info("Original application folder: " + application.getFolder());
 
@@ -55,7 +71,15 @@ public class TransformationEngine {
         logger.info("Transformed application folder: " + transformedAppFolder);
 
         transformedAppFolder.mkdir();
-        FileUtils.copyDirectory(application.getFolder(), transformedAppFolder);
+        try {
+            FileUtils.copyDirectory(application.getFolder(), transformedAppFolder);
+        } catch (IOException e) {
+            String exceptionMessage = String.format(
+                    "An error occurred when preparing the transformed application folder (%s). Check also if the original application folder (%s) is valid",
+                    transformedAppFolder, application.getFolder());
+            logger.error(exceptionMessage, e);
+            throw new InternalException(exceptionMessage, e);
+        }
         logger.debug("Transformed application folder is prepared");
 
         return transformedAppFolder;
