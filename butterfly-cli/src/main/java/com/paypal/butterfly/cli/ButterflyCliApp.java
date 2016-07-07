@@ -46,15 +46,19 @@ public class ButterflyCliApp {
         logger.info(BANNER);
 
         OptionParser optionParser = createOptionSet();
-        OptionSet optionSet = optionParser.parse(arguments);
+        OptionSet optionSet = null;
 
-        if(optionSet.has(CLI_OPTION_VERBOSE)) {
+        if(arguments.length != 0){
+            optionSet = optionParser.parse(arguments);
+        }
+
+        if(optionSet != null && optionSet.has(CLI_OPTION_VERBOSE)){
             VerboseConfigurator verboseConfigurator = applicationContext.getBean(VerboseConfigurator.class);
             verboseConfigurator.verboseMode(true);
             logger.debug("Verbose mode is ON");
         }
 
-        if(optionSet.has(CLI_OPTION_HELP) || !optionSet.hasOptions()) {
+        if(optionSet == null || optionSet.has(CLI_OPTION_HELP) || !optionSet.hasOptions()){
             logger.info("See CLI usage below\n");
             optionParser.printHelpOn(System.out);
             return;
