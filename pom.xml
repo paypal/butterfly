@@ -35,6 +35,17 @@
         </dependencies>
     </dependencyManagement>
 
+    <distributionManagement>
+        <repository>
+            <id>raptor.releases</id>
+            <url>https://paypalcentral.es.paypalcorp.com/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>raptor.snapshots</id>
+            <url>https://paypalcentral.es.paypalcorp.com/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <modules>
         <module>butterfly-facade</module>
         <module>butterfly-extensions-api</module>
