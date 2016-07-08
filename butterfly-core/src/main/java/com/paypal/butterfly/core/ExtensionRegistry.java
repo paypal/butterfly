@@ -32,9 +32,15 @@ public class ExtensionRegistry {
     private Set<Extension> extensions;
 
     private void setExtensions() {
-        logger.debug("Searching for extensions");
+        logger.info("Searching for extensions");
         Set<Class<? extends Extension>> extensionClasses = findExtensionClasses();
-        logger.debug("Number of extensions found: " + extensionClasses.size());
+        logger.info("Number of extensions found: " + extensionClasses.size());
+
+        if(extensionClasses.size() == 0) {
+            extensions = Collections.emptySet();
+            return;
+        }
+
         logger.debug("Registering extensions");
         registerExtensions(extensionClasses);
         logger.debug("Extensions have been registered");

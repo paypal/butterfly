@@ -72,7 +72,6 @@ public class ButterflyCliApp {
         ButterflyFacade butterflyFacade = applicationContext.getBean(ButterflyFacade.class);
 
         if(optionSet.has(CLI_OPTION_LIST_EXTENSIONS)) {
-            logger.info("See registered extensions below");
             try {
                 printExtensionsList(butterflyFacade);
             } catch (Exception e) {
@@ -129,6 +128,14 @@ public class ButterflyCliApp {
 
     private static void printExtensionsList(ButterflyFacade butterflyFacade) throws IllegalAccessException, InstantiationException {
         Set<Extension> registeredExtensions = butterflyFacade.getRegisteredExtensions();
+
+        if(registeredExtensions.size() == 0) {
+            logger.info("There are no registered extensions");
+            return;
+        }
+
+        logger.info("See registered extensions below");
+
         Extension extension;
         Class<? extends TransformationTemplate> template;
         for(Object extensionObj : registeredExtensions.toArray()) {
