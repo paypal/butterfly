@@ -12,7 +12,7 @@ There are a few ways to run it, see below.
 `mvn spring-boot:run -Drun.arguments=-h`
 
 #### From a terminal running Spring Boot executable jar
-`java -jar target/butterfly-cli-1.0.0-SNAPSHOT.jar`
+`java -jar target/butterfly-cli-1.0.0-SNAPSHOT.jar -h`
 
 _Ps.: don't forget to adjust the version suffix in the jar name_
 
