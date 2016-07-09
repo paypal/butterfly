@@ -17,6 +17,8 @@ public class RenameFile extends TransformationOperation<RenameFile> {
     private String newName;
 
     /**
+     * Operation for single file renaming
+     *
      * @see {@link #setRelativePath(String)}
      * @param relativePath
      */
@@ -24,6 +26,13 @@ public class RenameFile extends TransformationOperation<RenameFile> {
         super(relativePath);
     }
 
+    /**
+     * Operation for single file renaming
+     *
+     * @see {@link #setRelativePath(String)}
+     * @param relativePath
+     * @param newName new name for the file
+     */
     public RenameFile(String relativePath, String newName) {
         this(relativePath);
         this.newName = newName;

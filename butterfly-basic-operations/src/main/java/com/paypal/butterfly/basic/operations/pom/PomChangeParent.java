@@ -15,7 +15,7 @@ import java.io.FileOutputStream;
  *
  * @author facarvalho
  */
-public class ChangeParent extends TransformationOperation<ChangeParent> {
+public class PomChangeParent extends TransformationOperation<PomChangeParent> {
 
     private static final String DESCRIPTION = "Change parent artifact in POM file %s.";
 
@@ -24,19 +24,40 @@ public class ChangeParent extends TransformationOperation<ChangeParent> {
     private String version = null;
 
     /**
+     * Operation for revving up the parent' version in a Maven POM file
+     *
      * @param relativePath
      * @see {@link #setRelativePath(String)}
      */
-    private ChangeParent(String relativePath) {
+    private PomChangeParent(String relativePath) {
         super(relativePath);
     }
 
-    public ChangeParent(String relativePath, String version) {
+    /**
+     * Operation for revving up the parent' version in a Maven POM file
+     *
+     * @param relativePath
+     * @see {@link #setRelativePath(String)}
+     *
+     * @param version parent artifact version to be set
+     */
+    public PomChangeParent(String relativePath, String version) {
         this(relativePath);
         this.version = version;
     }
 
-    public ChangeParent(String relativePath, String groupId, String artifactId, String version) {
+
+    /**
+     * Operation for revving up the parent' version in a Maven POM file
+     *
+     * @param relativePath
+     * @see {@link #setRelativePath(String)}
+     *
+     * @param groupId parent artifact group id to be set
+     * @param artifactId parent artifact id to be set
+     * @param version parent artifact version to be set
+     */
+    public PomChangeParent(String relativePath, String groupId, String artifactId, String version) {
         this(relativePath);
         this.groupId = groupId;
         this.artifactId = artifactId;

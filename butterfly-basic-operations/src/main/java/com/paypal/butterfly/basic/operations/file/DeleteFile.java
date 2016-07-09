@@ -15,6 +15,8 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
     private static final String DESCRIPTION = "Delete file %s.";
 
     /**
+     * Operation for single file deletion
+     *
      * @see {@link #setRelativePath(String)}
      * @param relativePath
      */

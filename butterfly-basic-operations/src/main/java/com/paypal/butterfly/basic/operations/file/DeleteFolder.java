@@ -15,6 +15,8 @@ public class DeleteFolder extends TransformationOperation<DeleteFolder> {
     private static final String DESCRIPTION = "Delete folder %s.";
 
     /**
+     * Operation for single folder deletion
+     *
      * @see {@link #setRelativePath(String)}
      * @param relativePath
      */
