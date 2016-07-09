@@ -34,7 +34,12 @@ public abstract class TransformationOperation<TO> {
 
     // Abort the whole transformation if this operation fails
     private boolean abortOnFailure = true;
+
+    // The template this operation instance has been registered to
     private TransformationTemplate template;
+
+    // Optional condition to let this operation be executed
+    private TransformationOperationCondition condition = null;
 
     /**
      * @see {@link #setRelativePath(String)}
@@ -106,7 +111,8 @@ public abstract class TransformationOperation<TO> {
      * Returns relative path (from the application root folder) to the
      * file or folder the transformation operation is suppose to perform against
      *
-     * @return
+     * @return relative path (from the application root folder) to the
+     * file or folder the transformation operation is suppose to perform against
      */
     protected final String getRelativePath() {
         return relativePath;
@@ -133,6 +139,10 @@ public abstract class TransformationOperation<TO> {
     public final synchronized String perform(File transformedAppFolder) throws TransformationOperationException {
         if(hasBeenPerformed.get()) {
             throw new IllegalStateException("This transformation operation has already been performed");
+        }
+        if(condition != null && !condition.evaluate(transformedAppFolder)) {
+            // TODO state warning maybe?
+            return String.format("*** SKIPPED *** Operation '%s' skipped due to failing condition: %s", name, condition);
         }
         if(!preExecutionValidation(transformedAppFolder)) {
             throw new TransformationOperationException(name + " pre-execution validation has failed");
@@ -257,6 +267,11 @@ public abstract class TransformationOperation<TO> {
         return template;
     }
 
+    public final TO executeIf(TransformationOperationCondition condition) {
+        this.condition = condition;
+        return (TO) this;
+    }
+
     /**
      * Set this transformation operation instance name.
      * If not set, a default name will be assigned at the
@@ -270,6 +285,11 @@ public abstract class TransformationOperation<TO> {
 
     public final String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return getDescription();
     }
 
 }
