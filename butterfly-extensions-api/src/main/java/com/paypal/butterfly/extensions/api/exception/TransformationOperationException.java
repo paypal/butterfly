@@ -8,7 +8,7 @@ package com.paypal.butterfly.extensions.api.exception;
  *
  * @author facarvalho
  */
-public class TransformationOperationException extends ButterflyException {
+public class TransformationOperationException extends TransformationUtilityException {
 
     public TransformationOperationException(String exceptionMessage) {
         super(exceptionMessage);

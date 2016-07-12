@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.file;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
 import java.io.File;
@@ -11,7 +12,7 @@ import java.io.File;
  */
 public class RemoveLine extends TransformationOperation<RemoveLine> {
 
-    private static final String DESCRIPTION = "Remove line(s) matching '%s' from file %s.";
+    private static final String DESCRIPTION = "Remove line(s) matching '%s' from file %s";
 
     private String regex;
 
@@ -43,7 +44,7 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder) throws Exception {
+    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         // TODO
 
         return null;

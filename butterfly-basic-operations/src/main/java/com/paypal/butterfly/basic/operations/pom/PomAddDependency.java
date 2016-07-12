@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.pom;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -24,7 +25,7 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
     // TODO
     // What happens if dependency already exists? Fail? Warning? Replace it (if different version)?
 
-    private static final String DESCRIPTION = "Add dependency %s:%s:$s to POM file %s.";
+    private static final String DESCRIPTION = "Add dependency %s:%s:$s to POM file %s";
 
     private String groupId;
     private String artifactId;
@@ -80,8 +81,8 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
     }
 
     @Override
-    protected String execution(File transformedAppFolder) throws Exception {
-        File pomFile = getAbsoluteFile(transformedAppFolder);
+    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
         MavenXpp3Reader reader = new MavenXpp3Reader();
 
         Model model = reader.read(new FileInputStream(pomFile));

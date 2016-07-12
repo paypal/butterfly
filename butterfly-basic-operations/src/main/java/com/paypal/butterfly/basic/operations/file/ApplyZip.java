@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.file;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
 import java.io.File;
@@ -12,7 +13,7 @@ import java.net.URL;
  */
 public class ApplyZip extends TransformationOperation<ApplyZip> {
 
-    private static final String DESCRIPTION = "Download, decompress and place contents of zip %s file at %s.";
+    private static final String DESCRIPTION = "Download, decompress and place contents of zip %s file at %s";
 
     private URL zipFileUrl;
 
@@ -45,7 +46,7 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder) throws Exception {
+    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         // TODO
 
         return null;

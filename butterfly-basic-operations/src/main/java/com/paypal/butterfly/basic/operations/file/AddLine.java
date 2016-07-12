@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.file;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
 import java.io.File;
@@ -11,7 +12,7 @@ import java.io.File;
  */
 public class AddLine extends TransformationOperation<AddLine> {
 
-    private static final String DESCRIPTION = "Add line '%s' to file %s.";
+    private static final String DESCRIPTION = "Add line '%s' to file %s";
 
     private String newLine;
 
@@ -43,7 +44,7 @@ public class AddLine extends TransformationOperation<AddLine> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder) throws Exception {
+    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         // TODO
 
         return null;

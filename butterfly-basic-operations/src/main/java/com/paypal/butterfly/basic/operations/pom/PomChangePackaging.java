@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.pom;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
 import java.io.File;
@@ -11,7 +12,7 @@ import java.io.File;
  */
 public class PomChangePackaging extends TransformationOperation<PomChangePackaging> {
 
-    private static final String DESCRIPTION = "Change packaging to %s in POM file %s.";
+    private static final String DESCRIPTION = "Change packaging to %s in POM file %s";
 
     private String packagingType;
 
@@ -43,7 +44,7 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
     }
 
     @Override
-    protected String execution(File transformedAppFolder) throws Exception {
+    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         // TODO
 
         return null;

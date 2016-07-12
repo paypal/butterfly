@@ -1,8 +1,12 @@
 package com.paypal.butterfly.core;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.core.exception.InternalException;
+import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import com.paypal.butterfly.facade.exception.TransformationException;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -34,29 +38,51 @@ public class TransformationEngine {
 
         File transformedAppFolder = prepareOutputFolder(transformation.getApplication());
 
-        int total = transformation.getTemplate().getTransformationOperationsList().size();
-        logger.info("Beginning transformation (" + total + " operations to be performed)");
-        int n = 1;
+        TransformationTemplate template = transformation.getTemplate();
 
-        TransformationOperation transformationOperation;
-        for(Object transformationOperationObj: transformation.getTemplate().getTransformationOperationsList()) {
-            transformationOperation = (TransformationOperation) transformationOperationObj;
-            String result = null;
-            try {
-                result = transformationOperation.perform(transformedAppFolder);
-            } catch (TransformationOperationException e) {
-                if(transformationOperation.abortTransformationOnFailure()) {
-                    logger.error("*** Transformation will be aborted due to failed operation ***");
-                    logger.error("*** Operation: \t" + transformationOperation.getDescription());
+        int total = template.getTransformationUtilitiesList().size();
+        logger.info("Beginning transformation (" + template.getOperationsCount() + " operations to be performed)");
+        int operationsExecutionOrder = 1;
+
+        TransformationContext transformationContext = new TransformationContextImpl();
+
+        TransformationUtility utility;
+        TransformationOperation operation;
+        for(Object transformationUtilityObj: template.getTransformationUtilitiesList()) {
+            if(transformationUtilityObj instanceof TransformationOperation) {
+                operation = (TransformationOperation) transformationUtilityObj;
+                String result = null;
+                try {
+                    result = operation.perform(transformedAppFolder, transformationContext);
+                    String key = (operation.getContextAttributeName() != null ? operation.getContextAttributeName() : operation.getName());
+                    transformationContext.put(key, result);
+                } catch (TransformationOperationException e) {
+                    if (operation.abortTransformationOnFailure()) {
+                        logger.error("*** Transformation will be aborted due to failed operation ***");
+                        logger.error("*** Operation: \t" + operation.getDescription());
+                        logger.error("*** Cause: \t" + e.getCause());
+                        throw new TransformationException("Operation " + operation.getName() + " failed when performing transformation", e);
+                    } else {
+                        // TODO
+                        // State/save/log the exception, and go on with transformation
+                    }
+                }
+                logger.info("\t" + operationsExecutionOrder + "\t - " + result);
+                operationsExecutionOrder++;
+            } else {
+                utility = (TransformationUtility) transformationUtilityObj;
+                try {
+                    Object result = utility.perform(transformedAppFolder, transformationContext);
+                    String key = (utility.getContextAttributeName() != null ? utility.getContextAttributeName() : utility.getName());
+                    transformationContext.put(key, result);
+                    logger.debug("\t-\t - {} ({})", utility, utility.getName());
+                } catch (TransformationUtilityException e) {
+                    logger.error("*** Transformation will be aborted due to failed utility ***");
+                    logger.error("*** Utility: \t" + utility.getDescription());
                     logger.error("*** Cause: \t" + e.getCause());
-                    throw new TransformationException("Operation " + transformationOperation.getName() + " failed when performing transformation", e);
-                } else {
-                    // TODO
-                    // State/save/log the exception, and go on with transformation
+                    throw new TransformationException("Utility " + utility.getName() + " failed when being executed", e);
                 }
             }
-            logger.info("\t" + n + " - " + result);
-            n++;
         }
         logger.info("Transformation has been completed");
     }

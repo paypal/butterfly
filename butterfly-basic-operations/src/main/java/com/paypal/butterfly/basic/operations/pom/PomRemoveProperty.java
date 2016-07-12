@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.pom;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
 import java.io.File;
@@ -11,7 +12,7 @@ import java.io.File;
  */
 public class PomRemoveProperty extends TransformationOperation<PomRemoveProperty> {
 
-    private static final String DESCRIPTION = "Remove property %s from POM file %s.";
+    private static final String DESCRIPTION = "Remove property %s from POM file %s";
 
     private String propertyName;
 
@@ -43,7 +44,7 @@ public class PomRemoveProperty extends TransformationOperation<PomRemoveProperty
     }
 
     @Override
-    protected String execution(File transformedAppFolder) throws Exception {
+    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         // TODO
 
         return null;

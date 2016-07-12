@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.file;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import org.apache.commons.io.FileUtils;
 
@@ -12,7 +13,7 @@ import java.io.File;
  */
 public class RenameFile extends TransformationOperation<RenameFile> {
 
-    private static final String DESCRIPTION = "Rename file %s to %s.";
+    private static final String DESCRIPTION = "Rename file %s to %s";
 
     private String newName;
 
@@ -44,10 +45,10 @@ public class RenameFile extends TransformationOperation<RenameFile> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder) throws Exception {
+    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         String resultMessage;
 
-        File fileToBeRenamed = getAbsoluteFile(transformedAppFolder);
+        File fileToBeRenamed = getAbsoluteFile(transformedAppFolder, transformationContext);
         File newNameFile = new File(fileToBeRenamed.getParent(), newName);
         FileUtils.moveFile(fileToBeRenamed, newNameFile);
         resultMessage = "File " + getRelativePath() + " has been renamed to " + newName;

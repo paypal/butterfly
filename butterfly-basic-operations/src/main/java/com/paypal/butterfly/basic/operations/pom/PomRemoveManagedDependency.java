@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.pom;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
 import java.io.File;
@@ -11,7 +12,7 @@ import java.io.File;
  */
 public class PomRemoveManagedDependency extends TransformationOperation<PomRemoveManagedDependency> {
 
-    private static final String DESCRIPTION = "Remove managed dependency entry %s:%s from POM file %s.";
+    private static final String DESCRIPTION = "Remove managed dependency entry %s:%s from POM file %s";
 
     private String groupId;
     private String artifactId;
@@ -46,7 +47,7 @@ public class PomRemoveManagedDependency extends TransformationOperation<PomRemov
     }
 
     @Override
-    protected String execution(File transformedAppFolder) throws Exception {
+    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         // TODO
 
         return null;

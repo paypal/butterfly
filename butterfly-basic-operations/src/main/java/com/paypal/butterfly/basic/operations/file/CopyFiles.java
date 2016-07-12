@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.file;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
 import java.io.File;
@@ -11,7 +12,7 @@ import java.io.File;
  */
 public class CopyFiles extends TransformationOperation<CopyFiles> {
 
-    private static final String DESCRIPTION = "Copy all files recursively from %s to %s.";
+    private static final String DESCRIPTION = "Copy all files recursively from %s to %s";
 
     private String newFilesLocation;
 
@@ -43,8 +44,10 @@ public class CopyFiles extends TransformationOperation<CopyFiles> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder) throws Exception {
+    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         // TODO
+
+        // Take a look at this: https://docs.oracle.com/javase/tutorial/essential/io/walk.html
 
         return null;
     }

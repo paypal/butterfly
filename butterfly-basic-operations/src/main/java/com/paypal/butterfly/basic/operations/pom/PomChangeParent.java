@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.pom;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -17,7 +18,7 @@ import java.io.FileOutputStream;
  */
 public class PomChangeParent extends TransformationOperation<PomChangeParent> {
 
-    private static final String DESCRIPTION = "Change parent artifact in POM file %s.";
+    private static final String DESCRIPTION = "Change parent artifact in POM file %s";
 
     private String groupId = null;
     private String artifactId = null;
@@ -70,8 +71,8 @@ public class PomChangeParent extends TransformationOperation<PomChangeParent> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder) throws Exception {
-        File pomFile = getAbsoluteFile(transformedAppFolder);
+    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
 
         String resultMessage = null;
 

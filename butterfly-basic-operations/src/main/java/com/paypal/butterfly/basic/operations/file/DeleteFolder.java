@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.file;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import org.apache.commons.io.FileUtils;
 
@@ -12,7 +13,7 @@ import java.io.File;
  */
 public class DeleteFolder extends TransformationOperation<DeleteFolder> {
 
-    private static final String DESCRIPTION = "Delete folder %s.";
+    private static final String DESCRIPTION = "Delete folder %s";
 
     /**
      * Operation for single folder deletion
@@ -30,10 +31,10 @@ public class DeleteFolder extends TransformationOperation<DeleteFolder> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder) throws Exception {
+    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         String resultMessage;
 
-        File fileToBeRemoved = getAbsoluteFile(transformedAppFolder);
+        File fileToBeRemoved = getAbsoluteFile(transformedAppFolder, transformationContext);
         FileUtils.deleteDirectory(fileToBeRemoved);
         resultMessage = "Folder " + getRelativePath() + " has been deleted";
 

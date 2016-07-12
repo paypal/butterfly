@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.file;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import org.apache.commons.io.FileUtils;
 
@@ -12,7 +13,7 @@ import java.io.File;
  */
 public class DeleteFiles extends TransformationOperation<DeleteFiles> {
 
-    private static final String DESCRIPTION = "Delete all files named %s under %s, or any other folder under it, at any level.";
+    private static final String DESCRIPTION = "Delete all files named %s under %s, or any other folder under it, at any level";
 
     private String fileName;
 
@@ -46,8 +47,10 @@ public class DeleteFiles extends TransformationOperation<DeleteFiles> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder) throws Exception {
+    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         // TODO
+
+        // Take a look at this: https://docs.oracle.com/javase/tutorial/essential/io/walk.html
 
         return null;
     }

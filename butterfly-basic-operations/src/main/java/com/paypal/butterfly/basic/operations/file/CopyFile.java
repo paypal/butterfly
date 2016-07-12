@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.file;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import org.apache.commons.io.FileUtils;
 
@@ -12,7 +13,7 @@ import java.io.File;
  */
 public class CopyFile extends TransformationOperation<CopyFile> {
 
-    private static final String DESCRIPTION = "Copy file %s to %s.";
+    private static final String DESCRIPTION = "Copy file %s to %s";
 
     private String newFileLocation;
 
@@ -44,7 +45,7 @@ public class CopyFile extends TransformationOperation<CopyFile> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder) throws Exception {
+    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         // TODO
 
         return null;
