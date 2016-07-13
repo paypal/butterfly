@@ -1,6 +1,9 @@
 package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.facade.Configuration;
+
+import java.io.File;
 
 /**
  * Represents an specific transformation to be applied
@@ -14,12 +17,18 @@ public class Transformation {
     private static final String TO_STRING_SYNTAX = "\n\nTransformation {\n\t\"application\" : %s,\n\t\"template\" : %s,\n\t\"templateClass\" : %s\n}\n";
 
     private Application application;
-
     private TransformationTemplate template;
+    private Configuration configuration;
+    private File transformedApplicationLocation;
 
-    public Transformation(Application application, TransformationTemplate template) {
+    public Transformation(Application application, TransformationTemplate template, Configuration configuration) {
         this.application = application;
         this.template = template;
+        this.configuration = configuration;
+    }
+
+    public void setTransformedApplicationLocation(File transformedApplicationLocation) {
+        this.transformedApplicationLocation = transformedApplicationLocation;
     }
 
     public Application getApplication() {
@@ -28,6 +37,14 @@ public class Transformation {
 
     public TransformationTemplate getTemplate() {
         return template;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public File getTransformedApplicationLocation() {
+        return transformedApplicationLocation;
     }
 
     @Override

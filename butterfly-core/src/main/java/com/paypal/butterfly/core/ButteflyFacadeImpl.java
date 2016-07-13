@@ -31,6 +31,9 @@ public class ButteflyFacadeImpl implements ButterflyFacade {
     @Autowired
     private TransformationEngine transformationEngine;
 
+    @Autowired
+    private CompressionHandler compressionHandler;
+
     @Override
     public Set<Extension> getRegisteredExtensions() {
         return extensionRegistry.getExtensions();
@@ -43,14 +46,21 @@ public class ButteflyFacadeImpl implements ButterflyFacade {
 
     @Override
     public void transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException {
+        logger.debug("Transformation configuration: {}", configuration);
+
         if(!applicationFolder.exists() || applicationFolder.isFile()) {
             throw new IllegalArgumentException("Invalid application folder (" + applicationFolder.getAbsolutePath() + ")");
         }
+
         Application application = new Application(applicationFolder);
         TransformationTemplate template = getTemplate(templateClassName);
-        Transformation transformation = new Transformation(application, template);
+        Transformation transformation = new Transformation(application, template, configuration);
 
         transformationEngine.perform(transformation);
+
+        if(configuration.isZipOutput()){
+            compressionHandler.compress(transformation);
+        }
     }
 
     private TransformationTemplate getTemplate(String templateClassName) {

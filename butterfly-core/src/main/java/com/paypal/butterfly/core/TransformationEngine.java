@@ -7,6 +7,7 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.exception.TransformationException;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class TransformationEngine {
     public void perform(Transformation transformation) throws TransformationException {
         logger.debug("Transformation requested: " + transformation);
 
-        File transformedAppFolder = prepareOutputFolder(transformation.getApplication());
+        File transformedAppFolder = prepareOutputFolder(transformation);
 
         TransformationTemplate template = transformation.getTemplate();
 
@@ -87,14 +88,31 @@ public class TransformationEngine {
         logger.info("Transformation has been completed");
     }
 
-    private File prepareOutputFolder(Application application) {
+    private File prepareOutputFolder(Transformation transformation) {
         logger.debug("Preparing output folder");
+
+        Application application =  transformation.getApplication();
+        Configuration configuration =  transformation.getConfiguration();
+
         logger.info("Original application folder: " + application.getFolder());
 
         File originalAppParent = application.getFolder().getParentFile();
         String transformedAppFolderName = application.getFolder().getName() + "-transformed-" + getCurrentTimeStamp();
-        File transformedAppFolder = new File(originalAppParent.getAbsolutePath() + File.separator + transformedAppFolderName);
+
+        File transformedAppFolder;
+
+        if(configuration.getOutputFolder() != null) {
+            if(!configuration.getOutputFolder().exists()) {
+                throw new IllegalArgumentException("Invalid output folder (" + configuration.getOutputFolder() + ")");
+            }
+            transformedAppFolder = new File(configuration.getOutputFolder().getAbsolutePath() + File.separator + transformedAppFolderName);
+        } else {
+            transformedAppFolder = new File(originalAppParent.getAbsolutePath() + File.separator + transformedAppFolderName);
+        }
+
         logger.info("Transformed application folder: " + transformedAppFolder);
+
+        transformation.setTransformedApplicationLocation(transformedAppFolder);
 
         transformedAppFolder.mkdir();
         try {

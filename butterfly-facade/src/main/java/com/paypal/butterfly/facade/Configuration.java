@@ -81,4 +81,10 @@ public class Configuration {
         return zipOutput;
     }
 
+    private static final String TO_STRING_FORMAT = "{ outputFolder: %s , zipOutput: %s }";
+
+    @Override
+    public String toString() {
+        return String.format(TO_STRING_FORMAT, outputFolder, zipOutput);
+    }
 }

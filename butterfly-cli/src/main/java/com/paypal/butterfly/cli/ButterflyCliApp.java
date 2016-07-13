@@ -2,6 +2,7 @@ package com.paypal.butterfly.cli;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.exception.TransformationException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.facade.ButterflyFacade;
@@ -37,6 +38,7 @@ public class ButterflyCliApp {
     private static final String CLI_OPTION_ORIGINAL_APP_FOLDER = "i";
     private static final String CLI_OPTION_TRANSFORMED_APP_FOLDER = "o";
     private static final String CLI_OPTION_TEMPLATE = "t";
+    private static final String CLI_OPTION_CREATE_ZIP = "z";
 
     private static Logger logger = LoggerFactory.getLogger(ButterflyCliApp.class);
 
@@ -64,10 +66,16 @@ public class ButterflyCliApp {
             return;
         }
 
-        // TODO implement setting custom output folder
+        File applicationFolder = (File) optionSet.valueOf(CLI_OPTION_ORIGINAL_APP_FOLDER);
+        String templateClassName = (String) optionSet.valueOf(CLI_OPTION_TEMPLATE);
+        File transformedApplicationFolder = (File) optionSet.valueOf(CLI_OPTION_TRANSFORMED_APP_FOLDER);
+        boolean createZip = optionSet.has(CLI_OPTION_CREATE_ZIP);
 
-        File applicationFolder = (File) optionSet.valueOf("i");
-        String templateClassName = (String) optionSet.valueOf("t");
+        if(createZip) {
+            logger.info("-z option has been set, transformed application will be placed into a zip file");
+        }
+
+        Configuration configuration = new Configuration(transformedApplicationFolder, createZip);
 
         ButterflyFacade butterflyFacade = applicationContext.getBean(ButterflyFacade.class);
 
@@ -81,7 +89,7 @@ public class ButterflyCliApp {
         }
 
         try {
-            butterflyFacade.transform(applicationFolder, templateClassName);
+            butterflyFacade.transform(applicationFolder, templateClassName, configuration);
             logger.info("Application has been transformed");
         } catch (TransformationException e) {
             logger.error("A transformation error has occurred", e);
@@ -122,6 +130,9 @@ public class ButterflyCliApp {
 
         // Verbose option
         optionParser.accepts(CLI_OPTION_VERBOSE, "Runs Butterfly in verbose mode");
+
+        // Create Zip option
+        optionParser.accepts(CLI_OPTION_CREATE_ZIP, "Outputs a zip file instead of a folder");
 
         return optionParser;
     }

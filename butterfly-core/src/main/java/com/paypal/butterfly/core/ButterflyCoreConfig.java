@@ -1,6 +1,5 @@
 package com.paypal.butterfly.core;
 
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -11,6 +10,11 @@ import org.springframework.context.annotation.Import;
  * @author facarvalho
  */
 @Configuration
-@Import({ExtensionRegistry.class, ButteflyFacadeImpl.class, TransformationEngine.class})
+@Import({
+        ExtensionRegistry.class,
+        ButteflyFacadeImpl.class,
+        TransformationEngine.class,
+        CompressionHandler.class
+})
 public class ButterflyCoreConfig {
 }
