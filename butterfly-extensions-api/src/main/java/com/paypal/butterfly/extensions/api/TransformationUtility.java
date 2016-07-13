@@ -214,12 +214,22 @@ public abstract class TransformationUtility<TU, RT> {
     private void setAbsoluteFile(File transformedAppFolder, TransformationContext transformationContext) {
         if(absoluteFileFromContextAttribute != null) {
             absoluteFile = (File) transformationContext.get(absoluteFileFromContextAttribute);
-            relativePath = absoluteFile.getAbsolutePath().split(transformedAppFolder.getAbsolutePath())[1];
+            setRelativePath(transformedAppFolder, absoluteFile);
             logger.debug("Setting absolute file for {} from context attribute {}, whose value is {}", name, absoluteFileFromContextAttribute, absoluteFile.getAbsolutePath());
             logger.debug("Relative path for {} has just been reset to {}", name, relativePath);
         } else {
             absoluteFile = new File(transformedAppFolder, getRelativePath());
         }
+    }
+
+    /*
+     * Set the relativePath during transformation time, knowing the transformed
+     * application folder, and already knowing the absolute file
+     */
+    private void setRelativePath(File transformedAppFolder, File absoluteFile) {
+        int beginning = transformedAppFolder.getAbsolutePath().length();
+        int end = absoluteFile.getAbsolutePath().length();
+        relativePath = absoluteFile.getAbsolutePath().substring(beginning, end);
     }
 
     /**
