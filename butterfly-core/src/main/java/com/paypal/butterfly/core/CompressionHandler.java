@@ -22,7 +22,7 @@ public class CompressionHandler {
     private static final Logger logger = LoggerFactory.getLogger(CompressionHandler.class);
 
     public void compress(Transformation transformation) {
-        File inputFile = transformation.getApplication().getFolder();
+        File inputFile = transformation.getTransformedApplicationLocation().getAbsoluteFile();
         File compressedFile = new File(transformation.getTransformedApplicationLocation().getAbsolutePath() + ".zip");
 
         logger.info("Compressing transformed application");
@@ -34,7 +34,7 @@ public class CompressionHandler {
             parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
             parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
 
-            zipFile.addFile(inputFile, parameters);
+            zipFile.addFolder(inputFile, parameters);
             FileUtils.deleteDirectory(transformation.getTransformedApplicationLocation());
 
             logger.info("Transformed application has been compressed to {}", compressedFile.getAbsoluteFile());
