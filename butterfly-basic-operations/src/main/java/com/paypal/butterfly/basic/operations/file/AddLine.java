@@ -16,6 +16,9 @@ public class AddLine extends TransformationOperation<AddLine> {
 
     private String newLine;
 
+    public AddLine() {
+    }
+
     /**
      * Operation to add a line to a text file
      *
@@ -36,6 +39,15 @@ public class AddLine extends TransformationOperation<AddLine> {
     public AddLine(String relativePath, String newLine) {
         this(relativePath);
         this.newLine = newLine;
+    }
+
+    public AddLine setNewLine(String newLine) {
+        this.newLine = newLine;
+        return this;
+    }
+
+    public String getNewLine() {
+        return newLine;
     }
 
     @Override

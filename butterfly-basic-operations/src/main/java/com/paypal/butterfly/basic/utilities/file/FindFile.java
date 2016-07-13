@@ -32,6 +32,9 @@ public class FindFile extends TransformationUtility<FindFile, File> {
 
     private String fileName;
 
+    public FindFile() {
+    }
+
     /**
      * Utility to find a file based on its name
      *
@@ -52,6 +55,15 @@ public class FindFile extends TransformationUtility<FindFile, File> {
     public FindFile(String relativePath, String fileName) {
         this(relativePath);
         this.fileName = fileName;
+    }
+
+    public FindFile setFileName(String fileName) {
+        this.fileName = fileName;
+        return this;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 
     @Override

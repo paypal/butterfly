@@ -17,6 +17,9 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
 
     private URL zipFileUrl;
 
+    public ApplyZip() {
+    }
+
     /**
      * Operation to apply the contents of a zip file
      *
@@ -38,6 +41,15 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
     public ApplyZip(String relativePath, URL zipFileUrl) {
         this(relativePath);
         this.zipFileUrl = zipFileUrl;
+    }
+
+    public ApplyZip setZipFileUrl(URL zipFileUrl) {
+        this.zipFileUrl = zipFileUrl;
+        return this;
+    }
+
+    public URL getZipFileUrl() {
+        return zipFileUrl;
     }
 
     @Override

@@ -25,6 +25,9 @@ public class FindFiles extends TransformationUtility<FindFiles, List<File>> {
     private String regex;
     private boolean recursive;
 
+    public FindFiles() {
+    }
+
     /**
      * Utility to find files
      *
@@ -47,6 +50,24 @@ public class FindFiles extends TransformationUtility<FindFiles, List<File>> {
         this(relativePath);
         this.regex = regex;
         this.recursive = recursive;
+    }
+
+    public FindFiles setRegex(String regex) {
+        this.regex = regex;
+        return this;
+    }
+
+    public FindFiles setRecursive(boolean recursive) {
+        this.recursive = recursive;
+        return this;
+    }
+
+    public String getRegex() {
+        return regex;
+    }
+
+    public boolean isRecursive() {
+        return recursive;
     }
 
     @Override

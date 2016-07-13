@@ -15,6 +15,9 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
 
     private static final String DESCRIPTION = "Delete file %s";
 
+    public DeleteFile() {
+    }
+
     /**
      * Operation for single file deletion
      *

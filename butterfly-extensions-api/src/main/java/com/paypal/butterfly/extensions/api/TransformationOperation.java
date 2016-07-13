@@ -24,6 +24,9 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
     // Optional condition to let this operation be executed
     private TransformationOperationCondition condition = null;
 
+    public TransformationOperation() {
+    }
+
     /**
      * @param relativePath
      * @see {@link #setRelativePath(String)}

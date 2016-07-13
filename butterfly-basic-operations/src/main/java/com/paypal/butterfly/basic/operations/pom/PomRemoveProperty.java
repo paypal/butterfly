@@ -16,6 +16,9 @@ public class PomRemoveProperty extends TransformationOperation<PomRemoveProperty
 
     private String propertyName;
 
+    public PomRemoveProperty() {
+    }
+
     /**
      * Operation to remove a property entry from a properties file
      *
@@ -36,7 +39,16 @@ public class PomRemoveProperty extends TransformationOperation<PomRemoveProperty
     public PomRemoveProperty(String relativePath, String propertyName) {
         this(relativePath);
         this.propertyName = propertyName;
-   }
+    }
+
+    public PomRemoveProperty setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+        return this;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
 
     @Override
     public String getDescription() {

@@ -17,6 +17,9 @@ public class DeleteFiles extends TransformationOperation<DeleteFiles> {
 
     private String fileName;
 
+    public DeleteFiles() {
+    }
+
     /**
      * Operation for multiplee files deletion
      *
@@ -39,6 +42,15 @@ public class DeleteFiles extends TransformationOperation<DeleteFiles> {
     public DeleteFiles(String relativePath, String fileName) {
         this(relativePath);
         this.fileName = fileName;
+    }
+
+    public DeleteFiles setFileName(String fileName) {
+        this.fileName = fileName;
+        return this;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 
     @Override

@@ -31,6 +31,9 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
     private String artifactId;
     private String version;
 
+    public PomAddDependency() {
+    }
+
     /**
      * Operation to add a new dependency to a POM file
      *
@@ -73,6 +76,33 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
     public PomAddDependency(String relativePath, String groupId, String artifactId, String version) {
         this(relativePath, groupId, artifactId);
         this.version = version;
+    }
+
+    public PomAddDependency setGroupId(String groupId) {
+        this.groupId = groupId;
+        return this;
+    }
+
+    public PomAddDependency setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+        return this;
+    }
+
+    public PomAddDependency setVersion(String version) {
+        this.version = version;
+        return this;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     @Override

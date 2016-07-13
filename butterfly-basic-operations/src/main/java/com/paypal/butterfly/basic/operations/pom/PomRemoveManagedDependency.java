@@ -17,6 +17,9 @@ public class PomRemoveManagedDependency extends TransformationOperation<PomRemov
     private String groupId;
     private String artifactId;
 
+    public PomRemoveManagedDependency() {
+    }
+
     /**
      * Operation to remove a managed dependency entry from a POM file
      *
@@ -39,6 +42,24 @@ public class PomRemoveManagedDependency extends TransformationOperation<PomRemov
         this(relativePath);
         this.groupId = groupId;
         this.artifactId = artifactId;
+    }
+
+    public PomRemoveManagedDependency setGroupId(String groupId) {
+        this.groupId = groupId;
+        return this;
+    }
+
+    public PomRemoveManagedDependency setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+        return this;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
     }
 
     @Override

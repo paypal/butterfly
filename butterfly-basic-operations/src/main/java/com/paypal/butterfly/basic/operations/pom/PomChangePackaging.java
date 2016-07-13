@@ -16,6 +16,9 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
 
     private String packagingType;
 
+    public PomChangePackaging() {
+    }
+
     /**
      * Operation to change the packaging of a Maven artifact, by changing its POM file
      *
@@ -36,6 +39,15 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
     public PomChangePackaging(String relativePath, String packagingType) {
         this(relativePath);
         this.packagingType = packagingType;
+    }
+
+    public PomChangePackaging setPackagingType(String packagingType) {
+        this.packagingType = packagingType;
+        return this;
+    }
+
+    public String getPackagingType() {
+        return packagingType;
     }
 
     @Override

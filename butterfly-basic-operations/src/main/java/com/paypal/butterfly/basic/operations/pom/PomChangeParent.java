@@ -24,6 +24,9 @@ public class PomChangeParent extends TransformationOperation<PomChangeParent> {
     private String artifactId = null;
     private String version = null;
 
+    public PomChangeParent() {
+    }
+
     /**
      * Operation for revving up the parent' version in a Maven POM file
      *
@@ -47,6 +50,32 @@ public class PomChangeParent extends TransformationOperation<PomChangeParent> {
         this.version = version;
     }
 
+    public PomChangeParent setGroupId(String groupId) {
+        this.groupId = groupId;
+        return this;
+    }
+
+    public PomChangeParent setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+        return this;
+    }
+
+    public PomChangeParent setVersion(String version) {
+        this.version = version;
+        return this;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public String getVersion() {
+        return version;
+    }
 
     /**
      * Operation for revving up the parent' version in a Maven POM file

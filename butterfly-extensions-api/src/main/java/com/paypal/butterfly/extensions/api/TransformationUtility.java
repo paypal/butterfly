@@ -25,6 +25,11 @@ import java.util.Map;
  * @see {@link TransformationOperation} for a specialized transformation utility that
  * does modify the project
  *
+ * IMPORTANT:
+ * Every TransformationUtility subclass MUST be a Java bean, which means they must have
+ * a public no arguments default constructor, and also public setters and getters for all
+ * their properties
+ *
  * @author facarvalho
  */
 public abstract class TransformationUtility<TU, RT> {
@@ -67,6 +72,14 @@ public abstract class TransformationUtility<TU, RT> {
     // The keys must be utility Java bean property names, and the values
     // must be transformation context attribute names
     private Map<String, String> lateProperties = new HashMap<String, String>();
+
+    /**
+     * The public default constructor should always be available by any transformation
+     * utility because in many cases all of its properties will be set during
+     * transformation time, using the transformation context
+     */
+    public TransformationUtility() {
+    }
 
     /**
      * @see {@link #setRelativePath(String)}

@@ -16,6 +16,9 @@ public class CopyFiles extends TransformationOperation<CopyFiles> {
 
     private String newFilesLocation;
 
+    public CopyFiles() {
+    }
+
     /**
      * Operation to copy all files recursively from one location to another
      *
@@ -36,6 +39,15 @@ public class CopyFiles extends TransformationOperation<CopyFiles> {
     public CopyFiles(String relativePath, String newFilesLocation) {
         this(relativePath);
         this.newFilesLocation = newFilesLocation;
+    }
+
+    public CopyFiles setNewFilesLocation(String newFilesLocation) {
+        this.newFilesLocation = newFilesLocation;
+        return this;
+    }
+
+    public String getNewFilesLocation() {
+        return newFilesLocation;
     }
 
     @Override

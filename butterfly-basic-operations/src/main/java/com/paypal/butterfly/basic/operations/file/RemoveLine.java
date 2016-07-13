@@ -16,6 +16,9 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
 
     private String regex;
 
+    public RemoveLine() {
+    }
+
     /**
      * Operation to remove one, or more, lines from a text file
      *
@@ -36,6 +39,15 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
     public RemoveLine(String relativePath, String regex) {
         this(relativePath);
         this.regex = regex;
+    }
+
+    public RemoveLine setRegex(String regex) {
+        this.regex = regex;
+        return this;
+    }
+
+    public String getRegex() {
+        return regex;
     }
 
     @Override

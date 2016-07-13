@@ -17,6 +17,9 @@ public class RenameFile extends TransformationOperation<RenameFile> {
 
     private String newName;
 
+    public RenameFile() {
+    }
+
     /**
      * Operation for single file renaming
      *
@@ -37,6 +40,15 @@ public class RenameFile extends TransformationOperation<RenameFile> {
     public RenameFile(String relativePath, String newName) {
         this(relativePath);
         this.newName = newName;
+    }
+
+    public RenameFile setNewName(String newName) {
+        this.newName = newName;
+        return this;
+    }
+
+    public String getNewName() {
+        return newName;
     }
 
     @Override

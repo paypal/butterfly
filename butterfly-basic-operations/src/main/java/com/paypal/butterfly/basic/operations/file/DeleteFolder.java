@@ -15,6 +15,9 @@ public class DeleteFolder extends TransformationOperation<DeleteFolder> {
 
     private static final String DESCRIPTION = "Delete folder %s";
 
+    public DeleteFolder() {
+    }
+
     /**
      * Operation for single folder deletion
      *

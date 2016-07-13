@@ -17,6 +17,9 @@ public class AddProperty extends TransformationOperation<AddProperty> {
     private String propertyName;
     private String propertyValue;
 
+    public AddProperty() {
+    }
+
     /**
      * Operation to add a new property to a properties file
      *
@@ -37,8 +40,26 @@ public class AddProperty extends TransformationOperation<AddProperty> {
      */
     public AddProperty(String relativePath, String propertyName, String propertyValue) {
         this(relativePath);
-        this.propertyName = propertyValue;
+        this.propertyName = propertyName;
         this.propertyValue = propertyValue;
+    }
+
+    public AddProperty setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+        return this;
+    }
+
+    public AddProperty setPropertyValue(String propertyValue) {
+        this.propertyValue = propertyValue;
+        return this;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public String getPropertyValue() {
+        return propertyValue;
     }
 
     @Override
