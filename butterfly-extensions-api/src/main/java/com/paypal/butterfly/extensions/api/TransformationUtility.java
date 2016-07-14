@@ -65,12 +65,12 @@ public abstract class TransformationUtility<TU, RT> {
     // Holds the name of the context attribute whose value will be set as
     // the absolute file right before execution. If this is null, the
     // actual value in relativePath will be honored
-    /** see {@link #setAbsoluteFile(String)} **/
+    /** see {@link #absolute(String)} **/
     private String absoluteFileFromContextAttribute = null;
 
     // An additional relative path to be added to the absolute file
     // coming from the transformation context
-    /** see {@link #setAbsoluteFile(String, String)} **/
+    /** see {@link #absolute(String, String)} **/
     private String additionalRelativePath = null;
 
     // The name to be used as key for the result of this utility
@@ -179,9 +179,9 @@ public abstract class TransformationUtility<TU, RT> {
      * to the file or folder the transformation utility should perform against.
      * Three options are valid when separating folders in the path:
      * <ol>
-     * <li>1-File.separatorChar (e.g. setRelativePath("myFolder" + File.separator + "file.txt")</li>
-     * <li>2-Forward slash (e.g. setRelativePath("myFolder/file.txt")</li>
-     * <li>3-Two backward slashes (e.g. setRelativePath("myFolder\\file.txt")</li>
+     * <li>1-File.separatorChar (e.g. relative("myFolder" + File.separator + "file.txt")</li>
+     * <li>2-Forward slash (e.g. relative("myFolder/file.txt")</li>
+     * <li>3-Two backward slashes (e.g. relative("myFolder\\file.txt")</li>
      * </ol>
      * The slashes are replaced by OS specific separator char in runtime.
      *
@@ -189,7 +189,7 @@ public abstract class TransformationUtility<TU, RT> {
      *  to the file or folder the transformation utility should be performed against
      * @return this transformation utility
      */
-    public final TU setRelativePath(String relativePath) {
+    public final TU relative(String relativePath) {
         // It is ok to be null, in case it will be set during transformation time
         if(relativePath != null) {
             this.relativePath = relativePath.replace('/', File.separatorChar).replace('\\', File.separatorChar);
@@ -257,8 +257,8 @@ public abstract class TransformationUtility<TU, RT> {
      * This method allows setting properties in this transformation
      * utility during transformation time, right before its execution.
      * This is very useful when the property value is not known during
-     * transformation definition. Any other attribute stored in the
-     * transformation context, can be used as the value to be set to the
+     * transformation definition. Any attribute stored in the
+     * transformation context can be used as the value to be set to the
      * property. In most of the cases the result of a prior
      * transformation utility is used as property value.
      * Notice that, because this feature relies on reflection, it is not
@@ -271,7 +271,7 @@ public abstract class TransformationUtility<TU, RT> {
      *                             execution
      * @return this transformation utility
      */
-    public final TU setProperty(String propertyName, String contextAttributeName) {
+    public final TU set(String propertyName, String contextAttributeName) {
         validateProperty(propertyName);
         lateProperties.put(propertyName, contextAttributeName);
 
@@ -323,7 +323,7 @@ public abstract class TransformationUtility<TU, RT> {
      * There are two ways to specify the file, or folder, the transformation
      * utility is suppose to perform against. The default and most commons one is
      * by setting the relative path to it, which is done usually via the constructor
-     * or {@link #setRelativePath(String)}). That should be the chosen option whenever
+     * or {@link #relative(String)}). That should be the chosen option whenever
      * the relative location is known during transformation template definition time.
      * </br>
      * However, sometimes that is not possible because that location will only be known
@@ -338,23 +338,23 @@ public abstract class TransformationUtility<TU, RT> {
      *                             execution
      * @return this transformation utility
      * @see {@link #getAbsoluteFile(File, TransformationContext)}
-     * @see {@link #setRelativePath(String)}
+     * @see {@link #relative(String)}
      * @see {@link #getRelativePath()}
      */
-    public TU setAbsoluteFile(String contextAttributeName) {
+    public TU absolute(String contextAttributeName) {
         absoluteFileFromContextAttribute = contextAttributeName;
         return (TU) this;
     }
 
     /**
-     * Same as {@link #setAbsoluteFile(String, String)}, however, the absolute
+     * Same as {@link #absolute(String, String)}, however, the absolute
      * file is set with an additional relative path, which is defined via parameter
      * {@code additionalRelativePath}. This method is powerful because it allows setting
      * the absolute file using a portion of the location (absolute) that is only known during
      * transformation time, plus also a second portion of the location (relative) that is
      * already known during definition time
      *
-     * @see {@link #setAbsoluteFile(String, String)}
+     * @see {@link #absolute(String, String)}
      *
      * @param contextAttributeName the name of the transformation context attribute whose
      *                             value will be set as the absolute file right before
@@ -363,10 +363,10 @@ public abstract class TransformationUtility<TU, RT> {
      *                               file coming from the transformation context
      * @return this transformation utility
      * @see {@link #getAbsoluteFile(File, TransformationContext)}
-     * @see {@link #setRelativePath(String)}
+     * @see {@link #relative(String)}
      * @see {@link #getRelativePath()}
      */
-    public TU setAbsoluteFile(String contextAttributeName, String additionalRelativePath) {
+    public TU absolute(String contextAttributeName, String additionalRelativePath) {
         absoluteFileFromContextAttribute = contextAttributeName;
         this.additionalRelativePath = additionalRelativePath;
 
