@@ -8,8 +8,6 @@ import org.reflections.util.ClasspathHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
@@ -49,6 +47,7 @@ public class ExtensionRegistry {
     /**
      * Copy all entries that are a JAR file or a directory
      */
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="DMI_COLLECTION_OF_URLS", justification="All of type file")
     private void copyValidClasspathEntries(Collection<URL> source, Set<URL> destination) {
         String fileName;
         boolean isJarFile;
