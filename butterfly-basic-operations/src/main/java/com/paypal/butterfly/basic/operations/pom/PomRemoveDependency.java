@@ -23,23 +23,10 @@ public class PomRemoveDependency extends TransformationOperation<PomRemoveDepend
     /**
      * Operation to remove a dependency entry from a POM file
      *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
-     */
-    private PomRemoveDependency(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
-     * Operation to remove a dependency entry from a POM file
-     *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
      * @param groupId dependency to be removed group id
      * @param artifactId dependency to be removed artifact id
      */
-    public PomRemoveDependency(String relativePath, String groupId, String artifactId) {
-        this(relativePath);
+    public PomRemoveDependency(String groupId, String artifactId) {
         this.groupId = groupId;
         this.artifactId = artifactId;
     }

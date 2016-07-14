@@ -23,23 +23,9 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
     /**
      * Operation to apply the contents of a zip file
      *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
-     */
-    private ApplyZip(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
-     * Operation to apply the contents of a zip file
-     *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
-     *
      * @param zipFileUrl URL to locate the zip file to be applied
      */
-    public ApplyZip(String relativePath, URL zipFileUrl) {
-        this(relativePath);
+    public ApplyZip(URL zipFileUrl) {
         this.zipFileUrl = zipFileUrl;
     }
 

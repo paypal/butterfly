@@ -28,14 +28,6 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
     }
 
     /**
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
-     */
-    protected TransformationOperation(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
      * Returns an explanation of the criteria to pass or fail pre-execution validation
      * for this transformation operation.
      * </br>

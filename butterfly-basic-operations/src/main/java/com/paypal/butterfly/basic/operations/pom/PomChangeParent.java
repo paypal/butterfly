@@ -30,23 +30,22 @@ public class PomChangeParent extends TransformationOperation<PomChangeParent> {
     /**
      * Operation for revving up the parent' version in a Maven POM file
      *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
+     * @param version parent artifact version to be set
      */
-    private PomChangeParent(String relativePath) {
-        super(relativePath);
+    public PomChangeParent(String version) {
+        this(null, null, version);
     }
 
     /**
      * Operation for revving up the parent' version in a Maven POM file
      *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
-     *
+     * @param groupId parent artifact group id to be set
+     * @param artifactId parent artifact id to be set
      * @param version parent artifact version to be set
      */
-    public PomChangeParent(String relativePath, String version) {
-        this(relativePath);
+    public PomChangeParent(String groupId, String artifactId, String version) {
+        this.groupId = groupId;
+        this.artifactId = artifactId;
         this.version = version;
     }
 
@@ -75,23 +74,6 @@ public class PomChangeParent extends TransformationOperation<PomChangeParent> {
 
     public String getVersion() {
         return version;
-    }
-
-    /**
-     * Operation for revving up the parent' version in a Maven POM file
-     *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
-     *
-     * @param groupId parent artifact group id to be set
-     * @param artifactId parent artifact id to be set
-     * @param version parent artifact version to be set
-     */
-    public PomChangeParent(String relativePath, String groupId, String artifactId, String version) {
-        this(relativePath);
-        this.groupId = groupId;
-        this.artifactId = artifactId;
-        this.version = version;
     }
 
     @Override

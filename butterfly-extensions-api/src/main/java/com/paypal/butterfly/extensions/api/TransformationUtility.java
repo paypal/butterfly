@@ -28,7 +28,8 @@ import java.util.Map;
  * IMPORTANT:
  * Every TransformationUtility subclass MUST be a Java bean, which means they must have
  * a public no arguments default constructor, and also public setters and getters for all
- * their properties
+ * their properties. In addition to that, every setter must return the
+ * TransformationUtility instance.
  *
  * @author facarvalho
  */
@@ -86,15 +87,6 @@ public abstract class TransformationUtility<TU, RT> {
      * transformation time, using the transformation context
      */
     public TransformationUtility() {
-    }
-
-    /**
-     * @see {@link #setRelativePath(String)}
-     *
-     * @param relativePath
-     */
-    protected TransformationUtility(String relativePath) {
-        setRelativePath(relativePath);
     }
 
     /**

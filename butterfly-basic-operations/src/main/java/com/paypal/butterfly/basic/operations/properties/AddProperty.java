@@ -23,23 +23,10 @@ public class AddProperty extends TransformationOperation<AddProperty> {
     /**
      * Operation to add a new property to a properties file
      *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
-     */
-    private AddProperty(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
-     * Operation to add a new property to a properties file
-     *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
      * @param propertyName name to the property to be added
      * @param propertyValue value to be set to the new property
      */
-    public AddProperty(String relativePath, String propertyName, String propertyValue) {
-        this(relativePath);
+    public AddProperty(String propertyName, String propertyValue) {
         this.propertyName = propertyName;
         this.propertyValue = propertyValue;
     }

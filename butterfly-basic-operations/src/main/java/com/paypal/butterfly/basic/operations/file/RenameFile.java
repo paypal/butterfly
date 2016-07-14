@@ -23,22 +23,9 @@ public class RenameFile extends TransformationOperation<RenameFile> {
     /**
      * Operation for single file renaming
      *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
-     */
-    private RenameFile(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
-     * Operation for single file renaming
-     *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
      * @param newName new name for the file
      */
-    public RenameFile(String relativePath, String newName) {
-        this(relativePath);
+    public RenameFile(String newName) {
         this.newName = newName;
     }
 

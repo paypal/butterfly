@@ -22,22 +22,9 @@ public class CopyFiles extends TransformationOperation<CopyFiles> {
     /**
      * Operation to copy all files recursively from one location to another
      *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
-     */
-    private CopyFiles(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
-     * Operation to copy all files recursively from one location to another
-     *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
      * @param newFilesLocation location where to copy all files to
      */
-    public CopyFiles(String relativePath, String newFilesLocation) {
-        this(relativePath);
+    public CopyFiles(String newFilesLocation) {
         this.newFilesLocation = newFilesLocation;
     }
 

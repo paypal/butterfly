@@ -22,22 +22,9 @@ public class AddLine extends TransformationOperation<AddLine> {
     /**
      * Operation to add a line to a text file
      *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
-     */
-    private AddLine(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
-     * Operation to add a line to a text file
-     *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
      * @param newLine the new line to be added
      */
-    public AddLine(String relativePath, String newLine) {
-        this(relativePath);
+    public AddLine(String newLine) {
         this.newLine = newLine;
     }
 

@@ -22,22 +22,9 @@ public class CopyFile extends TransformationOperation<CopyFile> {
     /**
      * Operation to copy a file
      *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
-     */
-    private CopyFile(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
-     * Operation to copy a file
-     *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
      * @param newFileLocation location where to copy the file to
      */
-    public CopyFile(String relativePath, String newFileLocation) {
-        this(relativePath);
+    public CopyFile(String newFileLocation) {
         this.newFileLocation = newFileLocation;
     }
 

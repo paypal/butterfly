@@ -35,28 +35,15 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
     }
 
     /**
-     * Operation to add a new dependency to a POM file
-     *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
-     */
-    private PomAddDependency(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
      * Operation to add a new dependency to a POM file.
      * This constructor assumes this is a managed dependency, since the version
      * is not set. However, if that is not really the case, during transformation
      * this operation will fail pre-validation.
      *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
      * @param groupId new dependency group id
      * @param artifactId new dependency artifact id
      */
-    public PomAddDependency(String relativePath, String groupId, String artifactId) {
-        this(relativePath);
+    public PomAddDependency(String groupId, String artifactId) {
         this.groupId = groupId;
         this.artifactId = artifactId;
     }
@@ -67,14 +54,12 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
      * is not set. However, if that is not really the case, during transformation
      * this operation will fail pre-validation.
      *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
      * @param groupId new dependency group id
      * @param artifactId new dependency artifact id
      * @param version new dependency artifact version
      */
-    public PomAddDependency(String relativePath, String groupId, String artifactId, String version) {
-        this(relativePath, groupId, artifactId);
+    public PomAddDependency(String groupId, String artifactId, String version) {
+        this(groupId, artifactId);
         this.version = version;
     }
 

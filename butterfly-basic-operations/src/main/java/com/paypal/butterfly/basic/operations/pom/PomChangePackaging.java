@@ -22,22 +22,9 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
     /**
      * Operation to change the packaging of a Maven artifact, by changing its POM file
      *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
-     */
-    private PomChangePackaging(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
-     * Operation to change the packaging of a Maven artifact, by changing its POM file
-     *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
      * @param packagingType packaging type
      */
-    public PomChangePackaging(String relativePath, String packagingType) {
-        this(relativePath);
+    public PomChangePackaging(String packagingType) {
         this.packagingType = packagingType;
     }
 

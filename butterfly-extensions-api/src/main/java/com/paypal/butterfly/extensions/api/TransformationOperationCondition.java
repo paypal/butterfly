@@ -6,19 +6,19 @@ import java.io.File;
  * Condition to determine if a transformation operation
  * should be executed or not
  *
+ * IMPORTANT:
+ * Every TransformationOperationCondition subclass MUST be a Java bean, which means they must have
+ * a public no arguments default constructor, and also public setters and getters for all
+ * their properties. In addition to that, every setter must return the
+ * TransformationOperationCondition instance.
+ *
  * @author facarvalho
  */
 public abstract class TransformationOperationCondition<TOC> {
 
-    private String relativePath;
+    private String relativePath = "";
 
-    /**
-     * @see {@link #setRelativePath(String)}
-     *
-     * @param relativePath
-     */
-    public TransformationOperationCondition(String relativePath) {
-        setRelativePath(relativePath);
+    public TransformationOperationCondition() {
     }
 
     /**

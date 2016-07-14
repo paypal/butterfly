@@ -22,22 +22,9 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
     /**
      * Operation to remove one, or more, lines from a text file
      *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
-     */
-    private RemoveLine(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
-     * Operation to remove one, or more, lines from a text file
-     *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
      * @param regex the regular expression to identify the line(s) to be removed
      */
-    public RemoveLine(String relativePath, String regex) {
-        this(relativePath);
+    public RemoveLine(String regex) {
         this.regex = regex;
     }
 

@@ -22,22 +22,9 @@ public class PomRemoveProperty extends TransformationOperation<PomRemoveProperty
     /**
      * Operation to remove a property entry from a properties file
      *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
-     */
-    private PomRemoveProperty(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
-     * Operation to remove a property entry from a properties file
-     *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
      * @param propertyName property to be removed
      */
-    public PomRemoveProperty(String relativePath, String propertyName) {
-        this(relativePath);
+    public PomRemoveProperty(String propertyName) {
         this.propertyName = propertyName;
     }
 

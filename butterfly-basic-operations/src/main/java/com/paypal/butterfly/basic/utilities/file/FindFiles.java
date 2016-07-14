@@ -29,25 +29,12 @@ public class FindFiles extends TransformationUtility<FindFiles, List<File>> {
     }
 
     /**
-     * Utility to find files
-     *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
-     */
-    private FindFiles(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
      * Utility to find a files
      *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
      * @param regex regular expression to be applied against file name during search
      * @param recursive if true, sub-folders will also be searched
      */
-    public FindFiles(String relativePath, String regex, boolean recursive) {
-        this(relativePath);
+    public FindFiles(String regex, boolean recursive) {
         this.regex = regex;
         this.recursive = recursive;
     }

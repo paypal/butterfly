@@ -26,12 +26,7 @@ public class PomDependencyExists extends TransformationOperationCondition {
     private String artifactId;
     private String version = null;
 
-    /**
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
-     */
-    private PomDependencyExists(String relativePath) {
-        super(relativePath);
+    public PomDependencyExists() {
     }
 
     /**
@@ -40,13 +35,10 @@ public class PomDependencyExists extends TransformationOperationCondition {
      * is not set. However, if that is not really the case, during transformation
      * this operation will fail pre-validation.
      *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
      * @param groupId new dependency group id
      * @param artifactId new dependency artifact id
      */
-    public PomDependencyExists(String relativePath, String groupId, String artifactId) {
-        this(relativePath);
+    public PomDependencyExists(String groupId, String artifactId) {
         this.groupId = groupId;
         this.artifactId = artifactId;
     }
@@ -57,14 +49,39 @@ public class PomDependencyExists extends TransformationOperationCondition {
      * is not set. However, if that is not really the case, during transformation
      * this operation will fail pre-validation.
      *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
      * @param groupId new dependency group id
      * @param artifactId new dependency artifact id
      */
-    public PomDependencyExists(String relativePath, String groupId, String artifactId, String version) {
-        this(relativePath, groupId, artifactId);
+    public PomDependencyExists(String groupId, String artifactId, String version) {
+        this(groupId, artifactId);
         this.version = version;
+    }
+
+    public PomDependencyExists setGroupId(String groupId) {
+        this.groupId = groupId;
+        return this;
+    }
+
+    public PomDependencyExists setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+        return this;
+    }
+
+    public PomDependencyExists setVersion(String version) {
+        this.version = version;
+        return this;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     @Override

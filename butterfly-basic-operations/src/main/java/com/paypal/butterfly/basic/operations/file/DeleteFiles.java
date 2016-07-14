@@ -21,26 +21,12 @@ public class DeleteFiles extends TransformationOperation<DeleteFiles> {
     }
 
     /**
-     * Operation for multiplee files deletion
-     *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
-     */
-    private DeleteFiles(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
      * Operation for multiple files deletion
      *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
-     *
-     * @param fileName name of files to be deleted under relativePath, or
+     * @param fileName name of files to be deleted under {@code relativePath}, or
      *                 any other folder under it, at any level
      */
-    public DeleteFiles(String relativePath, String fileName) {
-        this(relativePath);
+    public DeleteFiles(String fileName) {
         this.fileName = fileName;
     }
 

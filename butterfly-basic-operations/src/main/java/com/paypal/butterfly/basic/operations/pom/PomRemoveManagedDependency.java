@@ -23,23 +23,10 @@ public class PomRemoveManagedDependency extends TransformationOperation<PomRemov
     /**
      * Operation to remove a managed dependency entry from a POM file
      *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
-     */
-    private PomRemoveManagedDependency(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
-     * Operation to remove a managed dependency entry from a POM file
-     *
-     * @param relativePath
-     * @see {@link #setRelativePath(String)}
      * @param groupId managed dependency to be removed group id
      * @param artifactId managed dependency to be removed artifact id
      */
-    public PomRemoveManagedDependency(String relativePath, String groupId, String artifactId) {
-        this(relativePath);
+    public PomRemoveManagedDependency(String groupId, String artifactId) {
         this.groupId = groupId;
         this.artifactId = artifactId;
     }

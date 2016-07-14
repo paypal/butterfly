@@ -38,22 +38,9 @@ public class FindFile extends TransformationUtility<FindFile, File> {
     /**
      * Utility to find a file based on its name
      *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
-     */
-    private FindFile(String relativePath) {
-        super(relativePath);
-    }
-
-    /**
-     * Utility to find a file based on its name
-     *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
      * @param fileName name of the file to be found
      */
-    public FindFile(String relativePath, String fileName) {
-        this(relativePath);
+    public FindFile(String fileName) {
         this.fileName = fileName;
     }
 
@@ -73,7 +60,7 @@ public class FindFile extends TransformationUtility<FindFile, File> {
 
     @Override
     protected File execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        FindFiles findFiles = new FindFiles(getRelativePath(), fileName, true);
+        FindFiles findFiles = new FindFiles(fileName, true);
         List<File> files = findFiles.execution(transformedAppFolder, transformationContext);
 
         if(files == null || files.size() == 0) {

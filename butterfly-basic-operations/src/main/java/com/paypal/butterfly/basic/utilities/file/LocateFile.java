@@ -19,18 +19,6 @@ public class LocateFile extends TransformationUtility<LocateFile, File> {
     public LocateFile() {
     }
 
-    /**
-     * Utility to locate a file based on the relative or absolute
-     * locations specified. It does not find files, it just results
-     * to a File object based on the input information
-     *
-     * @see {@link #setRelativePath(String)}
-     * @param relativePath
-     */
-    private LocateFile(String relativePath) {
-        super(relativePath);
-    }
-
     @Override
     public String getDescription() {
         return String.format(DESCRIPTION, getRelativePath());
