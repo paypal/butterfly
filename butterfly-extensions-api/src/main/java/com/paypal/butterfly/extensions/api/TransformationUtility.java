@@ -51,7 +51,9 @@ public abstract class TransformationUtility<TU, RT> {
 
     // Relative path from the application root folder to the file or
     // folder the transformation utility should perform against
-    private String relativePath;
+    // Setting it to a blank String, like below, means it will
+    // point to the project root folder
+    private String relativePath = "";
 
     // Absolute path to the file or folder the transformation utility
     // should perform against
@@ -60,8 +62,13 @@ public abstract class TransformationUtility<TU, RT> {
     // Holds the name of the context attribute whose value will be set as
     // the absolute file right before execution. If this is null, the
     // actual value in relativePath will be honored
-    /** see {@link #setAbsoluteFileFromContext(String)} **/
-    private String absoluteFileFromContextAttribute;
+    /** see {@link #setAbsoluteFile(String)} **/
+    private String absoluteFileFromContextAttribute = null;
+
+    // An additional relative path to be added to the absolute file
+    // coming from the transformation context
+    /** see {@link #setAbsoluteFile(String, String)} **/
+    private String additionalRelativePath = null;
 
     // The name to be used as key for the result of this utility
     // when saved into the transformation context.
@@ -227,8 +234,15 @@ public abstract class TransformationUtility<TU, RT> {
     private void setAbsoluteFile(File transformedAppFolder, TransformationContext transformationContext) {
         if(absoluteFileFromContextAttribute != null) {
             absoluteFile = (File) transformationContext.get(absoluteFileFromContextAttribute);
+            if(additionalRelativePath != null) {
+                absoluteFile = new File(absoluteFile, additionalRelativePath);
+                logger.debug("Setting absolute file for {} from context attribute {}, whose value is {}", name, absoluteFileFromContextAttribute, absoluteFile.getAbsolutePath());
+            } else {
+                logger.debug("Setting absolute file for {} from context attribute {} and additionalRelativePath", name, absoluteFileFromContextAttribute);
+            }
+
             setRelativePath(transformedAppFolder, absoluteFile);
-            logger.debug("Setting absolute file for {} from context attribute {}, whose value is {}", name, absoluteFileFromContextAttribute, absoluteFile.getAbsolutePath());
+
             logger.debug("Relative path for {} has just been reset to {}", name, relativePath);
         } else {
             absoluteFile = new File(transformedAppFolder, getRelativePath());
@@ -304,8 +318,35 @@ public abstract class TransformationUtility<TU, RT> {
      * @see {@link #setRelativePath(String)}
      * @see {@link #getRelativePath()}
      */
-    public TU setAbsoluteFileFromContext(String contextAttributeName) {
+    public TU setAbsoluteFile(String contextAttributeName) {
         absoluteFileFromContextAttribute = contextAttributeName;
+        return (TU) this;
+    }
+
+    /**
+     * Same as {@link #setAbsoluteFile(String, String)}, however, the absolute
+     * file is set with an additional relative path, which is defined via parameter
+     * {@code additionalRelativePath}. This method is powerful because it allows setting
+     * the absolute file using a portion of the location (absolute) that is only known during
+     * transformation time, plus also a second portion of the location (relative) that is
+     * already known during definition time
+     *
+     * @see {@link #setAbsoluteFile(String, String)}
+     *
+     * @param contextAttributeName the name of the transformation context attribute whose
+     *                             value will be set as the absolute file right before
+     *                             execution
+     * @param additionalRelativePath an additional relative path to be added to the absolute
+     *                               file coming from the transformation context
+     * @return this transformation utility
+     * @see {@link #getAbsoluteFile(File, TransformationContext)}
+     * @see {@link #setRelativePath(String)}
+     * @see {@link #getRelativePath()}
+     */
+    public TU setAbsoluteFile(String contextAttributeName, String additionalRelativePath) {
+        absoluteFileFromContextAttribute = contextAttributeName;
+        this.additionalRelativePath = additionalRelativePath;
+
         return (TU) this;
     }
 
