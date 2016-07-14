@@ -2,6 +2,7 @@ package com.paypal.butterfly.extensions.api;
 
 
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -67,7 +68,11 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
             throw new IllegalStateException("This transformation operation has already been performed");
         }
 
-        applyPropertiesFromContext(transformationContext);
+        try {
+            applyPropertiesFromContext(transformationContext);
+        } catch (TransformationUtilityException e) {
+            throw new TransformationOperationException(e.getMessage(), e);
+        }
 
         if(condition != null && !condition.evaluate(transformedAppFolder)) {
             // TODO the return type should be complext enough to tell the transformation engine that

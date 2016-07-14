@@ -1,12 +1,14 @@
 package com.paypal.butterfly.extensions.api;
 
 
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -267,13 +269,24 @@ public abstract class TransformationUtility<TU, RT> {
      * @param contextAttributeName the name of the transformation context attribute whose
      *                             value will be set as the property value right before
      *                             execution
-     * TODO what about exception handling? checked or not? definition or transformation time?
      * @return this transformation utility
      */
-    public final TU setPropertyFromContext(String propertyName, String contextAttributeName) {
+    public final TU setProperty(String propertyName, String contextAttributeName) {
+        validateProperty(propertyName);
         lateProperties.put(propertyName, contextAttributeName);
 
         return (TU) this;
+    }
+
+    private void validateProperty(String propertyName) {
+        try {
+            String methodName = getMethodName(propertyName);
+            ((TU) this).getClass().getMethod(methodName);
+        } catch (NoSuchMethodException e) {
+            String exceptionMessage = String.format("%s is not a valid property", propertyName);
+            logger.error(exceptionMessage, e);
+            throw new TransformationDefinitionException(exceptionMessage, e);
+        }
     }
 
     /**
@@ -283,9 +296,27 @@ public abstract class TransformationUtility<TU, RT> {
      *
      * @param transformationContext
      */
-    protected final void applyPropertiesFromContext(TransformationContext transformationContext) {
-        // TODO what about exception handling? checked or not? definition or transformation time?
-        // TODO take care of all other properties via reflections
+    protected final void applyPropertiesFromContext(TransformationContext transformationContext) throws TransformationUtilityException {
+        String attributeName;
+        Method method;
+        String methodName;
+        for(String propertyName : lateProperties.keySet()) {
+            attributeName = lateProperties.get(propertyName);
+            try {
+                methodName = getMethodName(propertyName);
+                method = ((TU) this).getClass().getMethod(methodName);
+                Object value = transformationContext.get(attributeName);
+                method.invoke(this, value);
+            } catch (Exception e) {
+                String exceptionMessage = String.format("An error happened when setting property %s from context attribute %s in %s", propertyName, attributeName, name);
+                logger.error(exceptionMessage, e);
+                throw new TransformationUtilityException(exceptionMessage, e);
+            }
+        }
+    }
+
+    private String getMethodName(String propertyName) {
+        return "set" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
     }
 
     /**
