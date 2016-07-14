@@ -177,11 +177,12 @@ public abstract class TransformationUtility<TU, RT> {
     /**
      * Sets the relative path from the application root folder
      * to the file or folder the transformation utility should perform against.
-     * Three options are valid when separating folders in the path:
+     * The path separator is automatically normalized, so there are three valid
+     * options when separating folders in the path:
      * <ol>
-     * <li>1-File.separatorChar (e.g. relative("myFolder" + File.separator + "file.txt")</li>
-     * <li>2-Forward slash (e.g. relative("myFolder/file.txt")</li>
-     * <li>3-Two backward slashes (e.g. relative("myFolder\\file.txt")</li>
+     *  <li>File.separatorChar (e.g. relative("myFolder" + File.separator + "file.txt")</li>
+     *  <li>Forward slash (e.g. relative("myFolder/file.txt")</li>
+     *  <li>Two backward slashes (e.g. relative("myFolder\\file.txt")</li>
      * </ol>
      * The slashes are replaced by OS specific separator char in runtime.
      *
@@ -190,12 +191,20 @@ public abstract class TransformationUtility<TU, RT> {
      * @return this transformation utility
      */
     public final TU relative(String relativePath) {
-        // It is ok to be null, in case it will be set during transformation time
-        if(relativePath != null) {
-            this.relativePath = relativePath.replace('/', File.separatorChar).replace('\\', File.separatorChar);
-        }
+        this.relativePath = normalizeRelativePathSeparator(relativePath);
 
         return (TU) this;
+    }
+
+    /*
+     * Returns a relative path that is in compliance with the current OS in terms of file separator
+     */
+    private static String normalizeRelativePathSeparator(String relativePath) {
+        if(relativePath != null) {
+            relativePath = relativePath.replace('/', File.separatorChar).replace('\\', File.separatorChar);
+        }
+
+        return relativePath;
     }
 
     /**
@@ -248,9 +257,24 @@ public abstract class TransformationUtility<TU, RT> {
      * application folder, and already knowing the absolute file
      */
     private void setRelativePath(File transformedAppFolder, File absoluteFile) {
-        int beginning = transformedAppFolder.getAbsolutePath().length();
-        int end = absoluteFile.getAbsolutePath().length();
-        relativePath = absoluteFile.getAbsolutePath().substring(beginning, end);
+        relativePath = getRelativePath(transformedAppFolder, absoluteFile);
+    }
+
+    /**
+     * Returns a relative path from {@code baselineFile} to {@code targetFile}.
+     * The file separator used is specific to the current OS
+     *
+     * @param baselineFile the file whose returned relative path should start from.
+     *                     It must be aa direct or indirect parent file to {@code targetFile}
+     * @param targetFile the file whose returned relative path should take to
+     *
+     * @return a relative path from {@code baselineFile} to {@code targetFile}
+     */
+    public static String getRelativePath(File baselineFile, File targetFile) {
+        int beginning = baselineFile.getAbsolutePath().length();
+        int end = targetFile.getAbsolutePath().length();
+
+        return targetFile.getAbsolutePath().substring(beginning, end);
     }
 
     /**
@@ -360,7 +384,9 @@ public abstract class TransformationUtility<TU, RT> {
      *                             value will be set as the absolute file right before
      *                             execution
      * @param additionalRelativePath an additional relative path to be added to the absolute
-     *                               file coming from the transformation context
+     *                               file coming from the transformation context. The path
+     *                               separator will be normalized, similar to what happens
+     *                               in {@link #relative(String)}
      * @return this transformation utility
      * @see {@link #getAbsoluteFile(File, TransformationContext)}
      * @see {@link #relative(String)}
@@ -368,7 +394,7 @@ public abstract class TransformationUtility<TU, RT> {
      */
     public TU absolute(String contextAttributeName, String additionalRelativePath) {
         absoluteFileFromContextAttribute = contextAttributeName;
-        this.additionalRelativePath = additionalRelativePath;
+        this.additionalRelativePath = normalizeRelativePathSeparator(additionalRelativePath);
 
         return (TU) this;
     }
