@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.conditions.pom;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperationCondition;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -82,8 +83,13 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
     }
 
     @Override
-    protected boolean evaluate(File transformedAppFolder) {
-        File pomFile = getAbsoluteFile(transformedAppFolder);
+    public String getDescription() {
+        return String.format(DESCRIPTION, groupId, artifactId, (version == null ? "" : version), getRelativePath());
+    }
+
+    @Override
+    protected Boolean execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
         MavenXpp3Reader reader = new MavenXpp3Reader();
 
         try {
@@ -99,11 +105,6 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
         }
 
         return false;
-    }
-
-    @Override
-    public String getDescription() {
-        return String.format(DESCRIPTION, groupId, artifactId, (version == null ? "" : version), getRelativePath());
     }
 
 }

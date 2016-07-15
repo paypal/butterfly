@@ -23,7 +23,9 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
     private boolean abortOnFailure = true;
 
     // Optional condition to let this operation be executed
-    private TransformationOperationCondition condition = null;
+    // This is the name of a transformation context attribute
+    // whose value is a boolean
+    private String conditionAttributeName = null;
 
     public TransformationOperation() {
     }
@@ -74,10 +76,10 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
             throw new TransformationOperationException(e.getMessage(), e);
         }
 
-        if(condition != null && !condition.evaluate(transformedAppFolder)) {
+        if(conditionAttributeName != null && (Boolean) transformationContext.get(conditionAttributeName)) {
             // TODO the return type should be complext enough to tell the transformation engine that
             // this operation was skipped. After that, this message here should be logged by the engine as DEBUG
-            return String.format("*** SKIPPED *** Operation '%s' skipped due to failing condition: %s", getName(), condition);
+            return String.format("*** SKIPPED *** Operation '%s' has been skipped due to failing condition: %s", getName(), conditionAttributeName);
         }
         if(!preExecutionValidation(transformedAppFolder)) {
             throw new TransformationOperationException(getName() + " pre-execution validation has failed");
@@ -163,8 +165,8 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
         return abortOnFailure;
     }
 
-    public final TO executeIf(TransformationOperationCondition condition) {
-        this.condition = condition;
+    public final TO executeIf(String conditionAttributeName) {
+        this.conditionAttributeName = conditionAttributeName;
         return (TO) this;
     }
 
