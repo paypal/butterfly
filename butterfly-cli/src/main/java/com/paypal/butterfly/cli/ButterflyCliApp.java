@@ -15,9 +15,11 @@ import org.slf4j.event.Level;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
@@ -44,6 +46,12 @@ public class ButterflyCliApp {
     private static Logger logger = LoggerFactory.getLogger(ButterflyCliApp.class);
 
     public static void main(String... arguments) throws IOException {
+        Scanner in = new Scanner(System.in);
+        //Used S.O.P here to show the message on command line.
+        System.out.println("Please provide the input:");
+        String input = in.nextLine();
+        System.out.println("The input you provided: "+input);
+        arguments = StringUtils.tokenizeToStringArray(input," ");
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ButterflyCliApp.class, arguments);
 
         logger.info(BANNER);
