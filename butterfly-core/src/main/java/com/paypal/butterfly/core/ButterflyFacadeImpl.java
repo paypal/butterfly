@@ -16,14 +16,14 @@ import java.io.File;
 import java.util.Set;
 
 /**
- * Buttefly Façade implementation
+ * Butterfly Façade implementation
  *
  * @author facarvalho
  */
 @Component
-public class ButteflyFacadeImpl implements ButterflyFacade {
+public class ButterflyFacadeImpl implements ButterflyFacade {
 
-    private static final Logger logger = LoggerFactory.getLogger(ButteflyFacadeImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ButterflyFacadeImpl.class);
 
     @Autowired
     private ExtensionRegistry extensionRegistry;

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @Import({
         ExtensionRegistry.class,
-        ButteflyFacadeImpl.class,
+        ButterflyFacadeImpl.class,
         TransformationEngine.class,
         CompressionHandler.class
 })
