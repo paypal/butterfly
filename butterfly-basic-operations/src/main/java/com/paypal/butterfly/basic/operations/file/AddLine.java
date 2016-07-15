@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.operations.file;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 
@@ -44,9 +45,12 @@ public class AddLine extends TransformationOperation<AddLine> {
 
     @Override
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        // TODO
+        File fileToBeModified = getAbsoluteFile(transformedAppFolder, transformationContext);
 
-        return null;
+        FileUtils.fileAppend(fileToBeModified.getAbsolutePath(), System.lineSeparator());
+        FileUtils.fileAppend(fileToBeModified.getAbsolutePath(), newLine);
+
+        return "A new line has been added to file " + getRelativePath();
     }
 
 }
