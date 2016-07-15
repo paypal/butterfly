@@ -11,6 +11,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -54,8 +55,10 @@ public class ButterflyCliApp {
             optionSet = optionParser.parse(arguments);
         }
 
+        VerboseConfigurator verboseConfigurator = null;
+
         if(optionSet != null && optionSet.has(CLI_OPTION_VERBOSE)){
-            VerboseConfigurator verboseConfigurator = applicationContext.getBean(VerboseConfigurator.class);
+            verboseConfigurator = applicationContext.getBean(VerboseConfigurator.class);
             verboseConfigurator.verboseMode(true);
             logger.debug("Verbose mode is ON");
         }
@@ -78,6 +81,15 @@ public class ButterflyCliApp {
         Configuration configuration = new Configuration(transformedApplicationFolder, createZip);
 
         ButterflyFacade butterflyFacade = applicationContext.getBean(ButterflyFacade.class);
+
+        // Setting extensions log level to DEBUG
+        if(optionSet.has(CLI_OPTION_VERBOSE)) {
+            Set<Extension> registeredExtensions = butterflyFacade.getRegisteredExtensions();
+            for(Extension extension : registeredExtensions) {
+                logger.debug("Setting DEBUG log level for extension {}", extension.getClass().getName());
+                verboseConfigurator.setLoggerLevel(extension.getClass().getPackage().getName(), Level.DEBUG);
+            }
+        }
 
         if(optionSet.has(CLI_OPTION_LIST_EXTENSIONS)) {
             try {
