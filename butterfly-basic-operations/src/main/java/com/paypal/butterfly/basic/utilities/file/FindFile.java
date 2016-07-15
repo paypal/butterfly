@@ -55,7 +55,7 @@ public class FindFile extends TransformationUtility<FindFile, File> {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, fileName, getRelativePath());
+        return String.format(DESCRIPTION, fileName, (getRelativePath() == "" ? "root of application" : getRelativePath()));
     }
 
     @Override

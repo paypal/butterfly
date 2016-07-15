@@ -35,7 +35,7 @@ public class TransformationEngine {
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIMESTAMP_SUFFIX_FORMAT);
 
     public void perform(Transformation transformation) throws TransformationException {
-        logger.debug("Transformation requested: " + transformation);
+        logger.debug("Requested transformation: " + transformation);
 
         File transformedAppFolder = prepareOutputFolder(transformation);
 

@@ -16,7 +16,7 @@ import java.io.FileInputStream;
  *
  * @author facarvalho
  */
-public class PomDependencyExists extends TransformationOperationCondition {
+public class PomDependencyExists extends TransformationOperationCondition<PomDependencyExists> {
 
     private static final Logger logger = LoggerFactory.getLogger(PomDependencyExists.class);
 
@@ -30,13 +30,11 @@ public class PomDependencyExists extends TransformationOperationCondition {
     }
 
     /**
-     * Operation to add a new dependency to a POM file.
-     * This constructor assumes this is a managed dependency, since the version
-     * is not set. However, if that is not really the case, during transformation
-     * this operation will fail pre-validation.
+     * Transformation operation condition to check if
+     * a particular Maven dependency exists or not
      *
-     * @param groupId new dependency group id
-     * @param artifactId new dependency artifact id
+     * @param groupId managed dependency group id
+     * @param artifactId managed dependency artifact id
      */
     public PomDependencyExists(String groupId, String artifactId) {
         this.groupId = groupId;
@@ -44,13 +42,12 @@ public class PomDependencyExists extends TransformationOperationCondition {
     }
 
     /**
-     * Operation to add a new dependency to a POM file.
-     * This constructor assumes this is a managed dependency, since the version
-     * is not set. However, if that is not really the case, during transformation
-     * this operation will fail pre-validation.
+     * Transformation operation condition to check if
+     * a particular Maven dependency exists or not
      *
-     * @param groupId new dependency group id
-     * @param artifactId new dependency artifact id
+     * @param groupId managed dependency group id
+     * @param artifactId managed dependency artifact id
+     * @param version managed dependency version
      */
     public PomDependencyExists(String groupId, String artifactId, String version) {
         this(groupId, artifactId);
