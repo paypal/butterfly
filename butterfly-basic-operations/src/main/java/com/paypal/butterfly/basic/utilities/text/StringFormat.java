@@ -47,7 +47,12 @@ public class StringFormat extends TransformationUtility<StringFormat, String> {
 
     @Override
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        return String.format(format, attributeNames);
+        String[] attributeValues = new String[attributeNames.length];
+        String attributeName;
+        for (int i = 0; i < attributeNames.length; i++) {
+            attributeValues[i] = (String) transformationContext.get(attributeNames[i]);
+        }
+        return String.format(format, attributeValues);
     }
 
 }
