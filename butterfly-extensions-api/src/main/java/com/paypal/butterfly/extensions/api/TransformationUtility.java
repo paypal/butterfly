@@ -81,7 +81,12 @@ public abstract class TransformationUtility<TU, RT> {
     // Map of properties to be set later, during transformation time.
     // The keys must be utility Java bean property names, and the values
     // must be transformation context attribute names
-    private Map<String, String> lateProperties = new HashMap<String, String>();
+    private Map<String, String> latePropertiesAttributes = new HashMap<String, String>();
+
+    // Map of properties to be set later, during transformation time.
+    // The keys must be utility Java bean property names, and the values
+    // must be the setter methods
+    private Map<String, Method> latePropertiesSetters = new HashMap<String, Method>();
 
     /**
      * The public default constructor should always be available by any transformation
@@ -296,21 +301,28 @@ public abstract class TransformationUtility<TU, RT> {
      * @return this transformation utility
      */
     public final TU set(String propertyName, String contextAttributeName) {
-        validateProperty(propertyName);
-        lateProperties.put(propertyName, contextAttributeName);
+        Method method = getMethod(propertyName);
+        latePropertiesAttributes.put(propertyName, contextAttributeName);
+        latePropertiesSetters.put(propertyName, method);
 
         return (TU) this;
     }
 
-    private void validateProperty(String propertyName) {
-        try {
-            String methodName = getMethodName(propertyName);
-            ((TU) this).getClass().getMethod(methodName);
-        } catch (NoSuchMethodException e) {
-            String exceptionMessage = String.format("%s is not a valid property", propertyName);
-            logger.error(exceptionMessage, e);
-            throw new TransformationDefinitionException(exceptionMessage, e);
+    private Method getMethod(String propertyName) {
+        String methodName = getMethodName(propertyName);
+        Class clazz = ((TU) this).getClass();
+
+        for(Method method : clazz.getMethods()) {
+            if(method.getName().equals(methodName)) {
+                return method;
+            }
         }
+
+        String exceptionMessage = String.format("%s is not a valid property", propertyName);
+        TransformationDefinitionException e = new TransformationDefinitionException(exceptionMessage);
+        logger.error(exceptionMessage, e);
+
+        throw e;
     }
 
     /**
@@ -323,12 +335,10 @@ public abstract class TransformationUtility<TU, RT> {
     protected final void applyPropertiesFromContext(TransformationContext transformationContext) throws TransformationUtilityException {
         String attributeName;
         Method method;
-        String methodName;
-        for(String propertyName : lateProperties.keySet()) {
-            attributeName = lateProperties.get(propertyName);
+        for(String propertyName : latePropertiesAttributes.keySet()) {
+            attributeName = latePropertiesAttributes.get(propertyName);
             try {
-                methodName = getMethodName(propertyName);
-                method = ((TU) this).getClass().getMethod(methodName);
+                method = latePropertiesSetters.get(propertyName);
                 Object value = transformationContext.get(attributeName);
                 method.invoke(this, value);
             } catch (Exception e) {
