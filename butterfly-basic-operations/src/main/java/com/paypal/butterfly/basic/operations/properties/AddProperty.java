@@ -6,7 +6,8 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
 import java.io.File;
 
 /**
- * Operation to add a new property to a properties file
+ * Operation to add a new property to a properties file.
+ * If the property already exists, its value is overwritten.
  *
  * @author facarvalho
  */
@@ -21,7 +22,8 @@ public class AddProperty extends TransformationOperation<AddProperty> {
     }
 
     /**
-     * Operation to add a new property to a properties file
+     * Operation to add a new property to a properties file.
+     * If the property already exists, its value is overwritten.
      *
      * @param propertyName name to the property to be added
      * @param propertyValue value to be set to the new property
