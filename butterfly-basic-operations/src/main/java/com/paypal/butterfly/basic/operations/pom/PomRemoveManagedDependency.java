@@ -2,8 +2,15 @@ package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 /**
  * Operation to remove a managed dependency entry from a POM file
@@ -56,9 +63,32 @@ public class PomRemoveManagedDependency extends TransformationOperation<PomRemov
 
     @Override
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        // TODO
+        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
+        String resultMessage = null;
+        MavenXpp3Reader reader = new MavenXpp3Reader();
 
-        return null;
+        Model model = reader.read(new FileInputStream(pomFile));
+        boolean found = false;
+        DependencyManagement dependencyManagement = model.getDependencyManagement();
+
+        if(dependencyManagement != null) {
+            for (Dependency dependency : dependencyManagement.getDependencies()) {
+                if(dependency.getArtifactId().equals(artifactId) && dependency.getGroupId().equals(groupId)) {
+                    dependencyManagement.removeDependency(dependency);
+                    resultMessage = String.format("Managed dependency %s:%s has been removed from POM file %s", groupId, artifactId, getRelativePath());
+                    MavenXpp3Writer writer = new MavenXpp3Writer();
+                    writer.write(new FileOutputStream(pomFile), model);
+
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if(!found){
+            resultMessage = String.format("Managed dependency %s:%s could not be found in POM file %s", groupId, artifactId, getRelativePath());
+        }
+
+        return resultMessage;
     }
 
 }
