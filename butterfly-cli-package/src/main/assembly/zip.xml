@@ -9,6 +9,7 @@
         <fileSet>
             <directory>src/main/resources</directory>
             <outputDirectory></outputDirectory>
+            <fileMode>755</fileMode>
         </fileSet>
     </fileSets>
 </assembly>
