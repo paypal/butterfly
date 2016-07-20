@@ -1,0 +1,6 @@
+#!/bin/bash
+SCRIPT_PATH="$0"
+if [[ -z "$BUTTERFLY_HOME" ]]; then
+    BUTTERFLY_HOME=$(dirname "$SCRIPT_PATH")
+fi
+java -cp $BUTTERFLY_HOME"/lib/*":$BUTTERFLY_HOME"/extensions/*" com.paypal.butterfly.cli.ButterflyCliApp $*
