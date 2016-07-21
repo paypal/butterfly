@@ -8,7 +8,7 @@
     <fileSets>
         <fileSet>
             <directory>src/main/resources</directory>
-            <outputDirectory></outputDirectory>
+            <outputDirectory>butterfly</outputDirectory>
             <fileMode>755</fileMode>
         </fileSet>
     </fileSets>
