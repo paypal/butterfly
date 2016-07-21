@@ -58,9 +58,9 @@
                     <filesets>
                         <fileset>
                             <directory>src/main/resources/lib</directory>
-                            <includes>
-                                <include>**/*.jar</include>
-                            </includes>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/extensions</directory>
                         </fileset>
                     </filesets>
                 </configuration>
