@@ -10,6 +10,7 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.util.regex.Pattern;
 
 /**
  * Utility that results in the value of an element,
@@ -83,6 +84,8 @@ public class XmlElement extends TransformationUtility<XmlElement, String> {
         return String.format(DESCRIPTION, xmlElement, getRelativePath());
     }
 
+    private static final Pattern XML_ELEMENT_SPLIT_REGEX_PATTERN = Pattern.compile("\\.");
+
     @Override
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         File xmlFile = getAbsoluteFile(transformedAppFolder, transformationContext);
@@ -92,7 +95,7 @@ public class XmlElement extends TransformationUtility<XmlElement, String> {
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(xmlFile);
 
-        node = findNode(doc.getChildNodes(), xmlElement.split("\\."), 0);
+        node = findNode(doc.getChildNodes(), XML_ELEMENT_SPLIT_REGEX_PATTERN.split(xmlElement), 0);
 
         String result;
 
