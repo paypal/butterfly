@@ -30,6 +30,7 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
     private String groupId;
     private String artifactId;
     private String version;
+    private String scope;
 
     public PomAddDependency() {
     }
@@ -44,8 +45,8 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
      * @param artifactId new dependency artifact id
      */
     public PomAddDependency(String groupId, String artifactId) {
-        this.groupId = groupId;
-        this.artifactId = artifactId;
+        setGroupId(groupId);
+        setArtifactId(artifactId);
     }
 
     /**
@@ -60,7 +61,23 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
      */
     public PomAddDependency(String groupId, String artifactId, String version) {
         this(groupId, artifactId);
-        this.version = version;
+        setVersion(version);
+    }
+
+    /**
+     * Operation to add a new dependency to a POM file.
+     * This constructor assumes this is a managed dependency, since the version
+     * is not set. However, if that is not really the case, during transformation
+     * this operation will fail pre-validation.
+     *
+     * @param groupId new dependency group id
+     * @param artifactId new dependency artifact id
+     * @param version new dependency artifact version
+     * @param scope new dependency artifact scope
+     */
+    public PomAddDependency(String groupId, String artifactId, String version, String scope) {
+        this(groupId, artifactId, version);
+        setScope(scope);
     }
 
     public PomAddDependency setGroupId(String groupId) {
@@ -78,6 +95,11 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
         return this;
     }
 
+    public PomAddDependency setScope(String scope) {
+        this.scope = scope;
+        return this;
+    }
+
     public String getGroupId() {
         return groupId;
     }
@@ -88,6 +110,10 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
 
     public String getVersion() {
         return version;
+    }
+
+    public String getScope() {
+        return scope;
     }
 
     @Override
@@ -106,6 +132,9 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
         dependency.setArtifactId(artifactId);
         if(version != null) {
             dependency.setVersion(version);
+        }
+        if(scope != null) {
+            dependency.setScope(scope);
         }
         model.addDependency(dependency);
 
