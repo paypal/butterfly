@@ -2,8 +2,13 @@ package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 /**
  * Operation to change the packaging of a Maven artifact, by changing its POM file
@@ -44,9 +49,19 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
 
     @Override
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        // TODO
 
-        return null;
+        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
+
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+
+        Model model = reader.read(new FileInputStream(pomFile));
+
+        model.setPackaging(packagingType);
+
+        MavenXpp3Writer writer = new MavenXpp3Writer();
+        writer.write(new FileOutputStream(pomFile), model);
+
+        return String.format("Packaging for POM file %s has been changed to %s",getRelativePath(), packagingType);
     }
 
 }
