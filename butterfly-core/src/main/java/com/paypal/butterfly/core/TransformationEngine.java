@@ -32,7 +32,7 @@ public class TransformationEngine {
 
     private static final String TIMESTAMP_SUFFIX_FORMAT = "yyyyMMddHHmmssSSS";
 
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIMESTAMP_SUFFIX_FORMAT);
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIMESTAMP_SUFFIX_FORMAT);
 
     public void perform(Transformation transformation) throws TransformationException {
         logger.debug("Requested transformation: " + transformation);
@@ -127,7 +127,7 @@ public class TransformationEngine {
         return transformedAppFolder;
     }
 
-    public static String getCurrentTimeStamp() {
+    public String getCurrentTimeStamp() {
         return simpleDateFormat.format(new Date());
     }
 
