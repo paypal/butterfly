@@ -4,7 +4,7 @@ import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
 import java.io.*;
-import java.util.regex.Matcher;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 /**
@@ -193,8 +193,8 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
         int n = 0;
 
         try {
-            reader = new BufferedReader(new FileReader(fileToBeChanged));
-            writer = new BufferedWriter(new FileWriter(tempFile));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile),StandardCharsets.UTF_8));
             String currentLine;
             while((currentLine = reader.readLine()) != null) {
                 n++;
@@ -220,8 +220,8 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
         int n = 0;
 
         try {
-            reader = new BufferedReader(new FileReader(fileToBeChanged));
-            writer = new BufferedWriter(new FileWriter(tempFile));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile),StandardCharsets.UTF_8));
             String currentLine;
             boolean foundFirstMatch = false;
             final Pattern pattern = Pattern.compile(regex);
