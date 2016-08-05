@@ -163,10 +163,10 @@ public class ButterflyCliApp {
         Class<? extends TransformationTemplate> template;
         for(Object extensionObj : registeredExtensions.toArray()) {
             extension = (Extension) extensionObj;
-            System.out.printf("\n- %s: %s\n", extension, extension.getDescription());
+            System.out.printf("%n- %s: %s%n", extension, extension.getDescription());
             for(Object templateObj : extension.getTemplateClasses().toArray()) {
                 template = (Class<? extends TransformationTemplate>) templateObj;
-                System.out.printf("\t* [%s] %s: %s\n", ExtensionTypeInitial.getFromClass(template), template.getName(), template.newInstance().getDescription());
+                System.out.printf("\t* [%s] %s: %s%n", ExtensionTypeInitial.getFromClass(template), template.getName(), template.newInstance().getDescription());
             }
         }
     }
