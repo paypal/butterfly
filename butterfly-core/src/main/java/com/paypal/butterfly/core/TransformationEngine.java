@@ -40,8 +40,6 @@ public class TransformationEngine {
         File transformedAppFolder = prepareOutputFolder(transformation);
 
         TransformationTemplate template = transformation.getTemplate();
-
-        int total = template.getTransformationUtilitiesList().size();
         logger.info("Beginning transformation (" + template.getOperationsCount() + " operations to be performed)");
         int operationsExecutionOrder = 1;
 
