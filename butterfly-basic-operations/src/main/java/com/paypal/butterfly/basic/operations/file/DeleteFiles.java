@@ -5,6 +5,8 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Operation for multiple files deletion
@@ -13,44 +15,63 @@ import java.io.File;
  */
 public class DeleteFiles extends TransformationOperation<DeleteFiles> {
 
-    private static final String DESCRIPTION = "Delete all files named %s under %s, or any other folder under it, at any level";
+    private static final String DESCRIPTION = "Delete all files listed under transformation context attribute %s";
 
-    private String fileName;
-
-    public DeleteFiles() {
-    }
+    // Name of transformation context attribute that holds
+    // all files to be deleted
+    private String attributeName;
 
     /**
      * Operation for multiple files deletion
      *
-     * @param fileName name of files to be deleted under {@code relativePath}, or
-     *                 any other folder under it, at any level
+     * @param attributeName name of transformation context attribute that holds
+     *                      all files to be deleted
      */
-    public DeleteFiles(String fileName) {
-        this.fileName = fileName;
+    public DeleteFiles(String attributeName) {
+        setAttributeName(attributeName);
     }
 
-    public DeleteFiles setFileName(String fileName) {
-        this.fileName = fileName;
+    /**
+     * Set the name of transformation context attribute that holds
+     * all files to be deleted
+     *
+     * @param attributeName name of transformation context attribute that holds
+     *                      all files to be deleted
+     * @return this transformation operation object
+     */
+    public DeleteFiles setAttributeName(String attributeName) {
+        this.attributeName = attributeName;
         return this;
     }
 
-    public String getFileName() {
-        return fileName;
+    /**
+     * Return the name of transformation context attribute that holds
+     * all files to be deleted
+     *
+     * @return the name of transformation context attribute that holds
+     * all files to be deleted
+     */
+    public String getAttributeName() {
+        return attributeName;
     }
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, fileName, getRelativePath());
+        return String.format(DESCRIPTION, attributeName);
     }
 
     @Override
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         // TODO
-
         // Take a look at this: https://docs.oracle.com/javase/tutorial/essential/io/walk.html
 
-        return null;
+        List<File> filesToBeDeleted = (List<File>) transformationContext.get(attributeName);
+        for(File fileToBeDeleted : filesToBeDeleted) {
+            FileUtils.deleteQuietly(fileToBeDeleted);
+        }
+
+        // TODO improve this message to state relative paths, instead of absolute
+        return String.format("Deleted files: %s", filesToBeDeleted.toString());
     }
 
 }

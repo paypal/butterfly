@@ -21,6 +21,7 @@ import java.util.List;
  * found, null is returned.
  *
  * @see {@link FindFiles} for a better refined search
+ * and to find multiple files
  *
  * @author facarvalho
  */

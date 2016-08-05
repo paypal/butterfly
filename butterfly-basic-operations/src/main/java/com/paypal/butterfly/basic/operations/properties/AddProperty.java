@@ -4,6 +4,9 @@ import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Properties;
 
 /**
  * Operation to add a new property to a properties file.
@@ -13,7 +16,7 @@ import java.io.File;
  */
 public class AddProperty extends TransformationOperation<AddProperty> {
 
-    private static final String DESCRIPTION = "Add new property (%s = %s) to file %s";
+    private static final String DESCRIPTION = "Add new property ('%s' = '%s') to file '%s'";
 
     private String propertyName;
     private String propertyValue;
@@ -58,9 +61,13 @@ public class AddProperty extends TransformationOperation<AddProperty> {
 
     @Override
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        // TODO
+        File propertiesFile = getAbsoluteFile(transformedAppFolder, transformationContext);
+        Properties properties = new Properties();
+        properties.load(new FileInputStream(propertiesFile));
+        properties.put(propertyName, propertyValue);
+        properties.store(new FileOutputStream(propertiesFile), null);
 
-        return null;
+        return String.format("Property '%s' set to '%s' at '%s'", propertyName, propertyValue, getRelativePath());
     }
 
 }

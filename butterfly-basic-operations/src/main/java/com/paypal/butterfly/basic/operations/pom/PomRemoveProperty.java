@@ -2,8 +2,14 @@ package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 /**
  * Operation to remove a property entry from a properties file
@@ -44,9 +50,17 @@ public class PomRemoveProperty extends TransformationOperation<PomRemoveProperty
 
     @Override
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        // TODO
+        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
 
-        return null;
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+        Model model = reader.read(new FileInputStream(pomFile));
+        model.getProperties().remove(propertyName);
+        MavenXpp3Writer writer = new MavenXpp3Writer();
+        writer.write(new FileOutputStream(pomFile), model);
+
+        String resultMessage = String.format("Property %s has been removed from POM file %s", propertyName, getRelativePath());
+
+        return resultMessage;
     }
 
 }
