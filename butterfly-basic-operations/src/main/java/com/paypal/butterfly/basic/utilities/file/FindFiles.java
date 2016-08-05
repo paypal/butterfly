@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * Utility to find files based on a regular expression
- * against the file name. The search might be recursive (including sub-folders)or not
+ * against the file name. The search might be recursive (including sub-folders) or not
  *
  * @author facarvalho
  */
