@@ -7,7 +7,7 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.File;
 
 /**
- * Operation to add a line to a text file
+ * Operation to add a new line to the end of a file
  *
  * @author facarvalho
  */
@@ -21,7 +21,7 @@ public class AddLine extends TransformationOperation<AddLine> {
     }
 
     /**
-     * Operation to add a line to a text file
+     * Operation to add a new line to the end of a file
      *
      * @param newLine the new line to be added
      */
