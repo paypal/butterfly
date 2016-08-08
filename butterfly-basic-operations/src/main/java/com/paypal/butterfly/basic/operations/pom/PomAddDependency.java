@@ -140,11 +140,11 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
             MavenXpp3Writer writer = new MavenXpp3Writer();
             writer.write(fileOutputStream, model);
         }finally {
-            if(fileInputStream != null)
-                fileInputStream.close();
-
-            if(fileOutputStream != null)
-                fileOutputStream.close();
+            try {
+                if (fileInputStream != null) fileInputStream.close();
+            }finally {
+                if(fileOutputStream != null) fileOutputStream.close();
+            }
         }
 
         return String.format("Dependency %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":"+ version), getRelativePath());
