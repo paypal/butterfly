@@ -9,6 +9,7 @@ import com.paypal.butterfly.extensions.api.exception.TransformationOperationExce
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.exception.TransformationException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,6 +136,7 @@ public class TransformationEngine {
         return transformedAppFolder;
     }
 
+    @SuppressFBWarnings("STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE")
     public static String getCurrentTimeStamp() {
         return simpleDateFormat.format(new Date());
     }
