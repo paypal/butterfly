@@ -53,13 +53,28 @@ public class PomRemoveProperty extends TransformationOperation<PomRemoveProperty
         File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
 
         MavenXpp3Reader reader = new MavenXpp3Reader();
-        Model model = reader.read(new FileInputStream(pomFile));
-        model.getProperties().remove(propertyName);
-        MavenXpp3Writer writer = new MavenXpp3Writer();
-        writer.write(new FileOutputStream(pomFile), model);
 
+        FileInputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
+
+        try {
+            fileInputStream = new FileInputStream(pomFile);
+            fileOutputStream = new FileOutputStream(pomFile);
+
+            Model model = reader.read(fileInputStream);
+            model.getProperties().remove(propertyName);
+            MavenXpp3Writer writer = new MavenXpp3Writer();
+            writer.write(fileOutputStream, model);
+
+
+        }finally {
+            try {
+                if (fileInputStream != null) fileInputStream.close();
+            }finally {
+                if(fileOutputStream != null) fileOutputStream.close();
+            }
+        }
         String resultMessage = String.format("Property %s has been removed from POM file %s", propertyName, getRelativePath());
-
         return resultMessage;
     }
 
