@@ -64,7 +64,7 @@ public class PomRemoveDependency extends TransformationOperation<PomRemoveDepend
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
 
         File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
-        String resultMessage = String.format("Managed dependency %s:%s could not be removed from POM file %s because it is not present", groupId, artifactId, getRelativePath());
+        String resultMessage = String.format("Dependency %s:%s could not be removed from POM file %s because it is not present", groupId, artifactId, getRelativePath());
 
         MavenXpp3Reader reader = new MavenXpp3Reader();
 
@@ -74,7 +74,7 @@ public class PomRemoveDependency extends TransformationOperation<PomRemoveDepend
             for (Dependency d : model.getDependencies()) {
                 if((d.getArtifactId().equals(artifactId)) && (d.getGroupId().equals(groupId))) {
                     model.removeDependency(d);
-                    resultMessage = String.format("Managed dependency %s:%s has been removed from POM file %s", groupId, artifactId, getRelativePath());
+                    resultMessage = String.format("Dependency %s:%s has been removed from POM file %s", groupId, artifactId, getRelativePath());
                     MavenXpp3Writer writer = new MavenXpp3Writer();
                     writer.write(new FileOutputStream(pomFile), model);
                     break;

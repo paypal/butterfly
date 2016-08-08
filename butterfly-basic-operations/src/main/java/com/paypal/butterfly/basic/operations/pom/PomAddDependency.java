@@ -51,9 +51,6 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
 
     /**
      * Operation to add a new dependency to a POM file.
-     * This constructor assumes this is a managed dependency, since the version
-     * is not set. However, if that is not really the case, during transformation
-     * this operation will fail pre-validation.
      *
      * @param groupId new dependency group id
      * @param artifactId new dependency artifact id
@@ -66,9 +63,6 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
 
     /**
      * Operation to add a new dependency to a POM file.
-     * This constructor assumes this is a managed dependency, since the version
-     * is not set. However, if that is not really the case, during transformation
-     * this operation will fail pre-validation.
      *
      * @param groupId new dependency group id
      * @param artifactId new dependency artifact id
@@ -141,7 +135,7 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
         MavenXpp3Writer writer = new MavenXpp3Writer();
         writer.write(new FileOutputStream(pomFile), model);
 
-        return String.format("Added dependency %s:%s:%s to POM file %s", groupId, artifactId, (version == null ? "" : version), getRelativePath());
+        return String.format("Dependency %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":"+ version), getRelativePath());
     }
 
 }
