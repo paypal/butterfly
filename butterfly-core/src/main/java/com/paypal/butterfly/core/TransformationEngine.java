@@ -87,6 +87,7 @@ public class TransformationEngine {
         logger.info("Transformation has been completed");
     }
 
+    @SuppressFBWarnings("VA_FORMAT_STRING_EXTRA_ARGUMENTS_PASSED")
     private File prepareOutputFolder(Transformation transformation) {
         logger.debug("Preparing output folder");
 
