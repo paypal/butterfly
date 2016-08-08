@@ -25,7 +25,7 @@ public class PomAddPlugin extends TransformationOperation<PomAddPlugin> {
     // TODO
     // What happens if plugin already exists? Fail? Warning? Replace it (if different version)?
 
-    private static final String DESCRIPTION = "Add plugin %s:%s:$s to POM file %s";
+    private static final String DESCRIPTION = "Add plugin %s:%s:%s to POM file %s";
 
     private String groupId;
     private String artifactId;
@@ -96,18 +96,36 @@ public class PomAddPlugin extends TransformationOperation<PomAddPlugin> {
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
         MavenXpp3Reader reader = new MavenXpp3Reader();
-        Model model = reader.read(new FileInputStream(pomFile));
 
-        Plugin plugin = new Plugin();
-        plugin.setGroupId(groupId);
-        plugin.setArtifactId(artifactId);
-        if (version != null) {
-            plugin.setVersion(version);
+        FileInputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
+
+        try {
+            fileInputStream = new FileInputStream(pomFile);
+            fileOutputStream = new FileOutputStream(pomFile);
+
+            Model model = reader.read(fileInputStream);
+
+
+            Plugin plugin = new Plugin();
+            plugin.setGroupId(groupId);
+            plugin.setArtifactId(artifactId);
+            if (version != null) {
+                plugin.setVersion(version);
+            }
+            model.getBuild().addPlugin(plugin);
+
+            MavenXpp3Writer writer = new MavenXpp3Writer();
+            writer.write(fileOutputStream, model);
+        }finally {
+            try {
+                if (fileInputStream != null) fileInputStream.close();
+            }finally {
+                if(fileOutputStream != null) fileOutputStream.close();
+            }
+
+
         }
-        model.getBuild().addPlugin(plugin);
-
-        MavenXpp3Writer writer = new MavenXpp3Writer();
-        writer.write(new FileOutputStream(pomFile), model);
 
         return String.format("Plugin %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":" + version), getRelativePath());
     }

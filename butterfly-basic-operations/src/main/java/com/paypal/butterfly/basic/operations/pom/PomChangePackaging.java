@@ -70,11 +70,11 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
             fileOutputStream = new FileOutputStream(pomFile);
             writer.write(fileOutputStream, model);
         }finally {
-            if(fileInputStream != null)
-                fileInputStream.close();
-
-            if(fileOutputStream != null)
-                fileOutputStream.close();
+            try {
+                if (fileInputStream != null) fileInputStream.close();
+            }finally {
+                if(fileOutputStream != null) fileOutputStream.close();
+            }
         }
 
         return String.format("Packaging for POM file %s has been changed to %s",getRelativePath(), packagingType);
