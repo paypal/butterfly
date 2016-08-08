@@ -89,7 +89,14 @@ public class PomChangeParent extends TransformationOperation<PomChangeParent> {
 
         MavenXpp3Reader reader = new MavenXpp3Reader();
 
-        Model model = reader.read(new FileInputStream(pomFile));
+        FileInputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
+
+        try{
+            fileInputStream = new FileInputStream(pomFile);
+            fileOutputStream = new FileOutputStream(pomFile);
+
+        Model model = reader.read(fileInputStream);
         Parent parent = model.getParent();
         if(groupId != null && artifactId != null && version != null) {
             parent.setGroupId(groupId);
@@ -106,7 +113,15 @@ public class PomChangeParent extends TransformationOperation<PomChangeParent> {
         }
 
         MavenXpp3Writer writer = new MavenXpp3Writer();
-        writer.write(new FileOutputStream(pomFile), model);
+        writer.write(fileOutputStream, model);
+
+    }finally {
+        try {
+            if (fileInputStream != null) fileInputStream.close();
+        }finally {
+            if(fileOutputStream != null) fileOutputStream.close();
+        }
+    }
 
         return resultMessage;
     }

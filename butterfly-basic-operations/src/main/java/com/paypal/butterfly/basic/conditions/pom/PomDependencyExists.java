@@ -91,17 +91,22 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
     protected Boolean execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
         MavenXpp3Reader reader = new MavenXpp3Reader();
+        FileInputStream fileInputStream = null;
 
         try {
-            Model model = reader.read(new FileInputStream(pomFile));
-            for(Dependency d : model.getDependencies()) {
-                if(d.getGroupId().equals(groupId) && d.getArtifactId().equals(artifactId)) {
+            fileInputStream = new FileInputStream(pomFile);
+            Model model = reader.read(fileInputStream);
+            for (Dependency d : model.getDependencies()) {
+                if (d.getGroupId().equals(groupId) && d.getArtifactId().equals(artifactId)) {
                     return (version == null || version.equals(d.getVersion()));
                 }
             }
         } catch (Exception e) {
             logger.error("Error happened during transformation operation condition evaluation");
             return false;
+        }finally {
+            if(fileInputStream != null)
+                fileInputStream.close();
         }
 
         return false;
