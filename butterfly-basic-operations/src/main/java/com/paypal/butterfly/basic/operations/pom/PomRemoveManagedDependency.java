@@ -67,25 +67,41 @@ public class PomRemoveManagedDependency extends TransformationOperation<PomRemov
         String resultMessage = null;
         MavenXpp3Reader reader = new MavenXpp3Reader();
 
-        Model model = reader.read(new FileInputStream(pomFile));
-        boolean found = false;
-        DependencyManagement dependencyManagement = model.getDependencyManagement();
+        FileInputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
 
-        if(dependencyManagement != null) {
-            for (Dependency dependency : dependencyManagement.getDependencies()) {
-                if(dependency.getArtifactId().equals(artifactId) && dependency.getGroupId().equals(groupId)) {
-                    dependencyManagement.removeDependency(dependency);
-                    resultMessage = String.format("Managed dependency %s:%s has been removed from POM file %s", groupId, artifactId, getRelativePath());
-                    MavenXpp3Writer writer = new MavenXpp3Writer();
-                    writer.write(new FileOutputStream(pomFile), model);
+        try {
+            fileInputStream = new FileInputStream(pomFile);
 
-                    found = true;
-                    break;
+
+            Model model = reader.read(fileInputStream);
+            boolean found = false;
+            DependencyManagement dependencyManagement = model.getDependencyManagement();
+
+            if(dependencyManagement != null) {
+                for (Dependency dependency : dependencyManagement.getDependencies()) {
+                    if(dependency.getArtifactId().equals(artifactId) && dependency.getGroupId().equals(groupId)) {
+                        dependencyManagement.removeDependency(dependency);
+                        resultMessage = String.format("Managed dependency %s:%s has been removed from POM file %s", groupId, artifactId, getRelativePath());
+                        MavenXpp3Writer writer = new MavenXpp3Writer();
+                        fileOutputStream = new FileOutputStream(pomFile);
+                        writer.write(fileOutputStream, model);
+
+                        found = true;
+                        break;
+                    }
                 }
             }
-        }
-        if(!found){
-            resultMessage = String.format("Managed dependency %s:%s could not be found in POM file %s", groupId, artifactId, getRelativePath());
+            if(!found){
+                resultMessage = String.format("Managed dependency %s:%s could not be found in POM file %s", groupId, artifactId, getRelativePath());
+            }
+
+        }finally {
+            try {
+                if (fileInputStream != null) fileInputStream.close();
+            }finally {
+                if(fileOutputStream != null) fileOutputStream.close();
+            }
         }
 
         return resultMessage;

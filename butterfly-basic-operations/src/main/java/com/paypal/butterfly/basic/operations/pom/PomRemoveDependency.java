@@ -68,19 +68,36 @@ public class PomRemoveDependency extends TransformationOperation<PomRemoveDepend
 
         MavenXpp3Reader reader = new MavenXpp3Reader();
 
-        Model model = reader.read(new FileInputStream(pomFile));
+        FileInputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
 
-        if(model.getDependencies() != null) {
-            for (Dependency d : model.getDependencies()) {
-                if((d.getArtifactId().equals(artifactId)) && (d.getGroupId().equals(groupId))) {
-                    model.removeDependency(d);
-                    resultMessage = String.format("Dependency %s:%s has been removed from POM file %s", groupId, artifactId, getRelativePath());
-                    MavenXpp3Writer writer = new MavenXpp3Writer();
-                    writer.write(new FileOutputStream(pomFile), model);
-                    break;
+        try {
+            fileInputStream = new FileInputStream(pomFile);
+
+
+            Model model = reader.read(fileInputStream);
+
+            if(model.getDependencies() != null) {
+                for (Dependency d : model.getDependencies()) {
+                    if((d.getArtifactId().equals(artifactId)) && (d.getGroupId().equals(groupId))) {
+                        model.removeDependency(d);
+                        resultMessage = String.format("Dependency %s:%s has been removed from POM file %s", groupId, artifactId, getRelativePath());
+                        MavenXpp3Writer writer = new MavenXpp3Writer();
+                        fileOutputStream = new FileOutputStream(pomFile);
+                        writer.write(fileOutputStream, model);
+                        break;
+                    }
                 }
             }
+
+        }finally {
+            try {
+                if (fileInputStream != null) fileInputStream.close();
+            }finally {
+                if(fileOutputStream != null) fileOutputStream.close();
+            }
         }
+
 
         return resultMessage;
     }

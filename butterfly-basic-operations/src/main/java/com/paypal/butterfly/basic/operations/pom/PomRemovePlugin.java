@@ -65,17 +65,35 @@ public class PomRemovePlugin extends TransformationOperation<PomRemovePlugin> {
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
         MavenXpp3Reader reader = new MavenXpp3Reader();
-        Model model = reader.read(new FileInputStream(pomFile));
 
-        Plugin plugin = new Plugin();
-        plugin.setGroupId(groupId);
-        plugin.setArtifactId(artifactId);
-        model.getBuild().removePlugin(plugin);
+        FileInputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
 
-        MavenXpp3Writer writer = new MavenXpp3Writer();
-        writer.write(new FileOutputStream(pomFile), model);
+        try {
+            fileInputStream = new FileInputStream(pomFile);
+
+
+            Model model = reader.read(fileInputStream);
+
+            Plugin plugin = new Plugin();
+            plugin.setGroupId(groupId);
+            plugin.setArtifactId(artifactId);
+            model.getBuild().removePlugin(plugin);
+
+            MavenXpp3Writer writer = new MavenXpp3Writer();
+            fileOutputStream = new FileOutputStream(pomFile);
+            writer.write(fileOutputStream, model);
+
+        }finally {
+            try {
+                if (fileInputStream != null) fileInputStream.close();
+            }finally {
+                if(fileOutputStream != null) fileOutputStream.close();
+            }
+        }
 
         return String.format("Plugin %s:%s has been removed from POM file %s", groupId, artifactId, getRelativePath());
     }
 
 }
+
