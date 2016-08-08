@@ -112,18 +112,26 @@ public class TransformationEngine {
 
         transformation.setTransformedApplicationLocation(transformedAppFolder);
 
-        transformedAppFolder.mkdir();
-        try {
-            FileUtils.copyDirectory(application.getFolder(), transformedAppFolder);
-        } catch (IOException e) {
+        boolean bDirCreated = transformedAppFolder.mkdir();
+        if(bDirCreated){
+            try {
+                FileUtils.copyDirectory(application.getFolder(), transformedAppFolder);
+            } catch (IOException e) {
+                String exceptionMessage = String.format(
+                        "An error occurred when preparing the transformed application folder (%s). Check also if the original application folder (%s) is valid",
+                        transformedAppFolder, application.getFolder());
+                logger.error(exceptionMessage, e);
+                throw new InternalException(exceptionMessage, e);
+            }
+            logger.debug("Transformed application folder is prepared");
+        }else{
             String exceptionMessage = String.format(
-                    "An error occurred when preparing the transformed application folder (%s). Check also if the original application folder (%s) is valid",
+                    "An error occurred when preparing the transformed application folder (%s). Transformed application folder could not be created",
                     transformedAppFolder, application.getFolder());
-            logger.error(exceptionMessage, e);
-            throw new InternalException(exceptionMessage, e);
+            InternalException ie  = new InternalException(exceptionMessage);
+            logger.error(exceptionMessage, ie);
+            throw ie;
         }
-        logger.debug("Transformed application folder is prepared");
-
         return transformedAppFolder;
     }
 
