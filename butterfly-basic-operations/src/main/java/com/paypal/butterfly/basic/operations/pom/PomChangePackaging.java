@@ -54,14 +54,31 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
 
         MavenXpp3Reader reader = new MavenXpp3Reader();
 
-        Model model = reader.read(new FileInputStream(pomFile));
+        FileInputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
 
-        model.setPackaging(packagingType);
+        try {
+            fileInputStream = new FileInputStream(pomFile);
 
-        MavenXpp3Writer writer = new MavenXpp3Writer();
-        writer.write(new FileOutputStream(pomFile), model);
+
+            Model model = reader.read(fileInputStream);
+
+            model.setPackaging(packagingType);
+
+            MavenXpp3Writer writer = new MavenXpp3Writer();
+
+            fileOutputStream = new FileOutputStream(pomFile);
+            writer.write(fileOutputStream, model);
+        }finally {
+            if(fileInputStream != null)
+                fileInputStream.close();
+
+            if(fileOutputStream != null)
+                fileOutputStream.close();
+        }
 
         return String.format("Packaging for POM file %s has been changed to %s",getRelativePath(), packagingType);
     }
+
 
 }

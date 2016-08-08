@@ -25,7 +25,7 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
     // TODO
     // What happens if dependency already exists? Fail? Warning? Replace it (if different version)?
 
-    private static final String DESCRIPTION = "Add dependency %s:%s:$s to POM file %s";
+    private static final String DESCRIPTION = "Add dependency %s:%s:%s to POM file %s";
 
     private String groupId;
     private String artifactId;
@@ -119,21 +119,33 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
         MavenXpp3Reader reader = new MavenXpp3Reader();
+        FileInputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
 
-        Model model = reader.read(new FileInputStream(pomFile));
-        Dependency dependency = new Dependency();
-        dependency.setGroupId(groupId);
-        dependency.setArtifactId(artifactId);
-        if(version != null) {
-            dependency.setVersion(version);
-        }
-        if(scope != null) {
-            dependency.setScope(scope);
-        }
-        model.addDependency(dependency);
+        try {
+            fileInputStream = new FileInputStream(pomFile);
+            fileOutputStream = new FileOutputStream(pomFile);
+            Model model = reader.read(fileInputStream);
+            Dependency dependency = new Dependency();
+            dependency.setGroupId(groupId);
+            dependency.setArtifactId(artifactId);
+            if (version != null) {
+                dependency.setVersion(version);
+            }
+            if (scope != null) {
+                dependency.setScope(scope);
+            }
+            model.addDependency(dependency);
 
-        MavenXpp3Writer writer = new MavenXpp3Writer();
-        writer.write(new FileOutputStream(pomFile), model);
+            MavenXpp3Writer writer = new MavenXpp3Writer();
+            writer.write(fileOutputStream, model);
+        }finally {
+            if(fileInputStream != null)
+                fileInputStream.close();
+
+            if(fileOutputStream != null)
+                fileOutputStream.close();
+        }
 
         return String.format("Dependency %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":"+ version), getRelativePath());
     }
