@@ -32,7 +32,7 @@ public class TransformationEngine {
 
     private static final String TIMESTAMP_SUFFIX_FORMAT = "yyyyMMddHHmmssSSS";
 
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIMESTAMP_SUFFIX_FORMAT);
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIMESTAMP_SUFFIX_FORMAT);
 
     public void perform(Transformation transformation) throws TransformationException {
         logger.debug("Requested transformation: " + transformation);
@@ -125,12 +125,16 @@ public class TransformationEngine {
             }
             logger.debug("Transformed application folder is prepared");
         }else{
-            logger.error("Transformed application folder doesn't get created");
+            logger.error("Transformed application folder could not be created");
+            String exceptionMessage = String.format(
+                    "An error occurred when preparing the transformed application folder (%s)",
+                    transformedAppFolder, application.getFolder());
+            throw new InternalException(exceptionMessage);
         }
         return transformedAppFolder;
     }
 
-    public String getCurrentTimeStamp() {
+    public static String getCurrentTimeStamp() {
         return simpleDateFormat.format(new Date());
     }
 
