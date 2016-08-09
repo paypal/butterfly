@@ -47,6 +47,10 @@ public abstract class TransformationUtility<TU, RT> {
     // 1 means first
     private int order = -1;
 
+    public int getOrder() {
+        return order;
+    }
+
     // The template this utility instance has been registered to
     private TransformationTemplate template;
 
