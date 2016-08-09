@@ -165,7 +165,7 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
         return abortOnFailure;
     }
 
-    public final TO executeIf(String conditionAttributeName) {
+    public final synchronized TO executeIf(String conditionAttributeName) {
         this.conditionAttributeName = conditionAttributeName;
         return (TO) this;
     }
