@@ -2,7 +2,6 @@ package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -111,8 +110,6 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
         return scope;
     }
 
-
-    @SuppressFBWarnings("VA_FORMAT_STRING_EXTRA_ARGUMENTS_PASSED")
     @Override
     public String getDescription() {
         return String.format(DESCRIPTION, groupId, artifactId, version, getRelativePath());
@@ -127,7 +124,7 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
 
         try {
             fileInputStream = new FileInputStream(pomFile);
-            fileOutputStream = new FileOutputStream(pomFile);
+
             Model model = reader.read(fileInputStream);
             Dependency dependency = new Dependency();
             dependency.setGroupId(groupId);
@@ -140,6 +137,7 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
             }
             model.addDependency(dependency);
 
+            fileOutputStream = new FileOutputStream(pomFile);
             MavenXpp3Writer writer = new MavenXpp3Writer();
             writer.write(fileOutputStream, model);
         }finally {

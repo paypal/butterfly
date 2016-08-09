@@ -82,3 +82,4 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
 
 
 }
+

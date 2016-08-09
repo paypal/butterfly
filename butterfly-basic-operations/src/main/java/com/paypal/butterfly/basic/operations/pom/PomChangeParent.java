@@ -94,34 +94,34 @@ public class PomChangeParent extends TransformationOperation<PomChangeParent> {
 
         try{
             fileInputStream = new FileInputStream(pomFile);
+
+
+            Model model = reader.read(fileInputStream);
+            Parent parent = model.getParent();
+            if(groupId != null && artifactId != null && version != null) {
+                parent.setGroupId(groupId);
+                parent.setArtifactId(artifactId);
+                parent.setVersion(version);
+                String newParent = parent.toString();
+                resultMessage = String.format("Parent for POM file (%s) has been set to %s", getRelativePath(), newParent);
+            } else if (groupId == null && artifactId == null && version != null) {
+                String oldVersion = parent.getVersion();
+                parent.setVersion(version);
+                resultMessage = String.format("Parent's version for POM file (%s) has been changed from %s to %s", getRelativePath(), oldVersion, version);
+            } else {
+                throw new IllegalStateException("Invalid POM parent transformation operation");
+            }
             fileOutputStream = new FileOutputStream(pomFile);
+            MavenXpp3Writer writer = new MavenXpp3Writer();
+            writer.write(fileOutputStream, model);
 
-        Model model = reader.read(fileInputStream);
-        Parent parent = model.getParent();
-        if(groupId != null && artifactId != null && version != null) {
-            parent.setGroupId(groupId);
-            parent.setArtifactId(artifactId);
-            parent.setVersion(version);
-            String newParent = parent.toString();
-            resultMessage = String.format("Parent for POM file (%s) has been set to %s", getRelativePath(), newParent);
-        } else if (groupId == null && artifactId == null && version != null) {
-            String oldVersion = parent.getVersion();
-            parent.setVersion(version);
-            resultMessage = String.format("Parent's version for POM file (%s) has been changed from %s to %s", getRelativePath(), oldVersion, version);
-        } else {
-            throw new IllegalStateException("Invalid POM parent transformation operation");
-        }
-
-        MavenXpp3Writer writer = new MavenXpp3Writer();
-        writer.write(fileOutputStream, model);
-
-    }finally {
-        try {
-            if (fileInputStream != null) fileInputStream.close();
         }finally {
-            if(fileOutputStream != null) fileOutputStream.close();
+            try {
+                if (fileInputStream != null) fileInputStream.close();
+            }finally {
+                if(fileOutputStream != null) fileOutputStream.close();
+            }
         }
-    }
 
         return resultMessage;
     }
