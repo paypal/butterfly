@@ -127,9 +127,7 @@ public class TransformationEngine {
             }
             logger.debug("Transformed application folder is prepared");
         }else{
-            String exceptionMessage = String.format(
-                    "An error occurred when preparing the transformed application folder (%s). Transformed application folder (%s) could not be created",
-                    transformedAppFolder, application.getFolder());
+            String exceptionMessage = String.format("Transformed application folder (%s) could not be created", transformedAppFolder);
             InternalException ie  = new InternalException(exceptionMessage);
             logger.error(exceptionMessage, ie);
             throw ie;
