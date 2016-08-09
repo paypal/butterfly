@@ -62,7 +62,7 @@ public class TransformationEngine {
                         logger.error("*** Operation: \t" + operation.getDescription());
                         logger.error("*** Cause: \t" + e.getCause());
                         throw new TransformationException("Operation " + operation.getName() + " failed when performing transformation", e);
-                    } else {
+                    //} else {
                         // TODO
                         // State/save/log the exception, and go on with transformation
                     }
