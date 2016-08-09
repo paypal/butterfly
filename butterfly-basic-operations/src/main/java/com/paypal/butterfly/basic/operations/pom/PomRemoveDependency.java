@@ -73,7 +73,7 @@ public class PomRemoveDependency extends TransformationOperation<PomRemoveDepend
 
         try {
             fileInputStream = new FileInputStream(pomFile);
-            fileOutputStream = new FileOutputStream(pomFile);
+
 
             Model model = reader.read(fileInputStream);
 
@@ -83,6 +83,7 @@ public class PomRemoveDependency extends TransformationOperation<PomRemoveDepend
                         model.removeDependency(d);
                         resultMessage = String.format("Dependency %s:%s has been removed from POM file %s", groupId, artifactId, getRelativePath());
                         MavenXpp3Writer writer = new MavenXpp3Writer();
+                        fileOutputStream = new FileOutputStream(pomFile);
                         writer.write(fileOutputStream, model);
                         break;
                     }

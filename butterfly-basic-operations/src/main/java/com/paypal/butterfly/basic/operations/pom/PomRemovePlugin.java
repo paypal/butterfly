@@ -2,7 +2,6 @@ package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -71,7 +70,7 @@ public class PomRemovePlugin extends TransformationOperation<PomRemovePlugin> {
 
         try {
             fileInputStream = new FileInputStream(pomFile);
-            fileOutputStream = new FileOutputStream(pomFile);
+
 
             Model model = reader.read(fileInputStream);
 
@@ -81,6 +80,7 @@ public class PomRemovePlugin extends TransformationOperation<PomRemovePlugin> {
             model.getBuild().removePlugin(plugin);
 
             MavenXpp3Writer writer = new MavenXpp3Writer();
+            fileOutputStream = new FileOutputStream(pomFile);
             writer.write(fileOutputStream, model);
 
         }finally {
@@ -95,3 +95,4 @@ public class PomRemovePlugin extends TransformationOperation<PomRemovePlugin> {
     }
 
 }
+
