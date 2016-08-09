@@ -25,7 +25,7 @@ public class PomAddPlugin extends TransformationOperation<PomAddPlugin> {
     // TODO
     // What happens if plugin already exists? Fail? Warning? Replace it (if different version)?
 
-    private static final String DESCRIPTION = "Add plugin %s:%s:$s to POM file %s";
+    private static final String DESCRIPTION = "Add plugin %s:%s:%s to POM file %s";
 
     private String groupId;
     private String artifactId;

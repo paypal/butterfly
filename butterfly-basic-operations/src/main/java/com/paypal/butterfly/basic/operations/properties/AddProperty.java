@@ -61,11 +61,23 @@ public class AddProperty extends TransformationOperation<AddProperty> {
 
     @Override
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        File propertiesFile = getAbsoluteFile(transformedAppFolder, transformationContext);
-        Properties properties = new Properties();
-        properties.load(new FileInputStream(propertiesFile));
-        properties.put(propertyName, propertyValue);
-        properties.store(new FileOutputStream(propertiesFile), null);
+        FileInputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
+        try {
+            File propertiesFile = getAbsoluteFile(transformedAppFolder, transformationContext);
+            Properties properties = new Properties();
+            fileInputStream = new FileInputStream(propertiesFile);
+            properties.load(fileInputStream);
+            properties.put(propertyName, propertyValue);
+            fileOutputStream = new FileOutputStream(propertiesFile);
+            properties.store(fileOutputStream, null);
+        } finally {
+            try {
+                if(fileInputStream != null) fileInputStream.close();
+            } finally {
+                if(fileOutputStream != null) fileOutputStream.close();
+            }
+        }
 
         return String.format("Property '%s' set to '%s' at '%s'", propertyName, propertyValue, getRelativePath());
     }
