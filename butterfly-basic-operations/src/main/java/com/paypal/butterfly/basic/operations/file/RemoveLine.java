@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.operations.file;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -39,8 +40,7 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
     private boolean firstOnly = FIRST_ONLY_DEFAULT_VALUE;
 
     // The number of the line to be removed
-    // 0 means a line number has not been set
-    private int lineNumber = 0;
+    private Integer lineNumber = null;
 
     /**
      * Operation to remove one, or more, lines from a text file.
@@ -119,7 +119,7 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
      *
      * @param lineNumber the number of the line to be removed
      */
-    public RemoveLine(int lineNumber) {
+    public RemoveLine(Integer lineNumber) {
         setLineNumber(lineNumber);
     }
 
@@ -158,7 +158,8 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
      * @param lineNumber the number of the line to be removed
      * @return
      */
-    public RemoveLine setLineNumber(int lineNumber) {
+    public RemoveLine setLineNumber(Integer lineNumber) {
+        // TODO add validation via BeanValidations to assure this is always positive
         this.lineNumber = lineNumber;
         return this;
     }
@@ -171,7 +172,7 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
         return firstOnly;
     }
 
-    public int getLineNumber() {
+    public Integer getLineNumber() {
         return lineNumber;
     }
 
@@ -183,10 +184,10 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
     @Override
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
-        return lineNumber > 0 ? removeBasedOnLineNumber(fileToBeChanged) : removeBasedOnRegex(fileToBeChanged);
+        return lineNumber != null ? removeBasedOnLineNumber(transformedAppFolder, fileToBeChanged) : removeBasedOnRegex(transformedAppFolder, fileToBeChanged);
     }
 
-    private String removeBasedOnLineNumber(File fileToBeChanged) throws Exception {
+    private String removeBasedOnLineNumber(File transformedAppFolder, File fileToBeChanged) throws Exception {
         File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader reader = null;
         BufferedWriter writer = null;
@@ -209,11 +210,15 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
             if(reader != null) reader.close();
         }
 
-        boolean successful = tempFile.renameTo(fileToBeChanged);
+        if(!tempFile.renameTo(fileToBeChanged)) {
+            String exceptionMessage = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
+            throw new TransformationOperationException(exceptionMessage);
+        }
+
         return String.format("File %s has had line number %d removed", getRelativePath(), lineNumber);
     }
 
-    private String removeBasedOnRegex(File fileToBeChanged) throws Exception {
+    private String removeBasedOnRegex(File transformedAppFolder, File fileToBeChanged) throws Exception {
         File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader reader = null;
         BufferedWriter writer = null;
@@ -239,7 +244,12 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
             if(reader != null) reader.close();
         }
 
-        boolean successful = tempFile.renameTo(fileToBeChanged);
+
+        if(!tempFile.renameTo(fileToBeChanged)) {
+            String exceptionMessage = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
+            throw new TransformationOperationException(exceptionMessage);
+        }
+
         return String.format("File %s has had %d line(s) removed based on regular expressions \"%s\"", getRelativePath(), n, regex);
     }
 
