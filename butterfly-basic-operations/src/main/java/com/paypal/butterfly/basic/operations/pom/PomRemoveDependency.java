@@ -79,7 +79,7 @@ public class PomRemoveDependency extends TransformationOperation<PomRemoveDepend
 
             if(model.getDependencies() != null) {
                 for (Dependency d : model.getDependencies()) {
-                    if((d.getArtifactId().equals(artifactId)) && (d.getGroupId().equals(groupId))) {
+                    if(d.getArtifactId().equals(artifactId) && d.getGroupId().equals(groupId)) {
                         model.removeDependency(d);
                         resultMessage = String.format("Dependency %s:%s has been removed from POM file %s", groupId, artifactId, getRelativePath());
                         MavenXpp3Writer writer = new MavenXpp3Writer();
