@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -110,6 +111,8 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
         return scope;
     }
 
+
+    @SuppressFBWarnings("VA_FORMAT_STRING_EXTRA_ARGUMENTS_PASSED")
     @Override
     public String getDescription() {
         return String.format(DESCRIPTION, groupId, artifactId, version, getRelativePath());

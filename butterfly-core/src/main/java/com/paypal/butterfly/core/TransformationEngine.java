@@ -9,6 +9,7 @@ import com.paypal.butterfly.extensions.api.exception.TransformationOperationExce
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.exception.TransformationException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,7 @@ public class TransformationEngine {
         logger.info("Transformation has been completed");
     }
 
+
     private File prepareOutputFolder(Transformation transformation) {
         logger.debug("Preparing output folder");
 
@@ -125,9 +127,7 @@ public class TransformationEngine {
             }
             logger.debug("Transformed application folder is prepared");
         }else{
-            String exceptionMessage = String.format(
-                    "An error occurred when preparing the transformed application folder (%s). Transformed application folder could not be created",
-                    transformedAppFolder, application.getFolder());
+            String exceptionMessage = String.format("Transformed application folder (%s) could not be created", transformedAppFolder);
             InternalException ie  = new InternalException(exceptionMessage);
             logger.error(exceptionMessage, ie);
             throw ie;
@@ -135,6 +135,7 @@ public class TransformationEngine {
         return transformedAppFolder;
     }
 
+    @SuppressFBWarnings("STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE")
     public static String getCurrentTimeStamp() {
         return simpleDateFormat.format(new Date());
     }
