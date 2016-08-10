@@ -245,7 +245,7 @@ public class InsertText extends TransformationOperation<InsertText> {
         String result;
 
         if (foundFirstMatch) {
-            result = String.format("Text has been inserted from %s to %s after first line that matches regular expression '%s'", textFileUrl, getRelativePath(), regex);
+            result = String.format("Text has been inserted from %s to %s after %d line(s) that matches regular expression '%s'", textFileUrl, getRelativePath(), n, regex);
         } else {
             result = String.format("No text has been inserted from %s to %s, since no line has been found to match regular expression '%s'", textFileUrl, getRelativePath(), regex);
         }
