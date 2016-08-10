@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * The text can be inserted:
  * <ol>
  *     <li>InsertionMode.CONCAT: At the final of the file (default)</li>
- *     <li>InsertionMode.LINE_NUMBER: After one particular specified line number (first line is number 1)</li>
+ *     <li>InsertionMode.LINE_NUMBER: At one particular specified line number (first line is number 1)</li>
  *     <li>InsertionMode.REGEX_FIRST: Right after only the first line to match the specified regular expression</li>
  *     <li>InsertionMode.REGEX_ALL: Right after any line to match the specified regular expression</li>
  * </ol>
@@ -28,7 +28,7 @@ public class InsertText extends TransformationOperation<InsertText> {
      * The text can be inserted:
      * <ol>
      *     <li>InsertionMode.CONCAT: At the final of the file (default)</li>
-     *     <li>InsertionMode.LINE_NUMBER: After one particular specified line number (first line is number 1)</li>
+     *     <li>InsertionMode.LINE_NUMBER: At one particular specified line number (first line is number 1)</li>
      *     <li>InsertionMode.REGEX_FIRST: Right after only the first line to match the specified regular expression</li>
      *     <li>InsertionMode.REGEX_ALL: Right after any line to match the specified regular expression</li>
      * </ol>
@@ -37,7 +37,7 @@ public class InsertText extends TransformationOperation<InsertText> {
         CONCAT, LINE_NUMBER, REGEX_FIRST, REGEX_ALL
     }
 
-    private static final String DESCRIPTION = "Insert text from %s to %s%s";
+    private static final String DESCRIPTION = "Insert text from %s to %s";
 
     private InsertionMode insertionMode = InsertionMode.CONCAT;
     private URL textFileUrl;
@@ -49,7 +49,7 @@ public class InsertText extends TransformationOperation<InsertText> {
      * The text can be inserted:
      * <ol>
      *     <li>InsertionMode.CONCAT: At the final of the file (default)</li>
-     *     <li>InsertionMode.LINE_NUMBER: After one particular specified line number (first line is number 1)</li>
+     *     <li>InsertionMode.LINE_NUMBER: At one particular specified line number (first line is number 1)</li>
      *     <li>InsertionMode.REGEX_FIRST: Right after only the first line to match the specified regular expression</li>
      *     <li>InsertionMode.REGEX_ALL: Right after any line to match the specified regular expression</li>
      * </ol>
@@ -73,7 +73,7 @@ public class InsertText extends TransformationOperation<InsertText> {
 
     /**
      * Operation to insert text into another text file.
-     * The text will be inserted after the specified line number
+     * The text will be inserted at the specified line number
      * </br>
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#LINE_NUMBER}
@@ -121,9 +121,9 @@ public class InsertText extends TransformationOperation<InsertText> {
     }
 
     /**
-     * Sets the line number the text should be added after
+     * Sets the line number the text should be added at
      *
-     * @param lineNumber the line number the text should be added after
+     * @param lineNumber the line number the text should be added at
      * @return this transformation operation instance
      */
     public InsertText setLineNumber(Integer lineNumber) {
@@ -147,8 +147,7 @@ public class InsertText extends TransformationOperation<InsertText> {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, textFileUrl.getFile(), getRelativePath(),
-                (lineNumber == null ? " at the end of the file": " after line number " + lineNumber));
+        return String.format(DESCRIPTION, textFileUrl.getFile(), getRelativePath());
     }
 
     @Override
@@ -168,7 +167,7 @@ public class InsertText extends TransformationOperation<InsertText> {
 
             switch (insertionMode) {
                 case LINE_NUMBER:
-                    result = insertAfterSpecificLine(readerText, readerOriginalFile, writer);
+                    result = insertAtSpecificLine(readerText, readerOriginalFile, writer);
                     break;
                 case REGEX_FIRST:
                     result = insertAfterRegex(readerText, readerOriginalFile, writer, true);
@@ -201,7 +200,7 @@ public class InsertText extends TransformationOperation<InsertText> {
         return result;
     }
 
-    private String insertAfterSpecificLine(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer) throws Exception {
+    private String insertAtSpecificLine(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer) throws Exception {
         String currentLine;
         int n = 0;
         while((currentLine = readerOriginalFile.readLine()) != null) {
@@ -216,7 +215,7 @@ public class InsertText extends TransformationOperation<InsertText> {
             }
         }
 
-        return String.format("Text has been inserted from %s to %s after line number %d", textFileUrl, getRelativePath(), lineNumber);
+        return String.format("Text has been inserted from %s to %s at line number %d", textFileUrl, getRelativePath(), lineNumber);
     }
 
     private String insertAfterRegex(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer, boolean firstOnly) throws Exception {
