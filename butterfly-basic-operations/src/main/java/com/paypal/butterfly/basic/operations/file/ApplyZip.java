@@ -67,20 +67,25 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
         // Folder where the zip file is supposed to be extracted
         File folder = getAbsoluteFile(transformedAppFolder, transformationContext);
 
-        ReadableByteChannel readableByteChannel = Channels.newChannel(zipFileUrl.openStream());
+        FileOutputStream fileOutputStream = null;
+        try {
+            ReadableByteChannel readableByteChannel = Channels.newChannel(zipFileUrl.openStream());
 
-        int p = zipFileUrl.getPath().lastIndexOf("/") + 1;
-        String fileName = zipFileUrl.getPath().substring(p);
+            int p = zipFileUrl.getPath().lastIndexOf("/") + 1;
+            String fileName = zipFileUrl.getPath().substring(p);
 
-        File zipFileDescriptor = new File(folder, fileName);
-        FileOutputStream fileOutputStream = new FileOutputStream(zipFileDescriptor);
-        fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+            File zipFileDescriptor = new File(folder, fileName);
+            fileOutputStream = new FileOutputStream(zipFileDescriptor);
+            fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
 
-        ZipFile zipFile = new ZipFile(zipFileDescriptor);
-        zipFile.extractAll(zipFileDescriptor.getParent());
-        FileUtils.deleteQuietly(zipFileDescriptor);
+            ZipFile zipFile = new ZipFile(zipFileDescriptor);
+            zipFile.extractAll(zipFileDescriptor.getParent());
+            FileUtils.deleteQuietly(zipFileDescriptor);
 
-        return String.format("Zip file %s has been downloaded and decompressed into %s", zipFileUrl, getRelativePath(transformedAppFolder, zipFileDescriptor.getParentFile()));
+            return String.format("Zip file %s has been downloaded and decompressed into %s", zipFileUrl, getRelativePath(transformedAppFolder, zipFileDescriptor.getParentFile()));
+        } finally {
+            if (fileOutputStream != null) fileOutputStream.close();
+        }
     }
 
 }

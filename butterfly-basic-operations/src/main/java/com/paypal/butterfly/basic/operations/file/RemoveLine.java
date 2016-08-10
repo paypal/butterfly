@@ -184,30 +184,28 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
     @Override
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
-        return lineNumber != null ? removeBasedOnLineNumber(transformedAppFolder, fileToBeChanged) : removeBasedOnRegex(transformedAppFolder, fileToBeChanged);
-    }
 
-    private String removeBasedOnLineNumber(File transformedAppFolder, File fileToBeChanged) throws Exception {
         File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader reader = null;
         BufferedWriter writer = null;
-        int n = 0;
+        String result;
 
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile),StandardCharsets.UTF_8));
-            String currentLine;
-            while((currentLine = reader.readLine()) != null) {
-                n++;
-                if(n == lineNumber) {
-                    continue;
-                }
-                writer.write(currentLine);
-                writer.write(System.lineSeparator());
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
+
+            if (lineNumber != null) {
+                result = removeBasedOnLineNumber(reader, writer);
+            } else {
+                result = removeBasedOnRegex(reader, writer);
             }
+
         } finally {
-            if(writer != null) writer.close();
-            if(reader != null) reader.close();
+            try {
+                if (writer != null) writer.close();
+            } finally {
+                if (reader != null) reader.close();
+            }
         }
 
         if(!tempFile.renameTo(fileToBeChanged)) {
@@ -215,39 +213,45 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
             throw new TransformationOperationException(exceptionMessage);
         }
 
+        return result;
+
+    }
+
+    private String removeBasedOnLineNumber(BufferedReader reader, BufferedWriter writer) throws Exception {
+        String currentLine;
+        int n = 0;
+        boolean firstLine = true;
+        while((currentLine = reader.readLine()) != null) {
+            if(!firstLine) {
+                writer.write(System.lineSeparator());
+            }
+            n++;
+            if(n == lineNumber) {
+                continue;
+            }
+            writer.write(currentLine);
+            firstLine = false;
+        }
         return String.format("File %s has had line number %d removed", getRelativePath(), lineNumber);
     }
 
-    private String removeBasedOnRegex(File transformedAppFolder, File fileToBeChanged) throws Exception {
-        File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
-        BufferedReader reader = null;
-        BufferedWriter writer = null;
+    private String removeBasedOnRegex(BufferedReader reader, BufferedWriter writer) throws Exception {
+        String currentLine;
         int n = 0;
-
-        try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile),StandardCharsets.UTF_8));
-            String currentLine;
-            boolean foundFirstMatch = false;
-            final Pattern pattern = Pattern.compile(regex);
-            while((currentLine = reader.readLine()) != null) {
-                if((!firstOnly || !foundFirstMatch) && pattern.matcher(currentLine).matches()) {
-                    foundFirstMatch = true;
-                    n++;
-                    continue;
-                }
-                writer.write(currentLine);
+        boolean foundFirstMatch = false;
+        final Pattern pattern = Pattern.compile(regex);
+        boolean firstLine = true;
+        while((currentLine = reader.readLine()) != null) {
+            if((!firstOnly || !foundFirstMatch) && pattern.matcher(currentLine).matches()) {
+                foundFirstMatch = true;
+                n++;
+                continue;
+            }
+            if(!firstLine) {
                 writer.write(System.lineSeparator());
             }
-        } finally {
-            if(writer != null) writer.close();
-            if(reader != null) reader.close();
-        }
-
-
-        if(!tempFile.renameTo(fileToBeChanged)) {
-            String exceptionMessage = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
-            throw new TransformationOperationException(exceptionMessage);
+            writer.write(currentLine);
+            firstLine = false;
         }
 
         return String.format("File %s has had %d line(s) removed based on regular expressions \"%s\"", getRelativePath(), n, regex);
