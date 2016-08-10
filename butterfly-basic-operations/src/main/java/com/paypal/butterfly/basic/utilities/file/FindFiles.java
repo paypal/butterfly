@@ -68,7 +68,7 @@ public class FindFiles extends TransformationUtility<FindFiles, List<File>> {
 
         IOFileFilter fileFilter = new AbstractFileFilter() {
             public boolean accept(File file) {
-                return (file.isFile() && file.getName().matches(regex));
+                return file.isFile() && file.getName().matches(regex);
             }
         };
         Collection<File> files = FileUtils.listFiles(rootSearchFolder, fileFilter, (recursive ? TrueFileFilter.INSTANCE : null));

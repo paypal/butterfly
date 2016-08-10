@@ -5,7 +5,6 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 /**

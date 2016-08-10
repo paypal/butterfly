@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -45,6 +46,10 @@ public abstract class TransformationUtility<TU, RT> {
     // -1 means it has not been registered to any template yet
     // 1 means first
     private int order = -1;
+
+    public int getOrder() {
+        return order;
+    }
 
     // The template this utility instance has been registered to
     private TransformationTemplate template;
@@ -335,7 +340,9 @@ public abstract class TransformationUtility<TU, RT> {
     protected final void applyPropertiesFromContext(TransformationContext transformationContext) throws TransformationUtilityException {
         String attributeName;
         Method method;
-        for(String propertyName : latePropertiesAttributes.keySet()) {
+        for (final Iterator itr = latePropertiesAttributes.entrySet().iterator(); itr.hasNext();) {
+            Map.Entry<String,String> entry = (Map.Entry)itr.next();
+            String propertyName = entry.getKey();
             attributeName = latePropertiesAttributes.get(propertyName);
             try {
                 method = latePropertiesSetters.get(propertyName);
