@@ -191,8 +191,8 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
         String result;
 
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged)));
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile)));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
 
             if (lineNumber != null) {
                 result = removeBasedOnLineNumber(reader, writer);
