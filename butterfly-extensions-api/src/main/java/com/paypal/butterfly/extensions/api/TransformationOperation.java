@@ -76,7 +76,7 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
             throw new TransformationOperationException(e.getMessage(), e);
         }
 
-        if(conditionAttributeName != null && (Boolean) transformationContext.get(conditionAttributeName)) {
+        if(conditionAttributeName != null && !(Boolean) transformationContext.get(conditionAttributeName)) {
             // TODO the return type should be complext enough to tell the transformation engine that
             // this operation was skipped. After that, this message here should be logged by the engine as DEBUG
             return String.format("*** SKIPPED *** Operation '%s' has been skipped due to failing condition: %s", getName(), conditionAttributeName);
