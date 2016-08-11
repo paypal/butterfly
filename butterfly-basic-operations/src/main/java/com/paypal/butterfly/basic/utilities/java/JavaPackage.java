@@ -1,4 +1,4 @@
-package com.paypal.butterfly.basic.utilities;
+package com.paypal.butterfly.basic.utilities.java;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
