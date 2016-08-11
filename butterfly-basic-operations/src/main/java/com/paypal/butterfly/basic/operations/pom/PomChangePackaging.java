@@ -51,29 +51,22 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
 
         File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
-
         MavenXpp3Reader reader = new MavenXpp3Reader();
-
         FileInputStream fileInputStream = null;
         FileOutputStream fileOutputStream = null;
 
         try {
             fileInputStream = new FileInputStream(pomFile);
-
-
             Model model = reader.read(fileInputStream);
-
             model.setPackaging(packagingType);
-
             MavenXpp3Writer writer = new MavenXpp3Writer();
-
             fileOutputStream = new FileOutputStream(pomFile);
             writer.write(fileOutputStream, model);
-        }finally {
+        } finally {
             try {
                 if (fileInputStream != null) fileInputStream.close();
             }finally {
-                if(fileOutputStream != null) fileOutputStream.close();
+                if (fileOutputStream != null) fileOutputStream.close();
             }
         }
 
@@ -82,4 +75,3 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
 
 
 }
-
