@@ -1,4 +1,4 @@
-package com.paypal.butterfly.basic.operations.file;
+package com.paypal.butterfly.basic.operations.text;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
@@ -254,7 +254,7 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
             firstLine = false;
         }
 
-        return String.format("File %s has had %d line(s) removed based on regular expressions \"%s\"", getRelativePath(), n, regex);
+        return String.format("File %s has had %d line(s) removed based on regular expression '%s'", getRelativePath(), n, regex);
     }
 
 }

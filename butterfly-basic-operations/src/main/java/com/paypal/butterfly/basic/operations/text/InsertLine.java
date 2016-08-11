@@ -1,17 +1,16 @@
-package com.paypal.butterfly.basic.operations.file;
+package com.paypal.butterfly.basic.operations.text;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 /**
- * Operation to insert text into another text file.
- * The text can be inserted:
+ * Operation to insert new line(s) into a text file.
+ * The new line can be inserted:
  * <ol>
  *     <li>InsertionMode.CONCAT: At the final of the file (default)</li>
  *     <li>InsertionMode.LINE_NUMBER: At one particular specified line number (first line is number 1)</li>
@@ -22,10 +21,10 @@ import java.util.regex.Pattern;
  * @see {@link InsertionMode}
  * @author facarvalho
  */
-public class InsertText extends TransformationOperation<InsertText> {
+public class InsertLine extends TransformationOperation<InsertLine> {
 
     /**
-     * The text can be inserted:
+     * The new line(s) can be inserted:
      * <ol>
      *     <li>InsertionMode.CONCAT: At the final of the file (default)</li>
      *     <li>InsertionMode.LINE_NUMBER: At one particular specified line number (first line is number 1)</li>
@@ -37,16 +36,16 @@ public class InsertText extends TransformationOperation<InsertText> {
         CONCAT, LINE_NUMBER, REGEX_FIRST, REGEX_ALL
     }
 
-    private static final String DESCRIPTION = "Insert text from %s to %s";
+    private static final String DESCRIPTION = "Insert new line(s) into %s";
 
     private InsertionMode insertionMode = InsertionMode.CONCAT;
-    private URL textFileUrl;
+    private String newLine;
     private Integer lineNumber = null;
     private String regex = null;
 
     /**
-     * Operation to insert text into another text file.
-     * The text can be inserted:
+     * Operation to insert new line(s) into a text file.
+     * The new line can be inserted:
      * <ol>
      *     <li>InsertionMode.CONCAT: At the final of the file (default)</li>
      *     <li>InsertionMode.LINE_NUMBER: At one particular specified line number (first line is number 1)</li>
@@ -57,43 +56,43 @@ public class InsertText extends TransformationOperation<InsertText> {
      * @see {@link InsertionMode}
      * @author facarvalho
      */
-    public InsertText() {
+    public InsertLine() {
     }
 
     /**
-     * Operation to insert text into another text file.
-     * The text will be inserted at the end of the file,
+     * Operation to insert a new line into a text file.
+     * The new line will be inserted at the end of the file,
      * unless another insertion method is specified
      *
      * @see {@link #setInsertionMode(InsertionMode)}
      */
-    public InsertText(URL textFileUrl) {
-        setTextFileUrl(textFileUrl);
+    public InsertLine(String newLine) {
+        setNewLine(newLine);
     }
 
     /**
-     * Operation to insert text into another text file.
-     * The text will be inserted at the specified line number
+     * Operation to insert a new line into a text file.
+     * The new line will be inserted at the specified line number
      * </br>
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#LINE_NUMBER}
      */
-    public InsertText(URL textFileUrl, Integer lineNumber) {
-        setTextFileUrl(textFileUrl);
+    public InsertLine(String newLine, Integer lineNumber) {
+        setNewLine(newLine);
         setLineNumber(lineNumber);
         setInsertionMode(InsertionMode.LINE_NUMBER);
     }
 
     /**
-     * Operation to insert text into another text file.
-     * The text will be inserted right after only the first
+     * Operation to insert a new line into a text file.
+     * The new line will be inserted right after only the first
      * line to match the specified regular expression
      * </br>
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#REGEX_FIRST}
      */
-    public InsertText(URL textFileUrl, String regex) {
-        setTextFileUrl(textFileUrl);
+    public InsertLine(String newLine, String regex) {
+        setNewLine(newLine);
         setRegex(regex);
         setInsertionMode(InsertionMode.REGEX_FIRST);
     }
@@ -104,50 +103,59 @@ public class InsertText extends TransformationOperation<InsertText> {
      * @param insertionMode the insertion mode
      * @return this transformation operation instance
      */
-    public InsertText setInsertionMode(InsertionMode insertionMode) {
+    public InsertLine setInsertionMode(InsertionMode insertionMode) {
         this.insertionMode = insertionMode;
         return this;
     }
 
     /**
-     * Sets the URL to the text to be inserted
+     * Sets the new line to be inserted
      *
-     * @param textFileUrl the URL to the text to be inserted
+     * @param newLine the new line to be inserted
      * @return this transformation operation instance
      */
-    public InsertText setTextFileUrl(URL textFileUrl) {
-        this.textFileUrl = textFileUrl;
+    public InsertLine setNewLine(String newLine) {
+        this.newLine = newLine;
         return this;
     }
 
     /**
-     * Sets the line number the text should be added at
+     * Sets the line number the new line should be added at
+     * Notice that the insertion mode is automatically set to
+     * {@link InsertionMode#LINE_NUMBER}
      *
-     * @param lineNumber the line number the text should be added at
+     * @param lineNumber the line number the new line should be added at
      * @return this transformation operation instance
      */
-    public InsertText setLineNumber(Integer lineNumber) {
+    public InsertLine setLineNumber(Integer lineNumber) {
         // TODO add validation via BeanValidations to assure this is always positive
         this.lineNumber = lineNumber;
+        setInsertionMode(InsertionMode.LINE_NUMBER);
         return this;
     }
 
     /**
      * Sets the regular expression to find insertion points
+     * Notice that the insertion mode is automatically set to
+     * {@link InsertionMode#REGEX_FIRST}, unless already set
+     * to {@link InsertionMode#REGEX_ALL}
      *
      * @see {@link InsertionMode}
      * @see {@link #setInsertionMode(InsertionMode)}
      * @param regex the regular expression to find insertion points
      * @return this transformation operation instance
      */
-    public InsertText setRegex(String regex) {
+    public InsertLine setRegex(String regex) {
         this.regex = regex;
+        if (!insertionMode.equals(InsertionMode.REGEX_ALL)) {
+            setInsertionMode(InsertionMode.REGEX_FIRST);
+        }
         return this;
     }
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, textFileUrl.getFile(), getRelativePath());
+        return String.format(DESCRIPTION, getRelativePath());
     }
 
     @Override
@@ -156,39 +164,33 @@ public class InsertText extends TransformationOperation<InsertText> {
 
         File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader readerOriginalFile = null;
-        BufferedReader readerText = null;
         BufferedWriter writer = null;
         String result;
 
         try {
             readerOriginalFile = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
-            readerText = new BufferedReader(new InputStreamReader(textFileUrl.openStream(), StandardCharsets.UTF_8));
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
 
             switch (insertionMode) {
                 case LINE_NUMBER:
-                    result = insertAtSpecificLine(readerText, readerOriginalFile, writer);
+                    result = insertAtSpecificLine(readerOriginalFile, writer);
                     break;
                 case REGEX_FIRST:
-                    result = insertAfterRegex(readerText, readerOriginalFile, writer, true);
+                    result = insertAfterRegex(readerOriginalFile, writer, true);
                     break;
                 case REGEX_ALL:
-                    result = insertAfterRegex(readerText, readerOriginalFile, writer, false);
+                    result = insertAfterRegex(readerOriginalFile, writer, false);
                     break;
                 default:
                 case CONCAT:
-                    result = concat(readerText, readerOriginalFile, writer);
+                    result = concat(readerOriginalFile, writer);
                     break;
             }
         } finally {
             try {
                 if (writer != null) { writer.close(); }
             } finally {
-                try {
-                    if (readerOriginalFile != null) { readerOriginalFile.close(); }
-                } finally {
-                    if(readerText != null) { readerText.close(); }
-                }
+                if (readerOriginalFile != null) { readerOriginalFile.close(); }
             }
         }
 
@@ -200,25 +202,23 @@ public class InsertText extends TransformationOperation<InsertText> {
         return result;
     }
 
-    private String insertAtSpecificLine(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer) throws Exception {
+    private String insertAtSpecificLine(BufferedReader readerOriginalFile, BufferedWriter writer) throws Exception {
         String currentLine;
         int n = 0;
         while((currentLine = readerOriginalFile.readLine()) != null) {
             n++;
+            if (n == lineNumber) {
+                writer.write(newLine);
+                writer.write(System.lineSeparator());
+            }
             writer.write(currentLine);
             writer.write(System.lineSeparator());
-            if (n == lineNumber) {
-                while((currentLine = readerText.readLine()) != null) {
-                    writer.write(currentLine);
-                    writer.write(System.lineSeparator());
-                }
-            }
         }
 
-        return String.format("Text has been inserted from %s to %s at line number %d", textFileUrl, getRelativePath(), lineNumber);
+        return String.format("A new line has been inserted into %s after line number %d", getRelativePath(), lineNumber);
     }
 
-    private String insertAfterRegex(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer, boolean firstOnly) throws Exception {
+    private String insertAfterRegex(BufferedReader readerOriginalFile, BufferedWriter writer, boolean firstOnly) throws Exception {
         String currentLine;
         int n = 0;
         boolean foundFirstMatch = false;
@@ -233,26 +233,24 @@ public class InsertText extends TransformationOperation<InsertText> {
             if((!firstOnly || !foundFirstMatch) && pattern.matcher(currentLine).matches()) {
                 foundFirstMatch = true;
                 n++;
-                while((currentLine = readerText.readLine()) != null) {
-                    writer.write(System.lineSeparator());
-                    writer.write(currentLine);
-                    firstLine = false;
-                }
+                writer.write(System.lineSeparator());
+                writer.write(newLine);
+                firstLine = false;
             }
         }
 
         String result;
 
         if (foundFirstMatch) {
-            result = String.format("Text has been inserted from %s to %s after %d line(s) that matches regular expression '%s'", textFileUrl, getRelativePath(), n, regex);
+            result = String.format("New line(s) has been inserted into %s after %d line(s) that matches regular expression '%s'", getRelativePath(), n, regex);
         } else {
-            result = String.format("No text has been inserted from %s to %s, since no line has been found to match regular expression '%s'", textFileUrl, getRelativePath(), regex);
+            result = String.format("No new line has been inserted into %s, since no line has been found to match regular expression '%s'", getRelativePath(), regex);
         }
 
         return result;
     }
 
-    private String concat(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer) throws Exception {
+    private String concat(BufferedReader readerOriginalFile, BufferedWriter writer) throws Exception {
         String currentLine;
         boolean firstLine = true;
         while((currentLine = readerOriginalFile.readLine()) != null) {
@@ -262,15 +260,12 @@ public class InsertText extends TransformationOperation<InsertText> {
             writer.write(currentLine);
             firstLine = false;
         }
-        while((currentLine = readerText.readLine()) != null) {
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
-            }
-            writer.write(currentLine);
-            firstLine = false;
+        if(!firstLine) {
+            writer.write(System.lineSeparator());
         }
+        writer.write(newLine);
 
-        return String.format("Text has been inserted from %s to %s at the end of the file", textFileUrl, getRelativePath());
+        return String.format("A new line has been inserted into %s at the end of the file", getRelativePath());
     }
 
 }

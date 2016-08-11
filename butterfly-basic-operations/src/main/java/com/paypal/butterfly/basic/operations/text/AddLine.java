@@ -1,4 +1,4 @@
-package com.paypal.butterfly.basic.operations.file;
+package com.paypal.butterfly.basic.operations.text;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
