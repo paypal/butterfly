@@ -7,7 +7,25 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
+            <directory>src/main/resources/extensions</directory>
+            <outputDirectory>butterfly/extensions</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/resources/lib</directory>
+            <outputDirectory>butterfly/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>src/main/resources</directory>
+            <includes>
+                <include>butterfly.cmd</include>
+            </includes>
+            <outputDirectory>butterfly</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>butterfly</include>
+            </includes>
             <outputDirectory>butterfly</outputDirectory>
             <fileMode>755</fileMode>
         </fileSet>
