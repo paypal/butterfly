@@ -207,9 +207,15 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
                 if (reader != null) reader.close();
             }
         }
-
-        if(!tempFile.renameTo(fileToBeChanged)) {
-            String exceptionMessage = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
+        //// TODO: 8/11/2016 : Refactor the delete code after introducing working directory
+        boolean bDeleted = fileToBeChanged.delete();
+        if(bDeleted) {
+            if (!tempFile.renameTo(fileToBeChanged)) {
+                String exceptionMessage = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
+                throw new TransformationOperationException(exceptionMessage);
+            }
+        }else{
+            String exceptionMessage = String.format("Error when deleting the directory %s", fileToBeChanged);
             throw new TransformationOperationException(exceptionMessage);
         }
 
