@@ -7,6 +7,7 @@ import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.exception.TransformationException;
+import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.slf4j.Logger;
@@ -52,7 +53,12 @@ public class ButterflyCliApp {
         OptionSet optionSet = null;
 
         if(arguments.length != 0){
-            optionSet = optionParser.parse(arguments);
+            try {
+                optionSet = optionParser.parse(arguments);
+            } catch (OptionException e) {
+                logger.error(e.getMessage());
+                System.exit(1);
+            }
         }
 
         VerboseConfigurator verboseConfigurator = null;
