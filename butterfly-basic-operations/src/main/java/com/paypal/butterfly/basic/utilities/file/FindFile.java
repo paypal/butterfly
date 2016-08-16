@@ -13,6 +13,13 @@ import java.util.List;
  * always recursive (includes sub-folders). If multiple files
  * are found, the first one only is returned. If no file is
  * found, null is returned.
+ * </br>
+ * The root directory from where the search should take place
+ * can be defined by {@link #relative(String)},
+ * {@link #absolute(String)} or {@link #absolute(String, String)}.
+ * If not set explicitly, then the search will happen from the root
+ * of the transformed application, which is equivalent to setting
+ * {@link #relative(String) to {@code "."}
  *
  * @see {@link FindFiles} for a better refined search
  * and to find multiple files
@@ -25,6 +32,7 @@ public class FindFile extends TransformationUtility<FindFile, File> {
 
     private static final String DESCRIPTION = "Find file named %s under %s";
 
+    // Name of the file to be found
     private String fileName;
 
     public FindFile() {
@@ -55,11 +63,12 @@ public class FindFile extends TransformationUtility<FindFile, File> {
 
     @Override
     protected File execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+        File searchRootFolder = getAbsoluteFile(transformedAppFolder, transformationContext);
         FindFiles findFiles = new FindFiles(fileName, true);
-        List<File> files = findFiles.execution(transformedAppFolder, transformationContext);
+        List<File> files = findFiles.execution(searchRootFolder, transformationContext);
 
         if(files == null || files.size() == 0) {
-            logger.debug("No file named {} has been found by {}", fileName, getName());
+            logger.warn("No file named '{}' has been found by {}", fileName, getName());
             return null;
         }
         if(files.size() > 1) {
