@@ -15,6 +15,13 @@ import java.util.List;
 /**
  * Utility to find files based on a regular expression
  * against the file name. The search might be recursive (including sub-folders) or not
+ * </br>
+ * The root directory from where the search should take place
+ * can be defined by {@link #relative(String)},
+ * {@link #absolute(String)} or {@link #absolute(String, String)}.
+ * If not set explicitly, then the search will happen from the root
+ * of the transformed application, which is equivalent to setting
+ * {@link #relative(String) to {@code "."}
  *
  * @author facarvalho
  */
@@ -29,7 +36,15 @@ public class FindFiles extends TransformationUtility<FindFiles, List<File>> {
     }
 
     /**
-     * Utility to find a files
+     * Utility to find files based on a regular expression
+     * against the file name. The search might be recursive (including sub-folders) or not
+     * </br>
+     * The root directory from where the search should take place
+     * can be defined by {@link #relative(String)},
+     * {@link #absolute(String)} or {@link #absolute(String, String)}.
+     * If not set explicitly, then the search will happen from the root
+     * of the transformed application, which is equivalent to setting
+     * {@link #relative(String) to {@code "."}
      *
      * @param regex regular expression to be applied against file name during search
      * @param recursive if true, sub-folders will also be searched
@@ -64,14 +79,13 @@ public class FindFiles extends TransformationUtility<FindFiles, List<File>> {
 
     @Override
     protected List<File> execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        File rootSearchFolder = getAbsoluteFile(transformedAppFolder, transformationContext);
-
+        File searchRootFolder = getAbsoluteFile(transformedAppFolder, transformationContext);
         IOFileFilter fileFilter = new AbstractFileFilter() {
             public boolean accept(File file) {
                 return file.isFile() && file.getName().matches(regex);
             }
         };
-        Collection<File> files = FileUtils.listFiles(rootSearchFolder, fileFilter, (recursive ? TrueFileFilter.INSTANCE : null));
+        Collection<File> files = FileUtils.listFiles(searchRootFolder, fileFilter, (recursive ? TrueFileFilter.INSTANCE : null));
 
         return new ArrayList<File>(files);
     }

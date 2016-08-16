@@ -9,7 +9,11 @@ import java.util.List;
 
 /**
  * Operation for multiple files deletion
- * <strong>Important: the term file here refers to both files and folders</strong>
+ * <strong>Important notes:</strong>
+ * <ol>
+ *     <li>The term "file" here refers to both files and folders</li>
+ *     <li>Different than other {@link TransformationOperation}, setting an absolute or relative path is not necessary, since the files this operation will perform against are set by a transformation context attribute</li>
+ * </ol>
  *
  * @author facarvalho
  */
@@ -21,6 +25,10 @@ public class DeleteFiles extends TransformationOperation<DeleteFiles> {
     // all files to be deleted
     private String attributeName;
 
+    public DeleteFiles() {
+        relative(".");
+    }
+
     /**
      * Operation for multiple files deletion
      * <strong>Important: the term files here refers to both file and folders</strong>
@@ -29,6 +37,7 @@ public class DeleteFiles extends TransformationOperation<DeleteFiles> {
      *                      all files to be deleted
      */
     public DeleteFiles(String attributeName) {
+        this();
         setAttributeName(attributeName);
     }
 

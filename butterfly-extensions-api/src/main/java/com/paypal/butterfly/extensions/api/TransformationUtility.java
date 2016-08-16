@@ -61,7 +61,7 @@ public abstract class TransformationUtility<TU, RT> {
     // folder the transformation utility should perform against
     // Setting it to "", or ".", means it will
     // point to the project root folder
-    private String relativePath = null;
+    private String relativePath = "";
 
     // Absolute path to the file or folder the transformation utility
     // should perform against
@@ -195,6 +195,9 @@ public abstract class TransformationUtility<TU, RT> {
      *  <li>Two backward slashes (e.g. relative("myFolder\\file.txt")</li>
      * </ol>
      * The slashes are replaced by OS specific separator char in runtime.
+     * </br>
+     * <strong>The default value is ".". which means the root of the transformed application
+     </strong>
      *
      * @param relativePath from the application root folder
      *  to the file or folder the transformation utility should be performed against
@@ -248,7 +251,7 @@ public abstract class TransformationUtility<TU, RT> {
         if(absoluteFileFromContextAttribute != null) {
             absoluteFile = (File) transformationContext.get(absoluteFileFromContextAttribute);
             if(absoluteFile == null) {
-                String exceptionMessage = String.format("Context attribute %s, which is supposed to define absolute file for transformation utility %s, is null", absoluteFileFromContextAttribute, name);
+                String exceptionMessage = String.format("Context attribute %s, which is supposed to define absolute file for %s, is null", absoluteFileFromContextAttribute, name);
                 TransformationUtilityException exception = new  TransformationUtilityException(exceptionMessage);
                 throw exception;
             }

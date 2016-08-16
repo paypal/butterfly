@@ -9,6 +9,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A transformation operation
+ * The default value for {@link #relative(String)} is {@code null}, which means
+ * it must be set explicitly, unless an absolute path is set via {@link #absolute(String)}
+ * or {@link #absolute(String, String)}
  *
  * @author facarvalho
  */
@@ -28,6 +31,9 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
     private String conditionAttributeName = null;
 
     public TransformationOperation() {
+        // Different than regular Transformation Utilities, the default value here is null, which means
+        // it must be set explicitly by the developer, unless an absolute path is set
+        relative(null);
     }
 
     /**
@@ -92,9 +98,9 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
             resultMessage = execution(transformedAppFolder, transformationContext);
         } catch(Exception e) {
             throw new TransformationOperationException(getName() + " has failed", e);
+        } finally {
+            hasBeenPerformed.set(true);
         }
-
-        hasBeenPerformed.set(true);
 
         // TODO post validation handling
 
@@ -112,7 +118,7 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
     /**
      * Return true only if this operation's pre-req has been met. If this returns
      * false, the operation will NOT be executed, and the whole transformation
-     * might be aborted, depending on {@link #abortTransformationOnFailure}
+     * might be aborted, depending on {@link #abortOnFailure}
      *
      * @param transformedAppFolder
      *
@@ -128,7 +134,7 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
      * Return true only if this operation's post-execution check has succeeded.
      * If this returns false, the operation WILL NOT be rolled back, but a
      * warning will be stated, and the whole transformation might be aborted,
-     * depending on {@link #abortTransformationOnFailure}
+     * depending on {@link #abortOnFailure}
      *
      * @param transformedAppFolder
      *
@@ -143,12 +149,14 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
     /**
      * If set to true, abort the whole transformation if validation or execution fails.
      * If not, just state a warning, aborts the operation execution only.
+     * <strong>Notice that abortion here means interrupting the transformation.
+     * It does not mean rolling back the changes that have might already been done
+     * by this transformation operation by the time it failed<strong/>
      *
      * @param abort
      * @return
      */
-    protected TO abortTransformationOnFailure(boolean abort) {
-        // TODO implement this logic in perform method
+    public final TO abortOnFailure(boolean abort) {
         abortOnFailure = abort;
         return (TO) this;
     }
@@ -161,7 +169,7 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
      * @return true only if this operation aborts the transformation or not in
      * case of an operation failure
      */
-    public boolean abortTransformationOnFailure() {
+    public final boolean abortOnFailure() {
         return abortOnFailure;
     }
 

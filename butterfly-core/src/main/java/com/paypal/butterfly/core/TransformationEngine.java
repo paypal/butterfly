@@ -57,14 +57,19 @@ public class TransformationEngine {
                     String key = (operation.getContextAttributeName() != null ? operation.getContextAttributeName() : operation.getName());
                     transformationContext.put(key, result);
                 } catch (TransformationOperationException e) {
-                    if (operation.abortTransformationOnFailure()) {
+                    if (operation.abortOnFailure()) {
                         logger.error("*** Transformation will be aborted due to failed operation ***");
-                        logger.error("*** Operation: \t" + operation.getDescription());
-                        logger.error("*** Cause: \t" + e.getCause());
+                        logger.error("*** Operation: {} - {}", operation.getName(), operation.getDescription());
+                        logger.error("*** Cause: " + e.getCause());
                         throw new TransformationException("Operation " + operation.getName() + " failed when performing transformation", e);
-                    //} else {
+                    } else {
                         // TODO
                         // State/save/log the exception, and go on with transformation
+
+                        if(logger.isDebugEnabled()) {
+                            logger.debug("Transformation operation " + operation.getName() + " has failed due to the exception below", e);
+                        }
+                        logger.warn("*** NON FATAL FAILURE *** Operation '{}' has failed, but it's not fatal. See debug logs for further details.", operation.getName());
                     }
                 }
                 logger.info("\t" + operationsExecutionOrder + "\t - " + result);
