@@ -9,6 +9,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A transformation operation
+ * The default value for {@link #relative(String)} is {@code null}, which means
+ * it must be set explicitly, unless an absolute path is set via {@link #absolute(String)}
+ * or {@link #absolute(String, String)}
  *
  * @author facarvalho
  */
@@ -28,6 +31,9 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
     private String conditionAttributeName = null;
 
     public TransformationOperation() {
+        // Different than regular Transformation Utilities, the default value here is null, which means
+        // it must be set explicitly by the developer, unless an absolute path is set
+        relative(null);
     }
 
     /**
