@@ -92,9 +92,9 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
             resultMessage = execution(transformedAppFolder, transformationContext);
         } catch(Exception e) {
             throw new TransformationOperationException(getName() + " has failed", e);
+        } finally {
+            hasBeenPerformed.set(true);
         }
-
-        hasBeenPerformed.set(true);
 
         // TODO post validation handling
 
@@ -112,7 +112,7 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
     /**
      * Return true only if this operation's pre-req has been met. If this returns
      * false, the operation will NOT be executed, and the whole transformation
-     * might be aborted, depending on {@link #abortTransformationOnFailure}
+     * might be aborted, depending on {@link #abortOnFailure}
      *
      * @param transformedAppFolder
      *
@@ -128,7 +128,7 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
      * Return true only if this operation's post-execution check has succeeded.
      * If this returns false, the operation WILL NOT be rolled back, but a
      * warning will be stated, and the whole transformation might be aborted,
-     * depending on {@link #abortTransformationOnFailure}
+     * depending on {@link #abortOnFailure}
      *
      * @param transformedAppFolder
      *
@@ -143,12 +143,14 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
     /**
      * If set to true, abort the whole transformation if validation or execution fails.
      * If not, just state a warning, aborts the operation execution only.
+     * <strong>Notice that abortion here means interrupting the transformation.
+     * It does not mean rolling back the changes that have might already been done
+     * by this transformation operation by the time it failed<strong/>
      *
      * @param abort
      * @return
      */
-    protected TO abortTransformationOnFailure(boolean abort) {
-        // TODO implement this logic in perform method
+    public final TO abortOnFailure(boolean abort) {
         abortOnFailure = abort;
         return (TO) this;
     }
@@ -161,7 +163,7 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
      * @return true only if this operation aborts the transformation or not in
      * case of an operation failure
      */
-    public boolean abortTransformationOnFailure() {
+    public final boolean abortOnFailure() {
         return abortOnFailure;
     }
 
