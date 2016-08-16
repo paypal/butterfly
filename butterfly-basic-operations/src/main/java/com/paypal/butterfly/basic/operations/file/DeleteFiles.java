@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * Operation for multiple files deletion
+ * <strong>Important: the term file here refers to both files and folders</strong>
  *
  * @author facarvalho
  */
@@ -22,6 +23,7 @@ public class DeleteFiles extends TransformationOperation<DeleteFiles> {
 
     /**
      * Operation for multiple files deletion
+     * <strong>Important: the term files here refers to both file and folders</strong>
      *
      * @param attributeName name of transformation context attribute that holds
      *                      all files to be deleted
@@ -66,7 +68,7 @@ public class DeleteFiles extends TransformationOperation<DeleteFiles> {
 
         List<File> filesToBeDeleted = (List<File>) transformationContext.get(attributeName);
         for(File fileToBeDeleted : filesToBeDeleted) {
-            FileUtils.deleteQuietly(fileToBeDeleted);
+            FileUtils.forceDelete(fileToBeDeleted);
         }
 
         // TODO improve this message to state relative paths, instead of absolute

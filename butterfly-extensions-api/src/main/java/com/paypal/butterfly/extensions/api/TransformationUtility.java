@@ -59,13 +59,13 @@ public abstract class TransformationUtility<TU, RT> {
 
     // Relative path from the application root folder to the file or
     // folder the transformation utility should perform against
-    // Setting it to a blank String, like below, means it will
+    // Setting it to "", or ".", means it will
     // point to the project root folder
-    private String relativePath = "";
+    private String relativePath = null;
 
     // Absolute path to the file or folder the transformation utility
     // should perform against
-    private File absoluteFile;
+    private File absoluteFile = null;
 
     // Holds the name of the context attribute whose value will be set as
     // the absolute file right before execution. If this is null, the
@@ -209,12 +209,12 @@ public abstract class TransformationUtility<TU, RT> {
     /*
      * Returns a relative path that is in compliance with the current OS in terms of file separator
      */
-    private static String normalizeRelativePathSeparator(String relativePath) {
-        if(relativePath != null) {
-            relativePath = relativePath.replace('/', File.separatorChar).replace('\\', File.separatorChar);
+    private static String normalizeRelativePathSeparator(String _relativePath) {
+        if(_relativePath != null) {
+            _relativePath = _relativePath.replace('/', File.separatorChar).replace('\\', File.separatorChar);
         }
 
-        return relativePath;
+        return _relativePath;
     }
 
     /**
@@ -236,7 +236,7 @@ public abstract class TransformationUtility<TU, RT> {
      * @return an absolute path to the file or folder the transformation
      * utility is suppose to perform against
      */
-    protected final File getAbsoluteFile(File transformedAppFolder, TransformationContext transformationContext) {
+    protected final File getAbsoluteFile(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
         if(absoluteFile == null) {
             setAbsoluteFile(transformedAppFolder, transformationContext);
         }
@@ -244,9 +244,14 @@ public abstract class TransformationUtility<TU, RT> {
         return absoluteFile;
     }
 
-    private void setAbsoluteFile(File transformedAppFolder, TransformationContext transformationContext) {
+    private void setAbsoluteFile(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
         if(absoluteFileFromContextAttribute != null) {
             absoluteFile = (File) transformationContext.get(absoluteFileFromContextAttribute);
+            if(absoluteFile == null) {
+                String exceptionMessage = String.format("Context attribute %s, which is supposed to define absolute file for transformation utility %s, is null", absoluteFileFromContextAttribute, name);
+                TransformationUtilityException exception = new  TransformationUtilityException(exceptionMessage);
+                throw exception;
+            }
             if(additionalRelativePath != null) {
                 absoluteFile = new File(absoluteFile, additionalRelativePath);
                 logger.debug("Setting absolute file for {} from context attribute {}, whose value is {}", name, absoluteFileFromContextAttribute, absoluteFile.getAbsolutePath());
@@ -258,7 +263,12 @@ public abstract class TransformationUtility<TU, RT> {
 
             logger.debug("Relative path for {} has just been reset to {}", name, relativePath);
         } else {
-            absoluteFile = new File(transformedAppFolder, getRelativePath());
+            if (relativePath == null) {
+                String exceptionMessage = String.format("Neither absolute nor relative path has been set for transformation utility %s", name);
+                TransformationUtilityException exception = new  TransformationUtilityException(exceptionMessage);
+                throw exception;
+            }
+            absoluteFile = new File(transformedAppFolder, relativePath);
         }
     }
 
@@ -414,6 +424,10 @@ public abstract class TransformationUtility<TU, RT> {
         this.additionalRelativePath = normalizeRelativePathSeparator(additionalRelativePath);
 
         return (TU) this;
+    }
+
+    final String getAbsoluteFileFromContextAttribute() {
+        return absoluteFileFromContextAttribute;
     }
 
     /**
