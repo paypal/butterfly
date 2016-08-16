@@ -8,6 +8,7 @@ import java.io.File;
 
 /**
  * Operation for single file deletion
+ * <strong>Important: the term file here refers to both file and folder</strong>
  *
  * @author facarvalho
  */
@@ -17,6 +18,7 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
 
     /**
      * Operation for single file deletion
+     * <strong>Important: the term file here refers to both file and folder</strong>
      */
     public DeleteFile() {
     }
@@ -29,9 +31,12 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
     @Override
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         File fileToBeRemoved = getAbsoluteFile(transformedAppFolder, transformationContext);
-        FileUtils.deleteQuietly(fileToBeRemoved);
+        if(!fileToBeRemoved.exists()) {
+            return String.format("File '%s' has not been removed because it does not exist", getRelativePath());
+        }
+        FileUtils.forceDelete(fileToBeRemoved);
 
-        return "File " + getRelativePath() + " has been removed";
+        return String.format("File '%s' has been removed", getRelativePath());
     }
 
 }
