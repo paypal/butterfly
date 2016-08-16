@@ -36,7 +36,7 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
             fileToBeRemoved = getAbsoluteFile(transformedAppFolder, transformationContext);
         } catch (TransformationUtilityException e) {
             // TODO deal with it properly with result type
-            return String.format("No file has been removed because file path has not been resolved", getName());
+            return String.format("No file has been removed because file path has not been resolved");
         }
         if(!fileToBeRemoved.exists()) {
             // TODO deal with it properly with result type
