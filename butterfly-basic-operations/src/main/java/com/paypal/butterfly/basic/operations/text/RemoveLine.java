@@ -185,6 +185,12 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
 
+        if (!fileToBeChanged.exists()) {
+            // TODO take care of this with a result object
+            // Should this be done as pre-validation?
+            return String.format("*** SKIPPED *** Operation '%s' has been skipped because file '%s', where the line removal should happen, does not exist", getName(), getRelativePath());
+        }
+
         File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader reader = null;
         BufferedWriter writer = null;

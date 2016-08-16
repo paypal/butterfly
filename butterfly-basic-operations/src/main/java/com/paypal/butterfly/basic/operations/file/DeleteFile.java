@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.operations.file;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -30,9 +31,16 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
 
     @Override
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        File fileToBeRemoved = getAbsoluteFile(transformedAppFolder, transformationContext);
+        File fileToBeRemoved;
+        try {
+            fileToBeRemoved = getAbsoluteFile(transformedAppFolder, transformationContext);
+        } catch (TransformationUtilityException e) {
+            // TODO deal with it properly with result type
+            return String.format("No file has been removed because file path has not been resolved", getName());
+        }
         if(!fileToBeRemoved.exists()) {
-            return String.format("File '%s' has not been removed because it does not exist", getRelativePath());
+            // TODO deal with it properly with result type
+            return String.format("File '%s' was not removed because it does not exist", getRelativePath());
         }
         FileUtils.forceDelete(fileToBeRemoved);
 
