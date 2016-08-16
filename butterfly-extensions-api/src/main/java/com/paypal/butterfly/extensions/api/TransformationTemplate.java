@@ -1,5 +1,7 @@
 package com.paypal.butterfly.extensions.api;
 
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +52,9 @@ public abstract class TransformationTemplate<TT> {
      */
     protected final String add(TransformationUtility utility) {
         if (utility.getTemplate() != null) {
-            throw new IllegalStateException("Invalid attempt to add an already registered transformation utility to a template");
+            String exceptionMessage = String.format("Invalid attempt to add already registered transformation utility %s to template transformation utility %s", utility.getName(), name);
+            TransformationDefinitionException exception = new  TransformationDefinitionException(exceptionMessage);
+            throw exception;
         }
 
         int order;
@@ -68,6 +72,12 @@ public abstract class TransformationTemplate<TT> {
         }
 
         utility.setTemplate(this, order);
+
+        if (utility.getRelativePath() == null && utility.getAbsoluteFileFromContextAttribute() == null) {
+            String exceptionMessage = String.format("Neither absolute, nor relative path, have been set for transformation utility %s", utility.getName());
+            TransformationDefinitionException exception = new  TransformationDefinitionException(exceptionMessage);
+            throw exception;
+        }
 
         return utility.getName();
     }

@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.operations.file;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -140,7 +141,7 @@ public class CopyFiles extends TransformationOperation<CopyFiles> {
         return String.format("Files '%s' copied to '%s'", filesFrom, getRelativePath(transformedAppFolder, fileTo));
     }
 
-    private String contentCopy(File transformedAppFolder, TransformationContext transformationContext) throws IOException {
+    private String contentCopy(File transformedAppFolder, TransformationContext transformationContext) throws IOException, TransformationUtilityException {
         File filesFrom = getAbsoluteFile(transformedAppFolder, transformationContext);
         File fileTo = getFileTo(transformedAppFolder, transformationContext);
         FileUtils.copyDirectory(filesFrom, fileTo);
