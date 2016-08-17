@@ -1,17 +1,16 @@
 package com.paypal.butterfly.core;
 
+import com.paypal.butterfly.core.exception.InternalException;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
-import com.paypal.butterfly.extensions.api.exception.ButterflyException;
-import com.paypal.butterfly.core.exception.InternalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.Set;
 
@@ -40,7 +39,7 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public void transform(@NotNull File applicationFolder, @NotNull String templateClassName) throws ButterflyException {
+    public void transform(File applicationFolder, String templateClassName) throws ButterflyException {
         transform(applicationFolder, templateClassName, new Configuration());
     }
 
