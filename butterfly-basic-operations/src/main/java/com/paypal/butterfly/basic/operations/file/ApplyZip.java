@@ -6,7 +6,8 @@ import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionExc
 import net.lingala.zip4j.core.ZipFile;
 import org.apache.commons.io.FileUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -86,6 +87,12 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
         } finally {
             if (fileOutputStream != null) fileOutputStream.close();
         }
+    }
+
+    @Override
+    public ApplyZip clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
     }
 
 }

@@ -279,4 +279,10 @@ public class InsertText extends TransformationOperation<InsertText> {
         return String.format("Text has been inserted from %s to %s at the end of the file", textFileUrl, getRelativePath());
     }
 
+    @Override
+    public InsertText clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }

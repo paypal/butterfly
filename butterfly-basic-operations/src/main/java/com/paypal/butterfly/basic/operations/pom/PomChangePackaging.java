@@ -73,5 +73,10 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
         return String.format("Packaging for POM file %s has been changed to %s",getRelativePath(), packagingType);
     }
 
+    @Override
+    public PomChangePackaging clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
 
 }

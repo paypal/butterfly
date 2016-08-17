@@ -268,4 +268,10 @@ public class InsertLine extends TransformationOperation<InsertLine> {
         return String.format("A new line has been inserted into %s at the end of the file", getRelativePath());
     }
 
+    @Override
+    public InsertLine clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }

@@ -95,4 +95,10 @@ public class CopyFile extends TransformationOperation<CopyFile> {
         return String.format("File '%s' was copied to '%s'", getRelativePath(), getRelativePath(transformedAppFolder, fileTo));
     }
 
+    @Override
+    public CopyFile clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }

@@ -47,4 +47,10 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
         return String.format("File '%s' has been removed", getRelativePath());
     }
 
+    @Override
+    public DeleteFile clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }

@@ -79,4 +79,10 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
         return result;
     }
 
+    @Override
+    public RemoveProperty clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }

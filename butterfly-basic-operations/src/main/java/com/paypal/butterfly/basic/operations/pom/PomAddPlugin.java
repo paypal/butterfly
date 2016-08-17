@@ -131,5 +131,11 @@ public class PomAddPlugin extends TransformationOperation<PomAddPlugin> {
         return String.format("Plugin %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":" + version), getRelativePath());
     }
 
+    @Override
+    public PomAddPlugin clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }
 
