@@ -48,9 +48,9 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
     }
 
     @Override
-    public DeleteFile clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public DeleteFile clone() throws CloneNotSupportedException {
+        DeleteFile clone = (DeleteFile) super.clone();
+        return clone;
     }
 
 }
