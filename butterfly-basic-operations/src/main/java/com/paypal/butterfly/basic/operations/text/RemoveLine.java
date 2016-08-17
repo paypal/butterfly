@@ -269,4 +269,14 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
         return String.format("File %s has had %d line(s) removed based on regular expression '%s'", getRelativePath(), n, regex);
     }
 
+    @Override
+    public RemoveLine clone() throws CloneNotSupportedException {
+        RemoveLine clone = (RemoveLine) super.clone();
+        clone.regex = this.regex;
+        clone.firstOnly = this.firstOnly;
+        clone.lineNumber = this.lineNumber;
+
+        return clone;
+    }
+
 }

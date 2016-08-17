@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author facarvalho
  */
-public abstract class TransformationTemplate<TT> {
+public abstract class TransformationTemplate<TT> implements TransformationUtilityParent {
 
     private List<TransformationUtility> utilityList = new ArrayList<TransformationUtility>();
 
@@ -51,7 +51,7 @@ public abstract class TransformationTemplate<TT> {
      * @return the utility name
      */
     protected final String add(TransformationUtility utility) {
-        if (utility.getTemplate() != null) {
+        if (utility.getParent() != null) {
             String exceptionMessage = String.format("Invalid attempt to add already registered transformation utility %s to template transformation utility %s", utility.getName(), name);
             TransformationDefinitionException exception = new  TransformationDefinitionException(exceptionMessage);
             throw exception;
@@ -71,7 +71,7 @@ public abstract class TransformationTemplate<TT> {
             }
         }
 
-        utility.setTemplate(this, order);
+        utility.setParent(this, order);
 
         if (utility.getRelativePath() == null && utility.getAbsoluteFileFromContextAttribute() == null) {
             String exceptionMessage = String.format("Neither absolute, nor relative path, have been set for transformation utility %s", utility.getName());
@@ -120,6 +120,7 @@ public abstract class TransformationTemplate<TT> {
         return Collections.unmodifiableList(utilityList);
     }
 
+    @Override
     public final String getName() {
         return name;
     }

@@ -84,4 +84,10 @@ public class DeleteFiles extends TransformationOperation<DeleteFiles> {
         return String.format("Deleted files: %s", filesToBeDeleted.toString());
     }
 
+    @Override
+    public DeleteFiles clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }

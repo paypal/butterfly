@@ -78,5 +78,11 @@ public class PomRemoveProperty extends TransformationOperation<PomRemoveProperty
         return resultMessage;
     }
 
+    @Override
+    public PomRemoveProperty clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }
 

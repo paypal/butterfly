@@ -33,17 +33,24 @@ import java.util.Map;
  * a public no arguments default constructor, and also public setters and getters for all
  * their properties. In addition to that, every setter must return the
  * TransformationUtility instance.
+ * </br>
+ * Also, every TransformationUtility subclass must override {@link #clone()} and every utility
+ * specific property defined in the subclass must be copied from the original
+ * object to the clone object. Properties inherited from this class and its super classes
+ * MUST NOT be copied from original object to cloned object, since that is all already taken
+ * care of properly by the framework. Notice that name, parent and path (absolute and relative)
+ * are NECESSARILY NOT assigned to the clone object
  *
  * @author facarvalho
  */
-public abstract class TransformationUtility<TU, RT> {
+public abstract class TransformationUtility<TU, RT> implements Cloneable {
 
     private static final Logger logger = LoggerFactory.getLogger(TransformationUtility.class);
 
     private static final String UTILITY_NAME_SYNTAX = "%s-%d-%s";
 
-    // The execution order for this utility on its template
-    // -1 means it has not been registered to any template yet
+    // The execution order for this utility on its parent
+    // -1 means it has not been registered to any parent yet
     // 1 means first
     private int order = -1;
 
@@ -51,8 +58,8 @@ public abstract class TransformationUtility<TU, RT> {
         return order;
     }
 
-    // The template this utility instance has been registered to
-    private TransformationTemplate template;
+    // The parent this utility instance has been registered to
+    private TransformationUtilityParent parent;
 
     // This transformation utility instance name
     private String name;
@@ -104,7 +111,7 @@ public abstract class TransformationUtility<TU, RT> {
     /**
      * Set this transformation utility instance name.
      * If not set, a default name will be assigned at the
-     * time it is added to a template.
+     * time it is added to a parent.
      *
      * @param name
      * @return this transformation utility
@@ -145,31 +152,33 @@ public abstract class TransformationUtility<TU, RT> {
     }
 
     /**
-     * Register this utility to a template, and also assign it a name
-     * based on the template name and order of execution
+     * Register this utility to its parent, and also assign it a name
+     * based on the parent name and order of execution.
+     * </br>
+     * Usually the parent is a {@link TransformationTemplate}
      *
-     * @param template
+     * @param parent
      * @param order
      * @return this transformation utility
      */
-    final TU setTemplate(TransformationTemplate template, int order) {
-        this.template = template;
+    public final TU setParent(TransformationUtilityParent parent, int order) {
+        this.parent = parent;
         this.order = order;
 
         if(name == null) {
-            setName(String.format(UTILITY_NAME_SYNTAX, template.getName(), order, ((TU) this).getClass().getSimpleName()));
+            setName(String.format(UTILITY_NAME_SYNTAX, parent.getName(), order, ((TU) this).getClass().getSimpleName()));
         }
 
         return (TU) this;
     }
 
     /**
-     * Returns the transformation template this utility instance belongs to
+     * Returns the transformation utility parent
      *
-     * @return the transformation template this utilityn instance belongs to
+     * @return  the transformation utility parent
      */
-    public TransformationTemplate getTemplate() {
-        return template;
+    public TransformationUtilityParent getParent() {
+        return parent;
     }
 
     /**
@@ -482,6 +491,27 @@ public abstract class TransformationUtility<TU, RT> {
     @Override
     public String toString() {
         return getDescription();
+    }
+
+    @Override
+    public TransformationUtility<TU, RT> clone() throws CloneNotSupportedException {
+        TransformationUtility<TU, RT> clone = (TransformationUtility<TU, RT>) super.clone();
+
+        // Properties we do NOT want to be in the clone (they are being initialized)
+        clone.order = -1;
+        clone.parent = null;
+        clone.name = null;
+        clone.relativePath = "";
+        clone.absoluteFile = null;
+        clone.absoluteFileFromContextAttribute = null;
+        clone.additionalRelativePath = null;
+        clone.contextAttributeName = null;
+
+        // Properties we want to be in the clone (they are being copied from original object)
+        clone.latePropertiesAttributes.putAll(this.latePropertiesAttributes);
+        clone.latePropertiesSetters.putAll(this.latePropertiesSetters);
+
+        return clone;
     }
 
 }

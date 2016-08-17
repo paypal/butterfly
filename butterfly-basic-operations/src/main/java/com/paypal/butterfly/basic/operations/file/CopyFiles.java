@@ -160,4 +160,10 @@ public class CopyFiles extends TransformationOperation<CopyFiles> {
         return fileTo;
     }
 
+    @Override
+    public CopyFiles clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }

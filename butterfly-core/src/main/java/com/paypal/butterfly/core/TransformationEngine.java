@@ -1,12 +1,13 @@
 package com.paypal.butterfly.core;
 
+import com.paypal.butterfly.core.exception.InternalException;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
-import com.paypal.butterfly.core.exception.InternalException;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import com.paypal.butterfly.extensions.api.utilities.MultipleOperations;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.exception.TransformationException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -19,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The transformation engine in charge of
@@ -42,56 +45,97 @@ public class TransformationEngine {
 
         TransformationTemplate template = transformation.getTemplate();
         logger.info("Beginning transformation (" + template.getOperationsCount() + " operations to be performed)");
-        int operationsExecutionOrder = 1;
+        AtomicInteger operationsExecutionOrder = new AtomicInteger(1);
 
         TransformationContext transformationContext = new TransformationContextImpl();
 
-        TransformationUtility utility;
         TransformationOperation operation;
+        MultipleOperations multipleOperations;
+        TransformationUtility utility;
         for(Object transformationUtilityObj: template.getTransformationUtilitiesList()) {
             if(transformationUtilityObj instanceof TransformationOperation) {
                 operation = (TransformationOperation) transformationUtilityObj;
-                String result = null;
-                try {
-                    result = operation.perform(transformedAppFolder, transformationContext);
-                    String key = (operation.getContextAttributeName() != null ? operation.getContextAttributeName() : operation.getName());
-                    transformationContext.put(key, result);
-                } catch (TransformationOperationException e) {
-                    if (operation.abortOnFailure()) {
-                        logger.error("*** Transformation will be aborted due to failed operation ***");
-                        logger.error("*** Operation: {} - {}", operation.getName(), operation.getDescription());
-                        logger.error("*** Cause: " + e.getCause());
-                        throw new TransformationException("Operation " + operation.getName() + " failed when performing transformation", e);
-                    } else {
-                        // TODO
-                        // State/save/log the exception, and go on with transformation
-
-                        if(logger.isDebugEnabled()) {
-                            logger.debug("Transformation operation " + operation.getName() + " has failed due to the exception below", e);
-                        }
-                        logger.warn("*** NON FATAL FAILURE *** Operation '{}' has failed, but it's not fatal. See debug logs for further details.", operation.getName());
-                    }
-                }
-                logger.info("\t" + operationsExecutionOrder + "\t - " + result);
-                operationsExecutionOrder++;
+                performOperation(operation, transformedAppFolder, transformationContext, operationsExecutionOrder, null);
+            } else if(transformationUtilityObj instanceof MultipleOperations) {
+                multipleOperations = (MultipleOperations) transformationUtilityObj;
+                performMultipleOperations(multipleOperations, transformedAppFolder, transformationContext, operationsExecutionOrder);
             } else {
                 utility = (TransformationUtility) transformationUtilityObj;
-                try {
-                    Object result = utility.perform(transformedAppFolder, transformationContext);
-                    String key = (utility.getContextAttributeName() != null ? utility.getContextAttributeName() : utility.getName());
-                    transformationContext.put(key, result);
-                    logger.debug("\t-\t - {} ({})", utility, utility.getName());
-                } catch (TransformationUtilityException e) {
-                    logger.error("*** Transformation will be aborted due to failed utility ***");
-                    logger.error("*** Utility: \t" + utility.getDescription());
-                    logger.error("*** Cause: \t" + e.getCause());
-                    throw new TransformationException("Utility " + utility.getName() + " failed when being executed", e);
-                }
+                performUtility(utility, transformedAppFolder, transformationContext);
             }
         }
         logger.info("Transformation has been completed");
     }
 
+    private void performOperation(TransformationOperation operation, File transformedAppFolder, TransformationContext transformationContext, AtomicInteger executionOrder, Integer outterOrder) throws TransformationException {
+        String result = null;
+        try {
+            result = operation.perform(transformedAppFolder, transformationContext);
+            String key = (operation.getContextAttributeName() != null ? operation.getContextAttributeName() : operation.getName());
+            transformationContext.put(key, result);
+        } catch (TransformationOperationException e) {
+            if (operation.abortOnFailure()) {
+                logger.error("*** Transformation will be aborted due to failed operation ***");
+                logger.error("*** Operation: {} - {}", operation.getName(), operation.getDescription());
+                logger.error("*** Cause: " + e.getCause());
+
+                throw new TransformationException("Operation " + operation.getName() + " failed when performing transformation", e);
+            } else {
+                // TODO
+                // State/save/log the exception, and go on with transformation
+
+                if(logger.isDebugEnabled()) {
+                    logger.debug("Transformation operation " + operation.getName() + " has failed due to the exception below", e);
+                }
+                logger.warn("*** NON FATAL FAILURE *** Operation '{}' has failed, but it's not fatal. See debug logs for further details.", operation.getName());
+            }
+        }
+
+        if(outterOrder != null) {
+            String order = String.format("%d.%d", outterOrder, executionOrder.getAndIncrement());
+            logger.debug("\t{}\t - {}", order, result);
+        } else {
+            String order = String.valueOf(executionOrder.getAndIncrement());
+            logger.info("\t{}\t - {}", order, result);
+        }
+    }
+
+    private void performMultipleOperations(MultipleOperations multipleOperations, File transformedAppFolder, TransformationContext transformationContext, AtomicInteger outterOpExecOrder) throws TransformationException {
+        List<TransformationOperation> operations;
+        try {
+            operations = multipleOperations.perform(transformedAppFolder, transformationContext);
+        } catch (TransformationUtilityException e) {
+            logger.error("*** Transformation will be aborted due to failed utility ***");
+            logger.error("*** Utility: \t{}", multipleOperations.getDescription());
+            logger.error("*** Cause: \t" + e.getCause());
+
+            throw new TransformationException("Utility " + multipleOperations.getName() + " failed when being executed", e);
+        }
+
+        logger.info("\t{}\t - Executing {} over {} files", outterOpExecOrder.intValue(), multipleOperations.getTemplateOperation().getName(), operations.size());
+
+        AtomicInteger innerOpExecOrder = new AtomicInteger(1);
+        for(TransformationOperation operation : operations) {
+            performOperation(operation, transformedAppFolder, transformationContext, innerOpExecOrder, outterOpExecOrder.intValue());
+        }
+
+        outterOpExecOrder.incrementAndGet();
+    }
+
+    private void performUtility(TransformationUtility utility, File transformedAppFolder, TransformationContext transformationContext) throws TransformationException {
+        try {
+            Object result = utility.perform(transformedAppFolder, transformationContext);
+            String key = (utility.getContextAttributeName() != null ? utility.getContextAttributeName() : utility.getName());
+            transformationContext.put(key, result);
+            logger.debug("\t-\t - {} ({})", utility, utility.getName());
+        } catch (TransformationUtilityException e) {
+            logger.error("*** Transformation will be aborted due to failed utility ***");
+            logger.error("*** Utility: \t{}", utility.getDescription());
+            logger.error("*** Cause: \t" + e.getCause());
+
+            throw new TransformationException("Utility " + utility.getName() + " failed when being executed", e);
+        }
+    }
 
     private File prepareOutputFolder(Transformation transformation) {
         logger.debug("Preparing output folder");

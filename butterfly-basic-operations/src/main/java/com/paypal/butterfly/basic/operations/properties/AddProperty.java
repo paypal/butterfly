@@ -82,4 +82,10 @@ public class AddProperty extends TransformationOperation<AddProperty> {
         return String.format("Property '%s' set to '%s' at '%s'", propertyName, propertyValue, getRelativePath());
     }
 
+    @Override
+    public AddProperty clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }

@@ -53,4 +53,10 @@ public class AddLine extends TransformationOperation<AddLine> {
         return "A new line has been added to file " + getRelativePath();
     }
 
+    @Override
+    public AddLine clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }

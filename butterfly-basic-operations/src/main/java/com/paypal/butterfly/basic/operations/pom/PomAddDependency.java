@@ -151,4 +151,10 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
         return String.format("Dependency %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":"+ version), getRelativePath());
     }
 
+    @Override
+    public PomAddDependency clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }

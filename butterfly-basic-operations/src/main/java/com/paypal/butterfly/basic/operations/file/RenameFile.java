@@ -55,4 +55,10 @@ public class RenameFile extends TransformationOperation<RenameFile> {
         return resultMessage;
     }
 
+    @Override
+    public RenameFile clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }

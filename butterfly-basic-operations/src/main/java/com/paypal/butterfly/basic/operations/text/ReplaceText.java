@@ -171,4 +171,10 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
         return String.format("File %s has had %d line(s) where text replacement was applied based on regular expression '%s'", getRelativePath(), n, regex);
     }
 
+    @Override
+    public ReplaceText clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }

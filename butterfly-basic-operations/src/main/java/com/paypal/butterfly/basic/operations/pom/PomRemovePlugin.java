@@ -94,5 +94,11 @@ public class PomRemovePlugin extends TransformationOperation<PomRemovePlugin> {
         return String.format("Plugin %s:%s has been removed from POM file %s", groupId, artifactId, getRelativePath());
     }
 
+    @Override
+    public PomRemovePlugin clone() {
+        // TODO
+        throw new RuntimeException("Clone operation not supported yet");
+    }
+
 }
 
