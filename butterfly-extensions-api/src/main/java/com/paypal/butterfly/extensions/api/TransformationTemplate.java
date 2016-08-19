@@ -1,6 +1,8 @@
 package com.paypal.butterfly.extensions.api;
 
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
+import com.paypal.butterfly.extensions.api.utilities.Log;
+import org.slf4j.event.Level;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -98,6 +100,22 @@ public abstract class TransformationTemplate<TT> implements TransformationUtilit
     protected final String add(TransformationUtility utility, String utilityName) {
         utility.setName(utilityName);
         return add(utility);
+    }
+
+    protected final void log(String logMessage) {
+        add(new Log().setLogMessage(logMessage));
+    }
+
+    protected final void log(Level logLevel, String logMessage) {
+        add(new Log().setLogLevel(logLevel).setLogMessage(logMessage));
+    }
+
+    protected final void log(String logMessage, String... attributeNames) {
+        add(new Log().setLogMessage(logMessage).setAttributeNames(attributeNames));
+    }
+
+    protected final void log(Level logLevel, String logMessage, String... attributeNames) {
+        add(new Log().setLogLevel(logLevel).setLogMessage(logMessage).setAttributeNames(attributeNames));
     }
 
     /**

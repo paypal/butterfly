@@ -83,7 +83,7 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
             zipFile.extractAll(zipFileDescriptor.getParent());
             FileUtils.deleteQuietly(zipFileDescriptor);
 
-            return String.format("Zip file %s has been downloaded and decompressed into %s", zipFileUrl, getRelativePath(transformedAppFolder, zipFileDescriptor.getParentFile()));
+            return String.format("Zip file '%s' has been downloaded and decompressed into %s", zipFileUrl, getRelativePath(transformedAppFolder, zipFileDescriptor.getParentFile()));
         } finally {
             if (fileOutputStream != null) fileOutputStream.close();
         }
