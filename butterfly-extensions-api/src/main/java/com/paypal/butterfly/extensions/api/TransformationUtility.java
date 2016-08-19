@@ -294,7 +294,9 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
 
     /**
      * Returns a relative path from {@code baselineFile} to {@code targetFile}.
-     * The file separator used is specific to the current OS
+     * The file separator used is specific to the current OS. If the baseline file
+     * is not entirely within the path to target file, then the target file
+     * absolute path is returned
      *
      * @param baselineFile the file whose returned relative path should start from.
      *                     It must be aa direct or indirect parent file to {@code targetFile}
@@ -303,10 +305,15 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
      * @return a relative path from {@code baselineFile} to {@code targetFile}
      */
     public static String getRelativePath(File baselineFile, File targetFile) {
-        int beginning = baselineFile.getAbsolutePath().length();
-        int end = targetFile.getAbsolutePath().length();
+        String baselineAbsolutePath = baselineFile.getAbsolutePath();
+        String targetAbsolutePath = targetFile.getAbsolutePath();
+        if (!targetAbsolutePath.startsWith(baselineAbsolutePath)) {
+            return targetAbsolutePath;
+        }
+        int beginning = baselineAbsolutePath.length();
+        int end = targetAbsolutePath.length();
 
-        return targetFile.getAbsolutePath().substring(beginning, end);
+        return targetAbsolutePath.substring(beginning, end);
     }
 
     /**
