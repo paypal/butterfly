@@ -4,8 +4,6 @@ import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 import org.slf4j.event.Level;
 
 import java.io.File;
