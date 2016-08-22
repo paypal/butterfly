@@ -9,7 +9,8 @@ import java.io.File;
 import java.util.*;
 
 /**
- * Utility to perform transformation operations against multiple files
+ * Utility to perform transformation operations against
+ * multiple files specified as a list, held as a transformation context attribute
  * </br>
  * <strong>Important:</strong> any path set to this operation, either relative
  * or absolute, will be ignored, and set later at transformation time based on
@@ -36,13 +37,19 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
     private List<TransformationOperation> operations;
 
     /**
-     * Utility to perform one transformation operation against a list of files
+     * Utility to perform transformation operations against
+     * multiple files specified as a list, held as a transformation context attribute
+     * </br>
+     * <strong>Important:</strong> any path set to this operation, either relative
+     * or absolute, will be ignored, and set later at transformation time based on
+     * the dynamically set multiple files
      */
     public MultipleOperations() {
     }
 
     /**
-     * Utility to perform one transformation operation against a list of files
+     * Utility to perform transformation operations against
+     * multiple files specified as a list, held as a transformation context attribute
      * </br>
      * <strong>Important:</strong> any path set to this operation, either relative
      * or absolute, will be ignored, and set later at transformation time based on
@@ -119,7 +126,9 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
 
         for(String attribute: attributes) {
             files = (List<File>) transformationContext.get(attribute);
-            allFiles.addAll(files);
+            if (files != null) {
+                allFiles.addAll(files);
+            }
         }
 
         operations = new ArrayList<TransformationOperation>();
