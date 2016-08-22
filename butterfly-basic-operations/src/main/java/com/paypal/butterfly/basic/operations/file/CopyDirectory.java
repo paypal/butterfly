@@ -1,13 +1,9 @@
 package com.paypal.butterfly.basic.operations.file;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.TransformationOperation;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Operation to copy a directory and its content from one location to another.
@@ -25,17 +21,9 @@ import java.util.List;
  *
  * @author facarvalho
  */
-public class CopyDirectory extends TransformationOperation<CopyDirectory> {
+public class CopyDirectory extends AbstractCopy<CopyDirectory> {
 
-    private static final String DESCRIPTION = "Copy files set by transformation context attribute %s to %s";
-
-    // Relative location where to copy the file to
-    private String toRelative = null;
-
-    // Name of the transformation context attribute that holds
-    // the absolute location where to copy the file to
-    // Only one should be set between this and {@code toRelative}
-    private String toAbsoluteAttribute = null;
+    private static final String DESCRIPTION = "Copy a directory and its content from %s to %s";
 
     /**
      * Operation to copy a directory and its content from one location to another.
@@ -48,57 +36,7 @@ public class CopyDirectory extends TransformationOperation<CopyDirectory> {
      * @author facarvalho
      */
     public CopyDirectory() {
-    }
-
-    /**
-     * Set relative location where to copy the file to.
-     * </br>
-     * If the relative location is NOT known during transformation definition time,
-     * then don't set it (leaving as {@code null) and use {@link #setToAbsolute(String)}
-     * based on a transformation context attribute set by a
-     * {@link com.paypal.butterfly.basic.utilities.file.LocateFile}
-     * transformation utility.
-     * </br>
-     * By setting this relative location, the absolute location attribute name is automatically set to {@code null}
-     *
-     * @param toRelative relative location where to copy the file to
-     */
-    public CopyDirectory setToRelative(String toRelative) {
-        this.toRelative = toRelative;
-        this.toAbsoluteAttribute = null;
-        return this;
-    }
-
-    /**
-     * The name of the transformation context attribute that holds
-     * the absolute location where to copy the file to.
-     * </br>
-     * If the relative location is known during transformation definition time,
-     * then don't use this setter, use {@link #setToRelative(String)} instead.
-     * </br>
-     * By setting this attribute name, the relative location is automatically set to {@code null}
-     *
-     * @param attributeName name of the transformation context attribute that holds
-     *                      the absolute location where to copy the file to
-     * @return this transformation operation instance
-     */
-    public CopyDirectory setToAbsolute(String attributeName) {
-        this.toAbsoluteAttribute = attributeName;
-        this.toRelative = null;
-        return this;
-    }
-
-    public String getToRelative() {
-        return toRelative;
-    }
-
-    public String getToAbsoluteAttribute() {
-        return toAbsoluteAttribute;
-    }
-
-    @Override
-    public String getDescription() {
-        return String.format(DESCRIPTION, getRelativePath(), (toRelative != null ? toRelative : "the location defined by transformation context attribute " + toAbsoluteAttribute));
+        super(DESCRIPTION);
     }
 
     @Override
