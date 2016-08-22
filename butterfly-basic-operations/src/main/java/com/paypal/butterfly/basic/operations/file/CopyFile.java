@@ -7,7 +7,15 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.File;
 
 /**
- * Operation to copy a file
+ * Operation to copy a file. The relative or absolute file is the
+ * "from" file, while the "to" location is specified via {@link #setToRelative(String)}
+ * or {@link #setToAbsoluteAttribute(String)}
+ * </br>
+ * <strong>Note:<strong/> if you want to copy a set of specific files from one
+ * location to another, then use a multiple transformation operation
+ * (see {@code TransformationTemplate.addMultiple()}) with {@link CopyFile}. Now, if
+ * you want to copy a directory and its content from one location to another, then
+ * use {@link CopyDirectory} instead.
  *
  * @author facarvalho
  */
@@ -24,7 +32,9 @@ public class CopyFile extends TransformationOperation<CopyFile> {
     private String toAbsoluteAttribute = null;
 
     /**
-     * Operation to copy a file
+     * Operation to copy a file. The relative or absolute file is the
+     * "from" file, while the "to" location is specified via {@link #setToRelative(String)}
+     * or {@link #setToAbsoluteAttribute(String)}
      */
     public CopyFile() {
     }
