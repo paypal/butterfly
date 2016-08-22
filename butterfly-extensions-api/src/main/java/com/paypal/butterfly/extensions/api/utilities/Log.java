@@ -12,23 +12,18 @@ import java.io.File;
  * Utility to provide logging statements during transformation time.
  * Since all it does is logging, it returns as result of execution
  * the log message
+ * If no log level is defined, then it will be set to INFO, except
+ * when there is only one attribute and it is null. In this case
+ * it will be set to WARNING
  *
  * @author facarvalho
  */
 public class Log extends TransformationUtility<Log, String> {
 
-    // TODO Add to Tasks:
-    // - create a log method in TransformationTemplate that adds a Log TU
-    // - add a flag to TU that says if its result should be saved as transformation
-    //   context attribute or not. For example, a TU like Log would turn that OFF
-    //   as default, since very likely nobody cares about saving log statements.
-    //   By default, it should be ON TU, and it must always be ON for TO, since that
-    //   is the way to save their results
-
     private static Logger logger = LoggerFactory.getLogger(TransformationUtility.class);
 
     // Log level
-    private Level logLevel = Level.INFO;
+    private Level logLevel = null;
 
     // Log message
     private String logMessage;
@@ -89,23 +84,30 @@ public class Log extends TransformationUtility<Log, String> {
     protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
         Object[] attributes = getAttributes(transformedAppFolder, transformationContext);
 
-        switch (logLevel) {
-            case ERROR:
-                logger.error(logMessage, attributes);
-                break;
-            case WARN:
-                logger.warn(logMessage, attributes);
-                break;
-            case TRACE:
-                logger.trace(logMessage, attributes);
-                break;
-            case DEBUG:
-                logger.debug(logMessage, attributes);
-                break;
-            case INFO:
-            default:
-                logger.info(logMessage, attributes);
-                break;
+        if (logLevel == null && attributes.length == 1 && attributes[0] == null) {
+            logger.warn(logMessage, attributes);
+        } else {
+            if (logLevel == null) {
+                logLevel = Level.INFO;
+            }
+            switch (logLevel) {
+                case ERROR:
+                    logger.error(logMessage, attributes);
+                    break;
+                case WARN:
+                    logger.warn(logMessage, attributes);
+                    break;
+                case TRACE:
+                    logger.trace(logMessage, attributes);
+                    break;
+                case DEBUG:
+                    logger.debug(logMessage, attributes);
+                    break;
+                case INFO:
+                default:
+                    logger.info(logMessage, attributes);
+                    break;
+            }
         }
 
         return getName();
