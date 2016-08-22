@@ -31,8 +31,8 @@ public class Configuration {
      * @param zipOutput
      */
     public Configuration(File outputFolder, boolean zipOutput) {
-        this.outputFolder = outputFolder;
-        this.zipOutput = zipOutput;
+        setOutputFolder(outputFolder);
+        setZipOutput(zipOutput);
     }
 
     /**
@@ -48,6 +48,9 @@ public class Configuration {
      *                     supposed to be placed
      */
     public void setOutputFolder(File outputFolder) {
+        if(outputFolder != null && (!outputFolder.exists() || !outputFolder.isDirectory())) {
+            throw new IllegalArgumentException(String.format("Invalid application folder %s",outputFolder));
+        }
         this.outputFolder = outputFolder;
     }
 

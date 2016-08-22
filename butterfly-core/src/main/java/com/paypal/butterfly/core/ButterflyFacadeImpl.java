@@ -47,10 +47,6 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     public void transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException {
         logger.debug("Transformation configuration: {}", configuration);
 
-        if(!applicationFolder.exists() || applicationFolder.isFile()) {
-            throw new IllegalArgumentException("Invalid application folder (" + applicationFolder.getAbsolutePath() + ")");
-        }
-
         Application application = new Application(applicationFolder);
         TransformationTemplate template = getTemplate(templateClassName);
         Transformation transformation = new Transformation(application, template, configuration);
@@ -65,7 +61,7 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     private TransformationTemplate getTemplate(String templateClassName) {
         try {
             Class<TransformationTemplate> templateClass = (Class<TransformationTemplate>) Class.forName(templateClassName);
-            TransformationTemplate template = (TransformationTemplate) templateClass.newInstance();
+            TransformationTemplate template = templateClass.newInstance();
 
             return template;
         } catch (ClassNotFoundException e) {
