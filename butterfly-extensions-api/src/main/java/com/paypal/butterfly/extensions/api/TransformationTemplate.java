@@ -2,6 +2,7 @@ package com.paypal.butterfly.extensions.api;
 
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.utilities.Log;
+import com.paypal.butterfly.extensions.api.utilities.MultipleOperations;
 import org.slf4j.event.Level;
 
 import java.util.ArrayList;
@@ -100,6 +101,21 @@ public abstract class TransformationTemplate<TT> implements TransformationUtilit
     protected final String add(TransformationUtility utility, String utilityName) {
         utility.setName(utilityName);
         return add(utility);
+    }
+
+    /**
+     * Adds a special transformation utility to perform transformation operations against
+     * multiple files specified as a list, held as a transformation context attribute
+     * </br>
+     *
+     * @param templateOperation a template of transformation operation to be performed
+     *                          against all specified files
+     * @param attributes one or more transformation context attributes that hold list
+     *                   of Files which the transformation operations should perform
+     *                   against
+     */
+    protected final String addMultiple(TransformationOperation templateOperation, String... attributes) {
+        return add(new MultipleOperations(templateOperation, attributes));
     }
 
     protected final void log(String logMessage) {
