@@ -100,6 +100,9 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
     // must be the setter methods
     private Map<String, Method> latePropertiesSetters = new HashMap<String, Method>();
 
+    // Abort the whole transformation if this operation fails
+    private boolean abortOnFailure = false;
+
     /**
      * The public default constructor should always be available by any transformation
      * utility because in many cases all of its properties will be set during
@@ -261,6 +264,7 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
             absoluteFile = (File) transformationContext.get(absoluteFileFromContextAttribute);
             if(absoluteFile == null) {
                 String exceptionMessage = String.format("Context attribute %s, which is supposed to define absolute file for %s, is null", absoluteFileFromContextAttribute, name);
+                // FIXME a better exception is necessary here for cases when the absolute path transformation context attribute value is null
                 TransformationUtilityException exception = new  TransformationUtilityException(exceptionMessage);
                 throw exception;
             }
@@ -483,6 +487,33 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
     }
 
     /**
+     * If set to true, abort the whole transformation if validation or execution fails.
+     * If not, just state a warning, aborts the operation execution only.
+     * <strong>Notice that abortion here means interrupting the transformation.
+     * It does not mean rolling back the changes that have might already been done
+     * by this transformation operation by the time it failed<strong/>
+     *
+     * @param abort
+     * @return
+     */
+    public final TU abortOnFailure(boolean abort) {
+        abortOnFailure = abort;
+        return (TU) this;
+    }
+
+    /**
+     * Returns whether this operation aborts the transformation or not in
+     * case of an operation failure. Notice that this method does NOT
+     * change the state this object in any ways, it is just a getter.
+     *
+     * @return true only if this operation aborts the transformation or not in
+     * case of an operation failure
+     */
+    public final boolean abortOnFailure() {
+        return abortOnFailure;
+    }
+
+    /**
      * The implementation of this transformation utility.
      * The returned object is the result of the execution and is always
      * automatically saved in the transformation context as a new
@@ -517,6 +548,7 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
         // Properties we want to be in the clone (they are being copied from original object)
         clone.latePropertiesAttributes.putAll(this.latePropertiesAttributes);
         clone.latePropertiesSetters.putAll(this.latePropertiesSetters);
+        clone.abortOnFailure = this.abortOnFailure;
 
         return clone;
     }

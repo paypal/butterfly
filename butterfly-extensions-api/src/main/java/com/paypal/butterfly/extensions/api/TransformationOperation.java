@@ -29,9 +29,6 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
     // be executed ONLY ONCE
     private AtomicBoolean hasBeenPerformed = new AtomicBoolean(false);
 
-    // Abort the whole transformation if this operation fails
-    private boolean abortOnFailure = true;
-
     // Optional condition to let this operation be executed
     // This is the name of a transformation context attribute
     // whose value is a boolean
@@ -153,33 +150,6 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
         return true;
     }
 
-    /**
-     * If set to true, abort the whole transformation if validation or execution fails.
-     * If not, just state a warning, aborts the operation execution only.
-     * <strong>Notice that abortion here means interrupting the transformation.
-     * It does not mean rolling back the changes that have might already been done
-     * by this transformation operation by the time it failed<strong/>
-     *
-     * @param abort
-     * @return
-     */
-    public final TO abortOnFailure(boolean abort) {
-        abortOnFailure = abort;
-        return (TO) this;
-    }
-
-    /**
-     * Returns whether this operation aborts the transformation or not in
-     * case of an operation failure. Notice that this method does NOT
-     * change the state this object in any ways, it is just a getter.
-     *
-     * @return true only if this operation aborts the transformation or not in
-     * case of an operation failure
-     */
-    public final boolean abortOnFailure() {
-        return abortOnFailure;
-    }
-
     public final synchronized TO executeIf(String conditionAttributeName) {
         this.conditionAttributeName = conditionAttributeName;
         return (TO) this;
@@ -208,7 +178,6 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
         clone.hasBeenPerformed = new AtomicBoolean(false);
 
         // Properties we want to be in the clone (they are being copied from original object)
-        clone.abortOnFailure = this.abortOnFailure;
         clone.conditionAttributeName = this.conditionAttributeName;
 
         return clone;
