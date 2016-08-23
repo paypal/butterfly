@@ -38,6 +38,8 @@ public class TransformationEngine {
 
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIMESTAMP_SUFFIX_FORMAT);
 
+    // TODO do a little refactoring in all these perform methods. There is too much duplicated code here
+
     public void perform(Transformation transformation) throws TransformationException {
         logger.debug("Requested transformation: " + transformation);
 
@@ -87,7 +89,7 @@ public class TransformationEngine {
                 if(logger.isDebugEnabled()) {
                     logger.debug("Transformation operation " + operation.getName() + " has failed due to the exception below", e);
                 }
-                logger.warn("*** NON FATAL FAILURE *** Operation '{}' has failed, but it's not fatal. See debug logs for further details.", operation.getName());
+                logger.error("Operation '{}' has failed. See debug logs for further details.", operation.getName());
             }
         }
 
@@ -105,9 +107,12 @@ public class TransformationEngine {
         try {
             operations = multipleOperations.perform(transformedAppFolder, transformationContext);
         } catch (TransformationUtilityException e) {
+
+            // TODO what about abortOnFailure for MultipleOperations?
+
             logger.error("*** Transformation will be aborted due to failed utility ***");
-            logger.error("*** Utility: \t{}", multipleOperations.getDescription());
-            logger.error("*** Cause: \t" + e.getCause());
+            logger.error("*** Utility: {} - {}", multipleOperations.getName(), multipleOperations.getDescription());
+            logger.error("*** Cause: " + e.getCause());
 
             throw new TransformationException("Utility " + multipleOperations.getName() + " failed when being executed", e);
         }
@@ -129,11 +134,21 @@ public class TransformationEngine {
             transformationContext.put(key, result);
             logger.debug("\t-\t - {} ({})", utility, utility.getName());
         } catch (TransformationUtilityException e) {
-            logger.error("*** Transformation will be aborted due to failed utility ***");
-            logger.error("*** Utility: \t{}", utility.getDescription());
-            logger.error("*** Cause: \t" + e.getCause());
+            if(utility.abortOnFailure()) {
+                logger.error("*** Transformation will be aborted due to failed utility ***");
+                logger.error("*** Utility: {} - {}", utility.getName(), utility.getDescription());
+                logger.error("*** Cause: " + e.getCause());
 
-            throw new TransformationException("Utility " + utility.getName() + " failed when being executed", e);
+                throw new TransformationException("Utility " + utility.getName() + " failed when being executed", e);
+            } else {
+                // TODO
+                // State/save/log the exception, and go on with transformation
+
+                if(logger.isDebugEnabled()) {
+                    logger.debug("Transformation utility " + utility.getName() + " has failed due to the exception below", e);
+                }
+                logger.error("Utility '{}' has failed. See debug logs for further details.", utility.getName());
+            }
         }
     }
 
