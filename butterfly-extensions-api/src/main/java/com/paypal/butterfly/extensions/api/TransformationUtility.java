@@ -264,6 +264,7 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
             absoluteFile = (File) transformationContext.get(absoluteFileFromContextAttribute);
             if(absoluteFile == null) {
                 String exceptionMessage = String.format("Context attribute %s, which is supposed to define absolute file for %s, is null", absoluteFileFromContextAttribute, name);
+                // FIXME a better exception is necessary here for cases when the absolute path transformation context attribute value is null
                 TransformationUtilityException exception = new  TransformationUtilityException(exceptionMessage);
                 throw exception;
             }
