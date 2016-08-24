@@ -33,16 +33,18 @@ public class PomRemoveDependency extends TransformationOperation<PomRemoveDepend
      * @param artifactId dependency to be removed artifact id
      */
     public PomRemoveDependency(String groupId, String artifactId) {
-        this.groupId = groupId;
-        this.artifactId = artifactId;
+        setGroupId(groupId);
+        setArtifactId(artifactId);
     }
 
     public PomRemoveDependency setGroupId(String groupId) {
+        checkForBlankString("GroupId",groupId);
         this.groupId = groupId;
         return this;
     }
 
     public PomRemoveDependency setArtifactId(String artifactId) {
+        checkForBlankString("ArtifactId", artifactId);
         this.artifactId = artifactId;
         return this;
     }

@@ -44,22 +44,25 @@ public class PomChangeParent extends TransformationOperation<PomChangeParent> {
      * @param version parent artifact version to be set
      */
     public PomChangeParent(String groupId, String artifactId, String version) {
-        this.groupId = groupId;
-        this.artifactId = artifactId;
-        this.version = version;
+        setGroupId(groupId);
+        setArtifactId(artifactId);
+        setVersion(version);
     }
 
     public PomChangeParent setGroupId(String groupId) {
+        checkForEmptyString("GroupId", groupId);
         this.groupId = groupId;
         return this;
     }
 
     public PomChangeParent setArtifactId(String artifactId) {
+        checkForEmptyString("ArtifactId", artifactId);
         this.artifactId = artifactId;
         return this;
     }
 
     public PomChangeParent setVersion(String version) {
+        checkForBlankString("Version", version);
         this.version = version;
         return this;
     }
