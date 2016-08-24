@@ -584,4 +584,20 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
         }
     }
 
+    /**
+     * To check for object is null if it is null then it would throw TransformationDefinitionException
+     * This check is required where value can't be null.
+     *
+     * @param name represents the purpose of the String is used for
+     * @param value represents the object value to be verified
+     * @throws TransformationDefinitionException
+     */
+    protected static void checkForNull(String name, Object value) throws TransformationDefinitionException{
+        if(value == null){
+            throw new TransformationDefinitionException(name+" cannot be null");
+        }
+    }
+
+
+
 }

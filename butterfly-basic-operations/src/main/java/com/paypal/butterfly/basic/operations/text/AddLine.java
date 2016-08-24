@@ -26,10 +26,11 @@ public class AddLine extends TransformationOperation<AddLine> {
      * @param newLine the new line to be added
      */
     public AddLine(String newLine) {
-        this.newLine = newLine;
+        setNewLine(newLine);
     }
 
     public AddLine setNewLine(String newLine) {
+        checkForNull("New Line", newLine);
         this.newLine = newLine;
         return this;
     }
