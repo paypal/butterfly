@@ -28,10 +28,11 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
      * @param propertyName name to the property to be removed
      */
     public RemoveProperty(String propertyName) {
-        this.propertyName = propertyName;
+        setPropertyName(propertyName);
     }
 
     public RemoveProperty setPropertyName(String propertyName) {
+        checkForBlankString("Property Name", propertyName);
         this.propertyName = propertyName;
         return this;
     }
