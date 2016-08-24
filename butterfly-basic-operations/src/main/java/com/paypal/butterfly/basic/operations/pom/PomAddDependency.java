@@ -75,21 +75,25 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
     }
 
     public PomAddDependency setGroupId(String groupId) {
+        checkForBlankString("GroupId", groupId);
         this.groupId = groupId;
         return this;
     }
 
     public PomAddDependency setArtifactId(String artifactId) {
+        checkForBlankString("ArtifactId",artifactId);
         this.artifactId = artifactId;
         return this;
     }
 
     public PomAddDependency setVersion(String version) {
+        checkForEmptyString("Version", version);
         this.version = version;
         return this;
     }
 
     public PomAddDependency setScope(String scope) {
+        checkForEmptyString("Scope", scope);
         this.scope = scope;
         return this;
     }

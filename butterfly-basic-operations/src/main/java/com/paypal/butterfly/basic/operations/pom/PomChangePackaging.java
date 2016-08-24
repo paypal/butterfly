@@ -30,10 +30,11 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
      * @param packagingType packaging type
      */
     public PomChangePackaging(String packagingType) {
-        this.packagingType = packagingType;
+        setPackagingType(packagingType);
     }
 
     public PomChangePackaging setPackagingType(String packagingType) {
+        checkForEmptyString("Packaging Type",packagingType);
         this.packagingType = packagingType;
         return this;
     }
