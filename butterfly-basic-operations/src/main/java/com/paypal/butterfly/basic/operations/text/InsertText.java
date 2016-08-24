@@ -123,8 +123,8 @@ public class InsertText extends TransformationOperation<InsertText> {
     }
 
     /**
-     * Sets the line number the text should be added at
-     *
+     * Sets the line number the text should be added at.
+     * Line number for first line is 1.
      * @param lineNumber the line number the text should be added at
      * @return this transformation operation instance
      */

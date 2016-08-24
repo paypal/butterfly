@@ -153,9 +153,9 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
     }
 
     /**
-     * Sets the number of the line to be removed. If this is set,
-     * it will determine the line to be removed, and the regular
-     * expression will be ignored
+     * Sets the number of the line to be removed. Line number for first line is 1.
+     * If this is set, it will determine the line to be removed, and the regular
+     * expression will be ignored.
      *
      * @param lineNumber the number of the line to be removed
      * @return

@@ -110,8 +110,8 @@ public class InsertLine extends TransformationOperation<InsertLine> {
     }
 
     /**
-     * Sets the new line to be inserted
-     *
+     * Sets the new line to be inserted. To insert a new blank line,
+     * just set {@code newLine} to an empty string {@code ""}
      * @param newLine the new line to be inserted
      * @return this transformation operation instance
      */
@@ -122,9 +122,10 @@ public class InsertLine extends TransformationOperation<InsertLine> {
     }
 
     /**
-     * Sets the line number the new line should be added at
+     * Sets the line number the new line should be added at.
+     * Line number for first line is 1.
      * Notice that the insertion mode is automatically set to
-     * {@link InsertionMode#LINE_NUMBER}
+     * {@link InsertionMode#LINE_NUMBER}.
      *
      * @param lineNumber the line number the new line should be added at
      * @return this transformation operation instance
