@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.operations.text;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 
 import java.io.*;
@@ -115,6 +116,7 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * @return this transformation operation instance
      */
     public InsertLine setNewLine(String newLine) {
+        checkForNull("New Line", newLine);
         this.newLine = newLine;
         return this;
     }
@@ -128,7 +130,10 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * @return this transformation operation instance
      */
     public InsertLine setLineNumber(Integer lineNumber) {
-        // TODO add validation via BeanValidations to assure this is always positive
+        checkForNull("Line Number", lineNumber);
+        if(lineNumber <= 0){
+            throw new TransformationDefinitionException("Line number cannot be negative or zero");
+        }
         this.lineNumber = lineNumber;
         setInsertionMode(InsertionMode.LINE_NUMBER);
         return this;
@@ -146,6 +151,7 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * @return this transformation operation instance
      */
     public InsertLine setRegex(String regex) {
+        checkForBlankString("Regex", regex);
         this.regex = regex;
         if (!insertionMode.equals(InsertionMode.REGEX_ALL)) {
             setInsertionMode(InsertionMode.REGEX_FIRST);

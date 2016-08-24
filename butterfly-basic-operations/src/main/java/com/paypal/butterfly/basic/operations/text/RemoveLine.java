@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.operations.text;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 
 import java.io.*;
@@ -133,6 +134,7 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
      * @return
      */
     public RemoveLine setRegex(String regex) {
+        checkForBlankString("Regex", regex);
         this.regex = regex;
         return this;
     }
@@ -159,7 +161,10 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
      * @return
      */
     public RemoveLine setLineNumber(Integer lineNumber) {
-        // TODO add validation via BeanValidations to assure this is always positive
+        checkForNull("Line Number", lineNumber);
+        if(lineNumber <= 0){
+            throw new TransformationDefinitionException("Line number cannot be negative or zero");
+        }
         this.lineNumber = lineNumber;
         return this;
     }
