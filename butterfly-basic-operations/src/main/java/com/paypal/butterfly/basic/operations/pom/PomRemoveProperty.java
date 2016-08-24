@@ -30,10 +30,11 @@ public class PomRemoveProperty extends TransformationOperation<PomRemoveProperty
      * @param propertyName property to be removed
      */
     public PomRemoveProperty(String propertyName) {
-        this.propertyName = propertyName;
+        setPropertyName(propertyName);
     }
 
     public PomRemoveProperty setPropertyName(String propertyName) {
+        checkForBlankString("Property Name", propertyName);
         this.propertyName = propertyName;
         return this;
     }

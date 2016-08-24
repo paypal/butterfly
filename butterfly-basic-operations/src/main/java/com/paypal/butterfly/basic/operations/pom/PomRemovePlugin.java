@@ -33,16 +33,18 @@ public class PomRemovePlugin extends TransformationOperation<PomRemovePlugin> {
      * @param artifactId plugin to be removed artifact id
      */
     public PomRemovePlugin(String groupId, String artifactId) {
-        this.groupId = groupId;
-        this.artifactId = artifactId;
+        setGroupId(groupId);
+        setArtifactId(artifactId);
     }
 
     public PomRemovePlugin setGroupId(String groupId) {
+        checkForBlankString("GroupId", groupId);
         this.groupId = groupId;
         return this;
     }
 
     public PomRemovePlugin setArtifactId(String artifactId) {
+        checkForBlankString("ArtifactId", artifactId);
         this.artifactId = artifactId;
         return this;
     }
