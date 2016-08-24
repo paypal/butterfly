@@ -26,10 +26,11 @@ public class RenameFile extends TransformationOperation<RenameFile> {
      * @param newName new name for the file
      */
     public RenameFile(String newName) {
-        this.newName = newName;
+        setNewName(newName);
     }
 
     public RenameFile setNewName(String newName) {
+        checkForBlankString("New Name",newName);
         this.newName = newName;
         return this;
     }
