@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.operations.text;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 
 import java.io.*;
@@ -116,18 +117,22 @@ public class InsertText extends TransformationOperation<InsertText> {
      * @return this transformation operation instance
      */
     public InsertText setTextFileUrl(URL textFileUrl) {
+        checkForNull("Text File Url", textFileUrl);
         this.textFileUrl = textFileUrl;
         return this;
     }
 
     /**
-     * Sets the line number the text should be added at
-     *
+     * Sets the line number the text should be added at.
+     * Line number for first line is 1.
      * @param lineNumber the line number the text should be added at
      * @return this transformation operation instance
      */
     public InsertText setLineNumber(Integer lineNumber) {
-        // TODO add validation via BeanValidations to assure this is always positive
+        checkForNull("Line Number", lineNumber);
+        if(lineNumber <= 0){
+            throw new TransformationDefinitionException("Line number cannot be negative or zero");
+        }
         this.lineNumber = lineNumber;
         return this;
     }
@@ -141,6 +146,7 @@ public class InsertText extends TransformationOperation<InsertText> {
      * @return this transformation operation instance
      */
     public InsertText setRegex(String regex) {
+        checkForBlankString("Regex", regex);
         this.regex = regex;
         return this;
     }
