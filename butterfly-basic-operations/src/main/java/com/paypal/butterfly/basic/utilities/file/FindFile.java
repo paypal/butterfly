@@ -44,10 +44,11 @@ public class FindFile extends TransformationUtility<FindFile, File> {
      * @param fileName name of the file to be found
      */
     public FindFile(String fileName) {
-        this.fileName = fileName;
+        setFileName(fileName);
     }
 
     public FindFile setFileName(String fileName) {
+        checkForBlankString("File Name", fileName);
         this.fileName = fileName;
         return this;
     }

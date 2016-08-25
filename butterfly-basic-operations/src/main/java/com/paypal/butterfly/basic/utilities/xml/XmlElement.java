@@ -61,6 +61,7 @@ public class XmlElement extends TransformationUtility<XmlElement, String> {
      * @return this instance
      */
     public XmlElement setXmlElement(String xmlElement) {
+        checkForBlankString("XML Element", xmlElement);
         this.xmlElement = xmlElement;
         return this;
     }
@@ -75,6 +76,7 @@ public class XmlElement extends TransformationUtility<XmlElement, String> {
      * @return this instance
      */
     public XmlElement setAttribute(String attribute) {
+        checkForEmptyString("Attribute", attribute);
         this.attribute = attribute;
         return this;
     }
