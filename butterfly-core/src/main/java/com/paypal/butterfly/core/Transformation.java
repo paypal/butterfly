@@ -13,7 +13,6 @@ import java.io.File;
  */
 public class Transformation {
 
-    // TODO Replace this by an actual JSON object mapper
     private static final String TO_STRING_SYNTAX = "{ \"application\" : %s, \"template\" : %s, \"templateClass\" : %s }";
 
     private Application application;
