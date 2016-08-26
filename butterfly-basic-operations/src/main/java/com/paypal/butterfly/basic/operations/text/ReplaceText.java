@@ -73,6 +73,7 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
      * @return this transformation operation instance
      */
     public ReplaceText setRegex(String regex) {
+        checkForBlankString("Regex", regex);
         this.regex = regex;
         return this;
     }
@@ -84,6 +85,7 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
      * @return this transformation operation instance
      */
     public ReplaceText setReplacement(String replacement) {
+        checkForNull("Replacement Text", replacement);
         this.replacement = replacement;
         return this;
     }

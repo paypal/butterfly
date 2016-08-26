@@ -4,6 +4,7 @@ package com.paypal.butterfly.extensions.api;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -552,5 +553,51 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
 
         return clone;
     }
+
+
+    /**
+     * To check for Blank String if it is Blank String then it would throw TransformationDefinitionException.
+     * This check is required for non-optional properties.
+     *
+     * @param name represents the purpose of the String is used for
+     * @param value represents the String to be verified
+     * @throws TransformationDefinitionException
+     */
+    protected static void checkForBlankString(String name, String value) throws TransformationDefinitionException{
+        if(StringUtils.isBlank(value)){
+            throw new TransformationDefinitionException(name+" cannot be blank");
+        }
+    }
+
+    /**
+     * To check for an Empty String if it is an Empty String then it would throw TransformationDefinitionException
+     * This check is required for optional properties where value can be possibly blank, if value is passed
+     * then it should not be an empty string.
+     *
+     * @param name represents the purpose of the String is used for
+     * @param value represents the String to be verified
+     * @throws TransformationDefinitionException
+     */
+    protected static void checkForEmptyString(String name, String value) throws TransformationDefinitionException{
+        if(value != null && value.trim().length() == 0){
+            throw new TransformationDefinitionException(name+" cannot be empty");
+        }
+    }
+
+    /**
+     * To check for object is null if it is null then it would throw TransformationDefinitionException
+     * This check is required where value can't be null.
+     *
+     * @param name represents the purpose of the String is used for
+     * @param value represents the object value to be verified
+     * @throws TransformationDefinitionException
+     */
+    protected static void checkForNull(String name, Object value) throws TransformationDefinitionException{
+        if(value == null){
+            throw new TransformationDefinitionException(name+" cannot be null");
+        }
+    }
+
+
 
 }

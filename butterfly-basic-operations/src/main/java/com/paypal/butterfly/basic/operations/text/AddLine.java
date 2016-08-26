@@ -21,15 +21,22 @@ public class AddLine extends TransformationOperation<AddLine> {
     }
 
     /**
-     * Operation to add a new line to the end of a file
-     *
+     * Operation to add a new line to the end of a file. To add a new blank line,
+     * just set {@code newLine} to an empty string {@code ""}
      * @param newLine the new line to be added
      */
     public AddLine(String newLine) {
-        this.newLine = newLine;
+        setNewLine(newLine);
     }
 
+    /**
+     * Sets the new line to be inserted. To add a new blank line,
+     * just set {@code newLine} to an empty string {@code ""}
+     * @param newLine the new line to be inserted
+     * @return this transformation operation instance
+     */
     public AddLine setNewLine(String newLine) {
+        checkForNull("New Line", newLine);
         this.newLine = newLine;
         return this;
     }

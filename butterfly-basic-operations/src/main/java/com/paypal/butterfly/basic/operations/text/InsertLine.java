@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.operations.text;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 
 import java.io.*;
@@ -109,26 +110,31 @@ public class InsertLine extends TransformationOperation<InsertLine> {
     }
 
     /**
-     * Sets the new line to be inserted
-     *
+     * Sets the new line to be inserted. To insert a new blank line,
+     * just set {@code newLine} to an empty string {@code ""}
      * @param newLine the new line to be inserted
      * @return this transformation operation instance
      */
     public InsertLine setNewLine(String newLine) {
+        checkForNull("New Line", newLine);
         this.newLine = newLine;
         return this;
     }
 
     /**
-     * Sets the line number the new line should be added at
+     * Sets the line number the new line should be added at.
+     * Line number for first line is 1.
      * Notice that the insertion mode is automatically set to
-     * {@link InsertionMode#LINE_NUMBER}
+     * {@link InsertionMode#LINE_NUMBER}.
      *
      * @param lineNumber the line number the new line should be added at
      * @return this transformation operation instance
      */
     public InsertLine setLineNumber(Integer lineNumber) {
-        // TODO add validation via BeanValidations to assure this is always positive
+        checkForNull("Line Number", lineNumber);
+        if(lineNumber <= 0){
+            throw new TransformationDefinitionException("Line number cannot be negative or zero");
+        }
         this.lineNumber = lineNumber;
         setInsertionMode(InsertionMode.LINE_NUMBER);
         return this;
@@ -146,6 +152,7 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * @return this transformation operation instance
      */
     public InsertLine setRegex(String regex) {
+        checkForBlankString("Regex", regex);
         this.regex = regex;
         if (!insertionMode.equals(InsertionMode.REGEX_ALL)) {
             setInsertionMode(InsertionMode.REGEX_FIRST);

@@ -32,16 +32,18 @@ public class AddProperty extends TransformationOperation<AddProperty> {
      * @param propertyValue value to be set to the new property
      */
     public AddProperty(String propertyName, String propertyValue) {
-        this.propertyName = propertyName;
-        this.propertyValue = propertyValue;
+        setPropertyName(propertyName);
+        setPropertyValue(propertyValue);
     }
 
     public AddProperty setPropertyName(String propertyName) {
+        checkForBlankString("Property Name", propertyName);
         this.propertyName = propertyName;
         return this;
     }
 
     public AddProperty setPropertyValue(String propertyValue) {
+        checkForBlankString("Property Value", propertyValue);
         this.propertyValue = propertyValue;
         return this;
     }

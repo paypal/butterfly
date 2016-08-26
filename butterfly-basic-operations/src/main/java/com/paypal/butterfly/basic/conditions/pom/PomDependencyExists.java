@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Transformation operation condition to check if
@@ -92,13 +94,16 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
         File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
         MavenXpp3Reader reader = new MavenXpp3Reader();
         FileInputStream fileInputStream = null;
-
         try {
             fileInputStream = new FileInputStream(pomFile);
             Model model = reader.read(fileInputStream);
-            for (Dependency d : model.getDependencies()) {
-                if (d.getGroupId().equals(groupId) && d.getArtifactId().equals(artifactId)) {
-                    return version == null || version.equals(d.getVersion());
+            List<Dependency> dependencyList = model.getDependencies();
+            dependencyList = dependencyList.stream().filter(item -> item.getGroupId().equals(groupId) && item.getArtifactId().equals(artifactId))
+                    .collect(Collectors.toList());
+            if(!dependencyList.isEmpty()) {
+                Dependency dependency = dependencyList.get(0);
+                if (version == null || version.equals(dependency.getVersion())) {
+                    return true;
                 }
             }
         } catch (Exception e) {
@@ -108,7 +113,6 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
             if(fileInputStream != null)
                 fileInputStream.close();
         }
-
         return false;
     }
 
