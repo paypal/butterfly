@@ -6,6 +6,7 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,9 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     private TransformationTemplate getTemplate(String templateClassName) {
+        if(StringUtils.isBlank(templateClassName)) {
+            throw new IllegalArgumentException("Template class name cannot be blank");
+        }
         try {
             Class<TransformationTemplate> templateClass = (Class<TransformationTemplate>) Class.forName(templateClassName);
             TransformationTemplate template = templateClass.newInstance();

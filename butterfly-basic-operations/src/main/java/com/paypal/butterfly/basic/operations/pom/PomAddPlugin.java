@@ -61,7 +61,7 @@ public class PomAddPlugin extends TransformationOperation<PomAddPlugin> {
     }
 
     public PomAddPlugin setGroupId(String groupId) {
-       checkForBlankString("GroupId", groupId);
+        checkForBlankString("GroupId", groupId);
         this.groupId = groupId;
         return this;
     }
