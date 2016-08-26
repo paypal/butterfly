@@ -50,11 +50,12 @@ public class FindFiles extends TransformationUtility<FindFiles, List<File>> {
      * @param recursive if true, sub-folders will also be searched
      */
     public FindFiles(String regex, boolean recursive) {
-        this.regex = regex;
-        this.recursive = recursive;
+        setRegex(regex);
+        setRecursive(recursive);
     }
 
     public FindFiles setRegex(String regex) {
+        checkForBlankString("Regex", regex);
         this.regex = regex;
         return this;
     }

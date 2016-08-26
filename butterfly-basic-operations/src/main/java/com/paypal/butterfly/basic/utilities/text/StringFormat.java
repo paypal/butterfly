@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.utilities.text;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 
 import java.io.File;
 import java.util.Arrays;
@@ -31,11 +32,15 @@ public class StringFormat extends TransformationUtility<StringFormat, String> {
     }
 
     public StringFormat setFormat(String format) {
+        checkForBlankString("Format", format);
         this.format = format;
         return this;
     }
 
     public StringFormat setAttributeNames(String... attributeNames) {
+        if(attributeNames == null || attributeNames.length == 0){
+            throw new TransformationDefinitionException("Attribute Names cannot be null or empty");
+        }
         this.attributeNames = attributeNames;
         return this;
     }
