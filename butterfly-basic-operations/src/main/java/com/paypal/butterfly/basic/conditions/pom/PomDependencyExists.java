@@ -40,8 +40,8 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
      * @param artifactId managed dependency artifact id
      */
     public PomDependencyExists(String groupId, String artifactId) {
-        this.groupId = groupId;
-        this.artifactId = artifactId;
+        setGroupId(groupId);
+        setArtifactId(artifactId);
     }
 
     /**
@@ -54,20 +54,23 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
      */
     public PomDependencyExists(String groupId, String artifactId, String version) {
         this(groupId, artifactId);
-        this.version = version;
+        setVersion(version);
     }
 
     public PomDependencyExists setGroupId(String groupId) {
+        checkForBlankString("GroupId", groupId);
         this.groupId = groupId;
         return this;
     }
 
     public PomDependencyExists setArtifactId(String artifactId) {
+        checkForBlankString("ArtifactId", artifactId);
         this.artifactId = artifactId;
         return this;
     }
 
     public PomDependencyExists setVersion(String version) {
+        checkForEmptyString("Version", version);
         this.version = version;
         return this;
     }

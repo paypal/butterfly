@@ -105,6 +105,7 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * @return this transformation operation instance
      */
     public InsertLine setInsertionMode(InsertionMode insertionMode) {
+        checkForNull("InsertionMode", insertionMode);
         this.insertionMode = insertionMode;
         return this;
     }

@@ -34,6 +34,7 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
      */
     public ApplyZip(String zipFileUrl) {
         try {
+            checkForBlankString("Zip File URL", zipFileUrl);
             setZipFileUrl(new URL(zipFileUrl));
         } catch (MalformedURLException e) {
             throw new TransformationDefinitionException("Malformed Zip file URL", e);
@@ -50,6 +51,7 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
     }
 
     public ApplyZip setZipFileUrl(URL zipFileUrl) {
+        checkForNull("Zip File URL", zipFileUrl);
         this.zipFileUrl = zipFileUrl;
         return this;
     }
