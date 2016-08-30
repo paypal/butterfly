@@ -5,6 +5,8 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import net.lingala.zip4j.core.ZipFile;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,6 +21,8 @@ import java.nio.channels.ReadableByteChannel;
  * @author facarvalho
  */
 public class ApplyZip extends TransformationOperation<ApplyZip> {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplyZip.class);
 
     private static final String DESCRIPTION = "Download, decompress and place contents of zip %s file at %s";
 
@@ -92,9 +96,15 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
     }
 
     @Override
-    public ApplyZip clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public ApplyZip clone() throws CloneNotSupportedException {
+        ApplyZip clonedApplyZip = null;
+        try {
+            clonedApplyZip = (ApplyZip) super.clone();
+            clonedApplyZip.zipFileUrl = new URL(this.zipFileUrl.toString());
+        } catch (MalformedURLException e) {
+            logger.error(String.format("Error when cloning ApplyZip %s", getName()), e);
+        }
+        return clonedApplyZip;
     }
 
 }
