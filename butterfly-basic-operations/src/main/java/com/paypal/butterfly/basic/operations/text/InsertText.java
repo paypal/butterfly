@@ -106,6 +106,7 @@ public class InsertText extends TransformationOperation<InsertText> {
      * @return this transformation operation instance
      */
     public InsertText setInsertionMode(InsertionMode insertionMode) {
+        checkForNull("InsertionMode", insertionMode);
         this.insertionMode = insertionMode;
         return this;
     }

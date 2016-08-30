@@ -31,6 +31,11 @@ abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
      * @see {@link CopyDirectory}
      */
     protected AbstractCopy(String description) {
+        setDescription(description);
+    }
+
+    public void setDescription(String description) {
+        checkForEmptyString("Description", description);
         this.description = description;
     }
 
@@ -48,6 +53,7 @@ abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
      * @param toRelative relative location where to copy the file to
      */
     public TO setToRelative(String toRelative) {
+        checkForEmptyString("Relative Location", toRelative);
         this.toRelative = toRelative;
         this.toAbsoluteAttribute = null;
         return (TO) this;
@@ -67,6 +73,7 @@ abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
      * @return this transformation operation instance
      */
     public TO setToAbsolute(String attributeName) {
+        checkForEmptyString("Absolute Location", attributeName);
         this.toAbsoluteAttribute = attributeName;
         this.toRelative = null;
         return (TO) this;
