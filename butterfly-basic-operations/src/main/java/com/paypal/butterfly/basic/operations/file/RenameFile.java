@@ -57,9 +57,10 @@ public class RenameFile extends TransformationOperation<RenameFile> {
     }
 
     @Override
-    public RenameFile clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public RenameFile clone() throws CloneNotSupportedException {
+        RenameFile clonedRenameFile = (RenameFile) super.clone();
+        clonedRenameFile.newName = this.newName;
+        return clonedRenameFile;
     }
 
 }

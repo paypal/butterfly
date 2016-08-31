@@ -547,6 +547,8 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
         clone.contextAttributeName = null;
 
         // Properties we want to be in the clone (they are being copied from original object)
+        clone.latePropertiesAttributes = new HashMap<String, String>();
+        clone.latePropertiesSetters = new HashMap<String, Method>();
         clone.latePropertiesAttributes.putAll(this.latePropertiesAttributes);
         clone.latePropertiesSetters.putAll(this.latePropertiesSetters);
         clone.abortOnFailure = this.abortOnFailure;
