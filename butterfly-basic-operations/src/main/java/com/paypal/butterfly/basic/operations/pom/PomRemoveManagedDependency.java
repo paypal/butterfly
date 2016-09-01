@@ -110,9 +110,9 @@ public class PomRemoveManagedDependency extends TransformationOperation<PomRemov
     }
 
     @Override
-    public PomRemoveManagedDependency clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public PomRemoveManagedDependency clone() throws CloneNotSupportedException {
+        PomRemoveManagedDependency pomRemoveManagedDependency = (PomRemoveManagedDependency) super.clone();
+        return pomRemoveManagedDependency;
     }
 
 }

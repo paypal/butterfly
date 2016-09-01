@@ -75,9 +75,9 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
     }
 
     @Override
-    public PomChangePackaging clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public PomChangePackaging clone() throws CloneNotSupportedException {
+        PomChangePackaging pomChangePackaging = (PomChangePackaging)super.clone();
+        return pomChangePackaging;
     }
 
 }

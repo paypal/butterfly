@@ -80,9 +80,9 @@ public class PomRemoveProperty extends TransformationOperation<PomRemoveProperty
     }
 
     @Override
-    public PomRemoveProperty clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public PomRemoveProperty clone() throws CloneNotSupportedException {
+        PomRemoveProperty pomRemoveProperty = (PomRemoveProperty) super.clone();
+        return pomRemoveProperty;
     }
 
 }

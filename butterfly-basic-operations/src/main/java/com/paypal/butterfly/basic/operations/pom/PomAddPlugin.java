@@ -135,10 +135,11 @@ public class PomAddPlugin extends TransformationOperation<PomAddPlugin> {
     }
 
     @Override
-    public PomAddPlugin clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public PomAddPlugin clone() throws CloneNotSupportedException{
+        PomAddPlugin clonedPomAddPlugin = (PomAddPlugin) super.clone();
+        return clonedPomAddPlugin;
     }
+
 
 }
 
