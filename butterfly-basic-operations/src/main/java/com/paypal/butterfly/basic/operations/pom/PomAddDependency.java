@@ -156,9 +156,9 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
     }
 
     @Override
-    public PomAddDependency clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public PomAddDependency clone() throws CloneNotSupportedException {
+        PomAddDependency clonedPomAddDependency = (PomAddDependency)super.clone();
+        return clonedPomAddDependency;
     }
 
 }
