@@ -61,9 +61,9 @@ public class AddLine extends TransformationOperation<AddLine> {
     }
 
     @Override
-    public AddLine clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public AddLine clone() throws CloneNotSupportedException {
+        AddLine clonedAddLine = (AddLine) super.clone();
+        return clonedAddLine;
     }
 
 }

@@ -85,9 +85,9 @@ public class AddProperty extends TransformationOperation<AddProperty> {
     }
 
     @Override
-    public AddProperty clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public AddProperty clone() throws CloneNotSupportedException {
+        AddProperty clonedAddProperty = (AddProperty) super.clone();
+        return clonedAddProperty;
     }
 
 }
