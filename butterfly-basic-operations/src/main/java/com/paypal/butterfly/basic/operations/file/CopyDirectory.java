@@ -61,9 +61,9 @@ public class CopyDirectory extends AbstractCopy<CopyDirectory> {
     }
 
     @Override
-    public CopyDirectory clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public CopyDirectory clone() throws CloneNotSupportedException {
+        CopyDirectory clonedCopyDirectory = (CopyDirectory)super.clone();
+        return clonedCopyDirectory;
     }
 
 }

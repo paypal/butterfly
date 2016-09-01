@@ -48,9 +48,9 @@ public class CopyFile extends AbstractCopy<CopyFile> {
     }
 
     @Override
-    public CopyFile clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public CopyFile clone() throws CloneNotSupportedException {
+        CopyFile clonedCopyFile  = (CopyFile) super.clone();
+        return clonedCopyFile;
     }
 
 }
