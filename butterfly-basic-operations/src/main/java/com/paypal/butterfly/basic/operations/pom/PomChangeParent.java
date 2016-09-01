@@ -130,9 +130,9 @@ public class PomChangeParent extends TransformationOperation<PomChangeParent> {
     }
 
     @Override
-    public PomChangeParent clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public PomChangeParent clone() throws CloneNotSupportedException {
+        PomChangeParent pomChangeParent = (PomChangeParent)super.clone();
+        return pomChangeParent;
     }
 
 }

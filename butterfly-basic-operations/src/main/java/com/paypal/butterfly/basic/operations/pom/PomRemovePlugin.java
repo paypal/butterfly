@@ -97,9 +97,9 @@ public class PomRemovePlugin extends TransformationOperation<PomRemovePlugin> {
     }
 
     @Override
-    public PomRemovePlugin clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public PomRemovePlugin clone() throws CloneNotSupportedException {
+        PomRemovePlugin pomRemovePlugin = (PomRemovePlugin)super.clone();
+        return pomRemovePlugin;
     }
 
 }
