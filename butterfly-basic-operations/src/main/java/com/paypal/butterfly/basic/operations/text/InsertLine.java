@@ -277,9 +277,9 @@ public class InsertLine extends TransformationOperation<InsertLine> {
     }
 
     @Override
-    public InsertLine clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public InsertLine clone() throws CloneNotSupportedException {
+        InsertLine clonedInsertLine = (InsertLine) super.clone();
+        return clonedInsertLine;
     }
 
 }

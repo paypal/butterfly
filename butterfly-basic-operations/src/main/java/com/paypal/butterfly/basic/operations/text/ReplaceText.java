@@ -174,9 +174,9 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
     }
 
     @Override
-    public ReplaceText clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public ReplaceText clone() throws CloneNotSupportedException{
+        ReplaceText clonedReplaceText = (ReplaceText) super.clone();
+        return clonedReplaceText;
     }
 
 }
