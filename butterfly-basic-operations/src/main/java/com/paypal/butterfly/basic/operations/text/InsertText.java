@@ -4,8 +4,11 @@ import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
@@ -24,6 +27,8 @@ import java.util.regex.Pattern;
  * @author facarvalho
  */
 public class InsertText extends TransformationOperation<InsertText> {
+
+    private static final Logger logger = LoggerFactory.getLogger(InsertText.class);
 
     /**
      * The text can be inserted:
@@ -287,9 +292,15 @@ public class InsertText extends TransformationOperation<InsertText> {
     }
 
     @Override
-    public InsertText clone() {
-        // TODO
-        throw new RuntimeException("Clone operation not supported yet");
+    public InsertText clone() throws CloneNotSupportedException {
+        InsertText clonedInsertText = null;
+        try {
+            clonedInsertText = (InsertText) super.clone();
+            clonedInsertText.textFileUrl = new URL(this.textFileUrl.toString());
+        } catch (MalformedURLException e) {
+            logger.error(String.format("Error when cloning InsertText %s", getName()), e);
+        }
+        return clonedInsertText;
     }
 
 }

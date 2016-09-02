@@ -276,12 +276,8 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
 
     @Override
     public RemoveLine clone() throws CloneNotSupportedException {
-        RemoveLine clone = (RemoveLine) super.clone();
-        clone.regex = this.regex;
-        clone.firstOnly = this.firstOnly;
-        clone.lineNumber = this.lineNumber;
-
-        return clone;
+        RemoveLine clonedRemoveLine = (RemoveLine) super.clone();
+        return clonedRemoveLine;
     }
 
 }

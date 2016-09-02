@@ -59,7 +59,6 @@ public class RenameFile extends TransformationOperation<RenameFile> {
     @Override
     public RenameFile clone() throws CloneNotSupportedException {
         RenameFile clonedRenameFile = (RenameFile) super.clone();
-        clonedRenameFile.newName = this.newName;
         return clonedRenameFile;
     }
 
