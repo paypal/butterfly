@@ -92,4 +92,10 @@ abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
         return String.format(description, getRelativePath(), (toRelative != null ? toRelative : "the location defined by transformation context attribute " + toAbsoluteAttribute));
     }
 
+    @Override
+    public AbstractCopy<TO> clone() throws CloneNotSupportedException {
+        AbstractCopy<TO> clone = (AbstractCopy<TO>) super.clone();
+        return clone;
+    }
+
 }
