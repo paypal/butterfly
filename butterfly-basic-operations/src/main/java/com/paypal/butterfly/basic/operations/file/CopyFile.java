@@ -20,6 +20,9 @@ import java.io.File;
  */
 public class CopyFile extends AbstractCopy<CopyFile> {
 
+    // TODO document in javadoc that by default it overwrites, in case the file
+    // already exists, or, make it configurable to overwrite or not
+
     private static final String DESCRIPTION = "Copy file %s to %s";
 
     /**
