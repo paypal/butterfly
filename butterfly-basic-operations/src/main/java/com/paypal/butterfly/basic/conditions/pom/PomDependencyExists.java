@@ -1,7 +1,7 @@
 package com.paypal.butterfly.basic.conditions.pom;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.TransformationOperationCondition;
+import com.paypal.butterfly.extensions.api.utilities.TransformationOperationCondition;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
