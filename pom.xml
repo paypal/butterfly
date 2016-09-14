@@ -11,6 +11,8 @@
 
     <properties>
         <spring.boot.version>1.4.0.RELEASE</spring.boot.version>
+        <coverage.line>80</coverage.line>
+        <coverage.branch>80</coverage.branch>
     </properties>
 
     <dependencyManagement>
@@ -87,5 +89,50 @@
         <module>butterfly-cli</module>
         <module>butterfly-cli-package</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <check>
+                        <lineRate>${coverage.line}</lineRate>
+                        <packageLineRate>${coverage.line}</packageLineRate>
+                        <totalLineRate>${coverage.line}</totalLineRate>
+                        <branchRate>${coverage.branch}</branchRate>
+                        <packageBranchRate>${coverage.branch}</packageBranchRate>
+                        <totalBranchRate>${coverage.branch}</totalBranchRate>
+                        <haltOnFailure>false</haltOnFailure>
+                    </check>
+                    <formats>
+                        <format>html</format>
+                        <format>xml</format>
+                    </formats>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>clean</goal>
+                            <goal>cobertura</goal>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
 </project>
