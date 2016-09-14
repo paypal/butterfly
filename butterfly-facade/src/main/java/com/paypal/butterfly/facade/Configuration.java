@@ -1,5 +1,7 @@
 package com.paypal.butterfly.facade;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.File;
 
 /**
@@ -40,16 +42,21 @@ public class Configuration {
         if(!(this.zipOutput == configuration.isZipOutput())) {
             return false;
         }
-        if ((this.outputFolder == null && configuration.getOutputFolder() != null)) {
+        if (this.outputFolder == null && configuration.getOutputFolder() != null) {
             return false;
         }
-        if ((this.outputFolder != null && configuration.getOutputFolder() == null)) {
+        if (this.outputFolder != null && configuration.getOutputFolder() == null) {
             return false;
         }
         if(this.outputFolder != null && configuration.getOutputFolder() != null && !this.outputFolder.equals(configuration.getOutputFolder())) {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(this.outputFolder).append(this.zipOutput).toHashCode();
     }
 
     /**
