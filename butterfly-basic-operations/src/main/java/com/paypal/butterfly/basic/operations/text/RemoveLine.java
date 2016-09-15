@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.operations.text;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 
@@ -187,54 +188,68 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
+    protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
 
+        String details;
+
         if (!fileToBeChanged.exists()) {
-            // TODO take care of this with a result object
-            // Should this be done as pre-validation?
-            return String.format("*** SKIPPED *** Operation '%s' has been skipped because file '%s', where the line removal should happen, does not exist", getName(), getRelativePath());
+            // TODO Should this be done as pre-validation?
+            details = String.format("Operation '%s' hasn't transformed the application because file '%s', where the line removal should happen, does not exist", getName(), getRelativePath(transformedAppFolder, fileToBeChanged));
+            return TOExecutionResult.noOp(this, details);
         }
 
         File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader reader = null;
         BufferedWriter writer = null;
-        String result;
+        TOExecutionResult result = null;
 
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
 
             if (lineNumber != null) {
-                result = removeBasedOnLineNumber(reader, writer);
+                details = removeBasedOnLineNumber(reader, writer);
             } else {
-                result = removeBasedOnRegex(reader, writer);
+                details = removeBasedOnRegex(reader, writer);
             }
-
+            result = TOExecutionResult.success(this, details);
+        } catch (IOException e) {
+            result = TOExecutionResult.error(this, e);
         } finally {
             try {
-                if (writer != null) writer.close();
+                if (writer != null) try {
+                    writer.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
+                }
             } finally {
-                if (reader != null) reader.close();
+                if(reader != null) try {
+                    reader.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
+                }
             }
         }
-        //// TODO: 8/11/2016 : Refactor the delete code after introducing working directory
-        boolean bDeleted = fileToBeChanged.delete();
-        if(bDeleted) {
+        // TODO Refactor the delete code after introducing working directory
+        boolean deleted = fileToBeChanged.delete();
+        if(deleted) {
             if (!tempFile.renameTo(fileToBeChanged)) {
-                String exceptionMessage = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
-                throw new TransformationOperationException(exceptionMessage);
+                details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
+                TransformationOperationException e = new TransformationOperationException(details);
+                result = TOExecutionResult.error(this, e);
             }
-        }else{
-            String exceptionMessage = String.format("Error when deleting the directory %s", fileToBeChanged);
-            throw new TransformationOperationException(exceptionMessage);
+        } else {
+            details = String.format("Error when deleting %s", getRelativePath(transformedAppFolder, fileToBeChanged));
+            TransformationOperationException e = new TransformationOperationException(details);
+            result = TOExecutionResult.error(this, e);
         }
 
         return result;
-
     }
 
-    private String removeBasedOnLineNumber(BufferedReader reader, BufferedWriter writer) throws Exception {
+    private String removeBasedOnLineNumber(BufferedReader reader, BufferedWriter writer) throws IOException {
         String currentLine;
         int n = 0;
         boolean firstLine = true;
@@ -249,10 +264,11 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
             writer.write(currentLine);
             firstLine = false;
         }
+
         return String.format("File %s has had line number %d removed", getRelativePath(), lineNumber);
     }
 
-    private String removeBasedOnRegex(BufferedReader reader, BufferedWriter writer) throws Exception {
+    private String removeBasedOnRegex(BufferedReader reader, BufferedWriter writer) throws IOException {
         String currentLine;
         int n = 0;
         boolean foundFirstMatch = false;

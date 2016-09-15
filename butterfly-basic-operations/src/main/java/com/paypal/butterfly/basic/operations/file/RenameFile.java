@@ -2,9 +2,11 @@ package com.paypal.butterfly.basic.operations.file;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Operation for single file renaming
@@ -45,15 +47,21 @@ public class RenameFile extends TransformationOperation<RenameFile> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        String resultMessage;
+    protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+        TOExecutionResult result = null;
 
         File fileToBeRenamed = getAbsoluteFile(transformedAppFolder, transformationContext);
         File newNameFile = new File(fileToBeRenamed.getParent(), newName);
-        FileUtils.moveFile(fileToBeRenamed, newNameFile);
-        resultMessage = "File " + getRelativePath() + " has been renamed to " + newName;
+        try {
+            FileUtils.moveFile(fileToBeRenamed, newNameFile);
+            String details = "File " + getRelativePath() + " has been renamed to " + newName;
+            result = TOExecutionResult.success(this, details);
+        } catch (IOException e) {
+            String details = String.format("File %s could not be renamed to %s", getRelativePath(transformedAppFolder, fileToBeRenamed), newName);
+            result = TOExecutionResult.error(this, e, details);
+        }
 
-        return resultMessage;
+        return result;
     }
 
     @Override

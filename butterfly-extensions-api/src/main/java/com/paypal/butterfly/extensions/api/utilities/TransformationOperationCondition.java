@@ -14,5 +14,5 @@ import com.paypal.butterfly.extensions.api.TransformationUtility;
  *
  * @author facarvalho
  */
-public abstract class TransformationOperationCondition<TOC> extends TransformationUtility<TOC, Boolean> {
+public abstract class TransformationOperationCondition<TOC> extends TransformationUtility<TOC> {
 }

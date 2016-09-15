@@ -2,10 +2,9 @@ package com.paypal.butterfly.basic.operations.properties;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.Properties;
 
 /**
@@ -62,9 +61,11 @@ public class AddProperty extends TransformationOperation<AddProperty> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
+    protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         FileInputStream fileInputStream = null;
         FileOutputStream fileOutputStream = null;
+        TOExecutionResult result = null;
         try {
             File propertiesFile = getAbsoluteFile(transformedAppFolder, transformationContext);
             Properties properties = new Properties();
@@ -73,15 +74,28 @@ public class AddProperty extends TransformationOperation<AddProperty> {
             properties.put(propertyName, propertyValue);
             fileOutputStream = new FileOutputStream(propertiesFile);
             properties.store(fileOutputStream, null);
+
+            String details = String.format("Property '%s' set to '%s' at '%s'", propertyName, propertyValue, getRelativePath());
+            result = TOExecutionResult.success(this, details);
+        } catch (IOException e) {
+            result = TOExecutionResult.error(this, e);
         } finally {
             try {
-                if(fileInputStream != null) fileInputStream.close();
+                if (fileInputStream != null) try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
+                }
             } finally {
-                if(fileOutputStream != null) fileOutputStream.close();
+                if(fileOutputStream != null) try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
+                }
             }
         }
 
-        return String.format("Property '%s' set to '%s' at '%s'", propertyName, propertyValue, getRelativePath());
+        return result;
     }
 
     @Override

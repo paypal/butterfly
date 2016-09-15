@@ -1,22 +1,19 @@
 package com.paypal.butterfly.basic.operations.pom;
 
-import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Operation to remove a plugin entry from a POM file
  *
  * @author facarvalho
  */
-public class PomRemovePlugin extends TransformationOperation<PomRemovePlugin> {
+public class PomRemovePlugin extends AbstractPomOperation<PomRemovePlugin> {
 
     private static final String DESCRIPTION = "Remove plugin %s:%s from POM file %s";
 
@@ -63,37 +60,29 @@ public class PomRemovePlugin extends TransformationOperation<PomRemovePlugin> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
-        MavenXpp3Reader reader = new MavenXpp3Reader();
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+        boolean found = false;
+        List<Plugin> plugins = model.getBuild().getPlugins();
+        TOExecutionResult result = null;
+        String details = null;
 
-        FileInputStream fileInputStream = null;
-        FileOutputStream fileOutputStream = null;
-
-        try {
-            fileInputStream = new FileInputStream(pomFile);
-
-
-            Model model = reader.read(fileInputStream);
-
-            Plugin plugin = new Plugin();
-            plugin.setGroupId(groupId);
-            plugin.setArtifactId(artifactId);
-            model.getBuild().removePlugin(plugin);
-
-            MavenXpp3Writer writer = new MavenXpp3Writer();
-            fileOutputStream = new FileOutputStream(pomFile);
-            writer.write(fileOutputStream, model);
-
-        }finally {
-            try {
-                if (fileInputStream != null) fileInputStream.close();
-            }finally {
-                if(fileOutputStream != null) fileOutputStream.close();
+        if(plugins != null) {
+            for (Plugin plugin : plugins) {
+                if(plugin.getArtifactId().equals(artifactId) && plugin.getGroupId().equals(groupId)) {
+                    model.getBuild().removePlugin(plugin);
+                    details = String.format("Plugin %s:%s has been removed from POM file %s", groupId, artifactId, relativePomFile);
+                    result = TOExecutionResult.success(this, details);
+                    found = true;
+                    break;
+                }
             }
         }
+        if(!found) {
+            details = String.format("Plugin %s:%s could not be found in POM file %s", groupId, artifactId, relativePomFile);
+            result = TOExecutionResult.noOp(this, details);
+        }
 
-        return String.format("Plugin %s:%s has been removed from POM file %s", groupId, artifactId, getRelativePath());
+        return result;
     }
 
     @Override

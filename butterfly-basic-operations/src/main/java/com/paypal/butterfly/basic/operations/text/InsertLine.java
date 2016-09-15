@@ -1,5 +1,6 @@
 package com.paypal.butterfly.basic.operations.text;
 
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
@@ -167,13 +168,15 @@ public class InsertLine extends TransformationOperation<InsertLine> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
+    protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
 
         File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader readerOriginalFile = null;
         BufferedWriter writer = null;
-        String result;
+        String details = null;
+        TOExecutionResult result = null;
 
         try {
             readerOriginalFile = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
@@ -181,36 +184,48 @@ public class InsertLine extends TransformationOperation<InsertLine> {
 
             switch (insertionMode) {
                 case LINE_NUMBER:
-                    result = insertAtSpecificLine(readerOriginalFile, writer);
+                    details = insertAtSpecificLine(readerOriginalFile, writer);
                     break;
                 case REGEX_FIRST:
-                    result = insertAfterRegex(readerOriginalFile, writer, true);
+                    details = insertAfterRegex(readerOriginalFile, writer, true);
                     break;
                 case REGEX_ALL:
-                    result = insertAfterRegex(readerOriginalFile, writer, false);
+                    details = insertAfterRegex(readerOriginalFile, writer, false);
                     break;
                 default:
                 case CONCAT:
-                    result = concat(readerOriginalFile, writer);
+                    details = concat(readerOriginalFile, writer);
                     break;
             }
+            result = TOExecutionResult.success(this, details);
+        } catch (IOException e) {
+            result = TOExecutionResult.error(this, e);
         } finally {
             try {
-                if (writer != null) { writer.close(); }
+                if (writer != null) try {
+                    writer.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
+                }
             } finally {
-                if (readerOriginalFile != null) { readerOriginalFile.close(); }
+                if(readerOriginalFile != null) try {
+                    readerOriginalFile.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
+                }
             }
         }
 
         if(!tempFile.renameTo(fileToBeChanged)) {
-            String exceptionMessage = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
-            throw new TransformationOperationException(exceptionMessage);
+            details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
+            TransformationOperationException e = new TransformationOperationException(details);
+            result = TOExecutionResult.error(this, e);
         }
 
         return result;
     }
 
-    private String insertAtSpecificLine(BufferedReader readerOriginalFile, BufferedWriter writer) throws Exception {
+    private String insertAtSpecificLine(BufferedReader readerOriginalFile, BufferedWriter writer) throws IOException {
         String currentLine;
         int n = 0;
         while((currentLine = readerOriginalFile.readLine()) != null) {
@@ -226,7 +241,7 @@ public class InsertLine extends TransformationOperation<InsertLine> {
         return String.format("A new line has been inserted into %s after line number %d", getRelativePath(), lineNumber);
     }
 
-    private String insertAfterRegex(BufferedReader readerOriginalFile, BufferedWriter writer, boolean firstOnly) throws Exception {
+    private String insertAfterRegex(BufferedReader readerOriginalFile, BufferedWriter writer, boolean firstOnly) throws IOException {
         String currentLine;
         int n = 0;
         boolean foundFirstMatch = false;
@@ -258,7 +273,7 @@ public class InsertLine extends TransformationOperation<InsertLine> {
         return result;
     }
 
-    private String concat(BufferedReader readerOriginalFile, BufferedWriter writer) throws Exception {
+    private String concat(BufferedReader readerOriginalFile, BufferedWriter writer) throws IOException {
         String currentLine;
         boolean firstLine = true;
         while((currentLine = readerOriginalFile.readLine()) != null) {

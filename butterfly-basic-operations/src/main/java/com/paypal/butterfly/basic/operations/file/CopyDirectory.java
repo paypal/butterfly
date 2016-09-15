@@ -1,9 +1,11 @@
 package com.paypal.butterfly.basic.operations.file;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Operation to copy a directory and its content from one location to another.
@@ -40,13 +42,21 @@ public class CopyDirectory extends AbstractCopy<CopyDirectory> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         // TODO Validation must be done here!!! In case none has been set!
         File filesFrom = getAbsoluteFile(transformedAppFolder, transformationContext);
         File fileTo = getFileTo(transformedAppFolder, transformationContext);
-        FileUtils.copyDirectory(filesFrom, fileTo);
+        TOExecutionResult result = null;
 
-        return String.format("Files from '%s' copied to '%s'", getRelativePath(transformedAppFolder, filesFrom), getRelativePath(transformedAppFolder, fileTo));
+        try {
+            FileUtils.copyDirectory(filesFrom, fileTo);
+            String details = String.format("Files from '%s' copied to '%s'", getRelativePath(transformedAppFolder, filesFrom), getRelativePath(transformedAppFolder, fileTo));
+            result = TOExecutionResult.success(this, details);
+        } catch (IOException e) {
+            result = TOExecutionResult.error(this, e);
+        }
+
+        return result;
     }
 
     private File getFileTo(File transformedAppFolder, TransformationContext transformationContext) {

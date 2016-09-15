@@ -11,22 +11,23 @@ package com.paypal.butterfly.extensions.api;
 public interface TransformationContext {
 
     /**
-     * Returns the attribute object associated with the key,
-     * or null, if there is none
+     * Returns the attribute object associated with the key
+     * (which is the attribute name), or null, if there is none
      *
-     * @param key
-     * @return
+     * @param name the transformation context attribute name
+     * @return the attribute object
      */
-    Object get(String key);
+    Object get(String name);
 
     /**
-     * Associates a new transformation context attribute with a key.
-     * If another attribute had already been associated with same key,
-     * it is replaced by the new one.
+     * Returns the performing result of the {@link TransformationUtility}
+     * identified by the specified name. Notice that it could be a
+     * {@link TransformationOperation} too, or any other
+     * {@link TransformationUtility} subclass
      *
-     * @param key
-     * @param attribute
+     * @param utilityName the name of the utility
+     * @return the utility performing result
      */
-    void put(String key, Object attribute);
+    Result getResult(String utilityName);
 
 }

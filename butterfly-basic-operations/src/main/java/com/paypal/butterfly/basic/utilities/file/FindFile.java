@@ -1,9 +1,8 @@
 package com.paypal.butterfly.basic.utilities.file;
 
+import com.paypal.butterfly.extensions.api.TUResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
@@ -20,15 +19,16 @@ import java.util.List;
  * If not set explicitly, then the search will happen from the root
  * of the transformed application, which is equivalent to setting
  * {@link #relative(String) to {@code "."}
+ * </br>
+ * If no file is found, a {@link com.paypal.butterfly.extensions.api.TUResult.Type#NULL}
+ * is returned
  *
  * @see {@link FindFiles} for a better refined search
  * and to find multiple files
  *
  * @author facarvalho
  */
-public class FindFile extends TransformationUtility<FindFile, File> {
-
-    private static final Logger logger = LoggerFactory.getLogger(FindFile.class);
+public class FindFile extends TransformationUtility<FindFile> {
 
     private static final String DESCRIPTION = "Find file named %s under %s";
 
@@ -63,20 +63,26 @@ public class FindFile extends TransformationUtility<FindFile, File> {
     }
 
     @Override
-    protected File execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File searchRootFolder = getAbsoluteFile(transformedAppFolder, transformationContext);
         FindFiles findFiles = new FindFiles(fileName, true);
-        List<File> files = findFiles.execution(searchRootFolder, transformationContext);
+
+        TUResult result = null;
+
+        // TODO improve this after TU execution returns TUResult, instead of Result
+        List<File> files = (List<File>) ((TUResult) findFiles.execution(searchRootFolder, transformationContext)).getValue();
 
         if(files == null || files.size() == 0) {
-            logger.warn("No file named '{}' has been found by {}", fileName, getName());
-            return null;
-        }
-        if(files.size() > 1) {
-            logger.debug("More than one file named {} has been found by {}, the first one will be returned", fileName, getName());
+            String details = String.format("No file named '%s' has been found by %s", fileName, getName());
+            result = TUResult.nullResult(this, details);
+        } else if(files.size() > 1) {
+            String details = String.format("More than one file named %s has been found by %s, the first one will be returned", fileName, getName());
+            result = TUResult.warning(this, files.get(0), details);
+        } else if(files.size() == 1) {
+            result = TUResult.value(this, files.get(0));
         }
 
-        return files.get(0);
+        return result;
     }
 
 }

@@ -1,11 +1,13 @@
 package com.paypal.butterfly.basic.operations.file;
 
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Operation for single file deletion
@@ -30,21 +32,29 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeRemoved;
         try {
             fileToBeRemoved = getAbsoluteFile(transformedAppFolder, transformationContext);
         } catch (TransformationUtilityException e) {
-            // TODO deal with it properly with result type
-            return String.format("No file has been removed because file path has not been resolved");
+            String result = String.format("No file has been removed because file path has not been resolved");
+            return TOExecutionResult.noOp(this, result);
         }
         if(!fileToBeRemoved.exists()) {
-            // TODO deal with it properly with result type
-            return String.format("File '%s' was not removed because it does not exist", getRelativePath());
+            String result = String.format("File '%s' was not removed because it does not exist", getRelativePath());
+            return TOExecutionResult.noOp(this, result);
         }
-        FileUtils.forceDelete(fileToBeRemoved);
 
-        return String.format("File '%s' has been removed", getRelativePath());
+        TOExecutionResult result = null;
+        try {
+            FileUtils.forceDelete(fileToBeRemoved);
+            String details = String.format("File '%s' has been removed", getRelativePath());
+            result = TOExecutionResult.success(this, details);
+        } catch (IOException e) {
+            result = TOExecutionResult.error(this, e);
+        }
+
+        return result;
     }
 
     @Override

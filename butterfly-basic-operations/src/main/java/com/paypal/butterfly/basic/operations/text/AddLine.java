@@ -2,9 +2,11 @@ package com.paypal.butterfly.basic.operations.text;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Operation to add a new line to the end of a file
@@ -51,13 +53,20 @@ public class AddLine extends TransformationOperation<AddLine> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeModified = getAbsoluteFile(transformedAppFolder, transformationContext);
+        TOExecutionResult result = null;
 
-        FileUtils.fileAppend(fileToBeModified.getAbsolutePath(), System.lineSeparator());
-        FileUtils.fileAppend(fileToBeModified.getAbsolutePath(), newLine);
+        try {
+            FileUtils.fileAppend(fileToBeModified.getAbsolutePath(), System.lineSeparator());
+            FileUtils.fileAppend(fileToBeModified.getAbsolutePath(), newLine);
+            String details =  "A new line has been added to file " + getRelativePath(transformedAppFolder, fileToBeModified);
+            result = TOExecutionResult.success(this, details);
+        } catch (IOException e) {
+            result = TOExecutionResult.error(this, e);
+        }
 
-        return "A new line has been added to file " + getRelativePath();
+        return result;
     }
 
     @Override

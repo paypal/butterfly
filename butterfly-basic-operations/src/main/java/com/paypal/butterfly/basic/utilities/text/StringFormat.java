@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.utilities.text;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
+import com.paypal.butterfly.extensions.api.TUResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 
 import java.io.File;
@@ -17,7 +18,7 @@ import java.util.Arrays;
  *
  * @author facarvalho
  */
-public class StringFormat extends TransformationUtility<StringFormat, String> {
+public class StringFormat extends TransformationUtility<StringFormat> {
 
     private static final String DESCRIPTION = "Apply transformation context attributes %s to '%s'";
 
@@ -51,12 +52,16 @@ public class StringFormat extends TransformationUtility<StringFormat, String> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+        TUResult result = null;
+
         String[] attributeValues = new String[attributeNames.length];
         for (int i = 0; i < attributeNames.length; i++) {
             attributeValues[i] = (String) transformationContext.get(attributeNames[i]);
         }
-        return String.format(format, attributeValues);
+        result = TUResult.value(this, String.format(format, attributeValues));
+
+        return result;
     }
 
 }
