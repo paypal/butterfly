@@ -66,10 +66,11 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
             String details;
             if (containsKey) {
                 details = String.format("Property '%s' has been removed from '%s'", propertyName, getRelativePath());
+                result = TOExecutionResult.success(this, details);
             } else {
                 details = String.format("Property '%s' has NOT been removed from '%s' because it is not present on it", propertyName, getRelativePath());
+                result = TOExecutionResult.warning(this, details);
             }
-            result = TOExecutionResult.success(this, details);
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);
         } finally {
