@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author facarvalho
  */
-public abstract class TransformationOperation<TO> extends TransformationUtility<TO, String> {
+public abstract class TransformationOperation<TO> extends TransformationUtility<TO> {
 
     // Indicates whether or not this operation has already been
     // executed. Transformation operations are supposed to
@@ -75,7 +75,8 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
      *
      * @return a message stating with details the operation that has been performed
      */
-    public final synchronized String perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationOperationException {
+    @Override
+    public final synchronized TOPerformResult perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationOperationException {
         if(hasBeenPerformed.get()) {
             throw new IllegalStateException("This transformation operation has already been performed");
         }
@@ -87,19 +88,21 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
         }
 
         if(conditionAttributeName != null && !(Boolean) transformationContext.get(conditionAttributeName)) {
-            // TODO the return type should be complext enough to tell the transformation engine that
-            // this operation was skipped. After that, this message here should be logged by the engine as DEBUG
-            return String.format("*** SKIPPED *** Operation '%s' has been skipped due to failing condition: %s", getName(), conditionAttributeName);
+            String details = String.format("Operation '%s' has been skipped due to failing condition: %s", getName(), conditionAttributeName);
+            TOPerformResult result = TOPerformResult.skippedCondition(this, details);
+            return result;
         }
         if(!preExecutionValidation(transformedAppFolder)) {
             throw new TransformationOperationException(getName() + " pre-execution validation has failed");
             // TODO create a meta-data here with reasons for pre-validation failures, it should state the error
         }
 
-        // TODO result should be a composite type, including potential warnings
-        String resultMessage;
+        // TODO implement logic for SKIPPED_DEPENDENCY and ERROR_PRE_VALIDATION
+
+        TOPerformResult result;
         try {
-            resultMessage = execution(transformedAppFolder, transformationContext);
+            TOExecutionResult executionResult = (TOExecutionResult) execution(transformedAppFolder, transformationContext);
+            result = TOPerformResult.executionResult(this, executionResult);
         } catch(Exception e) {
             throw new TransformationOperationException(getName() + " has failed", e);
         } finally {
@@ -108,7 +111,7 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
 
         // TODO post validation handling
 
-        return resultMessage;
+        return result;
     }
 
     /**
@@ -181,6 +184,21 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
         clone.conditionAttributeName = this.conditionAttributeName;
 
         return clone;
+    }
+
+    /**
+     * Return the condition attribute name associated with this transformation operation,
+     * or null, if there is none
+     *
+     * @return the condition attribute name associated with this transformation operation
+     */
+    public String getConditionAttributeName() {
+        return conditionAttributeName;
+    }
+
+    @Override
+    protected final void setSaveResult(boolean saveResult) {
+        throw new UnsupportedOperationException("Transformation operations must always save results");
     }
 
 }

@@ -2,9 +2,9 @@ package com.paypal.butterfly.basic.utilities.file;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
+import com.paypal.butterfly.extensions.api.TUResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
@@ -17,11 +17,9 @@ import java.io.File;
  *
  * @author facarvalho
  */
-public class LocateFile extends TransformationUtility<LocateFile, File> {
+public class LocateFile extends TransformationUtility<LocateFile> {
 
     private static final String DESCRIPTION = "Locate file under %s";
-
-    private static final Logger logger = LoggerFactory.getLogger(LocateFile.class);
 
     private int parentLevel = 0;
 
@@ -56,21 +54,32 @@ public class LocateFile extends TransformationUtility<LocateFile, File> {
     }
 
     @Override
-    protected File execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File locatedFile;
+        TUResult result = null;
+
         try {
             locatedFile = getAbsoluteFile(transformedAppFolder, transformationContext);
             for(int i = parentLevel; i > 0; i--) {
                 locatedFile = locatedFile.getParentFile();
+                if (locatedFile == null) {
+                    break;
+                }
             }
-			// FIXME a better exception is necessary here for cases when the absolute path transformation context attribute value is null
+            if (locatedFile == null) {
+                String message = String.format("File to be located reached limit of files hierarchy, parent level %d is too deep", parentLevel);
+                TransformationOperationException e = new TransformationOperationException(message);
+                result = TUResult.error(this, e);
+            } else {
+                result = TUResult.value(this, locatedFile);
+            }
+            // FIXME a better exception is necessary here for cases when the absolute path transformation context attribute value is null
         } catch(TransformationUtilityException exception) {
-            logger.warn("No file has been located by {} because its baseline relative or absolute location could not be resolved", getName());
-			// TODO a better result should be returned as soon as the reusult type is implemented
-            return null;
+            String details = String.format("No file has been located by %s because its baseline relative or absolute location could not be resolved", getName());
+            result = TUResult.error(this, exception, details);
         }
 
-        return locatedFile;
+        return result;
 
     }
 

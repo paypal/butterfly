@@ -1,9 +1,9 @@
 package com.paypal.butterfly.extensions.api.utilities;
 
-import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.TransformationOperation;
-import com.paypal.butterfly.extensions.api.TransformationUtility;
-import com.paypal.butterfly.extensions.api.TransformationUtilityParent;
+import com.paypal.butterfly.extensions.api.*;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
@@ -19,7 +19,9 @@ import java.util.*;
  * @author facarvalho
  */
 // TODO Analyze if CopyFiles and DeleteFiles could be removed due to this utility
-public class MultipleOperations extends TransformationUtility<MultipleOperations, List<TransformationOperation>> implements TransformationUtilityParent {
+public class MultipleOperations extends TransformationUtility<MultipleOperations> implements TransformationUtilityParent {
+
+    private static final Logger logger = LoggerFactory.getLogger(MultipleOperations.class);
 
     private static final String DESCRIPTION = "Perform operation %s against multiple files";
 
@@ -120,7 +122,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
     }
 
     @Override
-    protected List<TransformationOperation> execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         List<File> files;
         Set<File> allFiles = new HashSet<File>();
 
@@ -134,15 +136,24 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
         operations = new ArrayList<TransformationOperation>();
         TransformationOperation operation;
         int order = 1;
-        for(File file : allFiles) {
-            operation = (TransformationOperation) templateOperation.clone();
-            operation.setParent(this, order);
-            operation.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
-            order++;
-            operations.add(operation);
+        try {
+            for(File file : allFiles) {
+                operation = (TransformationOperation) templateOperation.clone();
+                operation.setParent(this, order);
+                operation.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
+                order++;
+                operations.add(operation);
+            }
+        } catch (CloneNotSupportedException e) {
+            // If MultipleOperations ever get converted to TO, then change the exception below to TOE
+            throw new TransformationUtilityException("The template transformation operation is not cloneable", e);
         }
 
-        return operations;
+        String message = null;
+        if(logger.isDebugEnabled()) {
+            message = String.format("Multiple operation %s resulted in %d operations based on %s", getName(), operations.size(), templateOperation.getClass().getSimpleName());
+        }
+        return TUResult.value(this, operations).setDetails(message);
     }
 
     public List<TransformationOperation> getOperations() {

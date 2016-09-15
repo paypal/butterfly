@@ -2,14 +2,18 @@ package com.paypal.butterfly.basic.utilities.xml;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
+import com.paypal.butterfly.extensions.api.TUResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 /**
@@ -18,7 +22,7 @@ import java.util.regex.Pattern;
  *
  * @author facarvalho
  */
-public class XmlElement extends TransformationUtility<XmlElement, String> {
+public class XmlElement extends TransformationUtility<XmlElement> {
 
     private static final String DESCRIPTION = "Retrieve the value of element %s in XML file %s";
 
@@ -89,22 +93,26 @@ public class XmlElement extends TransformationUtility<XmlElement, String> {
     private static final Pattern XML_ELEMENT_SPLIT_REGEX_PATTERN = Pattern.compile("\\.");
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File xmlFile = getAbsoluteFile(transformedAppFolder, transformationContext);
+        TUResult result = null;
 
-        Node node;
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(xmlFile);
-
-        node = findNode(doc.getChildNodes(), XML_ELEMENT_SPLIT_REGEX_PATTERN.split(xmlElement), 0);
-
-        String result;
-
-        if(attribute == null) {
-            result = node.getTextContent();
-        } else {
-            result = node.getAttributes().getNamedItem(attribute).getTextContent();
+        try {
+            Node node;
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = null;
+            builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(xmlFile);
+            node = findNode(doc.getChildNodes(), XML_ELEMENT_SPLIT_REGEX_PATTERN.split(xmlElement), 0);
+            String value;
+            if(attribute == null) {
+                value = node.getTextContent();
+            } else {
+                value = node.getAttributes().getNamedItem(attribute).getTextContent();
+            }
+            result = TUResult.value(this, value);
+        } catch (TransformationUtilityException|ParserConfigurationException|SAXException|IOException e) {
+            result = TUResult.error(this, e);
         }
 
         return result;

@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.operations.text;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import org.slf4j.Logger;
@@ -163,14 +164,16 @@ public class InsertText extends TransformationOperation<InsertText> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
+    protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
 
         File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader readerOriginalFile = null;
         BufferedReader readerText = null;
         BufferedWriter writer = null;
-        String result;
+        String details;
+        TOExecutionResult result = null;
 
         try {
             readerOriginalFile = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
@@ -179,46 +182,61 @@ public class InsertText extends TransformationOperation<InsertText> {
 
             switch (insertionMode) {
                 case LINE_NUMBER:
-                    result = insertAtSpecificLine(readerText, readerOriginalFile, writer);
+                    details = insertAtSpecificLine(readerText, readerOriginalFile, writer);
                     break;
                 case REGEX_FIRST:
-                    result = insertAfterRegex(readerText, readerOriginalFile, writer, true);
+                    details = insertAfterRegex(readerText, readerOriginalFile, writer, true);
                     break;
                 case REGEX_ALL:
-                    result = insertAfterRegex(readerText, readerOriginalFile, writer, false);
+                    details = insertAfterRegex(readerText, readerOriginalFile, writer, false);
                     break;
                 default:
                 case CONCAT:
-                    result = concat(readerText, readerOriginalFile, writer);
+                    details = concat(readerText, readerOriginalFile, writer);
                     break;
             }
+            result = TOExecutionResult.success(this, details);
+        } catch (IOException e) {
+            result = TOExecutionResult.error(this, e);
         } finally {
             try {
-                if (writer != null) { writer.close(); }
+                if (writer != null) try {
+                    writer.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
+                }
             } finally {
-                try {
-                    if (readerOriginalFile != null) { readerOriginalFile.close(); }
+                if(readerOriginalFile != null) try {
+                    readerOriginalFile.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
                 } finally {
-                    if(readerText != null) { readerText.close(); }
+                    if(readerText != null) try {
+                        readerText.close();
+                    } catch (IOException e) {
+                        result.addWarning(e);
+                    }
                 }
             }
         }
-        //// TODO: 8/11/2016 : Refactor the delete code after introducing working directory
-        boolean bDeleted = fileToBeChanged.delete();
-        if(bDeleted) {
+        // TODO Refactor the delete code after introducing working directory
+        boolean deleted = fileToBeChanged.delete();
+        if(deleted) {
             if (!tempFile.renameTo(fileToBeChanged)) {
-                String exceptionMessage = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
-                throw new TransformationOperationException(exceptionMessage);
+                details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
+                TransformationOperationException e = new TransformationOperationException(details);
+                result = TOExecutionResult.error(this, e);
             }
-        }else{
-            String exceptionMessage = String.format("Error when deleting the directory %s", fileToBeChanged);
-            throw new TransformationOperationException(exceptionMessage);
+        } else {
+            details = String.format("Error when deleting %s", getRelativePath(transformedAppFolder, fileToBeChanged));
+            TransformationOperationException e = new TransformationOperationException(details);
+            result = TOExecutionResult.error(this, e);
         }
 
         return result;
     }
 
-    private String insertAtSpecificLine(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer) throws Exception {
+    private String insertAtSpecificLine(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer) throws IOException {
         String currentLine;
         int n = 0;
         while((currentLine = readerOriginalFile.readLine()) != null) {
@@ -236,7 +254,7 @@ public class InsertText extends TransformationOperation<InsertText> {
         return String.format("Text has been inserted from %s to %s at line number %d", textFileUrl, getRelativePath(), lineNumber);
     }
 
-    private String insertAfterRegex(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer, boolean firstOnly) throws Exception {
+    private String insertAfterRegex(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer, boolean firstOnly) throws IOException {
         String currentLine;
         int n = 0;
         boolean foundFirstMatch = false;
@@ -270,7 +288,7 @@ public class InsertText extends TransformationOperation<InsertText> {
         return result;
     }
 
-    private String concat(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer) throws Exception {
+    private String concat(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer) throws IOException {
         String currentLine;
         boolean firstLine = true;
         while((currentLine = readerOriginalFile.readLine()) != null) {

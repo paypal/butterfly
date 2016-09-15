@@ -1,22 +1,18 @@
 package com.paypal.butterfly.basic.operations.pom;
 
-import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Operation to add a new plugin to a POM file
  *
  * @author facarvalho
  */
-public class PomAddPlugin extends TransformationOperation<PomAddPlugin> {
+public class PomAddPlugin extends AbstractPomOperation<PomAddPlugin> {
 
     // TODO
     // Add pre-validation to check, in case version was not set, if plugin
@@ -96,42 +92,17 @@ public class PomAddPlugin extends TransformationOperation<PomAddPlugin> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
-        MavenXpp3Reader reader = new MavenXpp3Reader();
-
-        FileInputStream fileInputStream = null;
-        FileOutputStream fileOutputStream = null;
-
-        try {
-            fileInputStream = new FileInputStream(pomFile);
-
-
-            Model model = reader.read(fileInputStream);
-
-
-            Plugin plugin = new Plugin();
-            plugin.setGroupId(groupId);
-            plugin.setArtifactId(artifactId);
-            if (version != null) {
-                plugin.setVersion(version);
-            }
-            model.getBuild().addPlugin(plugin);
-
-            MavenXpp3Writer writer = new MavenXpp3Writer();
-            fileOutputStream = new FileOutputStream(pomFile);
-            writer.write(fileOutputStream, model);
-        }finally {
-            try {
-                if (fileInputStream != null) fileInputStream.close();
-            }finally {
-                if(fileOutputStream != null) fileOutputStream.close();
-            }
-
-
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+        Plugin plugin = new Plugin();
+        plugin.setGroupId(groupId);
+        plugin.setArtifactId(artifactId);
+        if (version != null) {
+            plugin.setVersion(version);
         }
+        model.getBuild().addPlugin(plugin);
+        String details = String.format("Plugin %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":" + version), relativePomFile);
 
-        return String.format("Plugin %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":" + version), getRelativePath());
+        return TOExecutionResult.success(this, details);
     }
 
     @Override

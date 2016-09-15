@@ -10,7 +10,7 @@ import com.paypal.butterfly.extensions.api.TransformationUtility;
  *
  * @author facarvalho
  */
-public abstract class AnonymousUtility<RT> extends TransformationUtility<AnonymousUtility, RT> {
+public abstract class AnonymousUtility<RT> extends TransformationUtility<AnonymousUtility> {
 
     private String description = null;
 

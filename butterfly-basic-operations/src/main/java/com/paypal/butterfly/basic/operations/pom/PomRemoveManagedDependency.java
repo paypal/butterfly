@@ -1,23 +1,19 @@
 package com.paypal.butterfly.basic.operations.pom;
 
-import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Operation to remove a managed dependency entry from a POM file
  *
  * @author facarvalho
  */
-public class PomRemoveManagedDependency extends TransformationOperation<PomRemoveManagedDependency> {
+public class PomRemoveManagedDependency extends AbstractPomOperation<PomRemoveManagedDependency> {
 
     private static final String DESCRIPTION = "Remove managed dependency entry %s:%s from POM file %s";
 
@@ -64,49 +60,30 @@ public class PomRemoveManagedDependency extends TransformationOperation<PomRemov
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
-        String resultMessage = null;
-        MavenXpp3Reader reader = new MavenXpp3Reader();
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+        boolean found = false;
+        DependencyManagement dependencyManagement = model.getDependencyManagement();
 
-        FileInputStream fileInputStream = null;
-        FileOutputStream fileOutputStream = null;
+        TOExecutionResult result = null;
+        String details = null;
 
-        try {
-            fileInputStream = new FileInputStream(pomFile);
-
-
-            Model model = reader.read(fileInputStream);
-            boolean found = false;
-            DependencyManagement dependencyManagement = model.getDependencyManagement();
-
-            if(dependencyManagement != null) {
-                for (Dependency dependency : dependencyManagement.getDependencies()) {
-                    if(dependency.getArtifactId().equals(artifactId) && dependency.getGroupId().equals(groupId)) {
-                        dependencyManagement.removeDependency(dependency);
-                        resultMessage = String.format("Managed dependency %s:%s has been removed from POM file %s", groupId, artifactId, getRelativePath());
-                        MavenXpp3Writer writer = new MavenXpp3Writer();
-                        fileOutputStream = new FileOutputStream(pomFile);
-                        writer.write(fileOutputStream, model);
-
-                        found = true;
-                        break;
-                    }
+        if(dependencyManagement != null) {
+            for (Dependency dependency : dependencyManagement.getDependencies()) {
+                if(dependency.getArtifactId().equals(artifactId) && dependency.getGroupId().equals(groupId)) {
+                    dependencyManagement.removeDependency(dependency);
+                    details = String.format("Managed dependency %s:%s has been removed from POM file %s", groupId, artifactId, relativePomFile);
+                    result = TOExecutionResult.success(this, details);
+                    found = true;
+                    break;
                 }
             }
-            if(!found){
-                resultMessage = String.format("Managed dependency %s:%s could not be found in POM file %s", groupId, artifactId, getRelativePath());
-            }
-
-        }finally {
-            try {
-                if (fileInputStream != null) fileInputStream.close();
-            }finally {
-                if(fileOutputStream != null) fileOutputStream.close();
-            }
+        }
+        if(!found) {
+            details = String.format("Managed dependency %s:%s could not be found in POM file %s", groupId, artifactId, relativePomFile);
+            result = TOExecutionResult.noOp(this, details);
         }
 
-        return resultMessage;
+        return result;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.paypal.butterfly.core;
 
+import com.paypal.butterfly.extensions.api.Result;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,33 +14,66 @@ import java.util.Map;
  *
  * @author facarvalho
  */
-public class TransformationContextImpl implements TransformationContext {
+class TransformationContextImpl implements TransformationContext {
 
     private Map<String, Object> attributes = new HashMap<String, Object>();
+    private Map<String, Result> results = new HashMap<String, Result>();
 
     @Override
-    public Object get(String key) {
-        if(StringUtils.isBlank(key)) {
+    public Object get(String name) {
+        if(StringUtils.isBlank(name)) {
             // TODO replace this by a better exception type.
             // TransformationContextException could be a good one, however, according to the link below,
             // it is a checked exception, but we definitely need a runtime exception here.
             // https://engineering.paypalcorp.com/confluence/display/RaptorServices/Butterfly#Butterfly-Butterflyexceptions
             throw new IllegalArgumentException("Transformation context attribute key cannot be null");
         }
-        return attributes.get(key);
+        return attributes.get(name);
     }
 
     @Override
-    public void put(String key, Object attribute) {
+    public Result getResult(String utilityName) {
+        if(StringUtils.isBlank(utilityName)) {
+            throw new IllegalArgumentException("Result key cannot be null");
+        }
+        return results.get(utilityName);
+    }
+
+    /**
+     * Puts a new transformation context attribute, using its name as key.
+     * If another attribute had already been associated with same key,
+     * it is replaced by the new one.
+     *
+     * @param name the transformation context attribute name
+     * @param attributeObject the attribute object
+     */
+    void put(String name, Object attributeObject) {
         // TODO
-//        if(StringUtils.isBlank(key) || attribute == null || (attribute instanceof String && StringUtils.isBlank((String) attribute))) {
+//        if(StringUtils.isBlank(name) || attributeObject == null || (attributeObject instanceof String && StringUtils.isBlank((String) attributeObject))) {
 //            // TODO replace this by a better exception type.
 //            // TransformationContextException could be a good one, however, according to the link below,
 //            // it is a checked exception, but we definitely need a runtime exception here.
 //            // https://engineering.paypalcorp.com/confluence/display/RaptorServices/Butterfly#Butterfly-Butterflyexceptions
-//            throw new IllegalArgumentException("Transformation context attribute key and value cannot be null nor blank");
+//            throw new IllegalArgumentException("Transformation context attribute name and object cannot be null nor blank");
 //        }
-        attributes.put(key, attribute);
+        attributes.put(name, attributeObject);
     }
 
+    /**
+     * Puts a new transformation utility result, using its name as key.
+     * If another result had already been associated with same key,
+     * it is replaced by the new one.
+     *
+     * @param name the transformation utility name
+     * @param resultObject the result object
+     */
+    void putResult(String name, Result resultObject) {
+        if(StringUtils.isBlank(name)) {
+            throw new IllegalArgumentException("Result name cannot be null nor blank");
+        }
+        if(resultObject == null) {
+            throw new IllegalArgumentException("Result object cannot be null");
+        }
+        results.put(name, resultObject);
+    }
 }

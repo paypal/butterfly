@@ -1,9 +1,11 @@
 package com.paypal.butterfly.basic.operations.file;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Operation to copy a file. The relative or absolute file is the
@@ -35,9 +37,10 @@ public class CopyFile extends AbstractCopy<CopyFile> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File fileFrom = getAbsoluteFile(transformedAppFolder, transformationContext);
         File fileTo;
+        TOExecutionResult result = null;
 
         if(toRelative != null) {
             fileTo = new File(transformedAppFolder, toRelative);
@@ -45,9 +48,15 @@ public class CopyFile extends AbstractCopy<CopyFile> {
             fileTo = (File) transformationContext.get(toAbsoluteAttribute);
         }
 
-        FileUtils.copyFileToDirectory(fileFrom, fileTo);
+        try {
+            String details = String.format("File '%s' was copied to '%s'", getRelativePath(), getRelativePath(transformedAppFolder, fileTo));
+            FileUtils.copyFileToDirectory(fileFrom, fileTo);
+            result = TOExecutionResult.success(this, details);
+        } catch (IOException e) {
+            result = TOExecutionResult.error(this, e);
+        }
 
-        return String.format("File '%s' was copied to '%s'", getRelativePath(), getRelativePath(transformedAppFolder, fileTo));
+        return result;
     }
 
     @Override

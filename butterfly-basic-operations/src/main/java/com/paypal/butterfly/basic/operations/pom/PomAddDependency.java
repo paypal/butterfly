@@ -1,22 +1,18 @@
 package com.paypal.butterfly.basic.operations.pom;
 
-import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Operation to add a new dependency to a POM file
  *
  * @author facarvalho
  */
-public class PomAddDependency extends TransformationOperation<PomAddDependency> {
+public class PomAddDependency extends AbstractPomOperation<PomAddDependency> {
 
     // TODO
     // Add pre-validation to check, in case version was not set, if dependency
@@ -120,39 +116,20 @@ public class PomAddDependency extends TransformationOperation<PomAddDependency> 
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
-        MavenXpp3Reader reader = new MavenXpp3Reader();
-        FileInputStream fileInputStream = null;
-        FileOutputStream fileOutputStream = null;
-
-        try {
-            fileInputStream = new FileInputStream(pomFile);
-
-            Model model = reader.read(fileInputStream);
-            Dependency dependency = new Dependency();
-            dependency.setGroupId(groupId);
-            dependency.setArtifactId(artifactId);
-            if (version != null) {
-                dependency.setVersion(version);
-            }
-            if (scope != null) {
-                dependency.setScope(scope);
-            }
-            model.addDependency(dependency);
-
-            fileOutputStream = new FileOutputStream(pomFile);
-            MavenXpp3Writer writer = new MavenXpp3Writer();
-            writer.write(fileOutputStream, model);
-        }finally {
-            try {
-                if (fileInputStream != null) fileInputStream.close();
-            }finally {
-                if(fileOutputStream != null) fileOutputStream.close();
-            }
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws IOException, XmlPullParserException {
+        Dependency dependency = new Dependency();
+        dependency.setGroupId(groupId);
+        dependency.setArtifactId(artifactId);
+        if (version != null) {
+            dependency.setVersion(version);
         }
+        if (scope != null) {
+            dependency.setScope(scope);
+        }
+        model.addDependency(dependency);
+        String details = String.format("Dependency %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":"+ version), relativePomFile);
 
-        return String.format("Dependency %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":"+ version), getRelativePath());
+        return TOExecutionResult.success(this, details);
     }
 
     @Override

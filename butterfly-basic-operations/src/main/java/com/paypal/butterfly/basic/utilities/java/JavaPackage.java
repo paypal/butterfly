@@ -1,13 +1,17 @@
 package com.paypal.butterfly.basic.utilities.java;
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
+import com.paypal.butterfly.extensions.api.TUResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Transformation utility to retrieve the package
@@ -15,7 +19,7 @@ import java.io.FileInputStream;
  *
  * @author facarvalho
  */
-public class JavaPackage extends TransformationUtility<JavaPackage, String> {
+public class JavaPackage extends TransformationUtility<JavaPackage> {
 
     private static final String DESCRIPTION = "Retrieve the package of a Java class file %s";
 
@@ -28,19 +32,30 @@ public class JavaPackage extends TransformationUtility<JavaPackage, String> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
+    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File javaClassFile = getAbsoluteFile(transformedAppFolder, transformationContext);
+        FileInputStream fileInputStream = null;
+        TUResult result = null;
 
-        FileInputStream fileInputStream = new FileInputStream(javaClassFile);
-        CompilationUnit compilationUnit;
         try {
-            compilationUnit = JavaParser.parse(fileInputStream);
+            fileInputStream = new FileInputStream(javaClassFile);
+            CompilationUnit compilationUnit = JavaParser.parse(fileInputStream);
+            PackageDeclaration packageDeclaration = compilationUnit.getPackage();
+            result = TUResult.value(this, packageDeclaration.getPackageName());
+        } catch (FileNotFoundException|ParseException  e) {
+            result = TUResult.error(this, e);
         } finally {
-            fileInputStream.close();
+            try {
+                if (fileInputStream != null) {
+                    fileInputStream.close();
+                }
+            } catch (IOException e) {
+                result.addWarning(e);
+            }
         }
-        PackageDeclaration packageDeclaration = compilationUnit.getPackage();
 
-        return packageDeclaration.getPackageName();
+        return result;
     }
 
 }

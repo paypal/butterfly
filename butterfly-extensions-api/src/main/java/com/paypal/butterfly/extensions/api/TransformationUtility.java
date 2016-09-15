@@ -44,7 +44,10 @@ import java.util.Map;
  *
  * @author facarvalho
  */
-public abstract class TransformationUtility<TU, RT> implements Cloneable {
+// TODO create another type to be parent of TO and TU, this way the result type will be better organized
+// How to name it? transformation node?
+// This type should be the one to be added to a template
+public abstract class TransformationUtility<TU> implements Cloneable {
 
     private static final Logger logger = LoggerFactory.getLogger(TransformationUtility.class);
 
@@ -103,6 +106,9 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
 
     // Abort the whole transformation if this operation fails
     private boolean abortOnFailure = false;
+
+    // See comments in isSaveResult method
+    private boolean saveResult = true;
 
     /**
      * The public default constructor should always be available by any transformation
@@ -374,17 +380,23 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
     protected final void applyPropertiesFromContext(TransformationContext transformationContext) throws TransformationUtilityException {
         String attributeName;
         Method method;
+        Object value = null;
         for (final Iterator itr = latePropertiesAttributes.entrySet().iterator(); itr.hasNext();) {
             Map.Entry<String,String> entry = (Map.Entry)itr.next();
             String propertyName = entry.getKey();
             attributeName = latePropertiesAttributes.get(propertyName);
             try {
                 method = latePropertiesSetters.get(propertyName);
-                Object value = transformationContext.get(attributeName);
+                value = transformationContext.get(attributeName);
                 method.invoke(this, value);
+            } catch (TransformationDefinitionException e) {
+                String exceptionMessage = String.format("An error happened when setting property %s from context attribute %s in %s", propertyName, attributeName, name);
+                if(value == null) {
+                    logger.warn("Attribute %s is NULL. This problem could be avoided by setting the utility that generated it as a dependency for %s", getName());
+                }
+                throw new TransformationUtilityException(exceptionMessage, e);
             } catch (Exception e) {
                 String exceptionMessage = String.format("An error happened when setting property %s from context attribute %s in %s", propertyName, attributeName, name);
-                logger.error(exceptionMessage, e);
                 throw new TransformationUtilityException(exceptionMessage, e);
             }
         }
@@ -474,10 +486,10 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
      *
      * @return the result
      */
-    public synchronized RT perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
+    public synchronized Result perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
         applyPropertiesFromContext(transformationContext);
 
-        RT result;
+        Result result;
         try {
             result = execution(transformedAppFolder, transformationContext);
         } catch(Exception e) {
@@ -515,6 +527,34 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
     }
 
     /**
+     * This flag indicates whether the value produced by the transformation utility execution,
+     * and also its result object as a whole, should both be saved in the transformation
+     * context object.
+     * </br>
+     * In most cases it should do so, because that is the main purpose of
+     * every transformation utility, to produce and share useful data with other
+     * transformation utilities and operations.
+     * </br>
+     * However, there are rare cases,
+     * for example {@link com.paypal.butterfly.extensions.api.utilities.Log},
+     * where no value will be produced and nothing should be saved to the
+     * transformation context attribute
+     *
+     * @return
+     */
+    public boolean isSaveResult() {
+        return saveResult;
+    }
+
+    /**
+     * @see {@link #isSaveResult()}
+     * @param saveResult
+     */
+    protected void setSaveResult(boolean saveResult) {
+        this.saveResult = saveResult;
+    }
+
+    /**
      * The implementation of this transformation utility.
      * The returned object is the result of the execution and is always
      * automatically saved in the transformation context as a new
@@ -525,7 +565,7 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
      * @return an object with the result of this execution, to be better defined
      * by the concrete utility class, since its type is generic
      */
-    protected abstract RT execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception;
+    protected abstract Result execution(File transformedAppFolder, TransformationContext transformationContext);
 
     @Override
     public String toString() {
@@ -533,8 +573,8 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
     }
 
     @Override
-    public TransformationUtility<TU, RT> clone() throws CloneNotSupportedException {
-        TransformationUtility<TU, RT> clone = (TransformationUtility<TU, RT>) super.clone();
+    public TransformationUtility<TU> clone() throws CloneNotSupportedException {
+        TransformationUtility<TU> clone = (TransformationUtility<TU>) super.clone();
 
         // Properties we do NOT want to be in the clone (they are being initialized)
         clone.order = -1;
@@ -552,10 +592,10 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
         clone.latePropertiesAttributes.putAll(this.latePropertiesAttributes);
         clone.latePropertiesSetters.putAll(this.latePropertiesSetters);
         clone.abortOnFailure = this.abortOnFailure;
+        clone.saveResult = this.saveResult;
 
         return clone;
     }
-
 
     /**
      * To check for Blank String if it is Blank String then it would throw TransformationDefinitionException.
@@ -567,7 +607,7 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
      */
     protected static void checkForBlankString(String name, String value) throws TransformationDefinitionException{
         if(StringUtils.isBlank(value)){
-            throw new TransformationDefinitionException(name+" cannot be blank");
+            throw new TransformationDefinitionException(name + " cannot be blank");
         }
     }
 
@@ -582,7 +622,7 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
      */
     protected static void checkForEmptyString(String name, String value) throws TransformationDefinitionException{
         if(value != null && value.trim().length() == 0){
-            throw new TransformationDefinitionException(name+" cannot be empty");
+            throw new TransformationDefinitionException(name + " cannot be empty");
         }
     }
 
@@ -596,10 +636,8 @@ public abstract class TransformationUtility<TU, RT> implements Cloneable {
      */
     protected static void checkForNull(String name, Object value) throws TransformationDefinitionException{
         if(value == null){
-            throw new TransformationDefinitionException(name+" cannot be null");
+            throw new TransformationDefinitionException(name + " cannot be null");
         }
     }
-
-
 
 }

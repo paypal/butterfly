@@ -1,15 +1,18 @@
 package com.paypal.butterfly.basic.operations.file;
 
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -70,11 +73,13 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
+    protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         // Folder where the zip file is supposed to be extracted
         File folder = getAbsoluteFile(transformedAppFolder, transformationContext);
-
         FileOutputStream fileOutputStream = null;
+        TOExecutionResult result = null;
+
         try {
             ReadableByteChannel readableByteChannel = Channels.newChannel(zipFileUrl.openStream());
 
@@ -89,10 +94,21 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
             zipFile.extractAll(zipFileDescriptor.getParent());
             FileUtils.deleteQuietly(zipFileDescriptor);
 
-            return String.format("Zip file '%s' has been downloaded and decompressed into %s", zipFileUrl, getRelativePath(transformedAppFolder, zipFileDescriptor.getParentFile()));
+            String details = String.format("Zip file '%s' has been downloaded and decompressed into %s", zipFileUrl, getRelativePath(transformedAppFolder, zipFileDescriptor.getParentFile()));
+            result = TOExecutionResult.success(this, details);
+        } catch (ZipException|IOException e) {
+            result = TOExecutionResult.error(this, e);
         } finally {
-            if (fileOutputStream != null) fileOutputStream.close();
+            if(fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
+                }
+            }
         }
+
+        return result;
     }
 
     @Override

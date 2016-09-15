@@ -1,15 +1,16 @@
 package com.paypal.butterfly.basic.conditions.pom;
 
+import com.paypal.butterfly.extensions.api.TUResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.utilities.TransformationOperationCondition;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,8 +21,6 @@ import java.util.stream.Collectors;
  * @author facarvalho
  */
 public class PomDependencyExists extends TransformationOperationCondition<PomDependencyExists> {
-
-    private static final Logger logger = LoggerFactory.getLogger(PomDependencyExists.class);
 
     private static final String DESCRIPTION = "Check if dependency '%s:%s:%s' exists in POM file %s";
 
@@ -93,10 +92,14 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
     }
 
     @Override
-    protected Boolean execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
+    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
         MavenXpp3Reader reader = new MavenXpp3Reader();
         FileInputStream fileInputStream = null;
+        TUResult result = null;
+        boolean exists = false;
+
         try {
             fileInputStream = new FileInputStream(pomFile);
             Model model = reader.read(fileInputStream);
@@ -106,17 +109,26 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
             if(!dependencyList.isEmpty()) {
                 Dependency dependency = dependencyList.get(0);
                 if (version == null || version.equals(dependency.getVersion())) {
-                    return true;
+                    exists = true;
                 }
             }
-        } catch (Exception e) {
-            logger.error("Error happened during transformation operation condition evaluation");
-            return false;
-        }finally {
-            if(fileInputStream != null)
-                fileInputStream.close();
+            result = TUResult.value(this, exists);
+        } catch (XmlPullParserException|IOException e) {
+            String pomFileRelative = getRelativePath(transformedAppFolder, pomFile);
+            String dependency = String.format("%s:%s%s", groupId, artifactId, (version == null ? "" : ":" + version));
+            String details = String.format("Error happened when checking if POM dependency %s exists in %s", dependency, pomFileRelative);
+            result = TUResult.error(this, e, details);
+        } finally {
+            if(fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
+                }
+            }
         }
-        return false;
+
+        return result;
     }
 
 }

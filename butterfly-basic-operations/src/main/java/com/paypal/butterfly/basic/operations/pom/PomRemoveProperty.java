@@ -1,21 +1,17 @@
 package com.paypal.butterfly.basic.operations.pom;
 
-import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Operation to remove a property entry from a properties file
  *
  * @author facarvalho
  */
-public class PomRemoveProperty extends TransformationOperation<PomRemoveProperty> {
+public class PomRemoveProperty extends AbstractPomOperation<PomRemoveProperty> {
 
     private static final String DESCRIPTION = "Remove property %s from POM file %s";
 
@@ -49,34 +45,18 @@ public class PomRemoveProperty extends TransformationOperation<PomRemoveProperty
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
-        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+        TOExecutionResult result = null;
 
-        MavenXpp3Reader reader = new MavenXpp3Reader();
-
-        FileInputStream fileInputStream = null;
-        FileOutputStream fileOutputStream = null;
-
-        try {
-            fileInputStream = new FileInputStream(pomFile);
-
-
-            Model model = reader.read(fileInputStream);
-            model.getProperties().remove(propertyName);
-            MavenXpp3Writer writer = new MavenXpp3Writer();
-            fileOutputStream = new FileOutputStream(pomFile);
-            writer.write(fileOutputStream, model);
-
-
-        }finally {
-            try {
-                if (fileInputStream != null) fileInputStream.close();
-            }finally {
-                if(fileOutputStream != null) fileOutputStream.close();
-            }
+        if(model.getProperties().remove(propertyName) == null) {
+            String details = String.format("Property %s could not be found in POM file %s", propertyName, relativePomFile);
+            result = TOExecutionResult.noOp(this, details);
+        } else {
+            String details = String.format("Property %s has been removed from POM file %s", propertyName, relativePomFile);
+            result = TOExecutionResult.success(this, details);
         }
-        String resultMessage = String.format("Property %s has been removed from POM file %s", propertyName, getRelativePath());
-        return resultMessage;
+
+        return result;
     }
 
     @Override

@@ -1,21 +1,17 @@
 package com.paypal.butterfly.basic.operations.pom;
 
-import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Operation to change the packaging of a Maven artifact, by changing its POM file
  *
  * @author facarvalho
  */
-public class PomChangePackaging extends TransformationOperation<PomChangePackaging> {
+public class PomChangePackaging extends AbstractPomOperation<PomChangePackaging> {
 
     private static final String DESCRIPTION = "Change packaging to %s in POM file %s";
 
@@ -49,29 +45,11 @@ public class PomChangePackaging extends TransformationOperation<PomChangePackagi
     }
 
     @Override
-    protected String execution(File transformedAppFolder, TransformationContext transformationContext) throws Exception {
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+        model.setPackaging(packagingType);
+        String details = String.format("Packaging for POM file %s has been changed to %s", relativePomFile, packagingType);
 
-        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
-        MavenXpp3Reader reader = new MavenXpp3Reader();
-        FileInputStream fileInputStream = null;
-        FileOutputStream fileOutputStream = null;
-
-        try {
-            fileInputStream = new FileInputStream(pomFile);
-            Model model = reader.read(fileInputStream);
-            model.setPackaging(packagingType);
-            MavenXpp3Writer writer = new MavenXpp3Writer();
-            fileOutputStream = new FileOutputStream(pomFile);
-            writer.write(fileOutputStream, model);
-        } finally {
-            try {
-                if (fileInputStream != null) fileInputStream.close();
-            }finally {
-                if (fileOutputStream != null) fileOutputStream.close();
-            }
-        }
-
-        return String.format("Packaging for POM file %s has been changed to %s",getRelativePath(), packagingType);
+        return TOExecutionResult.success(this, details);
     }
 
     @Override
