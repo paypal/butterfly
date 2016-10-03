@@ -5,7 +5,7 @@ package com.paypal.butterfly.extensions.api;
  *
  * @author facarvalho
  */
-public class TOExecutionResult extends Result<TransformationOperation, TOExecutionResult, TOExecutionResult.Type> {
+public class TOExecutionResult extends ExecutionResult<TransformationOperation, TOExecutionResult, TOExecutionResult.Type> {
 
     public enum Type {
         // No error happened, but for some reason the TO didn't apply any change (for example, when it was supposed to
@@ -123,6 +123,11 @@ public class TOExecutionResult extends Result<TransformationOperation, TOExecuti
     @Override
     protected boolean isExceptionType() {
         return getType().equals(Type.ERROR) || getType().equals(Type.WARNING);
+    }
+
+    @Override
+    protected boolean dependencyFailureCheck() {
+        return getType().equals(Type.ERROR);
     }
 
 }

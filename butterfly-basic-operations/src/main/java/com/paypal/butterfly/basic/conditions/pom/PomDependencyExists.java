@@ -1,6 +1,6 @@
 package com.paypal.butterfly.basic.conditions.pom;
 
-import com.paypal.butterfly.extensions.api.TUResult;
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.utilities.TransformationOperationCondition;
 import org.apache.maven.model.Dependency;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 /**
  * Transformation operation condition to check if
- * a particular Maven dependency exists or not
+ * a particular Maven dependency exists
  *
  * @author facarvalho
  */
@@ -93,11 +93,11 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
 
     @Override
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
-    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
         MavenXpp3Reader reader = new MavenXpp3Reader();
         FileInputStream fileInputStream = null;
-        TUResult result = null;
+        TUExecutionResult result = null;
         boolean exists = false;
 
         try {
@@ -112,12 +112,12 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
                     exists = true;
                 }
             }
-            result = TUResult.value(this, exists);
+            result = TUExecutionResult.value(this, exists);
         } catch (XmlPullParserException|IOException e) {
             String pomFileRelative = getRelativePath(transformedAppFolder, pomFile);
             String dependency = String.format("%s:%s%s", groupId, artifactId, (version == null ? "" : ":" + version));
             String details = String.format("Error happened when checking if POM dependency %s exists in %s", dependency, pomFileRelative);
-            result = TUResult.error(this, e, details);
+            result = TUExecutionResult.error(this, e, details);
         } finally {
             if(fileInputStream != null) {
                 try {

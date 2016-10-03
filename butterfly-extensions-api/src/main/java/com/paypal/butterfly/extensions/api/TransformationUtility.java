@@ -2,7 +2,6 @@ package com.paypal.butterfly.extensions.api;
 
 
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -10,9 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Transformation utilities are executed against the to be transformed project,
@@ -109,6 +106,14 @@ public abstract class TransformationUtility<TU> implements Cloneable {
 
     // See comments in isSaveResult method
     private boolean saveResult = true;
+
+    // See comments in dependsOn method
+    private String[] dependencies = null;
+
+    // Optional condition to let this operation be executed
+    // This is the name of a transformation context attribute
+    // whose value is a boolean
+    private String conditionAttributeName = null;
 
     /**
      * The public default constructor should always be available by any transformation
@@ -486,17 +491,34 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      *
      * @return the result
      */
-    public synchronized Result perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
-        applyPropertiesFromContext(transformationContext);
+    public synchronized PerformResult perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
 
-        Result result;
-        try {
-            result = execution(transformedAppFolder, transformationContext);
-        } catch(Exception e) {
-            throw new TransformationOperationException(getName() + " has failed", e);
+        // Checking for conditions
+        if(conditionAttributeName != null) {
+            Object conditionResult = transformationContext.get(conditionAttributeName);
+            if (conditionResult == null || (conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue())) {
+                String details = String.format("Operation '%s' has been skipped due to failing condition: %s", getName(), conditionAttributeName);
+                return PerformResult.skippedCondition(this, details);
+            }
         }
 
-        return result;
+        // Checking for dependencies
+        PerformResult result = (PerformResult) checkDependencies(transformationContext);
+        if (result != null) {
+            return result;
+        }
+
+        // Applying properties during transformation time
+        applyPropertiesFromContext(transformationContext);
+
+        try {
+            ExecutionResult executionResult = execution(transformedAppFolder, transformationContext);
+            result = PerformResult.executionResult(this, executionResult);
+
+            return result;
+        } catch(Exception e) {
+            throw new TransformationUtilityException(getName() + " has failed", e);
+        }
     }
 
     /**
@@ -550,8 +572,130 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * @see {@link #isSaveResult()}
      * @param saveResult
      */
-    protected void setSaveResult(boolean saveResult) {
+    protected TU setSaveResult(boolean saveResult) {
         this.saveResult = saveResult;
+        return (TU) this;
+    }
+
+    /**
+     * Add all transformation utilities this utility depends on.
+     * Notice that this is not cumulative, meaning if this method has been called previously,
+     * that dependencies set will be entirely replaced by this new one.
+     * </br>
+     * This notion of "dependency" among TUs help resilience in two ways:
+     * <ol>
+     *     <li>If TU B depends on TU A, and if TU A "fails"
+     *     but doesn't abort transformation, then TU B would be skipped</li>
+     *     <li>If TU B depends on TU A, then that means TU A is necessary supposed to be executed first,
+     *     if not, TU B will be skipped</li>
+     * </ol>
+     * The term "fails" in this context means the perform result is of one of these types:
+     * <ol>
+     *     <li>{@link PerformResult.Type#ERROR}</li>
+     *     <li>{@link PerformResult.Type#SKIPPED_CONDITION}</li>
+     *     <li>{@link PerformResult.Type#SKIPPED_DEPENDENCY}</li>
+     * </ol>
+     * A dependency failure is also possible if perform result type is {@link PerformResult.Type#EXECUTION_RESULT},
+     * and the execution result type is one of the following:
+     * <ol>
+     *     <li>{@link com.paypal.butterfly.extensions.api.TUExecutionResult.Type#NULL} (for TUs only)</li>
+     *     <li>{@link com.paypal.butterfly.extensions.api.TUExecutionResult.Type#ERROR} (for TUs only)</li>
+     *     <li>{@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type#ERROR} (for TOs only)</li>
+     * </ol>
+     * </br>
+     *
+     * @see {@link #checkDependencies(TransformationContext)}
+     * @see {@link Result#dependencyFailureCheck()}
+     * @see {@link TUExecutionResult#dependencyFailureCheck()}
+     * @see {@link TOExecutionResult#dependencyFailureCheck()}
+     * @see {@link PerformResult#dependencyFailureCheck()}
+     *
+     * @param dependencies
+     */
+    public final TU dependsOn(String... dependencies) {
+        this.dependencies = dependencies;
+        return (TU) this;
+    }
+
+    /**
+     * Returns dependencies
+     *
+     * @see {@link #dependsOn(String...)}
+     *
+     * @return
+     */
+    protected final List<String> getDependencies() {
+        if (dependencies != null) {
+            return Collections.unmodifiableList(Arrays.asList(dependencies));
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Check if any of dependency of this TU failed. If that is true,
+     * returns a result object stating so. If not, returns null. If this TU
+     * has no dependencies it also returns null. See {@link #dependsOn(String...)}
+     * to find out the dependency failure criteria
+     *
+     * @return
+     * @param transformationContext
+     */
+    protected Result checkDependencies(TransformationContext transformationContext) {
+        List<String> dependencies = getDependencies();
+        PerformResult dependencyResult;
+        String failedDependency = null;
+        String failedDependencyResult = null;
+        for(String dependency : dependencies) {
+            dependencyResult = transformationContext.getResult(dependency);
+            if (dependencyResult == null) {
+                // This dependency has not even been executed, which
+                // is considered as failure for dependency check
+                failedDependency = dependency;
+                break;
+            }
+
+            PerformResult.Type type = dependencyResult.getType();
+
+            if (dependencyResult.dependencyFailureCheck()) {
+                failedDependency = dependency;
+                failedDependencyResult = type.name();
+                break;
+            }
+        }
+        if (failedDependency != null) {
+            String details;
+            if (failedDependencyResult != null) {
+                details = String.format("'%s' has been skipped because its dependency %s resulted in %s", getName(), failedDependency, failedDependencyResult);
+            } else {
+                details = String.format("'%s' has been skipped because its dependency %s has not been executed yet", getName(), failedDependency);
+            }
+            return PerformResult.skippedDependency(this, details);
+        }
+
+        return null;
+    }
+
+    /**
+     * When set, this TU will only execute if this transformation context
+     * attribute is existent and not false. In other words, it will execute if
+     * not null and, if of Boolean type, not false
+     *
+     * @param conditionAttributeName
+     * @return
+     */
+    public final synchronized TU executeIf(String conditionAttributeName) {
+        this.conditionAttributeName = conditionAttributeName;
+        return (TU) this;
+    }
+
+    /**
+     * Return the condition attribute name associated with this transformation operation,
+     * or null, if there is none
+     *
+     * @return the condition attribute name associated with this transformation operation
+     */
+    public String getConditionAttributeName() {
+        return conditionAttributeName;
     }
 
     /**
@@ -565,7 +709,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * @return an object with the result of this execution, to be better defined
      * by the concrete utility class, since its type is generic
      */
-    protected abstract Result execution(File transformedAppFolder, TransformationContext transformationContext);
+    protected abstract ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext);
 
     @Override
     public String toString() {
@@ -593,6 +737,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         clone.latePropertiesSetters.putAll(this.latePropertiesSetters);
         clone.abortOnFailure = this.abortOnFailure;
         clone.saveResult = this.saveResult;
+        clone.conditionAttributeName = this.conditionAttributeName;
 
         return clone;
     }

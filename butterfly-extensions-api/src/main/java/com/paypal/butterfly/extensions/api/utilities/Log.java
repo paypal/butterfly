@@ -1,8 +1,8 @@
 package com.paypal.butterfly.extensions.api.utilities;
 
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
-import com.paypal.butterfly.extensions.api.TUResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -83,7 +83,7 @@ public class Log extends TransformationUtility<Log> {
     }
 
     @Override
-    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         Object[] attributes = getAttributes(transformedAppFolder, transformationContext);
 
         if (logLevel == null && attributes.length == 1 && attributes[0] == null) {
@@ -112,7 +112,7 @@ public class Log extends TransformationUtility<Log> {
             }
         }
 
-        return TUResult.nullResult(this);
+        return TUExecutionResult.nullResult(this);
     }
 
     private Object[] getAttributes(File transformedAppFolder, TransformationContext transformationContext) {

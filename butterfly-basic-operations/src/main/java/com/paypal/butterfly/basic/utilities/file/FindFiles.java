@@ -2,7 +2,7 @@ package com.paypal.butterfly.basic.utilities.file;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
-import com.paypal.butterfly.extensions.api.TUResult;
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -82,7 +82,7 @@ public class FindFiles extends TransformationUtility<FindFiles> {
     }
 
     @Override
-    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File searchRootFolder = getAbsoluteFile(transformedAppFolder, transformationContext);
         IOFileFilter fileFilter = new AbstractFileFilter() {
             public boolean accept(File file) {
@@ -90,12 +90,12 @@ public class FindFiles extends TransformationUtility<FindFiles> {
             }
         };
         Collection<File> files = FileUtils.listFiles(searchRootFolder, fileFilter, (recursive ? TrueFileFilter.INSTANCE : null));
-        TUResult result = null;
+        TUExecutionResult result = null;
 
         if(files.size() == 0) {
-            result = TUResult.warning(this, new ArrayList<File>(files), "No files have been found");
+            result = TUExecutionResult.warning(this, new ArrayList<File>(files), "No files have been found");
         } else {
-            result = TUResult.value(this, new ArrayList<File>(files));
+            result = TUExecutionResult.value(this, new ArrayList<File>(files));
         }
 
         return result;

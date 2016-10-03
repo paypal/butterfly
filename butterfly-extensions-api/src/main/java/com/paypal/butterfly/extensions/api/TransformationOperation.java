@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A transformation operation
+ *</br>
  * The default value for {@link #relative(String)} is {@code null}, which means
  * it must be set explicitly, unless an absolute path is set via {@link #absolute(String)}
  * or {@link #absolute(String, String)}
@@ -19,6 +20,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * MUST NOT be copied from original object to cloned object, since that is all already taken
  * care of properly by the framework. Notice that name, parent and path (absolute and relative)
  * are NECESSARILY NOT assigned to the clone object
+ * </br>
+ * Differences between TU and TO:
+ *  - TU never modifies application
+ *  - TU usually returns a value
+ *  - TU instance can be executed multiple times
+ *  - TO always modifies application
+ *  - TO never returns a value
+ *  - TO instance must executed only once
  *
  * @author facarvalho
  */
@@ -29,41 +38,10 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
     // be executed ONLY ONCE
     private AtomicBoolean hasBeenPerformed = new AtomicBoolean(false);
 
-    // Optional condition to let this operation be executed
-    // This is the name of a transformation context attribute
-    // whose value is a boolean
-    private String conditionAttributeName = null;
-
     public TransformationOperation() {
         // Different than regular Transformation Utilities, the default value here is null, which means
         // it must be set explicitly by the developer, unless an absolute path is set
         relative(null);
-    }
-
-    /**
-     * Returns an explanation of the criteria to pass or fail pre-execution validation
-     * for this transformation operation.
-     * </br>
-     * You MUST override this method if the operation has a pre-execution validation check.
-     *
-     * @return an explanation of the criteria to pass or fail pre-execution validation,
-     *  or null, in case this operation has no pre-execution validation
-     */
-    public String getPreValidationExplanation() {
-        return null;
-    }
-
-    /**
-     * Returns an explanation of the criteria to pass or fail post-execution validation
-     * for this transformation operation.
-     * </br>
-     * You MUST override this method if the operation has a post-execution validation check.
-     *
-     * @return an explanation of the criteria to pass or fail post-execution validation,
-     *  or null, in case this operation has no post-execution validation
-     */
-    public String getPostValidationExplanation() {
-        return null;
     }
 
     /**
@@ -76,40 +54,22 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
      * @return a message stating with details the operation that has been performed
      */
     @Override
-    public final synchronized TOPerformResult perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationOperationException {
+    public final synchronized PerformResult perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationOperationException {
         if(hasBeenPerformed.get()) {
             throw new IllegalStateException("This transformation operation has already been performed");
         }
 
+        PerformResult result = null;
+
+        // Finally executing the operation
         try {
-            applyPropertiesFromContext(transformationContext);
-        } catch (TransformationUtilityException e) {
-            throw new TransformationOperationException(e.getMessage(), e);
-        }
-
-        if(conditionAttributeName != null && !(Boolean) transformationContext.get(conditionAttributeName)) {
-            String details = String.format("Operation '%s' has been skipped due to failing condition: %s", getName(), conditionAttributeName);
-            TOPerformResult result = TOPerformResult.skippedCondition(this, details);
-            return result;
-        }
-        if(!preExecutionValidation(transformedAppFolder)) {
-            throw new TransformationOperationException(getName() + " pre-execution validation has failed");
-            // TODO create a meta-data here with reasons for pre-validation failures, it should state the error
-        }
-
-        // TODO implement logic for SKIPPED_DEPENDENCY and ERROR_PRE_VALIDATION
-
-        TOPerformResult result;
-        try {
-            TOExecutionResult executionResult = (TOExecutionResult) execution(transformedAppFolder, transformationContext);
-            result = TOPerformResult.executionResult(this, executionResult);
+            result = super.perform(transformedAppFolder, transformationContext);
         } catch(Exception e) {
+            hasBeenPerformed.set(true);
             throw new TransformationOperationException(getName() + " has failed", e);
         } finally {
             hasBeenPerformed.set(true);
         }
-
-        // TODO post validation handling
 
         return result;
     }
@@ -120,42 +80,6 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
      */
     public final boolean hasBeenPerformed() {
         return hasBeenPerformed.get();
-    }
-
-    /**
-     * Return true only if this operation's pre-req has been met. If this returns
-     * false, the operation will NOT be executed, and the whole transformation
-     * might be aborted, depending on {@link #abortOnFailure}
-     *
-     * @param transformedAppFolder
-     *
-     * @return
-     */
-    protected boolean preExecutionValidation(File transformedAppFolder) {
-        // TODO implement this logic in perform method
-        // TODO create a meta-data here with reasons for pre-validation failures
-        return true;
-    }
-
-    /**
-     * Return true only if this operation's post-execution check has succeeded.
-     * If this returns false, the operation WILL NOT be rolled back, but a
-     * warning will be stated, and the whole transformation might be aborted,
-     * depending on {@link #abortOnFailure}
-     *
-     * @param transformedAppFolder
-     *
-     * @return
-     */
-    protected boolean postExecutionValidation(File transformedAppFolder) {
-        // TODO implement this logic in perform method
-        // TODO create a meta-data here with reasons for post-validation failures
-        return true;
-    }
-
-    public final synchronized TO executeIf(String conditionAttributeName) {
-        this.conditionAttributeName = conditionAttributeName;
-        return (TO) this;
     }
 
     /**
@@ -181,23 +105,13 @@ public abstract class TransformationOperation<TO> extends TransformationUtility<
         clone.hasBeenPerformed = new AtomicBoolean(false);
 
         // Properties we want to be in the clone (they are being copied from original object)
-        clone.conditionAttributeName = this.conditionAttributeName;
+        // none
 
         return clone;
     }
 
-    /**
-     * Return the condition attribute name associated with this transformation operation,
-     * or null, if there is none
-     *
-     * @return the condition attribute name associated with this transformation operation
-     */
-    public String getConditionAttributeName() {
-        return conditionAttributeName;
-    }
-
     @Override
-    protected final void setSaveResult(boolean saveResult) {
+    protected final TO setSaveResult(boolean saveResult) {
         throw new UnsupportedOperationException("Transformation operations must always save results");
     }
 
