@@ -1,8 +1,8 @@
 package com.paypal.butterfly.basic.operations.text;
 
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
-import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 
 import java.io.*;
@@ -154,8 +154,15 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
             }
         }
 
-        if(!tempFile.renameTo(fileToBeChanged)) {
-            details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
+        boolean bDeleted = fileToBeChanged.delete();
+        if(bDeleted) {
+            if (!tempFile.renameTo(fileToBeChanged)) {
+                details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
+                TransformationOperationException e = new TransformationOperationException(details);
+                result = TOExecutionResult.error(this, e);
+            }
+        }else {
+            details = String.format("Error when deleting %s", getRelativePath(transformedAppFolder, fileToBeChanged));
             TransformationOperationException e = new TransformationOperationException(details);
             result = TOExecutionResult.error(this, e);
         }

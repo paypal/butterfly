@@ -216,8 +216,15 @@ public class InsertLine extends TransformationOperation<InsertLine> {
             }
         }
 
-        if(!tempFile.renameTo(fileToBeChanged)) {
-            details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
+        boolean bDeleted = fileToBeChanged.delete();
+        if(bDeleted) {
+            if (!tempFile.renameTo(fileToBeChanged)) {
+                details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
+                TransformationOperationException e = new TransformationOperationException(details);
+                result = TOExecutionResult.error(this, e);
+            }
+        }else {
+            details = String.format("Error when deleting %s", getRelativePath(transformedAppFolder, fileToBeChanged));
             TransformationOperationException e = new TransformationOperationException(details);
             result = TOExecutionResult.error(this, e);
         }
