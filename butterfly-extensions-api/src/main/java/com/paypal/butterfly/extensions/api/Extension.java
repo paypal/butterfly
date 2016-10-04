@@ -1,8 +1,6 @@
 package com.paypal.butterfly.extensions.api;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A Butterfly third-party extension. It provides custom
@@ -12,7 +10,7 @@ import java.util.Set;
  */
 public abstract class Extension<E> {
 
-    private Set<Class<? extends TransformationTemplate>> templateClasses = new HashSet<Class<? extends TransformationTemplate>>();
+    private List<Class<? extends TransformationTemplate>> templateClasses = new ArrayList<>();
 
     /**
      * Adds a new transformation template class to the set
@@ -38,8 +36,8 @@ public abstract class Extension<E> {
      *
      * @return a read-only set containing all transformation template classes
      */
-    public final Set<Class<? extends TransformationTemplate>> getTemplateClasses() {
-        return Collections.unmodifiableSet(templateClasses);
+    public final List<Class<? extends TransformationTemplate>> getTemplateClasses() {
+        return Collections.unmodifiableList(templateClasses);
     }
 
     @Override
