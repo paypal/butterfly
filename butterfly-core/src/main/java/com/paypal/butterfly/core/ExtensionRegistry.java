@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import java.io.File;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Registry of all extensions. This class is used mostly for meta-data
@@ -27,7 +24,7 @@ public class ExtensionRegistry {
 
     private static Logger logger = LoggerFactory.getLogger(ExtensionRegistry.class);
 
-    private Set<Extension> extensions;
+    private List<Extension> extensions;
 
     private void setExtensions() {
         logger.info("Searching for extensions");
@@ -35,7 +32,7 @@ public class ExtensionRegistry {
         logger.info("Number of extensions found: " + extensionClasses.size());
 
         if(extensionClasses.size() == 0) {
-            extensions = Collections.emptySet();
+            extensions = Collections.emptyList();
             return;
         }
 
@@ -91,7 +88,7 @@ public class ExtensionRegistry {
         Class<? extends Extension> extensionClass;
         Extension extension;
 
-        Set<Extension> _extensions = new HashSet<Extension>();
+        List<Extension> _extensions = new ArrayList<>();
 
         for(Object extensionClassObj : extensionClasses.toArray()) {
             extensionClass = (Class<? extends Extension>) extensionClassObj;
@@ -103,7 +100,7 @@ public class ExtensionRegistry {
             }
         }
 
-        this.extensions = Collections.unmodifiableSet(_extensions);
+        this.extensions = Collections.unmodifiableList(_extensions);
     }
 
     /**
@@ -111,7 +108,7 @@ public class ExtensionRegistry {
      *
      * @return an immutable set of all registered extensions
      */
-    public Set<Extension> getExtensions() {
+    public List<Extension> getExtensions() {
         if(extensions == null) {
             setExtensions();
         }

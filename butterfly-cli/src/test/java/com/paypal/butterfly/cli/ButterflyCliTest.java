@@ -4,16 +4,18 @@ import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
+import com.test.SampleExtension;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.modules.testng.PowerMockTestCase;
-import org.springframework.util.Assert;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -34,43 +36,91 @@ public class ButterflyCliTest extends PowerMockTestCase {
     private VerboseConfigurator verboseConfigurator;
 
     /**
-     * To Test listing of extensions.
+     * To Test listing of extensions
+     *
      * @throws IOException
      */
     @Test
     public void testListingExtensions() throws IOException {
-        Assert.notNull(butterflyCli);
-        Assert.notNull(facade);
+        Assert.assertNotNull(butterflyCli);
+        Assert.assertNotNull(facade);
 
-        Set<Extension> extensions = new HashSet<>();
+        List<Extension> extensions = new ArrayList<>();
         when(facade.getRegisteredExtensions()).thenReturn(extensions);
 
         String[] arguments = {"-l", "-v"};
-        butterflyCli.run(arguments);
+        int status = butterflyCli.run(arguments);
 
-        verify(facade, times(2)).getRegisteredExtensions();
+        Assert.assertEquals(status, 0);
+        verify(facade, times(1)).getRegisteredExtensions();
     }
 
     /**
-     * To Test Transformation with -i, -t, -v and -z options.
+     * To Test Transformation with -i, -t, -v and -z options
+     *
      * @throws IOException
      * @throws ButterflyException
      */
     @Test
     public void testTransformation() throws IOException, ButterflyException {
         String arguments[] = {"-i", "PATH_TO_APP_FOLDER", "-t", "com.test.SampleTransformationTemplate", "-v", "-z"};
-        butterflyCli.run(arguments);
+        int status = butterflyCli.run(arguments);
+
+        Assert.assertEquals(status, 0);
         verify(facade, times(1)).transform(eq(new File("PATH_TO_APP_FOLDER")), eq("com.test.SampleTransformationTemplate"), eq(new Configuration(null, true)));
     }
 
     /**
-     * To Test without using any option, so that help option would be used.
+     * To Test Transformation with -i and -s options
+     *
+     * @throws IOException
+     * @throws ButterflyException
+     */
+    @Test
+    public void testTransformationWithShortcut() throws IOException, ButterflyException {
+        List<Extension> extensionsList = new ArrayList<>();
+        extensionsList.add(new SampleExtension());
+        Mockito.when(facade.getRegisteredExtensions()).thenReturn(extensionsList);
+
+        String arguments[] = {"-i", "PATH_TO_APP_FOLDER", "-s", "2"};
+        int status = butterflyCli.run(arguments);
+
+        Assert.assertEquals(status, 0);
+        verify(facade, times(1)).transform(eq(new File("PATH_TO_APP_FOLDER")), eq(com.test.SampleTransformationTemplate.class), eq(new Configuration(null, false)));
+    }
+
+    /**
+     * To Test Transformation with -i, -t and -s options.
+     * Option -s should be ignored, since -t was also provided
+     *
+     * @throws IOException
+     * @throws ButterflyException
+     */
+    @Test
+    public void testTransformationWithShortcutButIgnoringIt() throws IOException, ButterflyException {
+        List<Extension> extensionsList = new ArrayList<>();
+        extensionsList.add(new SampleExtension());
+        Mockito.when(facade.getRegisteredExtensions()).thenReturn(extensionsList);
+
+        String arguments[] = {"-i", "PATH_TO_APP_FOLDER", "-t", "com.test.SampleTransformationTemplate", "-z", "-s", "2"};
+        int status = butterflyCli.run(arguments);
+
+        Assert.assertEquals(status, 0);
+        verify(facade, times(1)).transform(eq(new File("PATH_TO_APP_FOLDER")), eq("com.test.SampleTransformationTemplate"), eq(new Configuration(null, true)));
+        verify(facade, times(0)).getRegisteredExtensions();
+    }
+
+    /**
+     * To Test without using any option, so that help option would be used
+     *
      * @throws IOException
      */
     @Test
     public void testNoOptions() throws IOException {
         String[] arguments = {};
-        butterflyCli.run(arguments);
+        int status = butterflyCli.run(arguments);
+
+        Assert.assertEquals(status, 0);
     }
 
     /**
@@ -79,22 +129,26 @@ public class ButterflyCliTest extends PowerMockTestCase {
     @Test
     public void testGetButterflyVersionFromProperties(){
         String version = VersionHelper.getButterflyVersion();
-        Assert.notNull(version);
+        Assert.assertNotNull(version);
     }
 
     /**
-     * To Test the case where exception is expected when non existing directory is being used as output directory.
+     * To Test the case where exception is expected when non existing directory is being used as output directory
+     *
      * @throws IOException
      * @throws ButterflyException
      */
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testTransformationWithNonExistDir() throws IOException, ButterflyException {
         String arguments[] = {"-i", "PATH_TO_APP_FOLDER", "-t", "com.test.SampleTransformationTemplate", "-v", "-o", "PATH_TO_OUTPUT_FOLDER"};
-        butterflyCli.run(arguments);
+        int status = butterflyCli.run(arguments);
+
+        Assert.assertEquals(status, 1);
     }
 
     /**
-     * To test Transformation with the output directory that actually should exist. Hence current directory is being used as an output directory.
+     * To test Transformation with the output directory that actually should exist. Hence current directory is being used as an output directory
+     *
      * @throws IOException
      * @throws ButterflyException
      */
@@ -102,7 +156,9 @@ public class ButterflyCliTest extends PowerMockTestCase {
     public void testTransformationWithValidOutPutDir() throws IOException, ButterflyException {
         String currentDir = System.getProperty("user.dir");
         String arguments[] = {"-i", "PATH_TO_APP_FOLDER", "-t", "com.test.SampleTransformationTemplate", "-v", "-o", currentDir};
-        butterflyCli.run(arguments);
+        int status = butterflyCli.run(arguments);
+
+        Assert.assertEquals(status, 0);
         verify(facade, times(1)).transform(eq(new File("PATH_TO_APP_FOLDER")), eq("com.test.SampleTransformationTemplate"), eq(new Configuration(new File(currentDir), false)));
     }
 

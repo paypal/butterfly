@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Butterfly Façade implementation
@@ -35,7 +35,7 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     private CompressionHandler compressionHandler;
 
     @Override
-    public Set<Extension> getRegisteredExtensions() {
+    public List<Extension> getRegisteredExtensions() {
         return extensionRegistry.getExtensions();
     }
 
@@ -46,10 +46,25 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
 
     @Override
     public void transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException {
+        if(StringUtils.isBlank(templateClassName)) {
+            throw new IllegalArgumentException("Template class name cannot be blank");
+        }
+        try {
+            Class<TransformationTemplate> templateClass = (Class<TransformationTemplate>) Class.forName(templateClassName);
+            transform(applicationFolder, templateClass, configuration);
+        } catch (ClassNotFoundException e) {
+            String exceptionMessage = "Template class " + templateClassName + " not found. Run Butterfly in verbose mode and double check if its extension has been properly registered";
+            logger.error(exceptionMessage, e);
+            throw new InternalException(exceptionMessage, e);
+        }
+    }
+
+    @Override
+    public void transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException {
         logger.debug("Transformation configuration: {}", configuration);
 
         Application application = new Application(applicationFolder);
-        TransformationTemplate template = getTemplate(templateClassName);
+        TransformationTemplate template = getTemplate(templateClass);
         Transformation transformation = new Transformation(application, template, configuration);
 
         transformationEngine.perform(transformation);
@@ -59,25 +74,19 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
         }
     }
 
-    private TransformationTemplate getTemplate(String templateClassName) {
-        if(StringUtils.isBlank(templateClassName)) {
-            throw new IllegalArgumentException("Template class name cannot be blank");
+    private TransformationTemplate getTemplate(Class<? extends TransformationTemplate> templateClass) {
+        if(templateClass == null) {
+            throw new IllegalArgumentException("Template class cannot be null");
         }
         try {
-            Class<TransformationTemplate> templateClass = (Class<TransformationTemplate>) Class.forName(templateClassName);
             TransformationTemplate template = templateClass.newInstance();
-
             return template;
-        } catch (ClassNotFoundException e) {
-            String exceptionMessage = "Template class " + templateClassName + " not found. Run Butterfly in verbose mode and double check if its extension has been properly registered";
-            logger.error(exceptionMessage, e);
-            throw new InternalException(exceptionMessage, e);
         } catch (InstantiationException e) {
-            String exceptionMessage = "Template class " + templateClassName + " could not be instantiated. Run Butterfly in verbose mode, double check if its extension has been properly registered, and also double check if it complies with Butterfly extensions API";
+            String exceptionMessage = "Template class " + templateClass + " could not be instantiated. Run Butterfly in verbose mode, double check if its extension has been properly registered, and also double check if it complies with Butterfly extensions API";
             logger.error(exceptionMessage, e);
             throw new InternalException(exceptionMessage, e);
         } catch (IllegalAccessException e) {
-            String exceptionMessage = "Template class " + templateClassName + " could not be accessed";
+            String exceptionMessage = "Template class " + templateClass + " could not be accessed";
             logger.error(exceptionMessage, e);
             throw new InternalException(exceptionMessage, e);
         }
