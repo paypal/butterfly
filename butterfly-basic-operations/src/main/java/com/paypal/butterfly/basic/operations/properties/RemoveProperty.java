@@ -66,7 +66,6 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
             String currentLine;
-            int n = 0;
             boolean foundFirstMatch = false;
             String regex = "("+propertyName+".*)";
             final Pattern pattern = Pattern.compile(regex);
@@ -74,7 +73,6 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
             while((currentLine = reader.readLine()) != null) {
                 if(!foundFirstMatch && pattern.matcher(currentLine).matches()) {
                     foundFirstMatch = true;
-                    n++;
                     continue;
                 }
                 if(!firstLine) {
@@ -83,8 +81,14 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
                 writer.write(currentLine);
                 firstLine = false;
             }
-            details =  String.format("File %s has had %d property removed based on regular expression '%s'", getRelativePath(), n, regex);
-            result = TOExecutionResult.success(this, details);
+            //If it founds first match means, then it would be removed
+            if(foundFirstMatch) {
+                details = String.format("Property '%s' has been removed from '%s'", propertyName, getRelativePath());
+                result = TOExecutionResult.success(this, details);
+            }else {
+                details = String.format("Property '%s' has NOT been removed from '%s' because it is not present on it", propertyName, getRelativePath());
+                result = TOExecutionResult.warning(this, details);
+            }
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);
         }finally {
