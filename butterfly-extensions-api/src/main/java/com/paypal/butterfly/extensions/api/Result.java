@@ -110,6 +110,14 @@ public abstract class Result<S, RT, T> {
     protected abstract boolean isExceptionType();
 
     /**
+     * Returns true if this result type falls to the dependency failure criteria,
+     * which is stated in {@link TransformationUtility#dependsOn(String...)}
+     *
+     * @return true only if this result type falls to the dependency failure criteria
+     */
+    protected abstract boolean dependencyFailureCheck();
+
+    /**
      * Returns the source of this result, which could be for example
      * a transformation utility instance or a transformation
      * operation instance
