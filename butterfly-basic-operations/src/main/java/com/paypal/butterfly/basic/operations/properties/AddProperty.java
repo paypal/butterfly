@@ -82,7 +82,7 @@ public class AddProperty extends TransformationOperation<AddProperty> {
                 result = addProperty(transformedAppFolder, transformationContext);
             } else {
                 //Set Property
-                result = setProperty(transformedAppFolder, transformationContext, fileInputStream);
+                result = setProperty(transformedAppFolder, transformationContext);
             }
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);
@@ -113,14 +113,12 @@ public class AddProperty extends TransformationOperation<AddProperty> {
      */
     private String replace(BufferedReader reader, BufferedWriter writer, String regex, String replacement) throws IOException {
         String currentLine;
-        int n = 0;
         boolean foundFirstMatch = false;
         final Pattern pattern = Pattern.compile(regex + "(.*)");
         boolean firstLine = true;
         while((currentLine = reader.readLine()) != null) {
             if(!foundFirstMatch && pattern.matcher(currentLine).matches()) {
                 foundFirstMatch = true;
-                n++;
                 //Replace the Property Key and Value (entire line)
                 currentLine = currentLine.replaceAll(".+", replacement);
             }
@@ -131,7 +129,7 @@ public class AddProperty extends TransformationOperation<AddProperty> {
             firstLine = false;
         }
 
-        return String.format("File %s has had %d line(s) where property setting was applied based on regular expression '%s'", getRelativePath(), n, regex);
+        return String.format("Property '%s' value replaced with %s' at '%s'", propertyName, propertyValue, getRelativePath());
     }
 
 
@@ -160,14 +158,13 @@ public class AddProperty extends TransformationOperation<AddProperty> {
     }
 
     /**
-     *
+     * To Set (Replace) the property value.
      * @param transformedAppFolder
      * @param transformationContext
-     * @param fileInputStream
      * @return TOExecutionResult
      */
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
-    private TOExecutionResult setProperty(File transformedAppFolder, TransformationContext transformationContext, FileInputStream fileInputStream) {
+    private TOExecutionResult setProperty(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
         TOExecutionResult result = null;
         String details = null;
