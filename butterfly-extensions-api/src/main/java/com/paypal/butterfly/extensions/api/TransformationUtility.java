@@ -496,7 +496,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         // Checking for conditions
         if(conditionAttributeName != null) {
             Object conditionResult = transformationContext.get(conditionAttributeName);
-            if (conditionResult == null || (conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue())) {
+            if (conditionResult == null || conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue()) {
                 String details = String.format("Operation '%s' has been skipped due to failing condition: %s", getName(), conditionAttributeName);
                 return PerformResult.skippedCondition(this, details);
             }

@@ -2,7 +2,6 @@ package com.paypal.butterfly.extensions.api;
 
 
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;

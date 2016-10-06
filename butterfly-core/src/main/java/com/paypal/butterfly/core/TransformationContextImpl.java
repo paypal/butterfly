@@ -1,7 +1,6 @@
 package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.api.PerformResult;
-import com.paypal.butterfly.extensions.api.Result;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import org.apache.commons.lang3.StringUtils;
 
