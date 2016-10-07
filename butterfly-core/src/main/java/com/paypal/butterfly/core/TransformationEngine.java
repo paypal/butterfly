@@ -2,7 +2,6 @@ package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.core.exception.InternalException;
 import com.paypal.butterfly.extensions.api.*;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import com.paypal.butterfly.extensions.api.utilities.MultipleOperations;
 import com.paypal.butterfly.facade.Configuration;
@@ -33,128 +32,45 @@ public class TransformationEngine {
 
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
-    // TODO do a little refactoring in all these perform methods. There is too much duplicated code here
-
     public void perform(Transformation transformation) throws TransformationException {
         if(logger.isDebugEnabled()) {
-            logger.debug("Requested transformation: " + transformation);
+            logger.debug("Requested transformation: {}", transformation);
         }
 
         File transformedAppFolder = prepareOutputFolder(transformation);
 
         TransformationTemplate template = transformation.getTemplate();
-        logger.info("Beginning transformation (" + template.getOperationsCount() + " operations to be performed)");
+        logger.info("Beginning transformation ({} operations to be performed)", template.getOperationsCount());
         AtomicInteger operationsExecutionOrder = new AtomicInteger(1);
 
         TransformationContextImpl transformationContext = new TransformationContextImpl();
 
-        TransformationOperation operation;
         MultipleOperations multipleOperations;
         TransformationUtility utility;
         PerformResult result;
         for(Object transformationUtilityObj: template.getTransformationUtilitiesList()) {
             utility = (TransformationUtility) transformationUtilityObj;
-            if(transformationUtilityObj instanceof TransformationOperation) {
-                operation = (TransformationOperation) transformationUtilityObj;
-                result = performOperation(operation, transformedAppFolder, transformationContext, operationsExecutionOrder, null);
-            } else if(transformationUtilityObj instanceof MultipleOperations) {
+            if(transformationUtilityObj instanceof MultipleOperations) {
                 multipleOperations = (MultipleOperations) transformationUtilityObj;
-                result = performMultipleOperations(multipleOperations, transformedAppFolder, transformationContext, operationsExecutionOrder);
+                result = perform(multipleOperations, transformedAppFolder, transformationContext, operationsExecutionOrder);
                 // FIXME saving multiple operation results need to be properly taken care of
             } else {
-                result = performUtility(utility, transformedAppFolder, transformationContext);
+                result = perform(utility, transformedAppFolder, transformationContext, operationsExecutionOrder, null);
             }
             if (utility.isSaveResult()) {
+                // Saving the whole perform result, which is different from the value that resulted from the utility execution,
+                // saved in processUtilityExecutionResult
+
                 transformationContext.putResult(((TransformationUtility) transformationUtilityObj).getName(), result);
             }
         }
+
         logger.info("Transformation has been completed");
-    }
-
-    private PerformResult performOperation(TransformationOperation operation, File transformedAppFolder, TransformationContext transformationContext, AtomicInteger operationsExecutionOrder, Integer outterOrder) throws TransformationException {
-        PerformResult result = null;
-        String order;
-        if(outterOrder != null) {
-            order = String.format("%d.%d", outterOrder, operationsExecutionOrder.get());
-        } else {
-            order = String.valueOf(operationsExecutionOrder.get());
-        }
-        try {
-            result = operation.perform(transformedAppFolder, transformationContext);
-
-            switch (result.getType()) {
-                case SKIPPED_CONDITION:
-                case SKIPPED_DEPENDENCY:
-                    logger.info("\t{}\t - {}", order, result.getDetails());
-                    break;
-                case EXECUTION_RESULT:
-                    TOExecutionResult executionResult = (TOExecutionResult) result.getExecutionResult();
-                    switch (executionResult.getType()) {
-                        case SUCCESS:
-                            logger.info("\t{}\t - {}", order, executionResult.getDetails());
-                            break;
-                        case NO_OP:
-                            logger.warn("\t{}\t - {}", order, executionResult.getDetails());
-                            break;
-                        case WARNING:
-                            logger.warn("\t{}\t - Operation '{}' has successfully been executed, but it has warnings, see debug logs for further details", order, operation.getName());
-                            if (logger.isDebugEnabled()) {
-                                if (result.getWarnings().size() == 0) {
-                                    logger.warn("\t\t\t * Warning message: {}", result.getDetails());
-                                } else {
-                                    logger.warn("\t\t\t * Execution details: {}", executionResult.getDetails());
-                                    logger.warn("\t\t\t * Warnings (see debug logs for further details):");
-                                    for (Exception warning : executionResult.getWarnings()) {
-                                        String message = String.format("\t\t\t\t - %s: %s", warning.getClass().getName(), warning.getMessage());
-                                        logger.warn(message, warning);
-                                    }
-                                }
-                            }
-                            break;
-                        case ERROR:
-                            if(logger.isDebugEnabled()) {
-                                logger.error("Transformation operation " + operation.getName() + " has failed due to the exception below", executionResult.getException());
-                            }
-                            logger.error("\t{}\t - Operation '{}' has failed. See debug logs for further details.", order, operation.getName());
-                            break;
-                        default:
-                            logger.error("\t{}\t - Operation '{}' has resulted in an unexpected execution result type {}", order, operation.getName(), executionResult.getType().name());
-                            break;
-                    }
-                    break;
-                case ERROR:
-                    if(logger.isDebugEnabled()) {
-                        logger.error("Transformation operation " + operation.getName() + " has failed due to the exception below", result.getException());
-                    }
-                    logger.error("\t{}\t - Operation '{}' has failed . See debug logs for further details.", order, operation.getName());
-                    break;
-                default:
-                    logger.error("\t{}\t - Operation '{}' has resulted in an unexpected perform result type {}", order, operation.getName(), ((TUExecutionResult) result.getExecutionResult()).getType().name());
-                    break;
-            }
-        } catch (TransformationOperationException e) {
-            result = PerformResult.error(operation, e);
-            if (operation.abortOnFailure()) {
-                logger.error("*** Transformation will be aborted due to failed operation ***");
-                logger.error("*** Operation: {} - {}", operation.getName(), operation.getDescription());
-                logger.error("*** Cause: " + e.getCause());
-
-                throw new TransformationException("Operation " + operation.getName() + " failed when performing transformation", e);
-            } else {
-                if(logger.isDebugEnabled()) {
-                    logger.debug("Transformation operation " + operation.getName() + " has failed due to the exception below", e);
-                }
-                logger.error("\t{}\t - Operation '{}' has failed. See debug logs for further details.", order, operation.getName());
-            }
-        } finally {
-            operationsExecutionOrder.incrementAndGet();
-        }
-        return result;
     }
 
     // TODO how to deal with results here???
     // First of all, Multiple operations must be converted to TO, instead of TU
-    private PerformResult performMultipleOperations(MultipleOperations multipleOperations, File transformedAppFolder, TransformationContext transformationContext, AtomicInteger outterOpExecOrder) throws TransformationException {
+    private PerformResult perform(MultipleOperations multipleOperations, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger outterOpExecOrder) throws TransformationException {
         List<TransformationOperation> operations;
         PerformResult result;
         try {
@@ -166,18 +82,18 @@ public class TransformationEngine {
 
             // TODO what about abortOnFailure for MultipleOperations?
 
-            logger.error("*** Transformation will be aborted due to failed utility ***");
-            logger.error("*** Utility: {} - {}", multipleOperations.getName(), multipleOperations.getDescription());
+            logger.error("*** Transformation will be aborted due to failure in {}  ***", multipleOperations.getName());
+            logger.error("*** Description: {}", multipleOperations.getDescription());
             logger.error("*** Cause: " + e.getCause());
 
-            throw new TransformationException("Utility " + multipleOperations.getName() + " failed when being executed", e);
+            throw new TransformationException(multipleOperations.getName() + " failed when performing transformation", e);
         }
 
         logger.info("\t{}\t - Executing {} over {} files", outterOpExecOrder.intValue(), multipleOperations.getTemplateOperation().getName(), operations.size());
 
         AtomicInteger innerOpExecOrder = new AtomicInteger(1);
         for(TransformationOperation operation : operations) {
-            performOperation(operation, transformedAppFolder, transformationContext, innerOpExecOrder, outterOpExecOrder.intValue());
+            perform(operation, transformedAppFolder, transformationContext, innerOpExecOrder, outterOpExecOrder.intValue());
             // FIXME the transformation context is not having a chance to save the result of every one of these. Only the template operation is having its result saved
         }
 
@@ -186,7 +102,16 @@ public class TransformationEngine {
         return result;
     }
 
-    private PerformResult performUtility(TransformationUtility utility, File transformedAppFolder, TransformationContextImpl transformationContext) throws TransformationException {
+    private PerformResult perform(TransformationUtility utility, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger operationsExecutionOrder, Integer outterOrder) throws TransformationException {
+        boolean isTO = utility instanceof TransformationOperation;
+        String order = "-";
+        if (isTO) {
+            if(outterOrder != null) {
+                order = String.format("%d.%d", outterOrder, operationsExecutionOrder.get());
+            } else {
+                order = String.valueOf(operationsExecutionOrder.get());
+            }
+        }
         PerformResult result = null;
         try {
             result = utility.perform(transformedAppFolder, transformationContext);
@@ -194,73 +119,123 @@ public class TransformationEngine {
             switch (result.getType()) {
                 case SKIPPED_CONDITION:
                 case SKIPPED_DEPENDENCY:
-                    if (logger.isDebugEnabled()) {
-                        logger.info("\t-\t - {}", result.getDetails());
+                    if (isTO || logger.isDebugEnabled()) {
+                        logger.info("\t{}\t - {}", order, result.getDetails());
                     }
                     break;
                 case EXECUTION_RESULT:
-                    if (utility.isSaveResult()) {
-                        String key = (utility.getContextAttributeName() != null ? utility.getContextAttributeName() : utility.getName());
-                        transformationContext.put(key, ((TUExecutionResult) result.getExecutionResult()).getValue());
-                    }
-                    switch (((TUExecutionResult) result.getExecutionResult()).getType()) {
-                        case NULL:
-                            if (utility.isSaveResult() && logger.isDebugEnabled()) {
-                                logger.warn("\t-\t - {} ({}) has returned NULL", utility, utility.getName());
-                            }
-                            break;
-                        case VALUE:
-                            logger.debug("\t-\t - {} ({})", utility, utility.getName());
-                            break;
-                        case WARNING:
-                            logger.warn("\t\t - Utility '{}' has successfully been executed, but it has warnings, see debug logs for further details", utility.getName());
-                            if (logger.isDebugEnabled()) {
-                                if (result.getWarnings().size() == 0) {
-                                    logger.warn("\t\t\t * Warning message: {}", result.getDetails());
-                                } else {
-                                    logger.warn("\t\t\t * Execution details: {}", result.getDetails());
-                                    logger.warn("\t\t\t * Warnings (see debug logs for further details):");
-                                    for (Exception warning : result.getWarnings()) {
-                                        String message = String.format("\t\t\t\t - %s: %s", warning.getClass().getName(), warning.getMessage());
-                                        logger.warn(message, warning);
-                                    }
-                                }
-                            }
-                            break;
-                        case ERROR:
-                            if(logger.isDebugEnabled()) {
-                                logger.debug("Transformation utility " + utility.getName() + " has failed due to the exception below", result.getException());
-                            }
-                            logger.error("\t \t - Utility '{}' has failed. See debug logs for further details.", utility.getName());
-                            break;
+                    if (isTO) {
+                        processOperationExecutionResult(utility, result, order);
+                    } else {
+                        processUtilityExecutionResult(utility, result, transformationContext);
                     }
                     break;
                 case ERROR:
                     if(logger.isDebugEnabled()) {
-                        logger.error("Transformation utility " + utility.getName() + " has failed due to the exception below", result.getException());
+                        logger.error(utility.getName() + " has failed due to the exception below", result.getException());
                     }
-                    logger.error("\t-\t - Utility '{}' has failed . See debug logs for further details.", utility.getName());
+                    logger.error("\t{}\t - '{}' has failed. See debug logs for further details.", order, utility.getName());
                     break;
                 default:
-                    logger.error("\t-\t - Utility '{}' has resulted in an unexpected perform result type {}", utility.getName(), ((TUExecutionResult) result.getExecutionResult()).getType().name());
+                    logger.error("\t{}\t - '{}' has resulted in an unexpected perform result type {}", order, utility.getName(), result.getType().name());
                     break;
             }
         } catch (TransformationUtilityException e) {
             result = PerformResult.error(utility, e);
-            if(utility.abortOnFailure()) {
-                logger.error("*** Transformation will be aborted due to failed utility ***");
-                logger.error("*** Utility: {} - {}", utility.getName(), utility.getDescription());
+            if (utility.abortOnFailure()) {
+                logger.error("*** Transformation will be aborted due to failure in {}  ***", utility.getName());
+                logger.error("*** Description: {}", utility.getDescription());
                 logger.error("*** Cause: " + e.getCause());
 
-                throw new TransformationException("Utility " + utility.getName() + " failed when being executed", e);
+                throw new TransformationException(utility.getName() + " failed when performing transformation", e);
             } else {
                 if(logger.isDebugEnabled()) {
-                    logger.debug("Transformation utility " + utility.getName() + " has failed due to the exception below", e);
+                    logger.debug(utility.getName() + " has failed due to the exception below", e);
                 }
-                logger.error("\t \t - Utility '{}' has failed. See debug logs for further details.", utility.getName());
+                logger.error("\t{}\t - '{}' has failed. See debug logs for further details.", order, utility.getName());
             }
+        } finally {
+            if (isTO) operationsExecutionOrder.incrementAndGet();
         }
         return result;
+    }
+
+    private void processOperationExecutionResult(TransformationUtility utility, PerformResult result, String order) {
+        TOExecutionResult executionResult = (TOExecutionResult) result.getExecutionResult();
+        switch (executionResult.getType()) {
+            case SUCCESS:
+                logger.info("\t{}\t - {}", order, executionResult.getDetails());
+                break;
+            case NO_OP:
+                logger.warn("\t{}\t - {}", order, executionResult.getDetails());
+                break;
+            case WARNING:
+                processExecutionResultWarningType(utility, result, executionResult, order);
+                break;
+            case ERROR:
+                processExecutionResultErrorType(utility, executionResult, order);
+                break;
+            default:
+                processExecutionResultUnknownType(utility, executionResult, order);
+                break;
+        }
+    }
+
+    private void processUtilityExecutionResult(TransformationUtility utility, PerformResult result, TransformationContextImpl transformationContext) {
+        TUExecutionResult executionResult = (TUExecutionResult) result.getExecutionResult();
+        if (utility.isSaveResult()) {
+            // Saving the value that resulted from the utility execution, which is different from the whole perform result
+            // object saved in the main perform method
+
+            String key = (utility.getContextAttributeName() != null ? utility.getContextAttributeName() : utility.getName());
+            transformationContext.put(key, executionResult.getValue());
+        }
+        switch (((TUExecutionResult) result.getExecutionResult()).getType()) {
+            case NULL:
+                if (utility.isSaveResult() && logger.isDebugEnabled()) {
+                    logger.warn("\t-\t - {} ({}) has returned NULL", utility, utility.getName());
+                }
+                break;
+            case VALUE:
+                logger.debug("\t-\t - {} ({})", utility, utility.getName());
+                break;
+            case WARNING:
+                processExecutionResultWarningType(utility, result, executionResult, "-");
+                break;
+            case ERROR:
+                processExecutionResultErrorType(utility, executionResult, "-");
+                break;
+            default:
+                processExecutionResultUnknownType(utility, executionResult, "-");
+                break;
+        }
+    }
+
+    private void processExecutionResultWarningType(TransformationUtility utility, PerformResult result, ExecutionResult executionResult, String order) {
+        logger.warn("\t{}\t - '{}' has successfully been executed, but it has warnings, see debug logs for further details", order, utility.getName());
+        if (logger.isDebugEnabled()) {
+            if (result.getWarnings().size() == 0) {
+                logger.warn("\t\t\t * Warning message: {}", result.getDetails());
+            } else {
+                logger.warn("\t\t\t * Execution details: {}", executionResult.getDetails());
+                logger.warn("\t\t\t * Warnings (see debug logs for further details):");
+                for (Object warning : executionResult.getWarnings()) {
+                    String message = String.format("\t\t\t\t - %s: %s", warning.getClass().getName(), ((Exception) warning).getMessage());
+                    logger.warn(message, warning);
+                }
+            }
+        }
+    }
+
+    private void processExecutionResultErrorType(TransformationUtility utility, ExecutionResult executionResult, String order) {
+        if(logger.isDebugEnabled()) {
+            logger.error(utility.getName() + " has failed due to the exception below", executionResult.getException());
+        }
+        logger.error("\t{}\t - '{}' has failed. See debug logs for further details.", order, utility.getName());
+    }
+
+    private void processExecutionResultUnknownType(TransformationUtility utility, ExecutionResult executionResult, String order) {
+        logger.error("\t{}\t - '{}' has resulted in an unexpected execution result type {}", order, utility.getName(), executionResult.getType());
     }
 
     private File prepareOutputFolder(Transformation transformation) {

@@ -69,8 +69,7 @@ public class FindFile extends TransformationUtility<FindFile> {
 
         TUExecutionResult result = null;
 
-        // TODO improve this after TU execution returns TUExecutionResult, instead of Result
-        List<File> files = (List<File>) ((TUExecutionResult) findFiles.execution(searchRootFolder, transformationContext)).getValue();
+        List<File> files = (List<File>) findFiles.execution(searchRootFolder, transformationContext).getValue();
 
         if(files == null || files.size() == 0) {
             String details = String.format("No file named '%s' has been found by %s", fileName, getName());

@@ -6,7 +6,7 @@ package com.paypal.butterfly.extensions.api;
  *
  * @author facarvalho
  */
-abstract class ExecutionResult<S, RT, T> extends Result <S, RT, T> {
+public abstract class ExecutionResult<S, RT, T> extends Result <S, RT, T> {
 
     ExecutionResult(S source) {
         super(source);
