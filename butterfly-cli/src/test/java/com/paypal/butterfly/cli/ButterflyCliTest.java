@@ -1,10 +1,12 @@
 package com.paypal.butterfly.cli;
 
 import com.paypal.butterfly.extensions.api.Extension;
+import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
 import com.test.SampleExtension;
+import com.test.SampleTransformationTemplate;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -141,9 +143,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testTransformationWithNonExistDir() throws IOException, ButterflyException {
         String arguments[] = {"-i", "PATH_TO_APP_FOLDER", "-t", "com.test.SampleTransformationTemplate", "-v", "-o", "PATH_TO_OUTPUT_FOLDER"};
-        int status = butterflyCli.run(arguments);
-
-        Assert.assertEquals(status, 1);
+        butterflyCli.run(arguments);
     }
 
     /**
@@ -160,6 +160,27 @@ public class ButterflyCliTest extends PowerMockTestCase {
 
         Assert.assertEquals(status, 0);
         verify(facade, times(1)).transform(eq(new File("PATH_TO_APP_FOLDER")), eq("com.test.SampleTransformationTemplate"), eq(new Configuration(new File(currentDir), false)));
+    }
+
+    @Test
+    public void testAutomaticResolution() throws IOException, ButterflyException {
+        Mockito.doReturn(SampleTransformationTemplate.class).when(facade).automaticResolution(Mockito.any(File.class));
+        String arguments[] = {"-i", "PATH_TO_APP_FOLDER", "-a"};
+        int status = butterflyCli.run(arguments);
+
+        verify(facade, times(1)).automaticResolution(eq(new File("PATH_TO_APP_FOLDER")));
+        verify(facade, times(1)).transform(eq(new File("PATH_TO_APP_FOLDER")), eq(SampleTransformationTemplate.class), eq(new Configuration(null, false)));
+        Assert.assertEquals(status, 0);
+    }
+
+    @Test
+    public void testAutomaticResolutionFailed() throws IOException, ButterflyException {
+        String arguments[] = {"-i", "PATH_TO_APP_FOLDER", "-a"};
+        int status = butterflyCli.run(arguments);
+
+        verify(facade, times(1)).automaticResolution(eq(new File("PATH_TO_APP_FOLDER")));
+        verify(facade, times(0)).transform(Mockito.anyObject(), (Class<? extends TransformationTemplate>) Mockito.anyObject(), Mockito.anyObject());
+        Assert.assertEquals(status, 1);
     }
 
 }

@@ -6,6 +6,7 @@ import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
+import com.paypal.butterfly.facade.exception.TemplateResolutionException;
 import com.paypal.butterfly.facade.exception.TransformationException;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
@@ -38,6 +39,7 @@ public class ButterflyCli {
 
     private static final String BANNER = String.format("Butterfly application transformation tool (version %s)", VersionHelper.getButterflyVersion());
 
+    // Possibe CLI options. See method createOptionSet for details about them
     private static final String CLI_OPTION_HELP = "h";
     private static final String CLI_OPTION_VERBOSE = "v";
     private static final String CLI_OPTION_LIST_EXTENSIONS = "l";
@@ -46,6 +48,7 @@ public class ButterflyCli {
     private static final String CLI_OPTION_TEMPLATE = "t";
     private static final String CLI_OPTION_CREATE_ZIP = "z";
     private static final String CLI_OPTION_TEMPLATE_SHORTCUT = "s";
+    private static final String CLI_OPTION_AUTOMATIC_TEMPLATE_RESOLUTION = "a";
 
     private static Logger logger = LoggerFactory.getLogger(ButterflyCli.class);
 
@@ -102,6 +105,18 @@ public class ButterflyCli {
                 return 1;
             }
             logger.info("Transformation template associated with shortcut {}: {}", shortcut, templateClass.getName());
+        } else if (optionSet.has(CLI_OPTION_AUTOMATIC_TEMPLATE_RESOLUTION)) {
+            try {
+                templateClass = butterflyFacade.automaticResolution(applicationFolder);
+                if (templateClass == null) {
+                    logger.error("No transformation template could be resolved for this application");
+                    return 1;
+                }
+                logger.info("Transformation template automatically resolved to {}", templateClass.getName());
+            } catch (TemplateResolutionException e) {
+                logger.error(e.getMessage());
+                return 1;
+            }
         } else {
             logger.error("Transformation template class has not been specified");
             return 1;
@@ -181,20 +196,23 @@ public class ButterflyCli {
                 .describedAs("input");
 
         // Transformation template option
-        optionParser.accepts(CLI_OPTION_TEMPLATE_SHORTCUT, "The shortcut number to the transformation template to be executed. If both shortcut and template class name are supplied, the shortcut will be ignored")
+        optionParser.accepts(CLI_OPTION_TEMPLATE_SHORTCUT, "The shortcut number to the transformation template to be executed. If both shortcut (-s) and template class (-t) name are supplied, the shortcut will be ignored")
                 .withRequiredArg()
                 .ofType(Integer.class)
                 .describedAs("template shortcut");
 
         // Transformation template option
-        optionParser.accepts(CLI_OPTION_TEMPLATE, "The Java class name of the transformation template to be executed")
-                .requiredUnless(CLI_OPTION_LIST_EXTENSIONS, CLI_OPTION_TEMPLATE_SHORTCUT)
+        optionParser.accepts(CLI_OPTION_AUTOMATIC_TEMPLATE_RESOLUTION, "If provided, Butterfly will try to automatically chose the transformation template to be used based on the application code. If shortcut (-s) or template class name (-t) are also supplied, this option (-a) will be ignored");
+
+        // Transformation template option
+        optionParser.accepts(CLI_OPTION_TEMPLATE, "The Java class name of the transformation template to be executed. This option has precedence over -s and -a")
+                .requiredUnless(CLI_OPTION_LIST_EXTENSIONS, CLI_OPTION_TEMPLATE_SHORTCUT, CLI_OPTION_AUTOMATIC_TEMPLATE_RESOLUTION)
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("template");
 
         // Transformed application folder option
-        optionParser.accepts(CLI_OPTION_TRANSFORMED_APP_FOLDER, "The folder location in the file system where the transformed application should be placed. It defaults to same location where original application is. Transformed application is placed under a new folder whose named is same as original folder, plus \"-transformed-yyyyMMddHHmmssSSS\" suffix")
+        optionParser.accepts(CLI_OPTION_TRANSFORMED_APP_FOLDER, "The folder location in the file system where the transformed application should be placed. It defaults to same location where original application is. Transformed application is placed under a new folder whose name is same as original folder, plus \"-transformed-yyyyMMddHHmmssSSS\" suffix")
                 .withRequiredArg()
                 .ofType(File.class)
                 .describedAs("output");
