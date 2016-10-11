@@ -122,7 +122,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
     }
 
     @Override
-    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         List<File> files;
         Set<File> allFiles = new HashSet<File>();
 
@@ -153,7 +153,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
         if(logger.isDebugEnabled()) {
             message = String.format("Multiple operation %s resulted in %d operations based on %s", getName(), operations.size(), templateOperation.getClass().getSimpleName());
         }
-        return TUResult.value(this, operations).setDetails(message);
+        return TUExecutionResult.value(this, operations).setDetails(message);
     }
 
     public List<TransformationOperation> getOperations() {

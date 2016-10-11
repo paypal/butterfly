@@ -6,6 +6,7 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
+import com.paypal.butterfly.facade.exception.TemplateResolutionException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Butterfly Façade implementation
@@ -37,6 +40,28 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     @Override
     public List<Extension> getRegisteredExtensions() {
         return extensionRegistry.getExtensions();
+    }
+
+    @Override
+    public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException {
+        Set<Class<? extends TransformationTemplate>> resolvedTemplates = new HashSet<>();
+        Class<? extends TransformationTemplate> t = null;
+
+        for (Extension extension : extensionRegistry.getExtensions()) {
+            t = extension.automaticResolution(applicationFolder);
+            if (t != null) {
+                resolvedTemplates.add(t);
+            }
+        }
+
+        if (resolvedTemplates.size() == 0) {
+            return null;
+        }
+        if (resolvedTemplates.size() == 1) {
+            return (Class<? extends TransformationTemplate>) resolvedTemplates.toArray()[0];
+        }
+
+        throw new TemplateResolutionException(resolvedTemplates);
     }
 
     @Override

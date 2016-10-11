@@ -2,7 +2,7 @@ package com.paypal.butterfly.basic.utilities.file;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
-import com.paypal.butterfly.extensions.api.TUResult;
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
@@ -54,9 +54,9 @@ public class LocateFile extends TransformationUtility<LocateFile> {
     }
 
     @Override
-    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File locatedFile;
-        TUResult result = null;
+        TUExecutionResult result = null;
 
         try {
             locatedFile = getAbsoluteFile(transformedAppFolder, transformationContext);
@@ -69,14 +69,14 @@ public class LocateFile extends TransformationUtility<LocateFile> {
             if (locatedFile == null) {
                 String message = String.format("File to be located reached limit of files hierarchy, parent level %d is too deep", parentLevel);
                 TransformationOperationException e = new TransformationOperationException(message);
-                result = TUResult.error(this, e);
+                result = TUExecutionResult.error(this, e);
             } else {
-                result = TUResult.value(this, locatedFile);
+                result = TUExecutionResult.value(this, locatedFile);
             }
             // FIXME a better exception is necessary here for cases when the absolute path transformation context attribute value is null
         } catch(TransformationUtilityException exception) {
             String details = String.format("No file has been located by %s because its baseline relative or absolute location could not be resolved", getName());
-            result = TUResult.error(this, exception, details);
+            result = TUExecutionResult.error(this, exception, details);
         }
 
         return result;

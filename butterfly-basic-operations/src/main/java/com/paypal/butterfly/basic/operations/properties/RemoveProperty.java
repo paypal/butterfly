@@ -1,11 +1,13 @@
 package com.paypal.butterfly.basic.operations.properties;
 
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
-import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 
 import java.io.*;
-import java.util.Properties;
+import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
 
 /**
  * Operation to remove a property from a properties file.
@@ -45,50 +47,78 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
         return String.format(DESCRIPTION, propertyName, getRelativePath());
     }
 
+
     @Override
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
     protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-        FileInputStream fileInputStream = null;
-        FileOutputStream fileOutputStream = null;
-        boolean containsKey = false;
+        String details;
+        BufferedReader reader = null;
+        BufferedWriter writer = null;
         TOExecutionResult result = null;
+        File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
+        File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         try {
-            File propertiesFile = getAbsoluteFile(transformedAppFolder, transformationContext);
-            Properties properties = new Properties();
-            fileInputStream = new FileInputStream(propertiesFile);
-            properties.load(fileInputStream);
-            containsKey = properties.getProperty(propertyName) != null;
-            if (containsKey) {
-                properties.remove(propertyName);
-                fileOutputStream = new FileOutputStream(propertiesFile);
-                properties.store(fileOutputStream, null);
+            if (!fileToBeChanged.exists()) {
+                // TODO Should this be done as pre-validation?
+                details = String.format("Operation '%s' hasn't transformed the application because file '%s', where the property removal should happen, does not exist", getName(), getRelativePath(transformedAppFolder, fileToBeChanged));
+                return TOExecutionResult.noOp(this, details);
             }
-            String details;
-            if (containsKey) {
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
+            String currentLine;
+            boolean foundFirstMatch = false;
+            String regex = "("+propertyName+".*)";
+            final Pattern pattern = Pattern.compile(regex);
+            boolean firstLine = true;
+            while((currentLine = reader.readLine()) != null) {
+                if(!foundFirstMatch && pattern.matcher(currentLine).matches()) {
+                    foundFirstMatch = true;
+                    continue;
+                }
+                if(!firstLine) {
+                    writer.write(System.lineSeparator());
+                }
+                writer.write(currentLine);
+                firstLine = false;
+            }
+            //If it founds first match means, then it would be removed
+            if(foundFirstMatch) {
                 details = String.format("Property '%s' has been removed from '%s'", propertyName, getRelativePath());
                 result = TOExecutionResult.success(this, details);
-            } else {
+            }else {
                 details = String.format("Property '%s' has NOT been removed from '%s' because it is not present on it", propertyName, getRelativePath());
                 result = TOExecutionResult.warning(this, details);
             }
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);
-        } finally {
+        }finally {
             try {
-                if (fileInputStream != null) try {
-                    fileInputStream.close();
+                if (writer != null) try {
+                    writer.close();
                 } catch (IOException e) {
                     result.addWarning(e);
                 }
             } finally {
-                if(fileOutputStream != null) try {
-                    fileOutputStream.close();
+                if(reader != null) try {
+                    reader.close();
                 } catch (IOException e) {
                     result.addWarning(e);
                 }
             }
         }
 
+        boolean deleted = fileToBeChanged.delete();
+        if(deleted) {
+            if (!tempFile.renameTo(fileToBeChanged)) {
+                details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
+                TransformationOperationException e = new TransformationOperationException(details);
+                result = TOExecutionResult.error(this, e);
+            }
+        } else {
+            details = String.format("Error when deleting %s", getRelativePath(transformedAppFolder, fileToBeChanged));
+            TransformationOperationException e = new TransformationOperationException(details);
+            result = TOExecutionResult.error(this, e);
+        }
         return result;
     }
 
@@ -97,5 +127,7 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
         RemoveProperty clonedRemoveProperty = (RemoveProperty) super.clone();
         return clonedRemoveProperty;
     }
+
+
 
 }
