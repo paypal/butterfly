@@ -4,6 +4,7 @@ import com.paypal.butterfly.core.exception.InternalException;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.exception.TemplateResolutionException;
@@ -85,12 +86,37 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public void transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException {
-        logger.debug("Transformation configuration: {}", configuration);
+    public void transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) throws ButterflyException {
+        transform(applicationFolder, templateClass, new Configuration());
+    }
 
-        Application application = new Application(applicationFolder);
+    @Override
+    public void transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException {
         TransformationTemplate template = getTemplate(templateClass);
-        Transformation transformation = new Transformation(application, template, configuration);
+        Application application = new Application(applicationFolder);
+        Transformation transformation = new TemplateTransformation(application, template, configuration);
+
+        transform(transformation);
+    }
+
+    @Override
+    public void transform(File applicationFolder, UpgradePath upgradePath) throws ButterflyException {
+        transform(applicationFolder, upgradePath, new Configuration());
+    }
+
+    @Override
+    public void transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) throws ButterflyException {
+        Application application = new Application(applicationFolder);
+        Transformation transformation = new UpgradePathTransformation(application, upgradePath, configuration);
+
+        transform(transformation);
+    }
+
+    private void transform(Transformation transformation) throws ButterflyException {
+        Configuration configuration = transformation.getConfiguration();
+        if (logger.isDebugEnabled()) {
+            logger.debug("Transformation configuration: {}", configuration);
+        }
 
         transformationEngine.perform(transformation);
 

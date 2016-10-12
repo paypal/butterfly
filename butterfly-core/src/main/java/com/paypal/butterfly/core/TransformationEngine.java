@@ -3,6 +3,8 @@ package com.paypal.butterfly.core;
 import com.paypal.butterfly.core.exception.InternalException;
 import com.paypal.butterfly.extensions.api.*;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.extensions.api.utilities.MultipleOperations;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.exception.TransformationException;
@@ -30,17 +32,61 @@ public class TransformationEngine {
 
     private static final Logger logger = LoggerFactory.getLogger(TransformationEngine.class);
 
+    // This is used to create a timestamp to be applied as suffix in the transformed application folder
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
+    /**
+     * Perform an application transformation based on the specified {@link Transformation}
+     * object
+     *
+     * @param transformation the transformation object
+     * @throws TransformationException if the transformation is aborted for any reason
+     */
     public void perform(Transformation transformation) throws TransformationException {
         if(logger.isDebugEnabled()) {
             logger.debug("Requested transformation: {}", transformation);
         }
-
         File transformedAppFolder = prepareOutputFolder(transformation);
 
-        TransformationTemplate template = transformation.getTemplate();
-        logger.info("Beginning transformation ({} operations to be performed)", template.getOperationsCount());
+        if (transformation instanceof UpgradePathTransformation) {
+            UpgradePath upgradePath = ((UpgradePathTransformation) transformation).getUpgradePath();
+            perform(upgradePath, transformedAppFolder);
+        } else if (transformation instanceof TemplateTransformation) {
+            TransformationTemplate template = ((TemplateTransformation) transformation).getTemplate();
+            perform(template, transformedAppFolder);
+        } else {
+            throw new TransformationException("Transformation type not recognized");
+        }
+    }
+
+    /*
+     * Upgrade the application based on an upgrade path (from an original version to a target version)
+     */
+    private void perform(UpgradePath upgradePath, File transformedAppFolder) throws TransformationException {
+        logger.info("====================================================================================================================================");
+        logger.info("\tUpgrade path from version {} to version {}", upgradePath.getOriginalVersion(), upgradePath.getUpgradeVersion());
+
+        UpgradeStep upgradeStep;
+        while (upgradePath.hasNext()) {
+            upgradeStep = upgradePath.next();
+
+            logger.info("====================================================================================================================================");
+            logger.info("\tUpgrade step");
+            logger.info("\t\t* from version: {}", upgradeStep.getCurrentVersion());
+            logger.info("\t\t* to version: {}", upgradeStep.getNextVersion());
+
+            perform(upgradeStep, transformedAppFolder);
+        }
+    }
+
+    /*
+     * Transform the application based on a single transformation template. Notice that this transformation
+     * template can also be an upgrade step
+     */
+    private void perform(TransformationTemplate template, File transformedAppFolder) throws TransformationException {
+        logger.info("====================================================================================================================================");
+        logger.info("Beginning transformation (template: {}, operations to be performed: {})", template.getClass().getName(), template.getOperationsCount());
+
         AtomicInteger operationsExecutionOrder = new AtomicInteger(1);
 
         TransformationContextImpl transformationContext = new TransformationContextImpl();
@@ -48,7 +94,7 @@ public class TransformationEngine {
         MultipleOperations multipleOperations;
         TransformationUtility utility;
         PerformResult result;
-        for(Object transformationUtilityObj: template.getTransformationUtilitiesList()) {
+        for(Object transformationUtilityObj: template.getUtilities()) {
             utility = (TransformationUtility) transformationUtilityObj;
             if(transformationUtilityObj instanceof MultipleOperations) {
                 multipleOperations = (MultipleOperations) transformationUtilityObj;
@@ -68,6 +114,9 @@ public class TransformationEngine {
         logger.info("Transformation has been completed");
     }
 
+    /*
+     * Perform multiple operations in an application
+     */
     // TODO how to deal with results here???
     // First of all, Multiple operations must be converted to TO, instead of TU
     private PerformResult perform(MultipleOperations multipleOperations, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger outterOpExecOrder) throws TransformationException {
@@ -102,6 +151,10 @@ public class TransformationEngine {
         return result;
     }
 
+    /*
+     * Perform an transformation utility against an application. Notice that this utility can also be
+     * actually a transformation operation
+     */
     private PerformResult perform(TransformationUtility utility, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger operationsExecutionOrder, Integer outterOrder) throws TransformationException {
         boolean isTO = utility instanceof TransformationOperation;
         String order = "-";
@@ -244,7 +297,7 @@ public class TransformationEngine {
         Application application =  transformation.getApplication();
         Configuration configuration =  transformation.getConfiguration();
 
-        logger.info("Original application folder: " + application.getFolder());
+        logger.info("Original application folder:\t\t" + application.getFolder());
 
         File originalAppParent = application.getFolder().getParentFile();
         String transformedAppFolderName = application.getFolder().getName() + "-transformed-" + getCurrentTimeStamp();
@@ -260,7 +313,7 @@ public class TransformationEngine {
             transformedAppFolder = new File(originalAppParent.getAbsolutePath() + File.separator + transformedAppFolderName);
         }
 
-        logger.info("Transformed application folder: " + transformedAppFolder);
+        logger.info("Transformed application folder:\t" + transformedAppFolder);
 
         transformation.setTransformedApplicationLocation(transformedAppFolder);
 

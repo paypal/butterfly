@@ -150,7 +150,7 @@ public abstract class TransformationTemplate<TT> implements TransformationUtilit
      *
      * @return the list of utilities to transform the application,
      */
-    public final List<TransformationUtility> getTransformationUtilitiesList() {
+    public final List<TransformationUtility> getUtilities() {
         return Collections.unmodifiableList(utilityList);
     }
 
