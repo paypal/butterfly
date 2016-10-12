@@ -4,7 +4,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
-import com.paypal.butterfly.extensions.api.TUResult;
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 
@@ -33,18 +33,18 @@ public class JavaPackage extends TransformationUtility<JavaPackage> {
 
     @Override
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
-    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File javaClassFile = getAbsoluteFile(transformedAppFolder, transformationContext);
         FileInputStream fileInputStream = null;
-        TUResult result = null;
+        TUExecutionResult result = null;
 
         try {
             fileInputStream = new FileInputStream(javaClassFile);
             CompilationUnit compilationUnit = JavaParser.parse(fileInputStream);
             PackageDeclaration packageDeclaration = compilationUnit.getPackage();
-            result = TUResult.value(this, packageDeclaration.getPackageName());
+            result = TUExecutionResult.value(this, packageDeclaration.getPackageName());
         } catch (FileNotFoundException|ParseException  e) {
-            result = TUResult.error(this, e);
+            result = TUExecutionResult.error(this, e);
         } finally {
             try {
                 if (fileInputStream != null) {

@@ -1,6 +1,6 @@
 package com.paypal.butterfly.core;
 
-import com.paypal.butterfly.extensions.api.Result;
+import com.paypal.butterfly.extensions.api.PerformResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,8 +16,8 @@ import java.util.Map;
  */
 class TransformationContextImpl implements TransformationContext {
 
-    private Map<String, Object> attributes = new HashMap<String, Object>();
-    private Map<String, Result> results = new HashMap<String, Result>();
+    private Map<String, Object> attributes = new HashMap<>();
+    private Map<String, PerformResult> results = new HashMap<>();
 
     @Override
     public Object get(String name) {
@@ -32,7 +32,7 @@ class TransformationContextImpl implements TransformationContext {
     }
 
     @Override
-    public Result getResult(String utilityName) {
+    public PerformResult getResult(String utilityName) {
         if(StringUtils.isBlank(utilityName)) {
             throw new IllegalArgumentException("Result key cannot be null");
         }
@@ -67,7 +67,7 @@ class TransformationContextImpl implements TransformationContext {
      * @param name the transformation utility name
      * @param resultObject the result object
      */
-    void putResult(String name, Result resultObject) {
+    void putResult(String name, PerformResult resultObject) {
         if(StringUtils.isBlank(name)) {
             throw new IllegalArgumentException("Result name cannot be null nor blank");
         }

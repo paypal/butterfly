@@ -4,8 +4,10 @@ import com.paypal.butterfly.core.exception.InternalException;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
+import com.paypal.butterfly.facade.exception.TemplateResolutionException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,8 +39,30 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     private CompressionHandler compressionHandler;
 
     @Override
-    public Set<Extension> getRegisteredExtensions() {
+    public List<Extension> getRegisteredExtensions() {
         return extensionRegistry.getExtensions();
+    }
+
+    @Override
+    public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException {
+        Set<Class<? extends TransformationTemplate>> resolvedTemplates = new HashSet<>();
+        Class<? extends TransformationTemplate> t = null;
+
+        for (Extension extension : extensionRegistry.getExtensions()) {
+            t = extension.automaticResolution(applicationFolder);
+            if (t != null) {
+                resolvedTemplates.add(t);
+            }
+        }
+
+        if (resolvedTemplates.size() == 0) {
+            return null;
+        }
+        if (resolvedTemplates.size() == 1) {
+            return (Class<? extends TransformationTemplate>) resolvedTemplates.toArray()[0];
+        }
+
+        throw new TemplateResolutionException(resolvedTemplates);
     }
 
     @Override
@@ -46,11 +72,51 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
 
     @Override
     public void transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException {
-        logger.debug("Transformation configuration: {}", configuration);
+        if(StringUtils.isBlank(templateClassName)) {
+            throw new IllegalArgumentException("Template class name cannot be blank");
+        }
+        try {
+            Class<TransformationTemplate> templateClass = (Class<TransformationTemplate>) Class.forName(templateClassName);
+            transform(applicationFolder, templateClass, configuration);
+        } catch (ClassNotFoundException e) {
+            String exceptionMessage = "Template class " + templateClassName + " not found. Run Butterfly in verbose mode and double check if its extension has been properly registered";
+            logger.error(exceptionMessage, e);
+            throw new InternalException(exceptionMessage, e);
+        }
+    }
 
+    @Override
+    public void transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) throws ButterflyException {
+        transform(applicationFolder, templateClass, new Configuration());
+    }
+
+    @Override
+    public void transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException {
+        TransformationTemplate template = getTemplate(templateClass);
         Application application = new Application(applicationFolder);
-        TransformationTemplate template = getTemplate(templateClassName);
-        Transformation transformation = new Transformation(application, template, configuration);
+        Transformation transformation = new TemplateTransformation(application, template, configuration);
+
+        transform(transformation);
+    }
+
+    @Override
+    public void transform(File applicationFolder, UpgradePath upgradePath) throws ButterflyException {
+        transform(applicationFolder, upgradePath, new Configuration());
+    }
+
+    @Override
+    public void transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) throws ButterflyException {
+        Application application = new Application(applicationFolder);
+        Transformation transformation = new UpgradePathTransformation(application, upgradePath, configuration);
+
+        transform(transformation);
+    }
+
+    private void transform(Transformation transformation) throws ButterflyException {
+        Configuration configuration = transformation.getConfiguration();
+        if (logger.isDebugEnabled()) {
+            logger.debug("Transformation configuration: {}", configuration);
+        }
 
         transformationEngine.perform(transformation);
 
@@ -59,25 +125,19 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
         }
     }
 
-    private TransformationTemplate getTemplate(String templateClassName) {
-        if(StringUtils.isBlank(templateClassName)) {
-            throw new IllegalArgumentException("Template class name cannot be blank");
+    private TransformationTemplate getTemplate(Class<? extends TransformationTemplate> templateClass) {
+        if(templateClass == null) {
+            throw new IllegalArgumentException("Template class cannot be null");
         }
         try {
-            Class<TransformationTemplate> templateClass = (Class<TransformationTemplate>) Class.forName(templateClassName);
             TransformationTemplate template = templateClass.newInstance();
-
             return template;
-        } catch (ClassNotFoundException e) {
-            String exceptionMessage = "Template class " + templateClassName + " not found. Run Butterfly in verbose mode and double check if its extension has been properly registered";
-            logger.error(exceptionMessage, e);
-            throw new InternalException(exceptionMessage, e);
         } catch (InstantiationException e) {
-            String exceptionMessage = "Template class " + templateClassName + " could not be instantiated. Run Butterfly in verbose mode, double check if its extension has been properly registered, and also double check if it complies with Butterfly extensions API";
+            String exceptionMessage = "Template class " + templateClass + " could not be instantiated. Run Butterfly in verbose mode, double check if its extension has been properly registered, and also double check if it complies with Butterfly extensions API";
             logger.error(exceptionMessage, e);
             throw new InternalException(exceptionMessage, e);
         } catch (IllegalAccessException e) {
-            String exceptionMessage = "Template class " + templateClassName + " could not be accessed";
+            String exceptionMessage = "Template class " + templateClass + " could not be accessed";
             logger.error(exceptionMessage, e);
             throw new InternalException(exceptionMessage, e);
         }

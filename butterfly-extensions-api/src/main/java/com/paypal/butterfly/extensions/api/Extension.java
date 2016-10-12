@@ -1,8 +1,16 @@
 package com.paypal.butterfly.extensions.api;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * A Butterfly third-party extension. It provides custom
@@ -12,7 +20,9 @@ import java.util.Set;
  */
 public abstract class Extension<E> {
 
-    private Set<Class<? extends TransformationTemplate>> templateClasses = new HashSet<Class<? extends TransformationTemplate>>();
+    private static final Logger logger = LoggerFactory.getLogger(Extension.class);
+
+    private List<Class<? extends TransformationTemplate>> templateClasses = new ArrayList<>();
 
     /**
      * Adds a new transformation template class to the set
@@ -38,8 +48,61 @@ public abstract class Extension<E> {
      *
      * @return a read-only set containing all transformation template classes
      */
-    public final Set<Class<? extends TransformationTemplate>> getTemplateClasses() {
-        return Collections.unmodifiableSet(templateClasses);
+    public final List<Class<? extends TransformationTemplate>> getTemplateClasses() {
+        return Collections.unmodifiableList(templateClasses);
+    }
+
+    /**
+     * Butterfly might be able to automatically identify the type of application
+     * and which transformation template to be applied to it. This automatic
+     * transformation template resolution is actually performed by each registered
+     * Extension class. Based on the application folder, and its content, each
+     * registered extension might decide which transformation template should be used
+     * to transform it. Only one or none can be chosen. If no one applies, null is
+     * returned.
+     *
+     * @param applicationFolder the folder where the code of the application to be transformed is
+     * @return the chosen transformation template class, or null, if no one applies
+     */
+    public abstract  Class<? extends TransformationTemplate> automaticResolution(File applicationFolder);
+
+    /**
+     * This is a convenience method in case the Extension subclass wants to implement its
+     * {@link #automaticResolution(File)} method based on one or more Maven pom files
+     *
+     * @param folder the folder where the pom.xml file would be
+     * @return the Model object related to the pom.xml file under {@code folder}, or null, if that file does
+     *              not exist, or any error happens when trying to read and parse it
+     */
+    protected Model getRootPomFile(File folder) {
+        File pomFile = null;
+        FileInputStream fileInputStream = null;
+        Model model = null;
+
+        try {
+            MavenXpp3Reader reader = new MavenXpp3Reader();
+            pomFile = new File(folder, "pom.xml");
+            if (!pomFile.exists()) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("This application does not have a pom.xml file on its root folder");
+                }
+                return null;
+            }
+            fileInputStream = new FileInputStream(pomFile);
+            model = reader.read(fileInputStream);
+        } catch (Exception e) {
+            if (logger.isDebugEnabled()) {
+                logger.error("Error happened when trying to read and parse pom.xml file " + pomFile, e);
+            }
+        } finally {
+            if (fileInputStream != null) try {
+                fileInputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return model;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.paypal.butterfly.basic.utilities.file;
 
-import com.paypal.butterfly.extensions.api.TUResult;
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 
@@ -20,7 +20,7 @@ import java.util.List;
  * of the transformed application, which is equivalent to setting
  * {@link #relative(String) to {@code "."}
  * </br>
- * If no file is found, a {@link com.paypal.butterfly.extensions.api.TUResult.Type#NULL}
+ * If no file is found, a {@link com.paypal.butterfly.extensions.api.TUExecutionResult.Type#NULL}
  * is returned
  *
  * @see {@link FindFiles} for a better refined search
@@ -63,23 +63,22 @@ public class FindFile extends TransformationUtility<FindFile> {
     }
 
     @Override
-    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File searchRootFolder = getAbsoluteFile(transformedAppFolder, transformationContext);
         FindFiles findFiles = new FindFiles(fileName, true);
 
-        TUResult result = null;
+        TUExecutionResult result = null;
 
-        // TODO improve this after TU execution returns TUResult, instead of Result
-        List<File> files = (List<File>) ((TUResult) findFiles.execution(searchRootFolder, transformationContext)).getValue();
+        List<File> files = (List<File>) findFiles.execution(searchRootFolder, transformationContext).getValue();
 
         if(files == null || files.size() == 0) {
             String details = String.format("No file named '%s' has been found by %s", fileName, getName());
-            result = TUResult.nullResult(this, details);
+            result = TUExecutionResult.nullResult(this, details);
         } else if(files.size() > 1) {
             String details = String.format("More than one file named %s has been found by %s, the first one will be returned", fileName, getName());
-            result = TUResult.warning(this, files.get(0), details);
+            result = TUExecutionResult.warning(this, files.get(0), details);
         } else if(files.size() == 1) {
-            result = TUResult.value(this, files.get(0));
+            result = TUExecutionResult.value(this, files.get(0));
         }
 
         return result;

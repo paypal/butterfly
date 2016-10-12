@@ -28,6 +28,6 @@ public interface TransformationContext {
      * @param utilityName the name of the utility
      * @return the utility performing result
      */
-    Result getResult(String utilityName);
+    PerformResult getResult(String utilityName);
 
 }

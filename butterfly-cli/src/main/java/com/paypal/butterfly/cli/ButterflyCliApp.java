@@ -17,7 +17,9 @@ public class ButterflyCliApp {
     public static void main(String... arguments) throws IOException {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ButterflyCliApp.class, arguments);
         ButterflyCli butterflyCli = applicationContext.getBean(ButterflyCli.class);
-        butterflyCli.run(arguments);
+        int status = butterflyCli.run(arguments);
+
+        System.exit(status);
     }
 
 }

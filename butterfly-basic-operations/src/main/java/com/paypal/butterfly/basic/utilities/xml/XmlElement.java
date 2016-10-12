@@ -2,7 +2,7 @@ package com.paypal.butterfly.basic.utilities.xml;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
-import com.paypal.butterfly.extensions.api.TUResult;
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -93,9 +93,9 @@ public class XmlElement extends TransformationUtility<XmlElement> {
     private static final Pattern XML_ELEMENT_SPLIT_REGEX_PATTERN = Pattern.compile("\\.");
 
     @Override
-    protected TUResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File xmlFile = getAbsoluteFile(transformedAppFolder, transformationContext);
-        TUResult result = null;
+        TUExecutionResult result = null;
 
         try {
             Node node;
@@ -110,9 +110,9 @@ public class XmlElement extends TransformationUtility<XmlElement> {
             } else {
                 value = node.getAttributes().getNamedItem(attribute).getTextContent();
             }
-            result = TUResult.value(this, value);
+            result = TUExecutionResult.value(this, value);
         } catch (TransformationUtilityException|ParserConfigurationException|SAXException|IOException e) {
-            result = TUResult.error(this, e);
+            result = TUExecutionResult.error(this, e);
         }
 
         return result;
