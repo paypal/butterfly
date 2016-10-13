@@ -3,6 +3,7 @@ package com.paypal.butterfly.basic.utilities.maven;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.maven.shared.invoker.*;
 
 import java.io.File;
@@ -122,6 +123,9 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
                 result = TUExecutionResult.value(this, mavenGoalResult);
             } else {
                 Exception e = invocationResult.getExecutionException();
+                if (e == null) {
+                    e = new TransformationUtilityException(String.format("Maven goals %s execution failed with exit code %d", Arrays.toString(goals), exitCode));
+                }
                 result = TUExecutionResult.error(this, e);
             }
         } catch (Exception e) {
