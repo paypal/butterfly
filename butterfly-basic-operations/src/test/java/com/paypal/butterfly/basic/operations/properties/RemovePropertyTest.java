@@ -16,6 +16,8 @@ import java.util.Properties;
  */
 public class RemovePropertyTest {
 
+    private File appFolder = new File(getClass().getResource("/").getFile());
+
     /**
      * Just to add a property(Not a Unit Test) in remove-test.properties file before executing Remove Test case to make sure existing property gets removed.
      * @throws IOException
@@ -30,8 +32,6 @@ public class RemovePropertyTest {
             properties.setProperty("color","green");
             outputStream = new FileOutputStream(this.getClass().getResource("/remove-test.properties").getFile());
             properties.store(outputStream, null);
-        } catch (IOException e) {
-            //Do Nothing
         } finally {
             try {
                 if (inputStream != null) try {
@@ -57,7 +57,7 @@ public class RemovePropertyTest {
     public void testRemoveProperty() throws IOException {
         InputStream inputStream = null;
         try {
-            TOExecutionResult toExecResult = new RemoveProperty("color").relative("").execution(new File(this.getClass().getResource("/remove-test.properties").getFile()),null);
+            TOExecutionResult toExecResult = new RemoveProperty("color").relative("remove-test.properties").execution(appFolder, null);
             inputStream = this.getClass().getResourceAsStream("/remove-test.properties");
             Properties prop = readPropertiesFile(inputStream);
             if(inputStream != null) {
@@ -66,7 +66,7 @@ public class RemovePropertyTest {
             Assert.assertFalse(prop.containsKey("color"));
             Assert.assertEquals(toExecResult.getType(), TOExecutionResult.Type.SUCCESS);
             //Try to Remove the Property which doesn't exist
-            TOExecutionResult toExecutionResult = new RemoveProperty("color").relative("").execution(new File(this.getClass().getResource("/remove-test.properties").getFile()),null);
+            TOExecutionResult toExecutionResult = new RemoveProperty("color").relative("remove-test.properties").execution(appFolder, null);
             Assert.assertNotNull(toExecutionResult);
             Assert.assertEquals(toExecutionResult.getType(), TOExecutionResult.Type.WARNING);
         } catch (IOException e) {
@@ -84,7 +84,7 @@ public class RemovePropertyTest {
     @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
     @Test
     public void testRemovePropertyWhenNoFileExists() {
-        TOExecutionResult toExecResult = new RemoveProperty("color").relative("").execution(new File("/remove-test-dummy.properties"), null);
+        TOExecutionResult toExecResult = new RemoveProperty("color").relative("remove-test-dummy.properties").execution(appFolder, null);
         Assert.assertEquals(toExecResult.getType(), TOExecutionResult.Type.NO_OP);
     }
 

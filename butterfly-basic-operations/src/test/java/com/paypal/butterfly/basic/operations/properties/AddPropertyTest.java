@@ -17,6 +17,8 @@ import java.util.Properties;
  */
 public class AddPropertyTest {
 
+    private File appFolder = new File(getClass().getResource("/").getFile());
+
     /**
      * Just to Clear the properties(Not a Unit Test) in add-test.properties (If Any) file before executing Add, Set and Remove Test cases.
      * @throws IOException
@@ -29,10 +31,10 @@ public class AddPropertyTest {
             inputStream = this.getClass().getResourceAsStream("/add-test.properties");
             Properties properties = readPropertiesFile(inputStream);
             properties.clear();
+            //Populate a Property in it
+            properties.setProperty("day", "friday");
             outputStream = new FileOutputStream(this.getClass().getResource("/add-test.properties").getFile());
             properties.store(outputStream, null);
-        } catch (IOException e) {
-            //Do Nothing
         } finally {
             try {
                 if (inputStream != null) try {
@@ -55,12 +57,12 @@ public class AddPropertyTest {
      * @throws IOException
      */
     @Test
-    public void testAddAndSetProperty() throws IOException {
+    public void testAddProperty() throws IOException {
         InputStream inputStream = null;
         try {
             AddProperty addProperty = new AddProperty();
             //Add Property
-            TOExecutionResult toAddExecutionResult = addProperty.setPropertyName("color").setPropertyValue("green").relative("").execution(new File(this.getClass().getResource("/add-test.properties").getFile()),null);
+            TOExecutionResult toAddExecutionResult = addProperty.setPropertyName("color").setPropertyValue("green").relative("add-test.properties").execution(appFolder, null);
             inputStream = this.getClass().getResourceAsStream("/add-test.properties");
             Properties properties = readPropertiesFile(inputStream);
             if(inputStream != null) {
@@ -69,15 +71,33 @@ public class AddPropertyTest {
             Assert.assertTrue(properties.containsKey("color"));
             Assert.assertEquals(properties.getProperty("color"), "green");
             Assert.assertEquals(toAddExecutionResult.getType(), TOExecutionResult.Type.SUCCESS);
-            //SetProperty ( Replace Property )
-            TOExecutionResult toSetExecutionResult = addProperty.setPropertyName("color").setPropertyValue("blue").relative("").execution(new File(this.getClass().getResource("/add-test.properties").getFile()),null);
-            //ReLoad the property file to compare
-            inputStream = this.getClass().getResourceAsStream("/add-test.properties");
-            Properties prop = readPropertiesFile(inputStream);
+        } catch (IOException e) {
+            Assert.fail();
+        } finally {
             if(inputStream != null) {
                 inputStream.close();
             }
-            Assert.assertEquals("blue", prop.getProperty("color"));
+        }
+    }
+
+    /**
+     * To Test Set Property Operation
+     * @throws IOException
+     */
+    @Test
+    public void testSetProperty() throws IOException {
+        InputStream inputStream = null;
+        try {
+            AddProperty addProperty = new AddProperty();
+            //SetProperty ( Replace Property )
+            TOExecutionResult toSetExecutionResult = addProperty.setPropertyName("day").setPropertyValue("saturday").relative("add-test.properties").execution(appFolder, null);
+            //ReLoad the property file to compare
+            inputStream = this.getClass().getResourceAsStream("/add-test.properties");
+            Properties prop = readPropertiesFile(inputStream);
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            Assert.assertEquals("saturday", prop.getProperty("day"));
             Assert.assertEquals(toSetExecutionResult.getType(), TOExecutionResult.Type.SUCCESS);
         } catch (IOException e) {
             Assert.fail();
@@ -94,7 +114,7 @@ public class AddPropertyTest {
     @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
     @Test
     public void testAddPropertyWhenNoFileExists() {
-        TOExecutionResult toExecResult = new AddProperty().setPropertyName("color").setPropertyValue("green").relative("").execution(new File("/add-test-dummy.properties"), null);
+        TOExecutionResult toExecResult = new AddProperty().setPropertyName("color").setPropertyValue("green").relative("add-test-dummy.properties").execution(appFolder, null);
         Assert.assertEquals(toExecResult.getType(), TOExecutionResult.Type.ERROR);
         Assert.assertEquals(toExecResult.getException().getClass(), FileNotFoundException.class);
     }
