@@ -171,6 +171,7 @@ public class TransformationEngine {
 
             switch (result.getType()) {
                 case SKIPPED_CONDITION:
+                    // Same as SKIPPED_DEPENDENCY
                 case SKIPPED_DEPENDENCY:
                     if (isTO || logger.isDebugEnabled()) {
                         logger.info("\t{}\t - {}", order, result.getDetails());
@@ -184,10 +185,7 @@ public class TransformationEngine {
                     }
                     break;
                 case ERROR:
-                    if(logger.isDebugEnabled()) {
-                        logger.error(utility.getName() + " has failed due to the exception below", result.getException());
-                    }
-                    logger.error("\t{}\t - '{}' has failed. See debug logs for further details.", order, utility.getName());
+                    processError(utility, result.getException(), order);
                     break;
                 default:
                     logger.error("\t{}\t - '{}' has resulted in an unexpected perform result type {}", order, utility.getName(), result.getType().name());
@@ -195,25 +193,29 @@ public class TransformationEngine {
             }
         } catch (TransformationUtilityException e) {
             result = PerformResult.error(utility, e);
-            if (utility.abortOnFailure()) {
-                logger.error("*** Transformation will be aborted due to failure in {}  ***", utility.getName());
-                logger.error("*** Description: {}", utility.getDescription());
-                logger.error("*** Cause: " + e.getCause());
-
-                throw new TransformationException(utility.getName() + " failed when performing transformation", e);
-            } else {
-                if(logger.isDebugEnabled()) {
-                    logger.debug(utility.getName() + " has failed due to the exception below", e);
-                }
-                logger.error("\t{}\t - '{}' has failed. See debug logs for further details.", order, utility.getName());
-            }
+            processError(utility, e, order);
         } finally {
             if (isTO) operationsExecutionOrder.incrementAndGet();
         }
         return result;
     }
 
-    private void processOperationExecutionResult(TransformationUtility utility, PerformResult result, String order) {
+    private void processError(TransformationUtility utility, Exception e, String order) throws TransformationException {
+        if (utility.abortOnFailure()) {
+            logger.error("*** Transformation will be aborted due to failure in {}  ***", utility.getName());
+            logger.error("*** Description: {}", utility.getDescription());
+            logger.error("*** Cause: {}", e.getMessage());
+
+            throw new TransformationException(utility.getName() + " failed when performing transformation", e);
+        } else {
+            if(logger.isDebugEnabled()) {
+                logger.debug(utility.getName() + " has failed due to the exception below", e);
+            }
+            logger.error("\t{}\t - '{}' has failed. See debug logs for further details.", order, utility.getName());
+        }
+    }
+
+    private void processOperationExecutionResult(TransformationUtility utility, PerformResult result, String order) throws TransformationException {
         TOExecutionResult executionResult = (TOExecutionResult) result.getExecutionResult();
         switch (executionResult.getType()) {
             case SUCCESS:
@@ -226,7 +228,7 @@ public class TransformationEngine {
                 processExecutionResultWarningType(utility, result, executionResult, order);
                 break;
             case ERROR:
-                processExecutionResultErrorType(utility, executionResult, order);
+                processError(utility, executionResult.getException(), order);
                 break;
             default:
                 processExecutionResultUnknownType(utility, executionResult, order);
@@ -234,7 +236,7 @@ public class TransformationEngine {
         }
     }
 
-    private void processUtilityExecutionResult(TransformationUtility utility, PerformResult result, TransformationContextImpl transformationContext) {
+    private void processUtilityExecutionResult(TransformationUtility utility, PerformResult result, TransformationContextImpl transformationContext) throws TransformationException {
         TUExecutionResult executionResult = (TUExecutionResult) result.getExecutionResult();
         if (utility.isSaveResult()) {
             // Saving the value that resulted from the utility execution, which is different from the whole perform result
@@ -256,7 +258,7 @@ public class TransformationEngine {
                 processExecutionResultWarningType(utility, result, executionResult, "-");
                 break;
             case ERROR:
-                processExecutionResultErrorType(utility, executionResult, "-");
+                processError(utility, executionResult.getException(), "-");
                 break;
             default:
                 processExecutionResultUnknownType(utility, executionResult, "-");
@@ -278,13 +280,6 @@ public class TransformationEngine {
                 }
             }
         }
-    }
-
-    private void processExecutionResultErrorType(TransformationUtility utility, ExecutionResult executionResult, String order) {
-        if(logger.isDebugEnabled()) {
-            logger.error(utility.getName() + " has failed due to the exception below", executionResult.getException());
-        }
-        logger.error("\t{}\t - '{}' has failed. See debug logs for further details.", order, utility.getName());
     }
 
     private void processExecutionResultUnknownType(TransformationUtility utility, ExecutionResult executionResult, String order) {

@@ -16,7 +16,7 @@ public class TUExecutionResult extends ExecutionResult<TransformationUtility, TU
         VALUE,
 
         // The TU executed, a "non-fatal" unexpected situation happened, and it resulted in a still valid value, or null
-        // Warninig types might have exceptions associated with it or not
+        // Warning types might have exceptions associated with it or not
         WARNING,
 
         // The TU failed to execute and resulted in no value, or in an invalid one to be discarded
