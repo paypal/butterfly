@@ -69,7 +69,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
         int status = butterflyCli.run(arguments);
 
         Assert.assertEquals(status, 0);
-        verify(facade, times(1)).transform(eq(new File("PATH_TO_APP_FOLDER")), eq("com.test.SampleTransformationTemplate"), eq(new Configuration(null, true)));
+        verify(facade, times(1)).transform(eq(new File("PATH_TO_APP_FOLDER")), eq(com.test.SampleTransformationTemplate.class), eq(new Configuration(null, true)));
     }
 
     /**
@@ -108,7 +108,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
         int status = butterflyCli.run(arguments);
 
         Assert.assertEquals(status, 0);
-        verify(facade, times(1)).transform(eq(new File("PATH_TO_APP_FOLDER")), eq("com.test.SampleTransformationTemplate"), eq(new Configuration(null, true)));
+        verify(facade, times(1)).transform(eq(new File("PATH_TO_APP_FOLDER")), eq(com.test.SampleTransformationTemplate.class), eq(new Configuration(null, true)));
         verify(facade, times(0)).getRegisteredExtensions();
     }
 
@@ -159,7 +159,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
         int status = butterflyCli.run(arguments);
 
         Assert.assertEquals(status, 0);
-        verify(facade, times(1)).transform(eq(new File("PATH_TO_APP_FOLDER")), eq("com.test.SampleTransformationTemplate"), eq(new Configuration(new File(currentDir), false)));
+        verify(facade, times(1)).transform(eq(new File("PATH_TO_APP_FOLDER")), eq(com.test.SampleTransformationTemplate.class), eq(new Configuration(new File(currentDir), false)));
     }
 
     @Test

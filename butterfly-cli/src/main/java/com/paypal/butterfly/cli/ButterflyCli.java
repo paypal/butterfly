@@ -3,6 +3,7 @@ package com.paypal.butterfly.cli;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
@@ -49,6 +50,7 @@ public class ButterflyCli {
     private static final String CLI_OPTION_CREATE_ZIP = "z";
     private static final String CLI_OPTION_TEMPLATE_SHORTCUT = "s";
     private static final String CLI_OPTION_AUTOMATIC_TEMPLATE_RESOLUTION = "a";
+    private static final String CLI_OPTION_UPGRADE_VERSION = "u";
 
     private static Logger logger = LoggerFactory.getLogger(ButterflyCli.class);
 
@@ -112,7 +114,7 @@ public class ButterflyCli {
                     logger.error("No transformation template could be resolved for this application");
                     return 1;
                 }
-                logger.info("Transformation template automatically resolved to {}", templateClass.getName());
+                logger.info("Transformation template automatically resolved");
             } catch (TemplateResolutionException e) {
                 logger.error(e.getMessage());
                 return 1;
@@ -138,10 +140,17 @@ public class ButterflyCli {
         }
 
         try {
-            if (templateClass != null) {
-                butterflyFacade.transform(applicationFolder, templateClass, configuration);
+            if (templateClass == null) {
+                templateClass = (Class<? extends TransformationTemplate>) Class.forName(templateClassName);
+            }
+            logger.info("Transformation template class: \t{}", templateClass.getName());
+            if (UpgradeStep.class.isAssignableFrom(templateClass)) {
+                Class<? extends UpgradeStep> firstStepClass = (Class<? extends UpgradeStep>) templateClass;
+                String upgradeVersion = (String) optionSet.valueOf(CLI_OPTION_UPGRADE_VERSION);
+                UpgradePath upgradePath = new UpgradePath(firstStepClass, upgradeVersion);
+                butterflyFacade.transform(applicationFolder, upgradePath, configuration);
             } else {
-                butterflyFacade.transform(applicationFolder, templateClassName, configuration);
+                butterflyFacade.transform(applicationFolder, templateClass, configuration);
             }
             logger.info("Application has been transformed");
         } catch (TransformationException e) {
@@ -149,6 +158,9 @@ public class ButterflyCli {
             return 1;
         } catch (ButterflyException e) {
             logger.error("An error has occurred", e);
+            return 1;
+        } catch (ClassNotFoundException e) {
+            logger.error("The specified transformation template class has not been found", e);
             return 1;
         }
 
@@ -195,21 +207,27 @@ public class ButterflyCli {
                 .ofType(File.class)
                 .describedAs("input");
 
-        // Transformation template option
-        optionParser.accepts(CLI_OPTION_TEMPLATE_SHORTCUT, "The shortcut number to the transformation template to be executed. If both shortcut (-s) and template class (-t) name are supplied, the shortcut will be ignored")
+        // Transformation template shortcut option
+        optionParser.accepts(CLI_OPTION_TEMPLATE_SHORTCUT, "The shortcut number to the transformation template to be executed. If both shortcut (-s) and template class (-t) name are supplied, the shortcut will be ignored. If the chosen transformation template is an upgrade template, then the application will be upgraded all the way to the latest version possible, unless upgrade version (-u) is specified")
                 .withRequiredArg()
                 .ofType(Integer.class)
                 .describedAs("template shortcut");
 
-        // Transformation template option
-        optionParser.accepts(CLI_OPTION_AUTOMATIC_TEMPLATE_RESOLUTION, "If provided, Butterfly will try to automatically chose the transformation template to be used based on the application code. If shortcut (-s) or template class name (-t) are also supplied, this option (-a) will be ignored");
+        // Automatic transformation template resolution option
+        optionParser.accepts(CLI_OPTION_AUTOMATIC_TEMPLATE_RESOLUTION, "If provided, Butterfly will try to automatically chose the transformation template to be used based on the application code. If shortcut (-s) or template class name (-t) are also supplied, this option (-a) will be ignored. If the chosen transformation template is an upgrade template, then the application will be upgraded all the way to the latest version possible, unless upgrade version (-u) is specified");
 
         // Transformation template option
-        optionParser.accepts(CLI_OPTION_TEMPLATE, "The Java class name of the transformation template to be executed. This option has precedence over -s and -a")
+        optionParser.accepts(CLI_OPTION_TEMPLATE, "The Java class name of the transformation template to be executed. This option has precedence over -s and -a. If the chosen transformation template is an upgrade template, then the application will be upgraded all the way to the latest version possible, unless upgrade version (-u) is specified")
                 .requiredUnless(CLI_OPTION_LIST_EXTENSIONS, CLI_OPTION_TEMPLATE_SHORTCUT, CLI_OPTION_AUTOMATIC_TEMPLATE_RESOLUTION)
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("template");
+
+        // Upgrade version option
+        optionParser.accepts(CLI_OPTION_UPGRADE_VERSION, "The version the application should be upgraded to. This option only makes sense if the transformation template to be used is also an upgrade template. If not, it is ignored. If it is, but this option is not specified, then the application will be upgraded all the way to the latest version possible")
+                .withRequiredArg()
+                .ofType(String.class)
+                .describedAs("upgrade version");
 
         // Transformed application folder option
         optionParser.accepts(CLI_OPTION_TRANSFORMED_APP_FOLDER, "The folder location in the file system where the transformed application should be placed. It defaults to same location where original application is. Transformed application is placed under a new folder whose name is same as original folder, plus \"-transformed-yyyyMMddHHmmssSSS\" suffix")
@@ -251,13 +269,10 @@ public class ButterflyCli {
     }
 
     private enum ExtensionTypeInitial {
-        TT, US, UP, VC;
+        TT, US, VC;
 
         public static ExtensionTypeInitial getFromClass(Class<? extends TransformationTemplate> template) {
             if(UpgradeStep.class.isAssignableFrom(template)) return US;
-
-            // TODO
-//            if(UpgradePath.class.isAssignableFrom(template)) return UP;
 
             if(TransformationTemplate.class.isAssignableFrom(template)) return TT;
 

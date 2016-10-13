@@ -7,16 +7,17 @@ import java.util.Map;
 
 /**
  * MultipleInvocationOutputHandler contains a list of
- * MavenInvocationOutputHandlers. </br>
+ * MavenInvocationOutputHandlers.</br>
  * It then handles each line of maven console output and calls each handler
- * in the list and returns a Map that contains the classname as the key and
+ * in the list and returns a Map that contains the class name as the key and
  * the result from each of the handlers as the value.
  * 
- * @author mcrockett
+ * @author mcrockett, facarvalho
  */
-class MultipleInvocationOutputHandler implements MavenInvocationOutputHandler<Map<String, Object>> {
+class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<String, Object>> {
+    
     private final List<MavenInvocationOutputHandler<Object>> handlers = new ArrayList<>();
-    private boolean execution_started = false;
+    private boolean executionStarted = false;
 
     /**
      * Calls each of the registered handlers for each line of input.
@@ -26,7 +27,7 @@ class MultipleInvocationOutputHandler implements MavenInvocationOutputHandler<Ma
      */
     @Override
     public void consumeLine(String line) {
-        this.execution_started = true;
+        executionStarted = true;
         for (MavenInvocationOutputHandler<?> handler : handlers) {
             handler.consumeLine(line);
         }
@@ -41,7 +42,7 @@ class MultipleInvocationOutputHandler implements MavenInvocationOutputHandler<Ma
      */
     @Override
     public Map<String, Object> getResult() {
-        if (false == this.execution_started) {
+        if (false == executionStarted) {
             throw new IllegalStateException("Execution has not started. No results to return.");
         }
 
@@ -62,7 +63,7 @@ class MultipleInvocationOutputHandler implements MavenInvocationOutputHandler<Ma
      * handler cannot be added.
      */
     void register(MavenInvocationOutputHandler<Object> handler) throws IllegalStateException {
-        if (true == this.execution_started) {
+        if (true == executionStarted) {
             throw new IllegalStateException("Execution has started. Not allowed to register new handlers.");
         } else if (null != handler) {
             handlers.add(handler);
