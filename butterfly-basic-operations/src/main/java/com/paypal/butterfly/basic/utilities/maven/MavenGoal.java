@@ -33,7 +33,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
      *
      * @param goals Maven goals to be executed
      */
-    public MavenGoal(String[] goals) {
+    public MavenGoal(String... goals) {
         setGoals(goals);
     }
 
@@ -54,7 +54,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
      * @param goals Maven goals to be executed
      * @return this utility instance
      */
-    public MavenGoal setGoals(String[] goals) {
+    public MavenGoal setGoals(String... goals) {
         checkForNull("Maven goals", goals);
         this.goals = Arrays.copyOf(goals, goals.length);
         return this;
@@ -66,7 +66,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
      * @param outputHandlers output handlers to be executed against the Maven goals execution result
      * @return this utility instance
      */
-    public MavenGoal setOutputHandlers(MavenInvocationOutputHandler[] outputHandlers) {
+    public MavenGoal setOutputHandlers(MavenInvocationOutputHandler... outputHandlers) {
         checkForNull("Output handlers", outputHandlers);
         this.outputHandlers = Arrays.copyOf(outputHandlers, outputHandlers.length);
         return this;
@@ -118,7 +118,12 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
             Map<String, Object> outputHandlersResult = multipleOutputHanlder.getResult();
             MavenGoalResult mavenGoalResult = new MavenGoalResult(exitCode, outputHandlersResult);
 
-            result = TUExecutionResult.value(this, mavenGoalResult);
+            if (exitCode == 0) {
+                result = TUExecutionResult.value(this, mavenGoalResult);
+            } else {
+                Exception e = invocationResult.getExecutionException();
+                result = TUExecutionResult.error(this, e);
+            }
         } catch (Exception e) {
             result = TUExecutionResult.error(this, e);
         }
