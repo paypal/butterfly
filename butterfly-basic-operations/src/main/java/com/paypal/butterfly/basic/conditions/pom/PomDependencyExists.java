@@ -11,8 +11,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Transformation operation condition to check if
@@ -103,13 +101,12 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
         try {
             fileInputStream = new FileInputStream(pomFile);
             Model model = reader.read(fileInputStream);
-            List<Dependency> dependencyList = model.getDependencies();
-            dependencyList = dependencyList.stream().filter(item -> item.getGroupId().equals(groupId) && item.getArtifactId().equals(artifactId))
-                    .collect(Collectors.toList());
-            if(!dependencyList.isEmpty()) {
-                Dependency dependency = dependencyList.get(0);
-                if (version == null || version.equals(dependency.getVersion())) {
-                    exists = true;
+            for (Dependency d : model.getDependencies()) {
+                if (d.getGroupId().equals(groupId) && d.getArtifactId().equals(artifactId)) {
+                    if(version == null || version.equals(d.getVersion())){
+                        exists = true;
+                        break;
+                    }
                 }
             }
             result = TUExecutionResult.value(this, exists);
