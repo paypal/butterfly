@@ -8,6 +8,20 @@ package com.paypal.butterfly.extensions.api.upgrade;
  */
 public abstract class UpgradeStep<US> extends UpgradeTemplate<US> {
 
+    /**
+     * Returns the version the application would be upgraded to
+     *
+     * @return the version the application would be upgraded to
+     */
     public abstract String getNextVersion();
+
+    /**
+     * Returns the next {@link UpgradeStep}.
+     * Returns null if there is no {@link UpgradeStep}
+     * associated with the next version
+     *
+     * @return the next {@link UpgradeStep}
+     */
+    public abstract UpgradeStep getNextStep();
 
 }

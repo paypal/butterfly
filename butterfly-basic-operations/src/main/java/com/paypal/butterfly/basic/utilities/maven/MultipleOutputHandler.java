@@ -7,14 +7,15 @@ import java.util.Map;
 
 /**
  * MultipleInvocationOutputHandler contains a list of
- * MavenInvocationOutputHandlers. </br>
+ * MavenInvocationOutputHandlers.</br>
  * It then handles each line of maven console output and calls each handler
- * in the list and returns a Map that contains the classname as the key and
+ * in the list and returns a Map that contains the class name as the key and
  * the result from each of the handlers as the value.
  * 
- * @author mcrockett
+ * @author mcrockett, facarvalho
  */
-class MultipleInvocationOutputHandler implements MavenInvocationOutputHandler<Map<String, Object>> {
+class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<String, Object>> {
+    
     private final List<MavenInvocationOutputHandler<Object>> handlers = new ArrayList<>();
     private boolean executionStarted = false;
 

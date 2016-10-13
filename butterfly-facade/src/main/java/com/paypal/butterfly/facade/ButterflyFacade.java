@@ -3,6 +3,7 @@ package com.paypal.butterfly.facade;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.facade.exception.TemplateResolutionException;
 
 import java.io.File;
@@ -59,6 +60,14 @@ public interface ButterflyFacade {
     void transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException;
 
     /**
+     * Transform an application
+     *
+     * @param applicationFolder application folder
+     * @param templateClass transformation template class
+     */
+    void transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) throws ButterflyException;
+
+    /**
      * Transform an application, and also accept an additional
      * parameter with configuration
      *
@@ -67,5 +76,23 @@ public interface ButterflyFacade {
      * @param configuration Butterfly configuration object
      */
     void transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException;
+
+    /**
+     * Upgrade an application based on an upgrade path
+     *
+     * @param applicationFolder application folder
+     * @param upgradePath upgrade path object used to upgrade this application
+     */
+    void transform(File applicationFolder, UpgradePath upgradePath) throws ButterflyException;
+
+    /**
+     * Transform an application based on an upgrade path, and also accept an additional
+     * parameter with configuration
+     *
+     * @param applicationFolder application folder
+     * @param upgradePath upgrade path object used to upgrade this application
+     * @param configuration Butterfly configuration object
+     */
+    void transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) throws ButterflyException;
 
 }

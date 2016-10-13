@@ -9,6 +9,13 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
  */
 public abstract class UpgradeTemplate<UT> extends TransformationTemplate<UT> {
 
+    /**
+     * Returns the current version of the application, in other words, the
+     * version the application would be upgraded from when this upgrade
+     * template is executed
+     *
+     * @return the current version of the application
+     */
     public abstract String getCurrentVersion();
 
 }
