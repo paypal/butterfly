@@ -102,11 +102,9 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
             fileInputStream = new FileInputStream(pomFile);
             Model model = reader.read(fileInputStream);
             for (Dependency d : model.getDependencies()) {
-                if (d.getGroupId().equals(groupId) && d.getArtifactId().equals(artifactId)) {
-                    if(version == null || version.equals(d.getVersion())){
+                if (d.getGroupId().equals(groupId) && d.getArtifactId().equals(artifactId) && (version == null || version.equals(d.getVersion()))) {
                         exists = true;
                         break;
-                    }
                 }
             }
             result = TUExecutionResult.value(this, exists);
