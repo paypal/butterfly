@@ -179,7 +179,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
         int status = butterflyCli.run(arguments);
 
         verify(facade, times(1)).automaticResolution(eq(new File("PATH_TO_APP_FOLDER")));
-        verify(facade, times(0)).transform(Mockito.anyObject(), (Class<? extends TransformationTemplate>) Mockito.anyObject(), Mockito.anyObject());
+        verify(facade, times(0)).transform(eq(new File("PATH_TO_APP_FOLDER")), eq(SampleTransformationTemplate.class), eq(new Configuration(null, false)));
         Assert.assertEquals(status, 1);
     }
 
