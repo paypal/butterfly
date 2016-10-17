@@ -8,8 +8,6 @@ import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionExc
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -76,7 +74,15 @@ public class ResultCondition extends UtilityCondition<ResultCondition> {
     }
 
     public PerformResult.Type[] getResultTypes() {
-        return resultTypes;
+        return resultTypes.clone();
+    }
+
+    public TUExecutionResult.Type[] getTuExecutionResultTypes() {
+        return tuExecutionResultTypes.clone();
+    }
+
+    public TOExecutionResult.Type[] getToExecutionResultTypes() {
+        return toExecutionResultTypes.clone();
     }
 
     @Override
