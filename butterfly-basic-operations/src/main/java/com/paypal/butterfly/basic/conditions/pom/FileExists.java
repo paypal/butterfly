@@ -2,7 +2,7 @@ package com.paypal.butterfly.basic.conditions.pom;
 
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.utilities.TransformationOperationCondition;
+import com.paypal.butterfly.extensions.api.utilities.UtilityCondition;
 
 import java.io.File;
 
@@ -12,7 +12,7 @@ import java.io.File;
  *
  * @author facarvalho
  */
-public class FileExists extends TransformationOperationCondition<FileExists> {
+public class FileExists extends UtilityCondition<FileExists> {
 
     private static final String DESCRIPTION = "Check if file or folder '%s' exists";
 
