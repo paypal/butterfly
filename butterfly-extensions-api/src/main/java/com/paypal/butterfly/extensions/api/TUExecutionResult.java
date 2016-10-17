@@ -97,6 +97,14 @@ public class TUExecutionResult extends ExecutionResult<TransformationUtility, TU
         return new TUExecutionResult(transformationUtility, exception).setDetails(details);
     }
 
+    public static TUExecutionResult error(TransformationUtility transformationUtility, Object value, Exception exception) {
+        return new TUExecutionResult(transformationUtility, exception).setValue(value);
+    }
+
+    public static TUExecutionResult error(TransformationUtility transformationUtility, Object value, Exception exception, String details) {
+        return new TUExecutionResult(transformationUtility, exception).setDetails(details).setValue(value);
+    }
+
     private TUExecutionResult setValue(Object value) {
         if(value == null) {
             throw new IllegalArgumentException("Value must not be null");

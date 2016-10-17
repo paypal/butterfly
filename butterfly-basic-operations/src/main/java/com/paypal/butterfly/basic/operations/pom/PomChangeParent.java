@@ -8,7 +8,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.IOException;
 
 /**
- * Operation for revving up the parent' version in a Maven POM file
+ * Operation to change the parent, or its version, in a Maven POM file
  *
  * @author facarvalho
  */
@@ -24,7 +24,7 @@ public class PomChangeParent extends AbstractPomOperation<PomChangeParent> {
     }
 
     /**
-     * Operation for revving up the parent' version in a Maven POM file
+     * Operation to change the parent, or its version, in a Maven POM file
      *
      * @param version parent artifact version to be set
      */
@@ -33,7 +33,7 @@ public class PomChangeParent extends AbstractPomOperation<PomChangeParent> {
     }
 
     /**
-     * Operation for revving up the parent' version in a Maven POM file
+     * Operation to change the parent, or its version, in a Maven POM file
      *
      * @param groupId parent artifact group id to be set
      * @param artifactId parent artifact id to be set

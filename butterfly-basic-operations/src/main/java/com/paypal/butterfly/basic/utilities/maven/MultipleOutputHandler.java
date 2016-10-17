@@ -14,7 +14,7 @@ import java.util.Map;
  * 
  * @author mcrockett, facarvalho
  */
-class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<String, Object>> {
+class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<Class<? extends MavenInvocationOutputHandler>, Object>> {
     
     private final List<MavenInvocationOutputHandler<Object>> handlers = new ArrayList<>();
     private boolean executionStarted = false;
@@ -36,20 +36,20 @@ class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<String, 
     /**
      * Returns the results of calling each handler for each line.
      * 
-     * @return results - a map with classname string as key and results as the
+     * @return results - a map with class as key and results as the
      *         corresponding value.
      * @throws IllegalStateException - if we haven't consumed any lines yet.
      */
     @Override
-    public Map<String, Object> getResult() {
+    public Map<Class<? extends MavenInvocationOutputHandler>, Object> getResult() {
         if (false == executionStarted) {
             throw new IllegalStateException("Execution has not started. No results to return.");
         }
 
-        Map<String, Object> results = new HashMap<String, Object>();
+        Map<Class<? extends MavenInvocationOutputHandler>, Object> results = new HashMap<Class<? extends MavenInvocationOutputHandler>, Object>();
 
         for (MavenInvocationOutputHandler<?> handler : handlers) {
-            results.put(handler.getClass().getName(), handler.getResult());
+            results.put(handler.getClass(), handler.getResult());
         }
 
         return results;

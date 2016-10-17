@@ -2,7 +2,7 @@ package com.paypal.butterfly.basic.conditions.pom;
 
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.utilities.TransformationOperationCondition;
+import com.paypal.butterfly.extensions.api.utilities.UtilityCondition;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -13,12 +13,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * Transformation operation condition to check if
- * a particular Maven dependency exists
+ * Condition to check if a particular Maven dependency exists
  *
  * @author facarvalho
  */
-public class PomDependencyExists extends TransformationOperationCondition<PomDependencyExists> {
+public class PomDependencyExists extends UtilityCondition<PomDependencyExists> {
 
     private static final String DESCRIPTION = "Check if dependency '%s:%s:%s' exists in POM file %s";
 
@@ -30,8 +29,7 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
     }
 
     /**
-     * Transformation operation condition to check if
-     * a particular Maven dependency exists or not
+     * Condition to check if a particular Maven dependency exists or not
      *
      * @param groupId managed dependency group id
      * @param artifactId managed dependency artifact id
@@ -42,8 +40,7 @@ public class PomDependencyExists extends TransformationOperationCondition<PomDep
     }
 
     /**
-     * Transformation operation condition to check if
-     * a particular Maven dependency exists or not
+     * Condition to check if a particular Maven dependency exists or not
      *
      * @param groupId managed dependency group id
      * @param artifactId managed dependency artifact id
