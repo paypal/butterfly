@@ -61,21 +61,14 @@ public class PomRemoveDependency extends AbstractPomOperation<PomRemoveDependenc
     @Override
     protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
         TOExecutionResult result = null;
-        boolean found = false;
-        String details = null;
+        String details;
 
-        if(model.getDependencies() != null) {
-            for (Dependency d : model.getDependencies()) {
-                if(d.getArtifactId().equals(artifactId) && d.getGroupId().equals(groupId)) {
-                    model.removeDependency(d);
-                    details = String.format("Dependency %s:%s has been removed from POM file %s", groupId, artifactId, relativePomFile);
-                    result = TOExecutionResult.success(this, details);
-                    found = true;
-                    break;
-                }
-            }
-        }
-        if(!found) {
+        Dependency dependency = getDependency(model, groupId, artifactId);
+        if (dependency != null) {
+            model.removeDependency(dependency);
+            details = String.format("Dependency %s:%s has been removed from POM file %s", groupId, artifactId, relativePomFile);
+            result = TOExecutionResult.success(this, details);
+        } else {
             details = String.format("Dependency %s:%s has NOT been removed from POM file %s because it is not present", groupId, artifactId, relativePomFile);
             result = TOExecutionResult.noOp(this, details);
         }
