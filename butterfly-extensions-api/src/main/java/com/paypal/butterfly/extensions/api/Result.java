@@ -69,7 +69,10 @@ public abstract class Result<S, RT, T> {
      * @return this object
      */
     protected RT setException(Exception exception) {
-        if(exception != null && !isExceptionType()) {
+        if(exception == null) {
+            throw new IllegalArgumentException("Exception object cannot be null");
+        }
+        if(!isExceptionType()) {
             throw new IllegalArgumentException("Exception cannot be assigned to " + type);
         }
         this.exception = exception;
