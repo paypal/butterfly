@@ -102,31 +102,30 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
         TUExecutionResult result = null;
 
         try {
-            MultipleOutputHandler multipleOutputHanlder = new MultipleOutputHandler();
+            MultipleOutputHandler multipleOutputHandler = new MultipleOutputHandler();
             for (MavenInvocationOutputHandler outputHandler : outputHandlers) {
-                multipleOutputHanlder.register(outputHandler);
+                multipleOutputHandler.register(outputHandler);
             }
 
             InvocationRequest request = new DefaultInvocationRequest();
             request.setPomFile(pomFile);
             request.setGoals(Arrays.asList(goals));
-            request.setOutputHandler(multipleOutputHanlder);
+            request.setOutputHandler(multipleOutputHandler);
 
             Invoker invoker = new DefaultInvoker();
             InvocationResult invocationResult = invoker.execute(request);
 
             int exitCode = invocationResult.getExitCode();
-            Map<String, Object> outputHandlersResult = multipleOutputHanlder.getResult();
-            MavenGoalResult mavenGoalResult = new MavenGoalResult(exitCode, outputHandlersResult);
+            Map<Class<? extends MavenInvocationOutputHandler>, Object> outputHandlersResult = multipleOutputHandler.getResult();
 
             if (exitCode == 0) {
-                result = TUExecutionResult.value(this, mavenGoalResult);
+                result = TUExecutionResult.value(this, outputHandlersResult);
             } else {
                 Exception e = invocationResult.getExecutionException();
                 if (e == null) {
                     e = new TransformationUtilityException(String.format("Maven goals %s execution failed with exit code %d", Arrays.toString(goals), exitCode));
                 }
-                result = TUExecutionResult.error(this, e);
+                result = TUExecutionResult.error(this, outputHandlersResult, e);
             }
         } catch (Exception e) {
             result = TUExecutionResult.error(this, e);
