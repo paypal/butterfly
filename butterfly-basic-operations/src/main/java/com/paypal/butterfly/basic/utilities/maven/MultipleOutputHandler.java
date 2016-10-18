@@ -1,9 +1,9 @@
 package com.paypal.butterfly.basic.utilities.maven;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * MultipleInvocationOutputHandler contains a list of
@@ -16,7 +16,8 @@ import java.util.Map;
  */
 class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<String, Object>> {
     
-    private final List<MavenInvocationOutputHandler<Object>> handlers = new ArrayList<>();
+    private final Set<MavenInvocationOutputHandler<Object>> handlers = new HashSet<>();
+    private final Map<MavenInvocationOutputHandler<Object>, Object> failedHandlers = new HashMap<>();
     private boolean executionStarted = false;
 
     /**
@@ -28,8 +29,14 @@ class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<String, 
     @Override
     public void consumeLine(String line) {
         executionStarted = true;
-        for (MavenInvocationOutputHandler<?> handler : handlers) {
-            handler.consumeLine(line);
+        for (MavenInvocationOutputHandler<Object> handler : handlers) {
+            if (false == failedHandlers.containsKey(handler)) {
+                try {
+                    handler.consumeLine(line);
+                } catch (IllegalStateException e) {
+                    failedHandlers.put(handler, e);
+                }
+            }
         }
     }
 
@@ -49,7 +56,11 @@ class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<String, 
         Map<String, Object> results = new HashMap<String, Object>();
 
         for (MavenInvocationOutputHandler<?> handler : handlers) {
-            results.put(handler.getClass().getName(), handler.getResult());
+            if (false == failedHandlers.containsKey(handler)) {
+                results.put(handler.getClass().getName(), handler.getResult());
+            } else {
+                results.put(handler.getClass().getName(), failedHandlers.get(handler));
+            }
         }
 
         return results;
