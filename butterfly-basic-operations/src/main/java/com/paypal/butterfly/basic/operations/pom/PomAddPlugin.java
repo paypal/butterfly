@@ -1,6 +1,8 @@
 package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.extensions.api.operations.AddElement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -12,18 +14,17 @@ import java.io.IOException;
  *
  * @author facarvalho
  */
-public class PomAddPlugin extends AbstractArtifactPomOperation<PomAddPlugin> {
+public class PomAddPlugin extends AbstractArtifactPomOperation<PomAddPlugin> implements AddElement<PomAddPlugin> {
 
     // TODO
     // Add pre-validation to check, in case version was not set, if plugin
     // is managed or not. If not, fail!
 
-    // TODO
-    // What happens if plugin already exists? Fail? Warning? Replace it (if different version)?
-
     private static final String DESCRIPTION = "Add plugin %s:%s:%s to POM file %s";
 
     private String version;
+
+    private IfPresent ifPresent = IfPresent.Fail;
 
     public PomAddPlugin() {
     }
@@ -60,6 +61,36 @@ public class PomAddPlugin extends AbstractArtifactPomOperation<PomAddPlugin> {
         return this;
     }
 
+    @Override
+    public PomAddPlugin failIfPresent() {
+        ifPresent = AddElement.IfPresent.Fail;
+        return this;
+    }
+
+    @Override
+    public PomAddPlugin warnNotAddIfPresent() {
+        ifPresent = AddElement.IfPresent.WarnNotAdd;
+        return this;
+    }
+
+    @Override
+    public PomAddPlugin warnButAddIfPresent() {
+        ifPresent = AddElement.IfPresent.WarnButAdd;
+        return this;
+    }
+
+    @Override
+    public PomAddPlugin noOpIfPresent() {
+        ifPresent = AddElement.IfPresent.NoOp;
+        return this;
+    }
+
+    @Override
+    public PomAddPlugin overwriteIfPresent() {
+        ifPresent = AddElement.IfPresent.Overwrite;
+        return this;
+    }
+
     public String getVersion() {
         return version;
     }
@@ -71,10 +102,32 @@ public class PomAddPlugin extends AbstractArtifactPomOperation<PomAddPlugin> {
 
     @Override
     protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+        Plugin plugin;
+        Exception warning = null;
 
-        // FIXME what if the dependency already exists?
+        plugin = getPlugin(model);
+        if (plugin != null) {
+            String message = String.format("Plugin %s:%s is already present in %s", groupId, artifactId, getRelativePath());
 
-        Plugin plugin = new Plugin();
+            switch (ifPresent) {
+                case WarnNotAdd:
+                    return TOExecutionResult.warning(this, message);
+                case WarnButAdd:
+                    warning = new TransformationOperationException(message);
+                    break;
+                case NoOp:
+                    return TOExecutionResult.noOp(this, message);
+                case Overwrite:
+                    // Nothing to be done here
+                    break;
+                case Fail:
+                    // Fail is the default
+                default:
+                    return TOExecutionResult.error(this, new TransformationOperationException(message));
+            }
+        }
+
+        plugin = new Plugin();
         plugin.setGroupId(groupId);
         plugin.setArtifactId(artifactId);
         if (version != null) {
@@ -82,8 +135,13 @@ public class PomAddPlugin extends AbstractArtifactPomOperation<PomAddPlugin> {
         }
         model.getBuild().addPlugin(plugin);
         String details = String.format("Plugin %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":" + version), relativePomFile);
+        TOExecutionResult result = TOExecutionResult.success(this, details);
 
-        return TOExecutionResult.success(this, details);
+        if (warning != null) {
+            result.addWarning(warning);
+        }
+
+        return result;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.extensions.api.operations.AddElement;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -12,19 +14,18 @@ import java.io.IOException;
  *
  * @author facarvalho
  */
-public class PomAddDependency extends AbstractArtifactPomOperation<PomAddDependency> {
+public class PomAddDependency extends AbstractArtifactPomOperation<PomAddDependency> implements AddElement<PomAddDependency> {
 
     // TODO
     // Add pre-validation to check, in case version was not set, if dependency
     // is managed or not. If not, fail!
 
-    // TODO
-    // What happens if dependency already exists? Fail? Warning? Replace it (if different version)?
-
     private static final String DESCRIPTION = "Add dependency %s:%s:%s to POM file %s";
 
     private String version;
     private String scope;
+
+    private IfPresent ifPresent = IfPresent.Fail;
 
     public PomAddDependency() {
     }
@@ -80,6 +81,36 @@ public class PomAddDependency extends AbstractArtifactPomOperation<PomAddDepende
         return this;
     }
 
+    @Override
+    public PomAddDependency failIfPresent() {
+        ifPresent = IfPresent.Fail;
+        return this;
+    }
+
+    @Override
+    public PomAddDependency warnNotAddIfPresent() {
+        ifPresent = IfPresent.WarnNotAdd;
+        return this;
+    }
+
+    @Override
+    public PomAddDependency warnButAddIfPresent() {
+        ifPresent = IfPresent.WarnButAdd;
+        return this;
+    }
+
+    @Override
+    public PomAddDependency noOpIfPresent() {
+        ifPresent = IfPresent.NoOp;
+        return this;
+    }
+
+    @Override
+    public PomAddDependency overwriteIfPresent() {
+        ifPresent = IfPresent.Overwrite;
+        return this;
+    }
+
     public String getVersion() {
         return version;
     }
@@ -95,10 +126,32 @@ public class PomAddDependency extends AbstractArtifactPomOperation<PomAddDepende
 
     @Override
     protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws IOException, XmlPullParserException {
+        Dependency dependency;
+        Exception warning = null;
 
-        // FIXME what if the dependency already exists?
+        dependency = getDependency(model);
+        if (dependency != null) {
+            String message = String.format("Dependency %s:%s is already present in %s", groupId, artifactId, getRelativePath());
 
-        Dependency dependency = new Dependency();
+            switch (ifPresent) {
+                case WarnNotAdd:
+                    return TOExecutionResult.warning(this, message);
+                case WarnButAdd:
+                    warning = new TransformationOperationException(message);
+                    break;
+                case NoOp:
+                    return TOExecutionResult.noOp(this, message);
+                case Overwrite:
+                    // Nothing to be done here
+                    break;
+                case Fail:
+                    // Fail is the default
+                default:
+                    return TOExecutionResult.error(this, new TransformationOperationException(message));
+            }
+        }
+
+        dependency = new Dependency();
         dependency.setGroupId(groupId);
         dependency.setArtifactId(artifactId);
         if (version != null) {
@@ -109,8 +162,13 @@ public class PomAddDependency extends AbstractArtifactPomOperation<PomAddDepende
         }
         model.addDependency(dependency);
         String details = String.format("Dependency %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":"+ version), relativePomFile);
+        TOExecutionResult result = TOExecutionResult.success(this, details);
 
-        return TOExecutionResult.success(this, details);
+        if (warning != null) {
+            result.addWarning(warning);
+        }
+
+        return result;
     }
 
     @Override

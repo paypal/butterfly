@@ -2,6 +2,7 @@ package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -13,9 +14,11 @@ import java.io.IOException;
  *
  * @author facarvalho
  */
-public class PomRemoveManagedDependency extends AbstractArtifactPomOperation<PomRemoveManagedDependency> {
+public class PomRemoveManagedDependency extends AbstractArtifactPomOperation<PomRemoveManagedDependency> implements ChangeOrRemoveElement<PomRemoveManagedDependency> {
 
     private static final String DESCRIPTION = "Remove managed dependency entry %s:%s from POM file %s";
+
+    private IfNotPresent ifNotPresent = IfNotPresent.Fail;
 
     public PomRemoveManagedDependency() {
     }
@@ -29,6 +32,24 @@ public class PomRemoveManagedDependency extends AbstractArtifactPomOperation<Pom
     public PomRemoveManagedDependency(String groupId, String artifactId) {
         setGroupId(groupId);
         setArtifactId(artifactId);
+    }
+
+    @Override
+    public PomRemoveManagedDependency failIfNotPresent() {
+        ifNotPresent = IfNotPresent.Fail;
+        return this;
+    }
+
+    @Override
+    public PomRemoveManagedDependency warnIfNotPresent() {
+        ifNotPresent = IfNotPresent.Warn;
+        return this;
+    }
+
+    @Override
+    public PomRemoveManagedDependency noOpIfNotPresent() {
+        ifNotPresent = IfNotPresent.NoOp;
+        return this;
     }
 
     @Override
@@ -47,8 +68,20 @@ public class PomRemoveManagedDependency extends AbstractArtifactPomOperation<Pom
             details = String.format("Managed dependency %s:%s has been removed from POM file %s", groupId, artifactId, relativePomFile);
             result = TOExecutionResult.success(this, details);
         } else {
-            details = String.format("Managed dependency %s:%s has NOT been removed from POM file %s because it is not present", groupId, artifactId, relativePomFile);
-            result = TOExecutionResult.error(this, new TransformationOperationException(details));
+            details = String.format("Managed dependency %s:%s has not been removed from POM file %s because it is not present", groupId, artifactId, relativePomFile);
+            switch (ifNotPresent) {
+                case Warn:
+                    result = TOExecutionResult.warning(this, new TransformationOperationException(details));
+                    break;
+                case NoOp:
+                    result = TOExecutionResult.noOp(this, details);
+                    break;
+                case Fail:
+                    // Fail is the default
+                default:
+                    result = TOExecutionResult.error(this, new TransformationOperationException(details));
+                    break;
+            }
         }
 
         return result;

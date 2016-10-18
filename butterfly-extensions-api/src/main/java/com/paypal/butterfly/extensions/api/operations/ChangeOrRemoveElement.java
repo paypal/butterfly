@@ -13,8 +13,14 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
  */
 public interface ChangeOrRemoveElement<TO extends TransformationOperation> {
 
+    /**
+     * The possibilities bellow refer to instances of {@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type},
+     * although they are intentionally not supposed to match one-to-one
+     */
     enum IfNotPresent {
-        Fail, NoOp, Warn
+        Fail,   // Fail if the element to be changed or removed is not present
+        NoOp,   // Warn if the element to be changed or removed is not present
+        Warn    // Do nothing, not warn neither fail, if the element to be changed or removed is not present
     }
 
     /**

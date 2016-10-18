@@ -1,6 +1,8 @@
 package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -12,11 +14,13 @@ import java.io.IOException;
  *
  * @author facarvalho
  */
-public class PomChangeParent extends AbstractArtifactPomOperation<PomChangeParent> {
+public class PomChangeParent extends AbstractArtifactPomOperation<PomChangeParent> implements ChangeOrRemoveElement<PomChangeParent> {
 
     private static final String DESCRIPTION = "Change parent artifact in POM file %s";
 
     private String version = null;
+
+    private IfNotPresent ifNotPresent = IfNotPresent.Fail;
 
     public PomChangeParent() {
     }
@@ -65,6 +69,24 @@ public class PomChangeParent extends AbstractArtifactPomOperation<PomChangeParen
         return this;
     }
 
+    @Override
+    public PomChangeParent failIfNotPresent() {
+        ifNotPresent = IfNotPresent.Fail;
+        return this;
+    }
+
+    @Override
+    public PomChangeParent warnIfNotPresent() {
+        ifNotPresent = IfNotPresent.Warn;
+        return this;
+    }
+
+    @Override
+    public PomChangeParent noOpIfNotPresent() {
+        ifNotPresent = IfNotPresent.NoOp;
+        return this;
+    }
+
     public String getVersion() {
         return version;
     }
@@ -79,8 +101,20 @@ public class PomChangeParent extends AbstractArtifactPomOperation<PomChangeParen
         String details;
         Parent parent = model.getParent();
 
-        // FIXME
-        // What if parent is null?
+        if (parent == null) {
+            String message = String.format("Pom file %s does not have a parent", getRelativePath());
+
+            switch (ifNotPresent) {
+                case Warn:
+                    return TOExecutionResult.warning(this, new TransformationOperationException(message));
+                case NoOp:
+                    return TOExecutionResult.noOp(this, message);
+                case Fail:
+                    // Fail is the default
+                default:
+                    return TOExecutionResult.error(this, new TransformationOperationException(message));
+            }
+        }
 
         if(groupId != null && artifactId != null && version != null) {
             parent.setGroupId(groupId);

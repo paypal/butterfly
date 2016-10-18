@@ -3,6 +3,7 @@ package com.paypal.butterfly.basic.operations.pom;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
 
 import java.util.List;
 
@@ -56,8 +57,16 @@ public abstract class AbstractArtifactPomOperation<TO extends AbstractArtifactPo
         return artifactId;
     }
 
+    protected Dependency getDependency(Model model) {
+        return getDependencyInList(model.getDependencies(), groupId, artifactId);
+    }
+
     protected Dependency getDependency(Model model, String groupId, String artifactId) {
         return getDependencyInList(model.getDependencies(), groupId, artifactId);
+    }
+
+    protected Dependency getManagedDependency(Model model) {
+        return getManagedDependency(model, groupId, artifactId);
     }
 
     protected Dependency getManagedDependency(Model model, String groupId, String artifactId) {
@@ -81,6 +90,41 @@ public abstract class AbstractArtifactPomOperation<TO extends AbstractArtifactPo
         }
 
         return dependency;
+    }
+
+    protected Plugin getPlugin(Model model) {
+        return getPluginInList(model.getBuild().getPlugins(), groupId, artifactId);
+    }
+
+    protected Plugin getPlugin(Model model, String groupId, String artifactId) {
+        return getPluginInList(model.getBuild().getPlugins(), groupId, artifactId);
+    }
+
+    protected Plugin getManagedPlugin(Model model) {
+        return getManagedPlugin(model, groupId, artifactId);
+    }
+
+    protected Plugin getManagedPlugin(Model model, String groupId, String artifactId) {
+        if (model.getBuild().getPluginManagement().getPlugins() == null) {
+            return null;
+        }
+        return getPluginInList(model.getBuild().getPluginManagement().getPlugins(), groupId, artifactId);
+    }
+
+    private Plugin getPluginInList(List<Plugin> pluginList, String groupId, String artifactId) {
+        if (pluginList == null || pluginList.size() == 0) {
+            return null;
+        }
+
+        Plugin plugin = null;
+        for (Plugin d : pluginList) {
+            if(d.getArtifactId().equals(artifactId) && d.getGroupId().equals(groupId)) {
+                plugin = d;
+                break;
+            }
+        }
+
+        return plugin;
     }
 
 }

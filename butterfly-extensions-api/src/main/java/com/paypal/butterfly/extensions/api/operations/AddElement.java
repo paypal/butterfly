@@ -13,8 +13,16 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
  */
 public interface AddElement<TO extends TransformationOperation> {
 
+    /**
+     * The possibilities bellow refer to instances of {@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type},
+     * although they are intentionally not supposed to match one-to-one
+     */
     enum IfPresent {
-        Fail, WarnNotAdd, WarnButAdd, NoOp, Overwrite
+        Fail,           // Fail if the element to be added is already present
+        WarnNotAdd,     // Warn and do not add if the element to be added is already present
+        WarnButAdd,     // Warn, but add, if the element to be added is already present
+        NoOp,           // Do nothing, not add, not warn neither fail, if the element to be added is already present
+        Overwrite       // Overwrite and not warn if the element to be added is already present
     }
 
     /**
