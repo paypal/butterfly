@@ -172,8 +172,8 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * </br>
      * Usually the parent is a {@link TransformationTemplate}
      *
-     * @param parent
-     * @param order
+     * @param parent the parent to be set to this utility
+     * @param order the order of execution of this utility
      * @return this transformation utility
      */
     public final TU setParent(TransformationUtilityParent parent, int order) {
@@ -408,7 +408,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     }
 
     private String getMethodName(String propertyName) {
-        return "set" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+        return String.format("set%s%s", propertyName.substring(0, 1).toUpperCase(), propertyName.substring(1));
     }
 
     /**

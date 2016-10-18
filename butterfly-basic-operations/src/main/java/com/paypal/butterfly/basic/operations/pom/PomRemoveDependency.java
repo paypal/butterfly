@@ -1,6 +1,8 @@
 package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -12,12 +14,11 @@ import java.io.IOException;
  *
  * @author facarvalho
  */
-public class PomRemoveDependency extends AbstractPomOperation<PomRemoveDependency> {
+public class PomRemoveDependency extends AbstractArtifactPomOperation<PomRemoveDependency> implements ChangeOrRemoveElement<PomRemoveDependency> {
+
+    private IfNotPresent ifNotPresent = IfNotPresent.Fail;
 
     private static final String DESCRIPTION = "Remove dependency %s:%s from POM file %s";
-
-    private String groupId;
-    private String artifactId;
 
     public PomRemoveDependency() {
     }
@@ -33,24 +34,22 @@ public class PomRemoveDependency extends AbstractPomOperation<PomRemoveDependenc
         setArtifactId(artifactId);
     }
 
-    public PomRemoveDependency setGroupId(String groupId) {
-        checkForBlankString("GroupId",groupId);
-        this.groupId = groupId;
+    @Override
+    public PomRemoveDependency failIfNotPresent() {
+        ifNotPresent = IfNotPresent.Fail;
         return this;
     }
 
-    public PomRemoveDependency setArtifactId(String artifactId) {
-        checkForBlankString("ArtifactId", artifactId);
-        this.artifactId = artifactId;
+    @Override
+    public PomRemoveDependency warnIfNotPresent() {
+        ifNotPresent = IfNotPresent.Warn;
         return this;
     }
 
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
+    @Override
+    public PomRemoveDependency noOpIfNotPresent() {
+        ifNotPresent = IfNotPresent.NoOp;
+        return this;
     }
 
     @Override
@@ -69,8 +68,20 @@ public class PomRemoveDependency extends AbstractPomOperation<PomRemoveDependenc
             details = String.format("Dependency %s:%s has been removed from POM file %s", groupId, artifactId, relativePomFile);
             result = TOExecutionResult.success(this, details);
         } else {
-            details = String.format("Dependency %s:%s has NOT been removed from POM file %s because it is not present", groupId, artifactId, relativePomFile);
-            result = TOExecutionResult.noOp(this, details);
+            details = String.format("Dependency %s:%s has not been removed from POM file %s because it is not present", groupId, artifactId, relativePomFile);
+            switch (ifNotPresent) {
+                case Warn:
+                    result = TOExecutionResult.warning(this, new TransformationOperationException(details));
+                    break;
+                case NoOp:
+                    result = TOExecutionResult.noOp(this, details);
+                    break;
+                case Fail:
+                    // Fail is the default
+                default:
+                    result = TOExecutionResult.error(this, new TransformationOperationException(details));
+                    break;
+            }
         }
 
         return result;
