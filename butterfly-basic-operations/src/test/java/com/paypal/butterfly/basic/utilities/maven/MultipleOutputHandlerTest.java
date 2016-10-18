@@ -80,10 +80,10 @@ public class MultipleOutputHandlerTest {
         Mockito.doThrow(new IllegalStateException("barf test failure")).when(badHandler).consumeLine(anyString());
         multiHandler.register(badHandler);
         multiHandler.consumeLine("lineA");
-        Map<String, Object> results = multiHandler.getResult();
-        Exception e = (Exception)results.get(badHandler.getClass().getName());
+        Map<Class<? extends MavenInvocationOutputHandler>, Object> results = multiHandler.getResult();
+        Exception e = (Exception)results.get(badHandler.getClass());
         Assert.assertNotNull(e);
-        Assert.assertEquals(IllegalStateException.class.getName(), e.getClass().getName());
+        Assert.assertEquals(IllegalStateException.class, e.getClass());
         Assert.assertEquals("barf test failure", e.getMessage());
     }
 
@@ -106,11 +106,11 @@ public class MultipleOutputHandlerTest {
         multiHandler.register(handler1);
         multiHandler.consumeLine("line1");
         multiHandler.consumeLine("line2");
-        Map<String, Object> results = multiHandler.getResult();
+        Map<Class<? extends MavenInvocationOutputHandler>, Object> results = multiHandler.getResult();
 
         Assert.assertEquals(2, results.size());
 
-        Assert.assertEquals(results.get(mockHandler.getClass().getName()), "data0");
-        Assert.assertEquals(results.get(handler1.getClass().getName()), "data1");
+        Assert.assertEquals(results.get(mockHandler.getClass()), "data0");
+        Assert.assertEquals(results.get(handler1.getClass()), "data1");
     }
 }

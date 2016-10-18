@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * MultipleInvocationOutputHandler contains a list of
  * MavenInvocationOutputHandlers.</br>
@@ -15,9 +18,14 @@ import java.util.Set;
  * @author mcrockett, facarvalho
  */
 class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<Class<? extends MavenInvocationOutputHandler>, Object>> {
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(MultipleOutputHandler.class);
+
+    /* Contains all output handlers */
     private final Set<MavenInvocationOutputHandler<Object>> handlers = new HashSet<>();
-    private final Map<MavenInvocationOutputHandler<Object>, Object> failedHandlers = new HashMap<>();
+
+    /* Contains output handlers that have thrown an exception and the exception thrown */
+    private final Map<MavenInvocationOutputHandler<Object>, Exception> failedHandlers = new HashMap<>();
     private boolean executionStarted = false;
 
     /**
@@ -33,7 +41,10 @@ class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<Class<? 
             if (false == failedHandlers.containsKey(handler)) {
                 try {
                     handler.consumeLine(line);
-                } catch (IllegalStateException e) {
+                } catch (Exception e) {
+                    if(true == logger.isDebugEnabled()) {
+                        logger.error(handler.getClass().getName() + " has failed due to an exception ", e);
+                    }
                     failedHandlers.put(handler, e);
                 }
             }
