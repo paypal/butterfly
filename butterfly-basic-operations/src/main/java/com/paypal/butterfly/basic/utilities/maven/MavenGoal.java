@@ -22,6 +22,10 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     private String[] goals = {};
 
     private MavenInvocationOutputHandler[] outputHandlers = {};
+    
+    private String mavenFailureBehavior = "";
+    
+    private InvocationRequest request = new DefaultInvocationRequest();
 
     /**
      * Utility to run one or more Maven goals against a specific Maven POM file
@@ -74,6 +78,16 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     }
 
     /**
+     * Set the maven failure behavior to only fail at the end.
+     *
+     * @return this utility instance
+     */
+    public MavenGoal setFailAtEnd() {
+        mavenFailureBehavior = InvocationRequest.REACTOR_FAIL_AT_END;
+        return this;
+    }
+
+    /**
      * Return the Maven goals to be executed
      *
      * @return the Maven goals to be executed
@@ -107,10 +121,10 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
                 multipleOutputHandler.register(outputHandler);
             }
 
-            InvocationRequest request = new DefaultInvocationRequest();
             request.setPomFile(pomFile);
             request.setGoals(Arrays.asList(goals));
             request.setOutputHandler(multipleOutputHandler);
+            request.setFailureBehavior(mavenFailureBehavior);
 
             Invoker invoker = new DefaultInvoker();
             InvocationResult invocationResult = invoker.execute(request);
