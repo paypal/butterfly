@@ -96,12 +96,10 @@ public class TransformationEngine {
         PerformResult result;
         for(Object transformationUtilityObj: template.getUtilities()) {
             utility = (TransformationUtility) transformationUtilityObj;
-            if(transformationUtilityObj instanceof MultipleOperations) {
-                multipleOperations = (MultipleOperations) transformationUtilityObj;
-                result = perform(multipleOperations, transformedAppFolder, transformationContext, operationsExecutionOrder);
-                // FIXME saving multiple operation results need to be properly taken care of
-            } else {
-                result = perform(utility, transformedAppFolder, transformationContext, operationsExecutionOrder, null);
+            result = perform(utility, transformedAppFolder, transformationContext, operationsExecutionOrder, null);
+            if(utility instanceof MultipleOperations) {
+                multipleOperations = (MultipleOperations) utility;
+                performMultiOperations(result, multipleOperations, transformedAppFolder, transformationContext, operationsExecutionOrder);
             }
             if (utility.isSaveResult()) {
                 // Saving the whole perform result, which is different from the value that resulted from the utility execution,
@@ -114,30 +112,30 @@ public class TransformationEngine {
         logger.info("Transformation has been completed");
     }
 
+    private void performMultiOperations(PerformResult result, MultipleOperations multipleOperations, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger operationsExecutionOrder) throws TransformationException {
+        PerformResult.Type performResultType = result.getType();
+        if (!performResultType.equals(PerformResult.Type.EXECUTION_RESULT)) {
+            // TODO
+            return;
+        }
+        TUExecutionResult.Type executionResultType = (TUExecutionResult.Type) result.getExecutionResult().getType();
+        if(!executionResultType.equals(TUExecutionResult.Type.VALUE)) {
+            // TODO
+            return;
+        }
+
+        List<TransformationOperation> operations = (List<TransformationOperation>) ((TUExecutionResult) result.getExecutionResult()).getValue();
+        perform(operations, multipleOperations, transformedAppFolder, transformationContext, operationsExecutionOrder);
+        // FIXME saving multiple operation results need to be properly taken care of
+        // FIXME what if any of them fail?
+    }
+
     /*
      * Perform multiple operations in an application
      */
     // TODO how to deal with results here???
     // First of all, Multiple operations must be converted to TO, instead of TU
-    private PerformResult perform(MultipleOperations multipleOperations, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger outterOpExecOrder) throws TransformationException {
-        List<TransformationOperation> operations;
-        PerformResult result;
-        try {
-            result = multipleOperations.perform(transformedAppFolder, transformationContext);
-
-            // TODO what if the result type is not EXECUTION_RESULT?
-            operations = (List<TransformationOperation>) ((TUExecutionResult) result.getExecutionResult()).getValue();
-        } catch (TransformationUtilityException e) {
-
-            // TODO what about abortOnFailure for MultipleOperations?
-
-            logger.error("*** Transformation will be aborted due to failure in {}  ***", multipleOperations.getName());
-            logger.error("*** Description: {}", multipleOperations.getDescription());
-            logger.error("*** Cause: " + e.getCause());
-
-            throw new TransformationException(multipleOperations.getName() + " failed when performing transformation", e);
-        }
-
+    private void perform(List<TransformationOperation> operations, MultipleOperations multipleOperations, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger outterOpExecOrder) throws TransformationException {
         logger.info("\t{}\t - Executing {} over {} files", outterOpExecOrder.intValue(), multipleOperations.getTemplateOperation().getName(), operations.size());
 
         AtomicInteger innerOpExecOrder = new AtomicInteger(1);
@@ -148,7 +146,8 @@ public class TransformationEngine {
 
         outterOpExecOrder.incrementAndGet();
 
-        return result;
+        // TODO what should we do with individual multiple operations results?
+//        return result;
     }
 
     /*
@@ -222,7 +221,7 @@ public class TransformationEngine {
                 logger.info("\t{}\t - {}", order, executionResult.getDetails());
                 break;
             case NO_OP:
-                logger.warn("\t{}\t - {}", order, executionResult.getDetails());
+                logger.info("\t{}\t - {}", order, executionResult.getDetails());
                 break;
             case WARNING:
                 processExecutionResultWarningType(utility, result, executionResult, order);

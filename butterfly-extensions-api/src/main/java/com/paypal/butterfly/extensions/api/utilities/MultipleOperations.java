@@ -1,20 +1,36 @@
 package com.paypal.butterfly.extensions.api.utilities;
 
 import com.paypal.butterfly.extensions.api.*;
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * Utility to perform transformation operations against
- * multiple files specified as a list, held as a transformation context attribute
+ * Utility to perform multiple transformation operations. Multiple transformation operations
+ * are defined based on an operation template and two other factors, that could be applied
+ * exclusively or together. They are:
+ * <ol>
+ *     <li>Multiple files: multiple operations are defined based on multiple files specified as a
+ *     list, held as one or more transformation context attribute, and set via {@link #setFiles(String...)}</li>
+ *     <li>Multiple configurations: multiple operations are defined based on different configurations,
+ *     set via {@link #setProperties(String, String)}</li>
+ * </ol>
  * </br>
- * <strong>Important:</strong> any path set to this operation, either relative
- * or absolute, will be ignored, and set later at transformation time based on
- * the dynamically set multiple files
+ * In other words, there are two possible ways to define multiple operations: multiple
+ * files, or multiple configurations (different property values). It is also possible
+ * to combine both, resulting in multiple operations to be executed against multiple files and
+ * with multiple configurations.
+ * </br>
+ * <strong>Important:</strong> when running against multiple files, any path set to this operation,
+ * either relative or absolute, will be ignored, and set later at transformation time based on
+ * the dynamically set multiple files. When running with multiple configurations, the properties set
+ * during transformation time will override any value that could have been set during definition time
  *
  * @author facarvalho
  */
@@ -29,7 +45,22 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
     // which the transformation operation should perform against.
     // If more than one attribute is specified, all list of files will be
     // combined into a single one.
-    private String[] attributes;
+    private String[] filesAttributes;
+
+    // The operation Java bean property name to be set during transformation time,
+    // whose value will differentiate each operation
+    private String propertyName;
+
+    // The name of the transformation context attribute that holds a collection of
+    // values to be each set individually (as the property value) to each operation of
+    // a set of multiple operations. These values are set right before execution. If
+    // the transformation context attribute value is not a collection, then it will be
+    // used as a single value to be set to one single operation, instead of multiple
+    private String propertyAttribute;
+
+    // This is the setter method in the template operation to be used to set the
+    // property in case of multiple configurations
+    private Method propertySetter;
 
     // A template of transformation operation to be performed against all
     // specified files
@@ -39,33 +70,55 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
     private List<TransformationOperation> operations;
 
     /**
-     * Utility to perform transformation operations against
-     * multiple files specified as a list, held as a transformation context attribute
+     * Utility to perform multiple transformation operations. Multiple transformation operations
+     * are defined based on an operation template and two other factors, that could be applied
+     * exclusively or together. They are:
+     * <ol>
+     *     <li>Multiple files: multiple operations are defined based on multiple files specified as a
+     *     list, held as one or more transformation context attribute, and set via {@link #setFiles(String...)}</li>
+     *     <li>Multiple configurations: multiple operations are defined based on different configurations,
+     *     set via {@link #setProperties(String, String)}</li>
+     * </ol>
      * </br>
-     * <strong>Important:</strong> any path set to this operation, either relative
-     * or absolute, will be ignored, and set later at transformation time based on
-     * the dynamically set multiple files
+     * In other words, there are two possible ways to define multiple operations: multiple
+     * files, or multiple configurations (different property values). It is also possible
+     * to combine both, resulting in multiple operations to be executed against multiple files and
+     * with multiple configurations.
+     * </br>
+     * <strong>Important:</strong> when running against multiple files, any path set to this operation,
+     * either relative or absolute, will be ignored, and set later at transformation time based on
+     * the dynamically set multiple files. When running with multiple configurations, the properties set
+     * during transformation time will override any value that could have been set during definition time
      */
     public MultipleOperations() {
     }
 
     /**
-     * Utility to perform transformation operations against
-     * multiple files specified as a list, held as a transformation context attribute
+     * Utility to perform multiple transformation operations. Multiple transformation operations
+     * are defined based on an operation template and two other factors, that could be applied
+     * exclusively or together. They are:
+     * <ol>
+     *     <li>Multiple files: multiple operations are defined based on multiple files specified as a
+     *     list, held as one or more transformation context attribute, and set via {@link #setFiles(String...)}</li>
+     *     <li>Multiple configurations: multiple operations are defined based on different configurations,
+     *     set via {@link #setProperties(String, String)}</li>
+     * </ol>
      * </br>
-     * <strong>Important:</strong> any path set to this operation, either relative
-     * or absolute, will be ignored, and set later at transformation time based on
-     * the dynamically set multiple files
+     * In other words, there are two possible ways to define multiple operations: multiple
+     * files, or multiple configurations (different property values). It is also possible
+     * to combine both, resulting in multiple operations to be executed against multiple files and
+     * with multiple configurations.
+     * </br>
+     * <strong>Important:</strong> when running against multiple files, any path set to this operation,
+     * either relative or absolute, will be ignored, and set later at transformation time based on
+     * the dynamically set multiple files. When running with multiple configurations, the properties set
+     * during transformation time will override any value that could have been set during definition time
      *
      * @param templateOperation a template of transformation operation to be performed
      *                          against all specified files
-     * @param attributes one or more transformation context attributes that hold list
-     *                   of Files which the transformation operations should perform
-     *                   against
      */
-    public MultipleOperations(TransformationOperation templateOperation, String... attributes) {
-        setTemplateOperation(templateOperation);
-        setAttributes(attributes);
+    public MultipleOperations(TransformationOperation templateOperation) {
+        setOperationTemplate(templateOperation);
     }
 
     /**
@@ -74,13 +127,39 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
      * If more than one attribute is specified, all list of files will be
      * combined into a single one
      *
-     * @param attributes one or more transformation context attributes that hold list
+     * @param filesAttributes one or more transformation context attributes that hold list
      *                   of Files which the transformation operation should perform
      *                   against
      * @return this transformation utility object
      */
-    public MultipleOperations setAttributes(String... attributes) {
-        this.attributes = attributes;
+    public MultipleOperations setFiles(String... filesAttributes) {
+        this.filesAttributes = filesAttributes;
+        return this;
+    }
+
+    /**
+     * This setter is similar to {@link TransformationUtility#set(String, String)}, however it is more powerful, because
+     * it allows setting, during transformation time, different properties values for each operation of a
+     * {@link MultipleOperations}.
+     * </br>
+     * That being said, calling this method will only make a difference if this operation is executed as the
+     * template operation for a multiple operations utility. That usually can be done by adding it to a
+     * transformation template via {@link TransformationTemplate#addMultiple(TransformationOperation, String...)}
+     *
+     * @param propertyName the operation Java bean property name to be set during transformation time
+     * @param propertyAttribute the name of the transformation context attribute that holds a {@link Set} of
+     *                          values to be each set individually (as the property value) to each operation of
+     *                          a set of multiple operations. These values are set right before execution. If
+     *                          the transformation context attribute value is not a {@link Set}, then a
+     *                          {@link com.paypal.butterfly.extensions.api.exception.TransformationUtilityException}
+     *                          will be thrown right before execution
+     * @return this instance
+     */
+    public final MultipleOperations setProperties(String propertyName, String propertyAttribute) {
+        checkForBlankString("propertyName", propertyName);
+        checkForBlankString("propertyAttribute", propertyAttribute);
+        this.propertyName = propertyName;
+        this.propertyAttribute = propertyAttribute;
         return this;
     }
 
@@ -95,7 +174,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
      *                  all specified files
      * @return this transformation utility object
      */
-    public MultipleOperations setTemplateOperation(TransformationOperation templateOperation) {
+    public MultipleOperations setOperationTemplate(TransformationOperation templateOperation) {
         templateOperation.relative(null);
         templateOperation.absolute(null);
         this.templateOperation = templateOperation;
@@ -108,8 +187,8 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
         return super.setName(name);
     }
 
-    public String[] getAttributes() {
-        return Arrays.copyOf(attributes, attributes.length);
+    public String[] getFilesAttributes() {
+        return Arrays.copyOf(filesAttributes, filesAttributes.length);
     }
 
     public TransformationOperation getTemplateOperation() {
@@ -121,32 +200,94 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
         return String.format(DESCRIPTION, templateOperation.getClass().getSimpleName());
     }
 
+    public void setPropertySetter() {
+        String methodName = String.format("set%s%s", propertyName.substring(0, 1).toUpperCase(), propertyName.substring(1));
+
+        for(Method method : templateOperation.getClass().getMethods()) {
+            if(method.getName().equals(methodName)) {
+                propertySetter = method;
+                return;
+            }
+        }
+
+        String exceptionMessage = String.format("%s is not a valid property", propertyName);
+        throw new TransformationDefinitionException(exceptionMessage);
+    }
+
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+
         List<File> files;
         Set<File> allFiles = new HashSet<File>();
 
-        for(String attribute: attributes) {
+        for(String attribute: filesAttributes) {
             files = (List<File>) transformationContext.get(attribute);
             if (files != null) {
                 allFiles.addAll(files);
             }
         }
 
-        operations = new ArrayList<TransformationOperation>();
+        boolean multipleFiles = true;
+        if (allFiles.size() == 0) {
+            // This means this multiple operation is not supposed to be executed
+            // based on multiple files, but based on multiple configuration
+            // Because of that, the single file the multiple operations should
+            // run against is defined as usual
+            allFiles.add(getAbsoluteFile(transformedAppFolder, transformationContext));
+            multipleFiles = false;
+        }
+
+        boolean multipleConfigurations = false;
+        Set propertyValues = null;
+
+        if (propertyName != null) {
+            Object propertyValuesObj = transformationContext.get(propertyAttribute);
+            if (!(propertyValuesObj instanceof Set)) {
+                String exceptionMessage = String.format("Transformation context attribute %s does not contain a java.util.Set object", propertyAttribute);
+                TransformationUtilityException tue = new TransformationUtilityException(exceptionMessage);
+                return TUExecutionResult.error(this, tue);
+            }
+            propertyValues = (Set) propertyValuesObj;
+            if (propertyValues.size() == 0) {
+                logger.warn("Transformation context attribute %s contains an empty java.util.Set object, so it will be ignored", propertyAttribute);
+            } else {
+                multipleConfigurations = true;
+                setPropertySetter();
+            }
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Multiple files in {} is set to {}", getName(), multipleFiles);
+            logger.debug("Multiple configurations in {} is set to {}", getName(), multipleConfigurations);
+        }
+
         TransformationOperation operation;
+        operations = new ArrayList<TransformationOperation>();
         int order = 1;
         try {
             for(File file : allFiles) {
-                operation = (TransformationOperation) templateOperation.clone();
-                operation.setParent(this, order);
-                operation.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
-                order++;
-                operations.add(operation);
+                if (!multipleConfigurations) {
+                    operation = createClone(order, transformedAppFolder, file);
+                    operations.add(operation);
+                    order++;
+                } else {
+                    Object[] propertyValuesArray = propertyValues.toArray();
+                    for (Object propertyValue : propertyValuesArray) {
+                        operation = createClone(order, transformedAppFolder, file);
+                        propertySetter.invoke(operation, propertyValue);
+                        operations.add(operation);
+                        order++;
+                    }
+                }
             }
         } catch (CloneNotSupportedException e) {
             // If MultipleOperations ever get converted to TO, then change the exception below to TOE
-            throw new TransformationUtilityException("The template transformation operation is not cloneable", e);
+            TransformationUtilityException tue = new TransformationUtilityException("The template transformation operation is not cloneable", e);
+            return TUExecutionResult.error(this, tue);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            String exceptionMessage = String.format("It was not possible to set property %s, in object of type %s, during multiple operation multiple configuration setting pre-execution", propertyName, templateOperation.getClass().getName());
+            TransformationUtilityException tue = new TransformationUtilityException(exceptionMessage, e);
+            return TUExecutionResult.error(this, tue);
         }
 
         String message = null;
@@ -154,6 +295,14 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
             message = String.format("Multiple operation %s resulted in %d operations based on %s", getName(), operations.size(), templateOperation.getClass().getSimpleName());
         }
         return TUExecutionResult.value(this, operations).setDetails(message);
+    }
+
+    private TransformationOperation createClone(int order, File transformedAppFolder, File file) throws CloneNotSupportedException {
+        TransformationOperation operation = (TransformationOperation) templateOperation.clone();
+        operation.setParent(this, order);
+        operation.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
+
+        return operation;
     }
 
     public List<TransformationOperation> getOperations() {
