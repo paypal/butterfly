@@ -743,12 +743,15 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     }
 
     /**
-     * To check for Blank String if it is Blank String then it would throw TransformationDefinitionException.
-     * This check is required for non-optional properties.
+     * Check if value is a blank String, if it is, then a
+     * {@link TransformationDefinitionException) is thown.
+     * </br>
+     * This check is used for mandatory properties where value cannot be null
+     * neither an empty string.
      *
-     * @param name represents the purpose of the String is used for
-     * @param value represents the String to be verified
-     * @throws TransformationDefinitionException
+     * @param name the name of the property
+     * @param value the value to be verified
+     * @throws TransformationDefinitionException if check fails
      */
     protected static void checkForBlankString(String name, String value) throws TransformationDefinitionException{
         if(StringUtils.isBlank(value)){
@@ -757,13 +760,15 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     }
 
     /**
-     * To check for an Empty String if it is an Empty String then it would throw TransformationDefinitionException
-     * This check is required for optional properties where value can be possibly blank, if value is passed
-     * then it should not be an empty string.
+     * Check if value is an empty String, if it is, then a
+     * {@link TransformationDefinitionException} is thrown.
+     * </br>
+     * This check is used for optional properties where value can be null,
+     * but not an empty string.
      *
-     * @param name represents the purpose of the String is used for
-     * @param value represents the String to be verified
-     * @throws TransformationDefinitionException
+     * @param name the name of the property
+     * @param value the value to be verified
+     * @throws TransformationDefinitionException if check fails
      */
     protected static void checkForEmptyString(String name, String value) throws TransformationDefinitionException{
         if(value != null && value.trim().length() == 0){
@@ -772,12 +777,15 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     }
 
     /**
-     * To check for object is null if it is null then it would throw TransformationDefinitionException
-     * This check is required where value can't be null.
+     * Check if value is null, if it is, then a
+     * {@link TransformationDefinitionException} is thrown.
+     * </br>
+     * This check is used for mandatory non-String properties,
+     * where value cannot be null
      *
-     * @param name represents the purpose of the String is used for
-     * @param value represents the object value to be verified
-     * @throws TransformationDefinitionException
+     * @param name the name of the property
+     * @param value the value to be verified
+     * @throws TransformationDefinitionException if check fails
      */
     protected static void checkForNull(String name, Object value) throws TransformationDefinitionException{
         if(value == null){
