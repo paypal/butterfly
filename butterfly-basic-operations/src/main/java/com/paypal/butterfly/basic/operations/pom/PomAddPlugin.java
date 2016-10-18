@@ -12,7 +12,7 @@ import java.io.IOException;
  *
  * @author facarvalho
  */
-public class PomAddPlugin extends AbstractPomOperation<PomAddPlugin> {
+public class PomAddPlugin extends AbstractArtifactPomOperation<PomAddPlugin> {
 
     // TODO
     // Add pre-validation to check, in case version was not set, if plugin
@@ -23,8 +23,6 @@ public class PomAddPlugin extends AbstractPomOperation<PomAddPlugin> {
 
     private static final String DESCRIPTION = "Add plugin %s:%s:%s to POM file %s";
 
-    private String groupId;
-    private String artifactId;
     private String version;
 
     public PomAddPlugin() {
@@ -56,30 +54,10 @@ public class PomAddPlugin extends AbstractPomOperation<PomAddPlugin> {
         setVersion(version);
     }
 
-    public PomAddPlugin setGroupId(String groupId) {
-        checkForBlankString("GroupId", groupId);
-        this.groupId = groupId;
-        return this;
-    }
-
-    public PomAddPlugin setArtifactId(String artifactId) {
-        checkForBlankString("ArtifactId", artifactId);
-        this.artifactId = artifactId;
-        return this;
-    }
-
     public PomAddPlugin setVersion(String version) {
         checkForEmptyString("Version", version);
         this.version = version;
         return this;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
     }
 
     public String getVersion() {
@@ -93,6 +71,9 @@ public class PomAddPlugin extends AbstractPomOperation<PomAddPlugin> {
 
     @Override
     protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+
+        // FIXME what if the dependency already exists?
+
         Plugin plugin = new Plugin();
         plugin.setGroupId(groupId);
         plugin.setArtifactId(artifactId);

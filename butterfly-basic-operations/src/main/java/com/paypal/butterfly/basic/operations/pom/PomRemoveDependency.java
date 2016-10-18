@@ -12,12 +12,9 @@ import java.io.IOException;
  *
  * @author facarvalho
  */
-public class PomRemoveDependency extends AbstractPomOperation<PomRemoveDependency> {
+public class PomRemoveDependency extends AbstractArtifactPomOperation<PomRemoveDependency> {
 
     private static final String DESCRIPTION = "Remove dependency %s:%s from POM file %s";
-
-    private String groupId;
-    private String artifactId;
 
     public PomRemoveDependency() {
     }
@@ -31,26 +28,6 @@ public class PomRemoveDependency extends AbstractPomOperation<PomRemoveDependenc
     public PomRemoveDependency(String groupId, String artifactId) {
         setGroupId(groupId);
         setArtifactId(artifactId);
-    }
-
-    public PomRemoveDependency setGroupId(String groupId) {
-        checkForBlankString("GroupId",groupId);
-        this.groupId = groupId;
-        return this;
-    }
-
-    public PomRemoveDependency setArtifactId(String artifactId) {
-        checkForBlankString("ArtifactId", artifactId);
-        this.artifactId = artifactId;
-        return this;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
     }
 
     @Override

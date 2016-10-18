@@ -13,12 +13,9 @@ import java.util.List;
  *
  * @author facarvalho
  */
-public class PomRemovePlugin extends AbstractPomOperation<PomRemovePlugin> {
+public class PomRemovePlugin extends AbstractArtifactPomOperation<PomRemovePlugin> {
 
     private static final String DESCRIPTION = "Remove plugin %s:%s from POM file %s";
-
-    private String groupId;
-    private String artifactId;
 
     public PomRemovePlugin() {
     }
@@ -32,26 +29,6 @@ public class PomRemovePlugin extends AbstractPomOperation<PomRemovePlugin> {
     public PomRemovePlugin(String groupId, String artifactId) {
         setGroupId(groupId);
         setArtifactId(artifactId);
-    }
-
-    public PomRemovePlugin setGroupId(String groupId) {
-        checkForBlankString("GroupId", groupId);
-        this.groupId = groupId;
-        return this;
-    }
-
-    public PomRemovePlugin setArtifactId(String artifactId) {
-        checkForBlankString("ArtifactId", artifactId);
-        this.artifactId = artifactId;
-        return this;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
     }
 
     @Override

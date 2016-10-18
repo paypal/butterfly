@@ -12,7 +12,7 @@ import java.io.IOException;
  *
  * @author facarvalho
  */
-public class PomAddDependency extends AbstractPomOperation<PomAddDependency> {
+public class PomAddDependency extends AbstractArtifactPomOperation<PomAddDependency> {
 
     // TODO
     // Add pre-validation to check, in case version was not set, if dependency
@@ -23,8 +23,6 @@ public class PomAddDependency extends AbstractPomOperation<PomAddDependency> {
 
     private static final String DESCRIPTION = "Add dependency %s:%s:%s to POM file %s";
 
-    private String groupId;
-    private String artifactId;
     private String version;
     private String scope;
 
@@ -70,18 +68,6 @@ public class PomAddDependency extends AbstractPomOperation<PomAddDependency> {
         setScope(scope);
     }
 
-    public PomAddDependency setGroupId(String groupId) {
-        checkForBlankString("GroupId", groupId);
-        this.groupId = groupId;
-        return this;
-    }
-
-    public PomAddDependency setArtifactId(String artifactId) {
-        checkForBlankString("ArtifactId",artifactId);
-        this.artifactId = artifactId;
-        return this;
-    }
-
     public PomAddDependency setVersion(String version) {
         checkForEmptyString("Version", version);
         this.version = version;
@@ -92,14 +78,6 @@ public class PomAddDependency extends AbstractPomOperation<PomAddDependency> {
         checkForEmptyString("Scope", scope);
         this.scope = scope;
         return this;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
     }
 
     public String getVersion() {
@@ -117,6 +95,9 @@ public class PomAddDependency extends AbstractPomOperation<PomAddDependency> {
 
     @Override
     protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws IOException, XmlPullParserException {
+
+        // FIXME what if the dependency already exists?
+
         Dependency dependency = new Dependency();
         dependency.setGroupId(groupId);
         dependency.setArtifactId(artifactId);

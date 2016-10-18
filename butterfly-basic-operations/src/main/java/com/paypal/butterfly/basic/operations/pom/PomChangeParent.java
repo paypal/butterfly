@@ -12,12 +12,10 @@ import java.io.IOException;
  *
  * @author facarvalho
  */
-public class PomChangeParent extends AbstractPomOperation<PomChangeParent> {
+public class PomChangeParent extends AbstractArtifactPomOperation<PomChangeParent> {
 
     private static final String DESCRIPTION = "Change parent artifact in POM file %s";
 
-    private String groupId = null;
-    private String artifactId = null;
     private String version = null;
 
     public PomChangeParent() {
@@ -45,12 +43,16 @@ public class PomChangeParent extends AbstractPomOperation<PomChangeParent> {
         setVersion(version);
     }
 
+    // Overriding because in this case this property is actually optional
+    @Override
     public PomChangeParent setGroupId(String groupId) {
         checkForEmptyString("GroupId", groupId);
         this.groupId = groupId;
         return this;
     }
 
+    // Overriding because in this case this property is actually optional
+    @Override
     public PomChangeParent setArtifactId(String artifactId) {
         checkForEmptyString("ArtifactId", artifactId);
         this.artifactId = artifactId;
@@ -61,14 +63,6 @@ public class PomChangeParent extends AbstractPomOperation<PomChangeParent> {
         checkForBlankString("Version", version);
         this.version = version;
         return this;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
     }
 
     public String getVersion() {
@@ -84,6 +78,9 @@ public class PomChangeParent extends AbstractPomOperation<PomChangeParent> {
     protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
         String details;
         Parent parent = model.getParent();
+
+        // FIXME
+        // What if parent is null?
 
         if(groupId != null && artifactId != null && version != null) {
             parent.setGroupId(groupId);
