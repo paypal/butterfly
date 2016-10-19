@@ -207,7 +207,7 @@ public class TransformationEngine {
 
             throw new TransformationException(utility.getName() + " failed when performing transformation", e);
         } else {
-            logger.error("\t{}\t -  `{}` has failed. See debug logs for further details. Utility name: {}", order, utility.getDescription(), utility.getName());
+            logger.error("\t{}\t -  '{}' has failed. See debug logs for further details. Utility name: {}", order, utility.getDescription(), utility.getName());
             if(logger.isDebugEnabled()) {
                 logger.error(utility.getName() + " has failed due to the exception below", e);
             }
@@ -266,7 +266,7 @@ public class TransformationEngine {
     }
 
     private void processExecutionResultWarningType(TransformationUtility utility, PerformResult result, ExecutionResult executionResult, String order) {
-        logger.warn("\t{}\t - '{}' has successfully been executed, but it has warnings, see debug logs for further details", order, utility.getName());
+        logger.warn("\t{}\t -  '{}' has successfully been executed, but it has warnings, see debug logs for further details. Utility name: {}", order, utility.getDescription(), utility.getName());
         if (logger.isDebugEnabled()) {
             if (result.getWarnings().size() == 0) {
                 logger.warn("\t\t\t * Warning message: {}", result.getDetails());

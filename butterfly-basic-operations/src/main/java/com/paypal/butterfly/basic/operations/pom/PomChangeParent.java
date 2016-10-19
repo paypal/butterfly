@@ -97,7 +97,7 @@ public class PomChangeParent extends AbstractArtifactPomOperation<PomChangeParen
     }
 
     @Override
-    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) {
         String details;
         Parent parent = model.getParent();
 
@@ -136,8 +136,8 @@ public class PomChangeParent extends AbstractArtifactPomOperation<PomChangeParen
 
     @Override
     public PomChangeParent clone() throws CloneNotSupportedException {
-        PomChangeParent pomChangeParent = (PomChangeParent)super.clone();
-        return pomChangeParent;
+        PomChangeParent clone = (PomChangeParent) super.clone();
+        return clone;
     }
 
 }

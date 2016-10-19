@@ -45,7 +45,7 @@ public class PomChangePackaging extends AbstractPomOperation<PomChangePackaging>
     }
 
     @Override
-    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) {
         model.setPackaging(packagingType);
         String details = String.format("Packaging for POM file %s has been changed to %s", relativePomFile, packagingType);
 
@@ -54,8 +54,8 @@ public class PomChangePackaging extends AbstractPomOperation<PomChangePackaging>
 
     @Override
     public PomChangePackaging clone() throws CloneNotSupportedException {
-        PomChangePackaging pomChangePackaging = (PomChangePackaging)super.clone();
-        return pomChangePackaging;
+        PomChangePackaging clone = (PomChangePackaging) super.clone();
+        return clone;
     }
 
 }

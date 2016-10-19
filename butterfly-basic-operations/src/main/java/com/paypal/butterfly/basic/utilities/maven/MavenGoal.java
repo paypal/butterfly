@@ -23,7 +23,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
 
     private MavenInvocationOutputHandler[] outputHandlers = {};
     
-    private String mavenFailureBehavior = "";
+    private String mavenFailureBehavior = null;
     
     private InvocationRequest request = new DefaultInvocationRequest();
 
@@ -124,7 +124,10 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
             request.setPomFile(pomFile);
             request.setGoals(Arrays.asList(goals));
             request.setOutputHandler(multipleOutputHandler);
-            request.setFailureBehavior(mavenFailureBehavior);
+
+            if (mavenFailureBehavior != null) {
+                request.setFailureBehavior(mavenFailureBehavior);
+            }
 
             Invoker invoker = new DefaultInvoker();
             InvocationResult invocationResult = invoker.execute(request);

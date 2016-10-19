@@ -67,7 +67,7 @@ public class PomRemoveProperty extends AbstractPomOperation<PomRemoveProperty> i
     }
 
     @Override
-    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) {
         TOExecutionResult result = null;
 
         if(model.getProperties().remove(propertyName) == null) {
@@ -95,8 +95,8 @@ public class PomRemoveProperty extends AbstractPomOperation<PomRemoveProperty> i
 
     @Override
     public PomRemoveProperty clone() throws CloneNotSupportedException {
-        PomRemoveProperty pomRemoveProperty = (PomRemoveProperty) super.clone();
-        return pomRemoveProperty;
+        PomRemoveProperty clone = (PomRemoveProperty) super.clone();
+        return clone;
     }
 
 }

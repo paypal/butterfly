@@ -162,7 +162,7 @@ public class PomChangeDependency extends AbstractArtifactPomOperation<PomChangeD
     }
 
     @Override
-    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) {
         TOExecutionResult result;
 
         Dependency dependency = getDependency(model, groupId, artifactId);
@@ -201,8 +201,8 @@ public class PomChangeDependency extends AbstractArtifactPomOperation<PomChangeD
 
     @Override
     public PomChangeDependency clone() throws CloneNotSupportedException {
-        PomChangeDependency pomChangeDependency = (PomChangeDependency)super.clone();
-        return pomChangeDependency;
+        PomChangeDependency clone = (PomChangeDependency) super.clone();
+        return clone;
     }
 
 }

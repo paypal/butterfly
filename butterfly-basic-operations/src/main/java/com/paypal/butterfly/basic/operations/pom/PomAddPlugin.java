@@ -20,7 +20,7 @@ public class PomAddPlugin extends AbstractArtifactPomOperation<PomAddPlugin> imp
     // Add pre-validation to check, in case version was not set, if plugin
     // is managed or not. If not, fail!
 
-    private static final String DESCRIPTION = "Add plugin %s:%s:%s to POM file %s";
+    private static final String DESCRIPTION = "Add plugin %s:%s to POM file %s";
 
     private String version;
 
@@ -97,11 +97,11 @@ public class PomAddPlugin extends AbstractArtifactPomOperation<PomAddPlugin> imp
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, groupId, artifactId, version, getRelativePath());
+        return String.format(DESCRIPTION, groupId, artifactId, getRelativePath());
     }
 
     @Override
-    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) {
         Plugin plugin;
         Exception warning = null;
 
@@ -146,8 +146,8 @@ public class PomAddPlugin extends AbstractArtifactPomOperation<PomAddPlugin> imp
 
     @Override
     public PomAddPlugin clone() throws CloneNotSupportedException{
-        PomAddPlugin clonedPomAddPlugin = (PomAddPlugin) super.clone();
-        return clonedPomAddPlugin;
+        PomAddPlugin clone = (PomAddPlugin) super.clone();
+        return clone;
     }
 
 

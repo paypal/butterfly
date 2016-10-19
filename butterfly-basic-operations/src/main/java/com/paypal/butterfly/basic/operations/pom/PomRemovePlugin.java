@@ -58,7 +58,7 @@ public class PomRemovePlugin extends AbstractArtifactPomOperation<PomRemovePlugi
     }
 
     @Override
-    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) {
         TOExecutionResult result = null;
         String details;
 
@@ -89,8 +89,8 @@ public class PomRemovePlugin extends AbstractArtifactPomOperation<PomRemovePlugi
 
     @Override
     public PomRemovePlugin clone() throws CloneNotSupportedException {
-        PomRemovePlugin pomRemovePlugin = (PomRemovePlugin)super.clone();
-        return pomRemovePlugin;
+        PomRemovePlugin clone = (PomRemovePlugin) super.clone();
+        return clone;
     }
 
 }
