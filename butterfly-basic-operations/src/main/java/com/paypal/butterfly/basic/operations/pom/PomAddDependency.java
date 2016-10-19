@@ -1,6 +1,8 @@
 package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.extensions.api.operations.AddElement;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -12,21 +14,18 @@ import java.io.IOException;
  *
  * @author facarvalho
  */
-public class PomAddDependency extends AbstractPomOperation<PomAddDependency> {
+public class PomAddDependency extends AbstractArtifactPomOperation<PomAddDependency> implements AddElement<PomAddDependency> {
 
     // TODO
     // Add pre-validation to check, in case version was not set, if dependency
     // is managed or not. If not, fail!
 
-    // TODO
-    // What happens if dependency already exists? Fail? Warning? Replace it (if different version)?
-
     private static final String DESCRIPTION = "Add dependency %s:%s:%s to POM file %s";
 
-    private String groupId;
-    private String artifactId;
     private String version;
     private String scope;
+
+    private IfPresent ifPresent = IfPresent.Fail;
 
     public PomAddDependency() {
     }
@@ -70,18 +69,6 @@ public class PomAddDependency extends AbstractPomOperation<PomAddDependency> {
         setScope(scope);
     }
 
-    public PomAddDependency setGroupId(String groupId) {
-        checkForBlankString("GroupId", groupId);
-        this.groupId = groupId;
-        return this;
-    }
-
-    public PomAddDependency setArtifactId(String artifactId) {
-        checkForBlankString("ArtifactId",artifactId);
-        this.artifactId = artifactId;
-        return this;
-    }
-
     public PomAddDependency setVersion(String version) {
         checkForEmptyString("Version", version);
         this.version = version;
@@ -94,12 +81,34 @@ public class PomAddDependency extends AbstractPomOperation<PomAddDependency> {
         return this;
     }
 
-    public String getGroupId() {
-        return groupId;
+    @Override
+    public PomAddDependency failIfPresent() {
+        ifPresent = IfPresent.Fail;
+        return this;
     }
 
-    public String getArtifactId() {
-        return artifactId;
+    @Override
+    public PomAddDependency warnNotAddIfPresent() {
+        ifPresent = IfPresent.WarnNotAdd;
+        return this;
+    }
+
+    @Override
+    public PomAddDependency warnButAddIfPresent() {
+        ifPresent = IfPresent.WarnButAdd;
+        return this;
+    }
+
+    @Override
+    public PomAddDependency noOpIfPresent() {
+        ifPresent = IfPresent.NoOp;
+        return this;
+    }
+
+    @Override
+    public PomAddDependency overwriteIfPresent() {
+        ifPresent = IfPresent.Overwrite;
+        return this;
     }
 
     public String getVersion() {
@@ -117,7 +126,32 @@ public class PomAddDependency extends AbstractPomOperation<PomAddDependency> {
 
     @Override
     protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws IOException, XmlPullParserException {
-        Dependency dependency = new Dependency();
+        Dependency dependency;
+        Exception warning = null;
+
+        dependency = getDependency(model);
+        if (dependency != null) {
+            String message = String.format("Dependency %s:%s is already present in %s", groupId, artifactId, getRelativePath());
+
+            switch (ifPresent) {
+                case WarnNotAdd:
+                    return TOExecutionResult.warning(this, message);
+                case WarnButAdd:
+                    warning = new TransformationOperationException(message);
+                    break;
+                case NoOp:
+                    return TOExecutionResult.noOp(this, message);
+                case Overwrite:
+                    // Nothing to be done here
+                    break;
+                case Fail:
+                    // Fail is the default
+                default:
+                    return TOExecutionResult.error(this, new TransformationOperationException(message));
+            }
+        }
+
+        dependency = new Dependency();
         dependency.setGroupId(groupId);
         dependency.setArtifactId(artifactId);
         if (version != null) {
@@ -128,8 +162,13 @@ public class PomAddDependency extends AbstractPomOperation<PomAddDependency> {
         }
         model.addDependency(dependency);
         String details = String.format("Dependency %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":"+ version), relativePomFile);
+        TOExecutionResult result = TOExecutionResult.success(this, details);
 
-        return TOExecutionResult.success(this, details);
+        if (warning != null) {
+            result.addWarning(warning);
+        }
+
+        return result;
     }
 
     @Override

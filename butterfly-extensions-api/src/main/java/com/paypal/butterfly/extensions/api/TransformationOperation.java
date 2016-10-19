@@ -21,12 +21,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * are NECESSARILY NOT assigned to the clone object
  * </br>
  * Differences between TU and TO:
- *  - TU never modifies application
- *  - TU usually returns a value
- *  - TU instance can be executed multiple times
- *  - TO always modifies application
- *  - TO never returns a value
- *  - TO instance must executed only once
+ * <ul>
+ *     <li>TU never modifies application. TO always does</li>
+ *     <li>TU usually returns a value, but not necessarily. TO never does</li>
+ *     <li>TU usually saves its result, but not necessarily. TO always does</li>
+ *     <li>TU instance can be executed multiple times. TO instance can be executed only once</li>
+ *     <li>TO allows multiple operations</li>
+ * </ul>
  *
  * @author facarvalho
  */

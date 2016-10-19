@@ -1,24 +1,24 @@
 package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Operation to remove a plugin entry from a POM file
  *
  * @author facarvalho
  */
-public class PomRemovePlugin extends AbstractPomOperation<PomRemovePlugin> {
+public class PomRemovePlugin extends AbstractArtifactPomOperation<PomRemovePlugin> implements ChangeOrRemoveElement<PomRemovePlugin> {
+
+    private IfNotPresent ifNotPresent = IfNotPresent.Fail;
 
     private static final String DESCRIPTION = "Remove plugin %s:%s from POM file %s";
-
-    private String groupId;
-    private String artifactId;
 
     public PomRemovePlugin() {
     }
@@ -34,24 +34,22 @@ public class PomRemovePlugin extends AbstractPomOperation<PomRemovePlugin> {
         setArtifactId(artifactId);
     }
 
-    public PomRemovePlugin setGroupId(String groupId) {
-        checkForBlankString("GroupId", groupId);
-        this.groupId = groupId;
+    @Override
+    public PomRemovePlugin failIfNotPresent() {
+        ifNotPresent = IfNotPresent.Fail;
         return this;
     }
 
-    public PomRemovePlugin setArtifactId(String artifactId) {
-        checkForBlankString("ArtifactId", artifactId);
-        this.artifactId = artifactId;
+    @Override
+    public PomRemovePlugin warnIfNotPresent() {
+        ifNotPresent = IfNotPresent.Fail;
         return this;
     }
 
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
+    @Override
+    public PomRemovePlugin noOpIfNotPresent() {
+        ifNotPresent = IfNotPresent.Fail;
+        return this;
     }
 
     @Override
@@ -61,25 +59,29 @@ public class PomRemovePlugin extends AbstractPomOperation<PomRemovePlugin> {
 
     @Override
     protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
-        boolean found = false;
-        List<Plugin> plugins = model.getBuild().getPlugins();
         TOExecutionResult result = null;
-        String details = null;
+        String details;
 
-        if(plugins != null) {
-            for (Plugin plugin : plugins) {
-                if(plugin.getArtifactId().equals(artifactId) && plugin.getGroupId().equals(groupId)) {
-                    model.getBuild().removePlugin(plugin);
-                    details = String.format("Plugin %s:%s has been removed from POM file %s", groupId, artifactId, relativePomFile);
-                    result = TOExecutionResult.success(this, details);
-                    found = true;
+        Plugin plugin = getPlugin(model, groupId, artifactId);
+        if (plugin != null) {
+            model.getBuild().removePlugin(plugin);
+            details = String.format("Plugin %s:%s has been removed from POM file %s", groupId, artifactId, relativePomFile);
+            result = TOExecutionResult.success(this, details);
+        } else {
+            details = String.format("Plugin %s:%s has not been removed from POM file %s because it is not present", groupId, artifactId, relativePomFile);
+            switch (ifNotPresent) {
+                case Warn:
+                    result = TOExecutionResult.warning(this, new TransformationOperationException(details));
                     break;
-                }
+                case NoOp:
+                    result = TOExecutionResult.noOp(this, details);
+                    break;
+                case Fail:
+                    // Fail is the default
+                default:
+                    result = TOExecutionResult.error(this, new TransformationOperationException(details));
+                    break;
             }
-        }
-        if(!found) {
-            details = String.format("Plugin %s:%s could not be found in POM file %s", groupId, artifactId, relativePomFile);
-            result = TOExecutionResult.noOp(this, details);
         }
 
         return result;

@@ -104,7 +104,7 @@ public abstract class TransformationTemplate<TT> implements TransformationUtilit
     }
 
     /**
-     * Adds a special transformation utility to perform transformation operations against
+     * Adds a special transformation utility to perform multiple transformation operations against
      * multiple files specified as a list, held as a transformation context attribute
      * </br>
      *
@@ -115,7 +115,7 @@ public abstract class TransformationTemplate<TT> implements TransformationUtilit
      *                   against
      */
     protected final String addMultiple(TransformationOperation templateOperation, String... attributes) {
-        return add(new MultipleOperations(templateOperation, attributes));
+        return add(new MultipleOperations(templateOperation).setFiles(attributes));
     }
 
     protected final void log(String logMessage) {

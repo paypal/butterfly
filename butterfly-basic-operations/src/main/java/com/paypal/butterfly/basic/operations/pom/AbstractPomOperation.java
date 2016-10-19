@@ -3,7 +3,6 @@ package com.paypal.butterfly.basic.operations.pom;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
@@ -19,7 +18,7 @@ import java.io.IOException;
  *
  * @author facarvalho
  */
-abstract class AbstractPomOperation<TO> extends TransformationOperation<TO> {
+abstract class AbstractPomOperation<TO extends AbstractPomOperation> extends TransformationOperation<TO> {
 
     @Override
     protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
@@ -63,19 +62,5 @@ abstract class AbstractPomOperation<TO> extends TransformationOperation<TO> {
     }
 
     protected abstract TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException;
-
-    protected Dependency getDependency(Model model, String groupId, String artifactId) {
-        Dependency dependency = null;
-        if(model.getDependencies() != null) {
-            for (Dependency d : model.getDependencies()) {
-                if(d.getArtifactId().equals(artifactId) && d.getGroupId().equals(groupId)) {
-                    dependency = d;
-                    break;
-                }
-            }
-        }
-
-        return dependency;
-    }
 
 }

@@ -1,6 +1,8 @@
 package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -12,13 +14,13 @@ import java.io.IOException;
  *
  * @author facarvalho
  */
-public class PomChangeParent extends AbstractPomOperation<PomChangeParent> {
+public class PomChangeParent extends AbstractArtifactPomOperation<PomChangeParent> implements ChangeOrRemoveElement<PomChangeParent> {
 
     private static final String DESCRIPTION = "Change parent artifact in POM file %s";
 
-    private String groupId = null;
-    private String artifactId = null;
     private String version = null;
+
+    private IfNotPresent ifNotPresent = IfNotPresent.Fail;
 
     public PomChangeParent() {
     }
@@ -45,12 +47,16 @@ public class PomChangeParent extends AbstractPomOperation<PomChangeParent> {
         setVersion(version);
     }
 
+    // Overriding because in this case this property is actually optional
+    @Override
     public PomChangeParent setGroupId(String groupId) {
         checkForEmptyString("GroupId", groupId);
         this.groupId = groupId;
         return this;
     }
 
+    // Overriding because in this case this property is actually optional
+    @Override
     public PomChangeParent setArtifactId(String artifactId) {
         checkForEmptyString("ArtifactId", artifactId);
         this.artifactId = artifactId;
@@ -63,12 +69,22 @@ public class PomChangeParent extends AbstractPomOperation<PomChangeParent> {
         return this;
     }
 
-    public String getGroupId() {
-        return groupId;
+    @Override
+    public PomChangeParent failIfNotPresent() {
+        ifNotPresent = IfNotPresent.Fail;
+        return this;
     }
 
-    public String getArtifactId() {
-        return artifactId;
+    @Override
+    public PomChangeParent warnIfNotPresent() {
+        ifNotPresent = IfNotPresent.Warn;
+        return this;
+    }
+
+    @Override
+    public PomChangeParent noOpIfNotPresent() {
+        ifNotPresent = IfNotPresent.NoOp;
+        return this;
     }
 
     public String getVersion() {
@@ -84,6 +100,21 @@ public class PomChangeParent extends AbstractPomOperation<PomChangeParent> {
     protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
         String details;
         Parent parent = model.getParent();
+
+        if (parent == null) {
+            String message = String.format("Pom file %s does not have a parent", getRelativePath());
+
+            switch (ifNotPresent) {
+                case Warn:
+                    return TOExecutionResult.warning(this, new TransformationOperationException(message));
+                case NoOp:
+                    return TOExecutionResult.noOp(this, message);
+                case Fail:
+                    // Fail is the default
+                default:
+                    return TOExecutionResult.error(this, new TransformationOperationException(message));
+            }
+        }
 
         if(groupId != null && artifactId != null && version != null) {
             parent.setGroupId(groupId);
