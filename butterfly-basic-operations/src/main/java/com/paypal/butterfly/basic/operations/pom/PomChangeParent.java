@@ -5,9 +5,6 @@ import com.paypal.butterfly.extensions.api.exception.TransformationOperationExce
 import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.IOException;
 
 /**
  * Operation to change the parent, or its version, in a Maven POM file
@@ -97,7 +94,7 @@ public class PomChangeParent extends AbstractArtifactPomOperation<PomChangeParen
     }
 
     @Override
-    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) {
         String details;
         Parent parent = model.getParent();
 
@@ -136,8 +133,8 @@ public class PomChangeParent extends AbstractArtifactPomOperation<PomChangeParen
 
     @Override
     public PomChangeParent clone() throws CloneNotSupportedException {
-        PomChangeParent pomChangeParent = (PomChangeParent)super.clone();
-        return pomChangeParent;
+        PomChangeParent clone = (PomChangeParent) super.clone();
+        return clone;
     }
 
 }

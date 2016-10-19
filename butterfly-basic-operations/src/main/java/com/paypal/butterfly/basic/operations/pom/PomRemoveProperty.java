@@ -4,9 +4,6 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
 import org.apache.maven.model.Model;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.IOException;
 
 /**
  * Operation to remove a property entry from a properties file
@@ -67,7 +64,7 @@ public class PomRemoveProperty extends AbstractPomOperation<PomRemoveProperty> i
     }
 
     @Override
-    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) {
         TOExecutionResult result = null;
 
         if(model.getProperties().remove(propertyName) == null) {
@@ -95,8 +92,8 @@ public class PomRemoveProperty extends AbstractPomOperation<PomRemoveProperty> i
 
     @Override
     public PomRemoveProperty clone() throws CloneNotSupportedException {
-        PomRemoveProperty pomRemoveProperty = (PomRemoveProperty) super.clone();
-        return pomRemoveProperty;
+        PomRemoveProperty clone = (PomRemoveProperty) super.clone();
+        return clone;
     }
 
 }

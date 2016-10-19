@@ -5,9 +5,6 @@ import com.paypal.butterfly.extensions.api.exception.TransformationOperationExce
 import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.IOException;
 
 /**
  * Operation to remove a plugin entry from a POM file
@@ -58,7 +55,7 @@ public class PomRemovePlugin extends AbstractArtifactPomOperation<PomRemovePlugi
     }
 
     @Override
-    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) {
         TOExecutionResult result = null;
         String details;
 
@@ -89,8 +86,8 @@ public class PomRemovePlugin extends AbstractArtifactPomOperation<PomRemovePlugi
 
     @Override
     public PomRemovePlugin clone() throws CloneNotSupportedException {
-        PomRemovePlugin pomRemovePlugin = (PomRemovePlugin)super.clone();
-        return pomRemovePlugin;
+        PomRemovePlugin clone = (PomRemovePlugin) super.clone();
+        return clone;
     }
 
 }

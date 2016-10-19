@@ -5,9 +5,6 @@ import com.paypal.butterfly.extensions.api.exception.TransformationOperationExce
 import com.paypal.butterfly.extensions.api.operations.AddElement;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.IOException;
 
 /**
  * Operation to add a new dependency to a POM file
@@ -125,7 +122,7 @@ public class PomAddDependency extends AbstractArtifactPomOperation<PomAddDepende
     }
 
     @Override
-    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws IOException, XmlPullParserException {
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) {
         Dependency dependency;
         Exception warning = null;
 
@@ -173,8 +170,8 @@ public class PomAddDependency extends AbstractArtifactPomOperation<PomAddDepende
 
     @Override
     public PomAddDependency clone() throws CloneNotSupportedException {
-        PomAddDependency clonedPomAddDependency = (PomAddDependency)super.clone();
-        return clonedPomAddDependency;
+        PomAddDependency clone = (PomAddDependency) super.clone();
+        return clone;
     }
 
 }

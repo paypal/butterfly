@@ -2,9 +2,6 @@ package com.paypal.butterfly.basic.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.apache.maven.model.Model;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.IOException;
 
 /**
  * Operation to change the packaging of a Maven artifact, by changing its POM file
@@ -45,7 +42,7 @@ public class PomChangePackaging extends AbstractPomOperation<PomChangePackaging>
     }
 
     @Override
-    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) {
         model.setPackaging(packagingType);
         String details = String.format("Packaging for POM file %s has been changed to %s", relativePomFile, packagingType);
 
@@ -54,8 +51,8 @@ public class PomChangePackaging extends AbstractPomOperation<PomChangePackaging>
 
     @Override
     public PomChangePackaging clone() throws CloneNotSupportedException {
-        PomChangePackaging pomChangePackaging = (PomChangePackaging)super.clone();
-        return pomChangePackaging;
+        PomChangePackaging clone = (PomChangePackaging) super.clone();
+        return clone;
     }
 
 }

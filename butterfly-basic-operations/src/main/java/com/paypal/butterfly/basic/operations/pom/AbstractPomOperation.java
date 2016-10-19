@@ -61,6 +61,6 @@ abstract class AbstractPomOperation<TO extends AbstractPomOperation> extends Tra
         return result;
     }
 
-    protected abstract TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException;
+    protected abstract TOExecutionResult pomExecution(String relativePomFile, Model model);
 
 }

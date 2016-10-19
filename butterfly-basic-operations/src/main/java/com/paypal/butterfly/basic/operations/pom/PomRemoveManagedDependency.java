@@ -5,9 +5,6 @@ import com.paypal.butterfly.extensions.api.exception.TransformationOperationExce
 import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.IOException;
 
 /**
  * Operation to remove a managed dependency entry from a POM file
@@ -58,7 +55,7 @@ public class PomRemoveManagedDependency extends AbstractArtifactPomOperation<Pom
     }
 
     @Override
-    protected TOExecutionResult pomExecution(String relativePomFile, Model model) throws XmlPullParserException, IOException {
+    protected TOExecutionResult pomExecution(String relativePomFile, Model model) {
         TOExecutionResult result = null;
         String details;
 
@@ -89,8 +86,8 @@ public class PomRemoveManagedDependency extends AbstractArtifactPomOperation<Pom
 
     @Override
     public PomRemoveManagedDependency clone() throws CloneNotSupportedException {
-        PomRemoveManagedDependency pomRemoveManagedDependency = (PomRemoveManagedDependency) super.clone();
-        return pomRemoveManagedDependency;
+        PomRemoveManagedDependency clone = (PomRemoveManagedDependency) super.clone();
+        return clone;
     }
 
 }
