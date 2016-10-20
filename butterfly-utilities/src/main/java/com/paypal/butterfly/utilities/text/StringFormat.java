@@ -39,11 +39,19 @@ public class StringFormat extends TransformationUtility<StringFormat> {
     }
 
     public StringFormat setAttributeNames(String... attributeNames) {
-        if(attributeNames == null || attributeNames.length == 0){
-            throw new TransformationDefinitionException("Attribute Names cannot be null or empty");
+        if(attributeNames == null || attributeNames.length == 0) {
+            throw new TransformationDefinitionException("Attribute names cannot be null or empty");
         }
         this.attributeNames = attributeNames;
         return this;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public String[] getAttributeNames() {
+        return attributeNames.clone();
     }
 
     @Override
