@@ -110,10 +110,15 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     // See comments in dependsOn method
     private String[] dependencies = null;
 
-    // Optional condition to let this operation be executed
+    // Optional condition to let this operation be executed (if true)
     // This is the name of a transformation context attribute
     // whose value is a boolean
-    private String conditionAttributeName = null;
+    private String ifConditionAttributeName = null;
+
+    // Optional condition to let this operation be executed (if false)
+    // This is the name of a transformation context attribute
+    // whose value is a boolean
+    private String unlessConditionAttributeName = null;
 
     /**
      * The public default constructor should always be available by any transformation
@@ -493,11 +498,20 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      */
     public synchronized PerformResult perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
 
-        // Checking for conditions
-        if(conditionAttributeName != null) {
-            Object conditionResult = transformationContext.get(conditionAttributeName);
+        // Checking for IF condition
+        if(ifConditionAttributeName != null) {
+            Object conditionResult = transformationContext.get(ifConditionAttributeName);
             if (conditionResult == null || conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue()) {
-                String details = String.format("Operation '%s' has been skipped due to failing condition: %s", getName(), conditionAttributeName);
+                String details = String.format("Operation '%s' has been skipped due to failing 'if' condition: %s", getName(), ifConditionAttributeName);
+                return PerformResult.skippedCondition(this, details);
+            }
+        }
+
+        // Checking for UNLESS condition
+        if(unlessConditionAttributeName != null) {
+            Object conditionResult = transformationContext.get(unlessConditionAttributeName);
+            if (conditionResult == null || conditionResult instanceof Boolean && ((Boolean) conditionResult).booleanValue()) {
+                String details = String.format("Operation '%s' has been skipped due to failing 'unless' condition: %s", getName(), unlessConditionAttributeName);
                 return PerformResult.skippedCondition(this, details);
             }
         }
@@ -677,25 +691,52 @@ public abstract class TransformationUtility<TU> implements Cloneable {
 
     /**
      * When set, this TU will only execute if this transformation context
-     * attribute is existent and not false. In other words, it will execute if
-     * not null and, if of Boolean type, not false
+     * attribute is existent and true. In other words, it will execute if
+     * not null and, if of Boolean type, true
      *
-     * @param conditionAttributeName
-     * @return
+     * @param conditionAttributeName the name of the transformation context attribute which
+     *                               holds a boolean value used to evaluate if this
+     *                               utility should be executed or not
+     * @return this utility instance
      */
     public final synchronized TU executeIf(String conditionAttributeName) {
-        this.conditionAttributeName = conditionAttributeName;
+        this.ifConditionAttributeName = conditionAttributeName;
         return (TU) this;
     }
 
     /**
-     * Return the condition attribute name associated with this transformation operation,
+     * When set, this TU will execute, unless this transformation context
+     * attribute is existent and true. In other words, it will execute, unless if
+     * not null and, if of Boolean type, true
+     *
+     * @param conditionAttributeName the name of the transformation context attribute which
+     *                               holds a boolean value used to evaluate if this
+     *                               utility should be executed or not
+     * @return this utility instance
+     */
+    public final synchronized TU executeUnless(String conditionAttributeName) {
+        this.unlessConditionAttributeName = conditionAttributeName;
+        return (TU) this;
+    }
+
+    /**
+     * Return the "if" condition attribute name associated with this transformation operation,
      * or null, if there is none
      *
-     * @return the condition attribute name associated with this transformation operation
+     * @return the "if" condition attribute name associated with this transformation operation
      */
-    public String getConditionAttributeName() {
-        return conditionAttributeName;
+    public String getIfConditionAttributeName() {
+        return ifConditionAttributeName;
+    }
+
+    /**
+     * Return the "unless" condition attribute name associated with this transformation operation,
+     * or null, if there is none
+     *
+     * @return the "unless" condition attribute name associated with this transformation operation
+     */
+    public String getUnlessConditionAttributeName() {
+        return unlessConditionAttributeName;
     }
 
     /**
@@ -737,7 +778,8 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         clone.latePropertiesSetters.putAll(this.latePropertiesSetters);
         clone.abortOnFailure = this.abortOnFailure;
         clone.saveResult = this.saveResult;
-        clone.conditionAttributeName = this.conditionAttributeName;
+        clone.ifConditionAttributeName = this.ifConditionAttributeName;
+        clone.unlessConditionAttributeName = this.unlessConditionAttributeName;
 
         return clone;
     }
