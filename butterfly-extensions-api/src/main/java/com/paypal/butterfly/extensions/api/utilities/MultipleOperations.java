@@ -217,11 +217,11 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
 
-        List<File> files;
+        Collection<File> files;
         Set<File> allFiles = new HashSet<File>();
 
         for(String attribute: filesAttributes) {
-            files = (List<File>) transformationContext.get(attribute);
+            files = (Collection<File>) transformationContext.get(attribute);
             if (files != null) {
                 allFiles.addAll(files);
             }
