@@ -20,7 +20,7 @@ import java.io.File;
  *
  * @author facarvalho
  */
-public class ScriptRunner extends TransformationUtility<ScriptRunner> {
+public class RunScript extends TransformationUtility<RunScript> {
 
     private static final String DESCRIPTION = "Executes script '%s' and saves its evaluation result";
 
@@ -30,27 +30,27 @@ public class ScriptRunner extends TransformationUtility<ScriptRunner> {
     private String language = "js";
     private String[] attributeNames;
 
-    public ScriptRunner() {
+    public RunScript() {
     }
 
-    public ScriptRunner(String script, String... attributeNames) {
+    public RunScript(String script, String... attributeNames) {
         setScript(script);
         setAttributeNames(attributeNames);
     }
 
-    public ScriptRunner setScript(String script) {
+    public RunScript setScript(String script) {
         checkForBlankString("script", script);
         this.script = script;
         return this;
     }
 
-    public ScriptRunner setLanguage(String language) {
+    public RunScript setLanguage(String language) {
         checkForEmptyString("script", script);
         this.language = language;
         return this;
     }
 
-    public ScriptRunner setAttributeNames(String... attributeNames) {
+    public RunScript setAttributeNames(String... attributeNames) {
         if(attributeNames == null || attributeNames.length == 0){
             throw new TransformationDefinitionException("Attribute names cannot be null or empty");
         }
