@@ -19,11 +19,17 @@ public class LogbackVerboseConfigurator extends VerboseConfigurator {
 
     @Override
     void setLoggerLevel(String logger, org.slf4j.event.Level level) {
+        if(level == null) {
+            throw new IllegalArgumentException("level argument cannot be null");
+        }
         loggerContext.getLogger(logger).setLevel(getLogbackLogLevel(level));
     }
 
     @Override
     void setLoggerLevel(Class logger, org.slf4j.event.Level level) {
+        if(level == null) {
+            throw new IllegalArgumentException("level argument cannot be null");
+        }
         loggerContext.getLogger(logger).setLevel(getLogbackLogLevel(level));
     }
 
