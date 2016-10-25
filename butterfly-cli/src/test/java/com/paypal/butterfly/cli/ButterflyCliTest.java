@@ -1,7 +1,6 @@
 package com.paypal.butterfly.cli;
 
 import com.paypal.butterfly.extensions.api.Extension;
-import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
