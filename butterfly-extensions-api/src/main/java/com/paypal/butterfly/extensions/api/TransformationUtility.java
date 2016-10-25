@@ -536,7 +536,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
                     return PerformResult.skippedCondition(this, details);
                 }
             } catch (CloneNotSupportedException e) {
-                String exceptionMessage = String.format("Utility '%s' can't be executed because the UtilityCondition object associated with it can't be cloned");
+                String exceptionMessage = String.format("Utility '%s' can't be executed because the UtilityCondition object associated with it can't be cloned", getName());
                 TransformationUtilityException ex = new TransformationUtilityException(exceptionMessage, e);
                 return PerformResult.error(this, ex);
             }
