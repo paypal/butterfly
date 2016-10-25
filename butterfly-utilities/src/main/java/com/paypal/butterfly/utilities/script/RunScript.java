@@ -33,9 +33,8 @@ public class RunScript extends TransformationUtility<RunScript> {
     public RunScript() {
     }
 
-    public RunScript(String script, String... attributeNames) {
+    public RunScript(String script) {
         setScript(script);
-        setAttributeNames(attributeNames);
     }
 
     public RunScript setScript(String script) {
