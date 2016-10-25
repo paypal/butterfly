@@ -85,7 +85,8 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
         return this;
     }
 
-    /* Set the Maven properties for the goal
+    /**
+     * Set the Maven properties for the goal
      *
      * @param properties equivalent to '-D' options
      * @return this utility instance
@@ -113,6 +114,15 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
      */
     public String[] getGoals() {
         return Arrays.copyOf(goals, goals.length);
+    }
+
+    /**
+     * Return the Maven properties for the goal
+     *
+     * @return properties for the Maven invocation
+     */
+    public Properties getProperties() {
+        return properties;
     }
 
     /**
@@ -148,7 +158,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
                 request.setFailureBehavior(mavenFailureBehavior);
             }
 
-            if ((null != properties) && (false == properties.isEmpty())) {
+            if (null != properties && false == properties.isEmpty()) {
                 request.setProperties(properties);
             }
 

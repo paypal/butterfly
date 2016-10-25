@@ -81,6 +81,14 @@ public class MavenGoalTest {
     }
 
     @Test
+    public void getPropertiesReturnsOriginalObject() {
+        Properties p = new Properties();
+        p.put("a",  "b");
+        mavenGoal.setProperties(p);
+        Assert.assertEquals(mavenGoal.getProperties(), p);
+    }
+
+    @Test
     public void providesADescription() {
         String[] goals = {"x", "y", "z"};
         MavenGoal mGoal = new MavenGoal(goals);
