@@ -91,9 +91,9 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
      * @param properties equivalent to '-D' options
      * @return this utility instance
      */
-    public MavenGoal setProperties(Properties p) {
-        checkForNull("Maven properties", p);
-        this.properties = p;
+    public MavenGoal setProperties(Properties properties) {
+        checkForNull("Maven properties", properties);
+        this.properties = properties;
         return this;
     }
 
