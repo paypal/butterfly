@@ -1,0 +1,93 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] paymentapiplatserv application
+[INFO] common
+[INFO] bridge-impl
+[INFO] client
+[INFO] paymentapiplatservService
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building paymentapiplatserv application 208.0.2-RC1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.3.1:enforce (enforce) @ paymentapiplatserv ---
+[INFO] Current project isn't entry project(Raptor Web Project or Raptor Batch Project), no validation needed.
+[INFO] start validating project:/Users/facarvalho/dev/butterfly/Butterfly-Samples/transformed-apps/paymentapiplatserv-develop_219-transformed-20161018102819979
+[INFO] Dependency validation complete!! No violations.
+[INFO] Plugin dependency validation complete!! No violations.
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building common 208.0.2-RC1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.3.1:enforce (enforce) @ common ---
+[INFO] Current project isn't entry project(Raptor Web Project or Raptor Batch Project), no validation needed.
+[INFO] start validating project:/Users/sample/dev/butterfly/Butterfly-Samples/transformed-apps/paymentapiplatserv-develop_219-transformed-20161018102819979/common
+[ERROR] Application dependencies' version are lower than the version used by raptor:
+[org.mockito.mockito-core, 1.9.5]
+[org.apache.commons.commons-lang3, 3.2]
+
+[WARNING] Rule 2: org.apache.maven.plugins.enforcer.FailOnLowerVersionOverride failed with message:
+Application dependencies' version are lower than the version used by raptor:
+[org.mockito.mockito-core, 1.9.5]
+[org.apache.commons.commons-lang3, 3.2]
+
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Skipping bridge-impl
+[INFO] This project has been banned from the build due to previous failures.
+[INFO] ------------------------------------------------------------------------
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building client 208.0.2-RC1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.3.1:enforce (enforce) @ client ---
+[INFO] Current project isn't entry project(Raptor Web Project or Raptor Batch Project), no validation needed.
+[INFO] start validating project:/Users/sample/dev/butterfly/Butterfly-Samples/transformed-apps/paymentapiplatserv-develop_219-transformed-20161018102819979/client
+[ERROR] Application dependencies' version are lower than the version used by raptor:
+[com.ebayinc.platform.mayfly.mayfly-client, 1.2.6-RELEASE]
+[com.fasterxml.jackson.datatype.jackson-datatype-joda, 2.2.1]
+[WARNING] Rule 0: org.apache.maven.plugins.enforcer.AlwaysFail failed with message:
+Always fails!
+[WARNING] Rule 1: org.apache.maven.plugins.enforcer.RequireMavenVersion failed with message:
+Detected Maven Version: 3.1.1 is not in the allowed range 3.3.1.
+
+[WARNING] Rule 2: org.apache.maven.plugins.enforcer.FailOnLowerVersionOverride failed with message:
+Application dependencies' version are lower than the version used by raptor:
+[com.ebayinc.platform.mayfly.mayfly-client, 1.2.6-RELEASE]
+[com.fasterxml.jackson.datatype.jackson-datatype-joda, 2.2.1]
+
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Skipping paymentapiplatservService
+[INFO] This project has been banned from the build due to previous failures.
+[INFO] ------------------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] paymentapiplatserv application .................... SUCCESS [0.244s]
+[INFO] common ............................................ FAILURE [0.007s]
+[INFO] bridge-impl ....................................... SKIPPED
+[INFO] client ............................................ FAILURE [0.005s]
+[INFO] paymentapiplatservService ......................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 0.525s
+[INFO] Finished at: Tue Oct 18 10:53:58 CDT 2016
+[INFO] Final Memory: 11M/245M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-enforcer-plugin:1.3.1:enforce (enforce) on project common: Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed. -> [Help 1]
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-enforcer-plugin:1.3.1:enforce (enforce) on project client: Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed. -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <goals> -rf :common
