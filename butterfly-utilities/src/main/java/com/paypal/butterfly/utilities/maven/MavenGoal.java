@@ -1,14 +1,20 @@
 package com.paypal.butterfly.utilities.maven;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+import org.apache.maven.shared.invoker.DefaultInvoker;
+import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.Invoker;
+
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import org.apache.maven.shared.invoker.*;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Map;
 
 /**
  * Utility to run one or more Maven goals against a specific Maven POM file
@@ -20,6 +26,8 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     private static final String DESCRIPTION = "Execute Maven goal %s against pom file %s";
 
     private String[] goals = {};
+
+    private Properties properties = null;
 
     private MavenInvocationOutputHandler[] outputHandlers = {};
     
@@ -78,6 +86,18 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     }
 
     /**
+     * Set the Maven properties for the goal
+     *
+     * @param properties equivalent to '-D' options
+     * @return this utility instance
+     */
+    public MavenGoal setProperties(Properties p) {
+        checkForNull("Maven properties", p);
+        this.properties = p;
+        return this;
+    }
+
+    /**
      * Set the maven failure behavior to only fail at the end.
      *
      * @return this utility instance
@@ -94,6 +114,15 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
      */
     public String[] getGoals() {
         return Arrays.copyOf(goals, goals.length);
+    }
+
+    /**
+     * Return the Maven properties for the goal
+     *
+     * @return properties for the Maven invocation
+     */
+    public Properties getProperties() {
+        return properties;
     }
 
     /**
@@ -127,6 +156,10 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
 
             if (mavenFailureBehavior != null) {
                 request.setFailureBehavior(mavenFailureBehavior);
+            }
+
+            if (null != properties && false == properties.isEmpty()) {
+                request.setProperties(properties);
             }
 
             Invoker invoker = new DefaultInvoker();
