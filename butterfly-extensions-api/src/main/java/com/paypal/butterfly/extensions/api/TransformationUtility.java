@@ -3,6 +3,7 @@ package com.paypal.butterfly.extensions.api;
 
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import com.paypal.butterfly.extensions.api.utilities.UtilityCondition;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,6 +120,12 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     // This is the name of a transformation context attribute
     // whose value is a boolean
     private String unlessConditionAttributeName = null;
+
+    // Optional condition to let this operation be executed (if true)
+    // This is the actual UtilityCondition object to be executed
+    // right before this TU is executed. Its result is then evaluated
+    // and, based on that, this TU is executed or not
+    private UtilityCondition utilityCondition = null;
 
     /**
      * The public default constructor should always be available by any transformation
@@ -496,13 +503,13 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      *
      * @return the result
      */
-    public synchronized PerformResult perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
+    public PerformResult perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
 
         // Checking for IF condition
         if(ifConditionAttributeName != null) {
             Object conditionResult = transformationContext.get(ifConditionAttributeName);
             if (conditionResult == null || conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue()) {
-                String details = String.format("Operation '%s' has been skipped due to failing 'if' condition: %s", getName(), ifConditionAttributeName);
+                String details = String.format("Utility '%s' has been skipped due to failing 'if' condition: %s", getName(), ifConditionAttributeName);
                 return PerformResult.skippedCondition(this, details);
             }
         }
@@ -511,9 +518,29 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         if(unlessConditionAttributeName != null) {
             Object conditionResult = transformationContext.get(unlessConditionAttributeName);
             if (conditionResult == null || conditionResult instanceof Boolean && ((Boolean) conditionResult).booleanValue()) {
-                String details = String.format("Operation '%s' has been skipped due to failing 'unless' condition: %s", getName(), unlessConditionAttributeName);
+                String details = String.format("Utility '%s' has been skipped due to failing 'unless' condition: %s", getName(), unlessConditionAttributeName);
                 return PerformResult.skippedCondition(this, details);
             }
+        }
+
+        // Checking for UtilityCondition condition
+        if(utilityCondition != null) {
+            try {
+                TransformationUtility utilityCondition = this.utilityCondition.clone();
+                utilityCondition.relative(this.getRelativePath());
+                TUExecutionResult conditionExecutionResult = (TUExecutionResult) utilityCondition.execution(transformedAppFolder, transformationContext);
+                Object conditionResult = conditionExecutionResult.getValue();
+                if (conditionResult == null || conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue()) {
+                    String utilityConditionName = (utilityCondition.getName() == null ? utilityCondition.toString() : utilityCondition.getName());
+                    String details = String.format("Utility '%s' has been skipped due to failing UtilityCondition '%s'", getName(), utilityConditionName);
+                    return PerformResult.skippedCondition(this, details);
+                }
+            } catch (CloneNotSupportedException e) {
+                String exceptionMessage = String.format("Utility '%s' can't be executed because the UtilityCondition object associated with it can't be cloned", getName());
+                TransformationUtilityException ex = new TransformationUtilityException(exceptionMessage, e);
+                return PerformResult.error(this, ex);
+            }
+
         }
 
         // Checking for dependencies
@@ -699,8 +726,30 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      *                               utility should be executed or not
      * @return this utility instance
      */
-    public final synchronized TU executeIf(String conditionAttributeName) {
+    public final TU executeIf(String conditionAttributeName) {
         this.ifConditionAttributeName = conditionAttributeName;
+        return (TU) this;
+    }
+
+    /**
+     * When set, this TU will only execute if this {@code utilityCondition} object,
+     * executed right before this TU, result in true.
+     * </br>
+     * Differences between this approach and {@link #executeIf(String)}:
+     * <ol>
+     *     <li>Instead of relying on a TCA ({@link TransformationContext attribute}) with the condition result, this method is based on the direct execution of the {@link UtilityCondition} object</li>
+     *     <li>The {@link UtilityCondition} object is always executed necessarily against the same file. Because of that, any value set on it via {@link #relative(String)} or {@link #absolute(String)} is ignored.</li>
+     *     <li>The {@link UtilityCondition} object does not produce any TCA, neither its result value or result object. Instead, it hands its result directly to the TU, so that the condition can be evaluated just before the TU executes (or not, if it fails).</li>
+     *     <li>The {@link UtilityCondition} object does not exist from a transformation template point of view. That means this method is totally different than adding a new {@link UtilityCondition} object by calling {@link TransformationTemplate#add(TransformationUtility)}.</li>
+     *     <li>No TU can {@link #dependsOn(String...)} this {@link UtilityCondition} object.</li>
+     * </ol>
+     * <strong>The actual {@link UtilityCondition} object is not the one used, but a clone of it<strong/>
+     *
+     * @param utilityCondition the condition to be executed and evaluated right before this TU
+     * @return this utility instance
+     */
+    public final TU executeIf(UtilityCondition utilityCondition) {
+        this.utilityCondition = utilityCondition;
         return (TU) this;
     }
 
@@ -714,7 +763,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      *                               utility should be executed or not
      * @return this utility instance
      */
-    public final synchronized TU executeUnless(String conditionAttributeName) {
+    public final TU executeUnless(String conditionAttributeName) {
         this.unlessConditionAttributeName = conditionAttributeName;
         return (TU) this;
     }
@@ -780,6 +829,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         clone.saveResult = this.saveResult;
         clone.ifConditionAttributeName = this.ifConditionAttributeName;
         clone.unlessConditionAttributeName = this.unlessConditionAttributeName;
+        clone.utilityCondition = this.utilityCondition;
 
         return clone;
     }

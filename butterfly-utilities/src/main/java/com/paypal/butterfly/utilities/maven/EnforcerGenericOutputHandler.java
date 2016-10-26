@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 public class EnforcerGenericOutputHandler implements MavenInvocationOutputHandler<Set<String>> {
     private static final Pattern RULE_WARNING_LINE_MATCH_REGEX = Pattern.compile(".* Rule [\\d]+:.*");
     private static final String RULE_BEGINNING_PHRASE = "Rule ";
+    private static final String MESSAGE_FORMAT = "%s '%s'.";
 
     private boolean executionStarted = false;
     private String message = null;
@@ -27,7 +28,7 @@ public class EnforcerGenericOutputHandler implements MavenInvocationOutputHandle
      * @return a String representation of the summary and details
      */
     public static String createMessage(String summary, String details) {
-        return String.format("%s '%s'.", summary, details);
+        return String.format(MESSAGE_FORMAT, summary, details);
     }
 
     @Override
