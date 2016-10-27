@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Transformation utilities are executed against the to be transformed project,
@@ -126,6 +127,15 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     // right before this TU is executed. Its result is then evaluated
     // and, based on that, this TU is executed or not
     private UtilityCondition utilityCondition = null;
+
+    // Indicates whether or not this utility has already been
+    // executed. Transformation utilities are supposed to
+    // be executed ONLY ONCE. If there is a need to execute
+    // it more than once, then it should be cloned before execution,
+    // then the original and the clone can be executed. They will
+    // have necessarily different names and different result objects
+    // in the TCA
+    private AtomicBoolean hasBeenPerformed = new AtomicBoolean(false);
 
     /**
      * The public default constructor should always be available by any transformation
@@ -504,6 +514,11 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * @return the result
      */
     public PerformResult perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
+        if(hasBeenPerformed.get()) {
+            String exceptionMessage = String.format("Utility %s has already been performed", getName());
+            TransformationUtilityException e = new TransformationUtilityException(exceptionMessage);
+            return PerformResult.error(this, e);
+        }
 
         // Checking for IF condition
         if(ifConditionAttributeName != null) {
@@ -555,11 +570,15 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         try {
             ExecutionResult executionResult = execution(transformedAppFolder, transformationContext);
             result = PerformResult.executionResult(this, executionResult);
-
-            return result;
         } catch(Exception e) {
-            throw new TransformationUtilityException(getName() + " has failed", e);
+            String exceptionMessage = String.format("Utility %s has failed", getName());
+            TransformationUtilityException ex = new TransformationUtilityException(exceptionMessage, e);
+            return PerformResult.error(this, ex);
+        } finally {
+            hasBeenPerformed.set(true);
         }
+
+        return result;
     }
 
     /**
@@ -616,6 +635,15 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     protected TU setSaveResult(boolean saveResult) {
         this.saveResult = saveResult;
         return (TU) this;
+    }
+
+    /**
+     * Returns true only if this utility has already been performed
+     *
+     * @return true only if this utility has already been performed
+     */
+    public final boolean hasBeenPerformed() {
+        return hasBeenPerformed.get();
     }
 
     /**
@@ -819,6 +847,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         clone.absoluteFileFromContextAttribute = null;
         clone.additionalRelativePath = null;
         clone.contextAttributeName = null;
+        clone.hasBeenPerformed = new AtomicBoolean(false);
 
         // Properties we want to be in the clone (they are being copied from original object)
         clone.latePropertiesAttributes = new HashMap<String, String>();

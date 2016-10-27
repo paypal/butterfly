@@ -17,6 +17,8 @@ import java.util.List;
  */
 public abstract class TransformationTemplate<TT> implements TransformationUtilityParent {
 
+    // TODO it should have a map of TUs to ensure all TUs names will always be unique and non null
+
     private List<TransformationUtility> utilityList = new ArrayList<TransformationUtility>();
 
     private String name = getExtensionClass().getSimpleName() + ":" + getClass().getSimpleName();;
