@@ -15,15 +15,13 @@ import java.util.List;
  *
  * @author facarvalho
  */
-public abstract class TransformationTemplate<TT> implements TransformationUtilityParent {
+public abstract class TransformationTemplate implements TransformationUtilityParent {
 
     // TODO it should have a map of TUs to ensure all TUs names will always be unique and non null
 
     private List<TransformationUtility> utilityList = new ArrayList<TransformationUtility>();
 
     private String name = getExtensionClass().getSimpleName() + ":" + getClass().getSimpleName();;
-
-    private int operationsCount = 0;
 
     /**
      * Returns the class of the extension this transformation
@@ -70,10 +68,6 @@ public abstract class TransformationTemplate<TT> implements TransformationUtilit
             // Not to be confused with the index of the element in the list,
             // Since the first utility will be assigned order 1 (not 0)
             order = utilityList.size();
-
-            if(utility instanceof TransformationOperation) {
-                operationsCount++;
-            }
         }
 
         utility.setParent(this, order);
@@ -134,16 +128,6 @@ public abstract class TransformationTemplate<TT> implements TransformationUtilit
 
     protected final void log(Level logLevel, String logMessage, String... attributeNames) {
         add(new Log().setLogLevel(logLevel).setLogMessage(logMessage).setAttributeNames(attributeNames));
-    }
-
-    /**
-     * Returns the number of transformation operations to be executed by this
-     * transformation template
-     *
-     * @return
-     */
-    public int getOperationsCount() {
-        return operationsCount;
     }
 
     /**

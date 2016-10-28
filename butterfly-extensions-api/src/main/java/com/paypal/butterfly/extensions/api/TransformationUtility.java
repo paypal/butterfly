@@ -154,6 +154,9 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * @return this transformation utility
      */
     public TU setName(String name) {
+        if(StringUtils.isBlank(name)) {
+            throw new TransformationDefinitionException(name + " cannot be blank");
+        }
         this.name = name;
         return (TU) this;
     }
@@ -875,7 +878,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * @throws TransformationDefinitionException if check fails
      */
     protected static void checkForBlankString(String name, String value) throws TransformationDefinitionException{
-        if(StringUtils.isBlank(value)){
+        if (StringUtils.isBlank(value)) {
             throw new TransformationDefinitionException(name + " cannot be blank");
         }
     }
@@ -892,7 +895,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * @throws TransformationDefinitionException if check fails
      */
     protected static void checkForEmptyString(String name, String value) throws TransformationDefinitionException{
-        if(value != null && value.trim().length() == 0){
+        if (value != null && value.trim().length() == 0) {
             throw new TransformationDefinitionException(name + " cannot be empty");
         }
     }
@@ -909,7 +912,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * @throws TransformationDefinitionException if check fails
      */
     protected static void checkForNull(String name, Object value) throws TransformationDefinitionException{
-        if(value == null){
+        if (value == null) {
             throw new TransformationDefinitionException(name + " cannot be null");
         }
     }

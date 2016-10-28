@@ -85,7 +85,7 @@ public class TransformationEngine {
      */
     private void perform(TransformationTemplate template, File transformedAppFolder) throws TransformationException {
         logger.info("====================================================================================================================================");
-        logger.info("Beginning transformation (template: {}, operations to be performed: {})", template.getClass().getName(), template.getOperationsCount());
+        logger.info("Beginning transformation (template: {})", template.getClass().getName());
 
         AtomicInteger operationsExecutionOrder = new AtomicInteger(1);
 
