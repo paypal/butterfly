@@ -30,10 +30,16 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     private Properties properties = null;
 
     private MavenInvocationOutputHandler[] outputHandlers = {};
+
+    private MultipleOutputHandler multipleOutputHandler = new MultipleOutputHandler();
     
     private String mavenFailureBehavior = null;
     
     private InvocationRequest request = new DefaultInvocationRequest();
+
+    private InvocationResult invocationResult = null;
+
+    private Invoker invoker = new DefaultInvoker();
 
     /**
      * Utility to run one or more Maven goals against a specific Maven POM file
@@ -145,7 +151,6 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
         TUExecutionResult result = null;
 
         try {
-            MultipleOutputHandler multipleOutputHandler = new MultipleOutputHandler();
             for (MavenInvocationOutputHandler outputHandler : outputHandlers) {
                 multipleOutputHandler.register(outputHandler);
             }
@@ -162,8 +167,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
                 request.setProperties(properties);
             }
 
-            Invoker invoker = new DefaultInvoker();
-            InvocationResult invocationResult = invoker.execute(request);
+            invocationResult = invoker.execute(request);
 
             int exitCode = invocationResult.getExitCode();
             Map<Class<? extends MavenInvocationOutputHandler>, Object> outputHandlersResult = multipleOutputHandler.getResult();
@@ -178,7 +182,16 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
                 result = TUExecutionResult.error(this, outputHandlersResult, e);
             }
         } catch (Exception e) {
-            result = TUExecutionResult.error(this, e);
+            if (invocationResult != null) {
+                Exception invocationException = invocationResult.getExecutionException();
+                if (invocationException != null) {
+                    result = TUExecutionResult.error(this, invocationException);
+                }
+            }
+
+            if (result == null) {
+                result = TUExecutionResult.error(this, e);
+            }
         }
 
         return result;
