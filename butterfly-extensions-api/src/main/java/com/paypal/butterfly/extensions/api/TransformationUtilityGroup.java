@@ -8,10 +8,12 @@ import java.io.File;
 import java.util.*;
 
 /**
+ * Group of transformation utilities. The benefit of grouping them is the ability to, for example, condition the execution of all of them
+ * together (by setting {@link #executeIf(String)} to the group), or to loop them, etc.
  *
  * @author facarvalho
  */
-public class UtilitiesGroup extends TransformationUtility<UtilitiesGroup> implements TransformationUtilityList {
+public class TransformationUtilityGroup extends TransformationUtility<TransformationUtilityGroup> implements TransformationUtilityList {
 
     private List<TransformationUtility> utilityList = new ArrayList<TransformationUtility>();
 
@@ -19,7 +21,7 @@ public class UtilitiesGroup extends TransformationUtility<UtilitiesGroup> implem
 
     private static final String DESCRIPTION = "Transformation utility group";
 
-    public UtilitiesGroup() {
+    public TransformationUtilityGroup() {
     }
 
     @Override
