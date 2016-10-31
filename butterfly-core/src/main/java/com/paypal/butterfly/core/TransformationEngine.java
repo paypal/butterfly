@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The transformation engine in charge of
@@ -32,6 +31,7 @@ public class TransformationEngine {
 
     // This is used to create a timestamp to be applied as suffix in the transformed application folder
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+    private static final String ORDER_FORMAT = "%s.%d";
 
     /**
      * Perform an application transformation based on the specified {@link Transformation}
@@ -85,13 +85,16 @@ public class TransformationEngine {
         logger.info("====================================================================================================================================");
         logger.info("Beginning transformation");
 
-        AtomicInteger operationsExecutionOrder = new AtomicInteger(1);
+        int operationsExecutionOrder = 1;
         TransformationContextImpl transformationContext = new TransformationContextImpl();
 
         TransformationUtility utility;
         for(Object transformationUtilityObj: template.getUtilities()) {
             utility = (TransformationUtility) transformationUtilityObj;
-            perform(utility, transformedAppFolder, transformationContext, operationsExecutionOrder, null);
+            perform(utility, transformedAppFolder, transformationContext, String.valueOf(operationsExecutionOrder));
+            if (utility instanceof TransformationOperation || utility instanceof TransformationUtilityParent) {
+                operationsExecutionOrder++;
+            }
         }
 
         logger.info("Transformation has been completed");
@@ -100,44 +103,40 @@ public class TransformationEngine {
     /*
      * Perform a list of utilities in an application
      */
-    private void perform(TransformationUtilityParent utilityParent, PerformResult result, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger operationsExecutionOrder) throws TransformationException {
+    private void perform(TransformationUtilityParent utilityParent, PerformResult result, File transformedAppFolder, TransformationContextImpl transformationContext, String order) throws TransformationException {
         TUExecutionResult.Type executionResultType = (TUExecutionResult.Type) result.getExecutionResult().getType();
         if(!executionResultType.equals(TUExecutionResult.Type.VALUE)) {
             processUtilityExecutionResult((TransformationUtility) utilityParent, result, transformationContext);
             return;
         }
 
-        logger.info("\t{}\t - Executing {}", operationsExecutionOrder.intValue(), utilityParent.getName());
+        // TODO print number of \t based on depth of parents
+        logger.info("\t{}\t - Executing {}", order, utilityParent.getName());
 
-        AtomicInteger innerOpExecOrder = new AtomicInteger(1);
         PerformResult childResult;
+        String childOrder;
+        int i = 1;
         for(TransformationUtility utility : utilityParent.getChildren()) {
-            childResult = perform(utility, transformedAppFolder, transformationContext, innerOpExecOrder, operationsExecutionOrder.intValue());
+            childOrder = String.format(ORDER_FORMAT, order, i);
+            childResult = perform(utility, transformedAppFolder, transformationContext, childOrder);
             if (utility.isSaveResult()) {
                 // Saving the whole perform result, which is different from the value that resulted from the utility execution,
                 // saved in processUtilityExecutionResult
 
                 transformationContext.putResult(utility.getName(), childResult);
             }
+            if (utility instanceof TransformationOperation || utility instanceof TransformationUtilityParent) {
+                i++;
+            }
         }
-
-        operationsExecutionOrder.incrementAndGet();
     }
 
     /*
      * Perform an transformation utility against an application. Notice that this utility can also be
      * actually a transformation operation
      */
-    private PerformResult perform(TransformationUtility utility, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger operationsExecutionOrder, Integer outerOrder) throws TransformationException {
+    private PerformResult perform(TransformationUtility utility, File transformedAppFolder, TransformationContextImpl transformationContext, String order) throws TransformationException {
         boolean isTO = utility instanceof TransformationOperation;
-        String order = "-";
-        if (isTO) {
-            if(outerOrder != null) {
-                order = String.format("%d.%d", outerOrder, operationsExecutionOrder.get());
-            } else {
-                order = String.valueOf(operationsExecutionOrder.get());
-            }
-        }
         PerformResult result = null;
         try {
             result = utility.perform(transformedAppFolder, transformationContext);
@@ -147,6 +146,7 @@ public class TransformationEngine {
                     // Same as SKIPPED_DEPENDENCY
                 case SKIPPED_DEPENDENCY:
                     if (isTO || logger.isDebugEnabled()) {
+                        // TODO print number of \t based on depth of parents
                         logger.info("\t{}\t - {}", order, result.getDetails());
                     }
                     break;
@@ -156,7 +156,7 @@ public class TransformationEngine {
                     } else {
                         processUtilityExecutionResult(utility, result, transformationContext);
                         if(utility instanceof TransformationUtilityParent) {
-                            perform((TransformationUtilityParent) utility, result, transformedAppFolder, transformationContext, operationsExecutionOrder);
+                            perform((TransformationUtilityParent) utility, result, transformedAppFolder, transformationContext, order);
                         }
                     }
                     break;
@@ -171,7 +171,6 @@ public class TransformationEngine {
             result = PerformResult.error(utility, e);
             processError(utility, e, order);
         } finally {
-            if (isTO) operationsExecutionOrder.incrementAndGet();
             if (utility.isSaveResult()) {
                 // Saving the whole perform result, which is different from the value that resulted from the utility execution,
                 // saved in processUtilityExecutionResult
@@ -201,9 +200,11 @@ public class TransformationEngine {
         TOExecutionResult executionResult = (TOExecutionResult) result.getExecutionResult();
         switch (executionResult.getType()) {
             case SUCCESS:
+                // TODO print number of \t based on depth of parents
                 logger.info("\t{}\t - {}", order, executionResult.getDetails());
                 break;
             case NO_OP:
+                // TODO print number of \t based on depth of parents
                 logger.info("\t{}\t - {}", order, executionResult.getDetails());
                 break;
             case WARNING:
