@@ -6,7 +6,7 @@ package com.paypal.butterfly.extensions.api.upgrade;
  *
  * @author facarvalho
  */
-public abstract class UpgradeStep<US> extends UpgradeTemplate<US> {
+public abstract class UpgradeStep extends UpgradeTemplate {
 
     /**
      * Returns the version the application would be upgraded to

@@ -7,7 +7,7 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
  *
  * @author facarvalho
  */
-public abstract class UpgradeTemplate<UT> extends TransformationTemplate<UT> {
+public abstract class UpgradeTemplate extends TransformationTemplate {
 
     /**
      * Returns the current version of the application, in other words, the
