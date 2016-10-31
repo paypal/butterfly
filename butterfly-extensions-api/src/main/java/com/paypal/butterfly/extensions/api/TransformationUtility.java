@@ -50,7 +50,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
 
     private static final Logger logger = LoggerFactory.getLogger(TransformationUtility.class);
 
-    private static final String UTILITY_NAME_SYNTAX = "%s-%d-%s";
+    protected static final String UTILITY_NAME_SYNTAX = "%s-%d-%s";
 
     // The execution order for this utility on its parent
     // -1 means it has not been registered to any parent yet
@@ -153,7 +153,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * @param name
      * @return this transformation utility
      */
-    public TU setName(String name) {
+    TU setName(String name) {
         if(StringUtils.isBlank(name)) {
             throw new TransformationDefinitionException(name + " cannot be blank");
         }
@@ -527,7 +527,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         if(ifConditionAttributeName != null) {
             Object conditionResult = transformationContext.get(ifConditionAttributeName);
             if (conditionResult == null || conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue()) {
-                String details = String.format("Utility '%s' has been skipped due to failing 'if' condition: %s", getName(), ifConditionAttributeName);
+                String details = String.format("%s was skipped due to failing 'if' condition: %s", getName(), ifConditionAttributeName);
                 return PerformResult.skippedCondition(this, details);
             }
         }
@@ -536,7 +536,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         if(unlessConditionAttributeName != null) {
             Object conditionResult = transformationContext.get(unlessConditionAttributeName);
             if (conditionResult == null || conditionResult instanceof Boolean && ((Boolean) conditionResult).booleanValue()) {
-                String details = String.format("Utility '%s' has been skipped due to failing 'unless' condition: %s", getName(), unlessConditionAttributeName);
+                String details = String.format("%s was skipped due to failing 'unless' condition: %s", getName(), unlessConditionAttributeName);
                 return PerformResult.skippedCondition(this, details);
             }
         }
@@ -550,11 +550,11 @@ public abstract class TransformationUtility<TU> implements Cloneable {
                 Object conditionResult = conditionExecutionResult.getValue();
                 if (conditionResult == null || conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue()) {
                     String utilityConditionName = (utilityCondition.getName() == null ? utilityCondition.toString() : utilityCondition.getName());
-                    String details = String.format("Utility '%s' has been skipped due to failing UtilityCondition '%s'", getName(), utilityConditionName);
+                    String details = String.format("%s was skipped due to failing UtilityCondition '%s'", getName(), utilityConditionName);
                     return PerformResult.skippedCondition(this, details);
                 }
             } catch (CloneNotSupportedException e) {
-                String exceptionMessage = String.format("Utility '%s' can't be executed because the UtilityCondition object associated with it can't be cloned", getName());
+                String exceptionMessage = String.format("%s can't be executed because the UtilityCondition object associated with it can't be cloned", getName());
                 TransformationUtilityException ex = new TransformationUtilityException(exceptionMessage, e);
                 return PerformResult.error(this, ex);
             }
@@ -831,6 +831,15 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * by the concrete utility class, since its type is generic
      */
     protected abstract ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext);
+
+    /**
+     * Return true only if a file has been set, either via {@link #relative(String)} or {@link #absolute(String)}
+     *
+     * @return
+     */
+    public final boolean isFileSet() {
+        return !(getRelativePath() == null && getAbsoluteFileFromContextAttribute() == null);
+    }
 
     @Override
     public String toString() {

@@ -1,6 +1,5 @@
-package com.paypal.butterfly.extensions.api.utilities;
+package com.paypal.butterfly.extensions.api;
 
-import com.paypal.butterfly.extensions.api.*;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.slf4j.Logger;
@@ -67,7 +66,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
     private TransformationOperation templateOperation;
 
     // Actual operations to performed against all specified files
-    private List<TransformationOperation> operations;
+    private List<TransformationUtility> operations;
 
     /**
      * Utility to perform multiple transformation operations. Multiple transformation operations
@@ -217,6 +216,8 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
 
+        // FIXME this is not working when executed inside of a UtilitiesGroup
+
         Collection<File> files;
         Set<File> allFiles = new HashSet<File>();
 
@@ -262,7 +263,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
         }
 
         TransformationOperation operation;
-        operations = new ArrayList<TransformationOperation>();
+        operations = new ArrayList<TransformationUtility>();
         int order = 1;
         try {
             for(File file : allFiles) {
@@ -281,7 +282,6 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
                 }
             }
         } catch (CloneNotSupportedException e) {
-            // If MultipleOperations ever get converted to TO, then change the exception below to TOE
             TransformationUtilityException tue = new TransformationUtilityException("The template transformation operation is not cloneable", e);
             return TUExecutionResult.error(this, tue);
         } catch (InvocationTargetException | IllegalAccessException e) {
@@ -294,7 +294,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
         if(logger.isDebugEnabled()) {
             message = String.format("Multiple operation %s resulted in %d operations based on %s", getName(), operations.size(), templateOperation.getClass().getSimpleName());
         }
-        return TUExecutionResult.value(this, operations).setDetails(message);
+        return TUExecutionResult.value(this, getChildren()).setDetails(message);
     }
 
     private TransformationOperation createClone(int order, File transformedAppFolder, File file) throws CloneNotSupportedException {
@@ -305,7 +305,8 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
         return operation;
     }
 
-    public List<TransformationOperation> getOperations() {
+    @Override
+    public List<TransformationUtility> getChildren() {
         return Collections.unmodifiableList(operations);
     }
 

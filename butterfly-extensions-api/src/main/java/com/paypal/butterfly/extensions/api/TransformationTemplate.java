@@ -2,12 +2,9 @@ package com.paypal.butterfly.extensions.api;
 
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.utilities.Log;
-import com.paypal.butterfly.extensions.api.utilities.MultipleOperations;
 import org.slf4j.event.Level;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * A transformation template is a set of transformation
@@ -15,11 +12,11 @@ import java.util.List;
  *
  * @author facarvalho
  */
-public abstract class TransformationTemplate implements TransformationUtilityParent {
+public abstract class TransformationTemplate implements TransformationUtilityList {
 
-    // TODO it should have a map of TUs to ensure all TUs names will always be unique and non null
+    private List<TransformationUtility> utilityList = new ArrayList<>();
 
-    private List<TransformationUtility> utilityList = new ArrayList<TransformationUtility>();
+    private Set<String> utilityNames = new HashSet<>();
 
     private String name = getExtensionClass().getSimpleName() + ":" + getClass().getSimpleName();;
 
@@ -53,11 +50,21 @@ public abstract class TransformationTemplate implements TransformationUtilityPar
      *
      * @return the utility name
      */
-    protected final String add(TransformationUtility utility) {
+    @Override
+    public final String add(TransformationUtility utility) {
         if (utility.getParent() != null) {
             String exceptionMessage = String.format("Invalid attempt to add already registered transformation utility %s to template transformation utility %s", utility.getName(), name);
-            TransformationDefinitionException exception = new  TransformationDefinitionException(exceptionMessage);
-            throw exception;
+            throw new  TransformationDefinitionException(exceptionMessage);
+        }
+        // TODO
+        // Here I should check the TUs inside of utilities groups and multiple operations as well
+        if (utility.getName() != null && utilityNames.contains(utility.getName())) {
+            String exceptionMessage = String.format("Invalid attempt to add transformation utility %s to template transformation utility %s. Its name is already registered", utility.getName(), name);
+            throw new  TransformationDefinitionException(exceptionMessage);
+        }
+        if (!utility.isFileSet()) {
+            String exceptionMessage = String.format("Neither absolute, nor relative path, have been set for transformation utility %s", utility.getName());
+            throw new  TransformationDefinitionException(exceptionMessage);
         }
 
         int order;
@@ -72,11 +79,7 @@ public abstract class TransformationTemplate implements TransformationUtilityPar
 
         utility.setParent(this, order);
 
-        if (utility.getRelativePath() == null && utility.getAbsoluteFileFromContextAttribute() == null) {
-            String exceptionMessage = String.format("Neither absolute, nor relative path, have been set for transformation utility %s", utility.getName());
-            TransformationDefinitionException exception = new  TransformationDefinitionException(exceptionMessage);
-            throw exception;
-        }
+        utilityNames.add(utility.getName());
 
         return utility.getName();
     }
@@ -94,7 +97,8 @@ public abstract class TransformationTemplate implements TransformationUtilityPar
      *
      * @return the utility name
      */
-    protected final String add(TransformationUtility utility, String utilityName) {
+    @Override
+    public final String add(TransformationUtility utility, String utilityName) {
         utility.setName(utilityName);
         return add(utility);
     }
@@ -110,23 +114,28 @@ public abstract class TransformationTemplate implements TransformationUtilityPar
      *                   of Files which the transformation operations should perform
      *                   against
      */
-    protected final String addMultiple(TransformationOperation templateOperation, String... attributes) {
+    @Override
+    public final String addMultiple(TransformationOperation templateOperation, String... attributes) {
         return add(new MultipleOperations(templateOperation).setFiles(attributes));
     }
 
-    protected final void log(String logMessage) {
+    @Override
+    public final void log(String logMessage) {
         add(new Log().setLogMessage(logMessage));
     }
 
-    protected final void log(Level logLevel, String logMessage) {
+    @Override
+    public final void log(Level logLevel, String logMessage) {
         add(new Log().setLogLevel(logLevel).setLogMessage(logMessage));
     }
 
-    protected final void log(String logMessage, String... attributeNames) {
+    @Override
+    public final void log(String logMessage, String... attributeNames) {
         add(new Log().setLogMessage(logMessage).setAttributeNames(attributeNames));
     }
 
-    protected final void log(Level logLevel, String logMessage, String... attributeNames) {
+    @Override
+    public final void log(Level logLevel, String logMessage, String... attributeNames) {
         add(new Log().setLogLevel(logLevel).setLogMessage(logMessage).setAttributeNames(attributeNames));
     }
 
@@ -136,8 +145,14 @@ public abstract class TransformationTemplate implements TransformationUtilityPar
      *
      * @return the list of utilities to transform the application,
      */
+    @Override
     public final List<TransformationUtility> getUtilities() {
         return Collections.unmodifiableList(utilityList);
+    }
+
+    @Override
+    public List<TransformationUtility> getChildren() {
+        return getUtilities();
     }
 
     @Override

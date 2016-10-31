@@ -1,16 +1,14 @@
-package com.paypal.butterfly.extensions.api.utilities;
-
-import com.paypal.butterfly.extensions.api.TransformationOperation;
+package com.paypal.butterfly.extensions.api;
 
 /**
- * This is a basic abstract transformation operation that allows transformation templates
- * to define on-the-fly anonymous operations where only the execution method is left
+ * This is a basic abstract transformation utility that allows transformation templates
+ * to define on-the-fly anonymous utilities where only the execution method is left
  * to be implemented. Notice that the description can be set using a setter
  * inside of the execution implementation. If not set, a generic description will be set.
  *
  * @author facarvalho
  */
-public abstract class AnonymousOperation extends TransformationOperation<AnonymousOperation> {
+public abstract class AnonymousUtility<RT> extends TransformationUtility<AnonymousUtility> {
 
     private String description = null;
 
@@ -20,9 +18,9 @@ public abstract class AnonymousOperation extends TransformationOperation<Anonymo
     }
 
     @Override
-    public AnonymousOperation setName(String name) {
+    public AnonymousUtility setName(String name) {
         if(description == null) {
-            description = "Anonymous transformation operation " + name;
+            description = "Anonymous transformation utility " + name;
         }
         return super.setName(name);
     }
