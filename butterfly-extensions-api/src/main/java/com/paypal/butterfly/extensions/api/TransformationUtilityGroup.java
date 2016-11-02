@@ -8,10 +8,12 @@ import java.io.File;
 import java.util.*;
 
 /**
+ * Group of transformation utilities. The benefit of grouping them is the ability to, for example, condition the execution of all of them
+ * together (by setting {@link #executeIf(String)} to the group), or to loop them, etc.
  *
  * @author facarvalho
  */
-public class UtilitiesGroup extends TransformationUtility<UtilitiesGroup> implements TransformationUtilityList {
+public class TransformationUtilityGroup extends TransformationUtility<TransformationUtilityGroup> implements TransformationUtilityList {
 
     private List<TransformationUtility> utilityList = new ArrayList<TransformationUtility>();
 
@@ -19,7 +21,7 @@ public class UtilitiesGroup extends TransformationUtility<UtilitiesGroup> implem
 
     private static final String DESCRIPTION = "Transformation utility group";
 
-    public UtilitiesGroup() {
+    public TransformationUtilityGroup() {
     }
 
     @Override
@@ -59,7 +61,6 @@ public class UtilitiesGroup extends TransformationUtility<UtilitiesGroup> implem
         }
 
         utility.setParent(this, order);
-
         utilityNames.add(utility.getName());
 
         return utility.getName();
@@ -108,21 +109,23 @@ public class UtilitiesGroup extends TransformationUtility<UtilitiesGroup> implem
 
     @Override
     protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-// FIXME this won't work because clone doesn't propagate many essential attributes, such as the file, order, parent, etc
-//        List<TransformationUtility> utilityClonesList = new ArrayList<>();
-//
-//        try {
-//            for (TransformationUtility utility : utilityList) {
-//                utilityClonesList.add(utility.clone());
-//            }
-//        } catch (CloneNotSupportedException e) {
-//            TransformationUtilityException tue = new TransformationUtilityException("Transformation utility is not cloneable", e);
-//            return TUExecutionResult.error(this, tue);
-//        }
-//
-//        TUExecutionResult result = TUExecutionResult.value(this, utilityClonesList);
         TUExecutionResult result = TUExecutionResult.value(this, getChildren());
         return result;
+    }
+
+    @Override
+    public TransformationUtility<TransformationUtilityGroup> clone() throws CloneNotSupportedException {
+        TransformationUtilityGroup groupClone = (TransformationUtilityGroup) super.clone();
+        groupClone.utilityList = new ArrayList<>();
+        groupClone.utilityNames = new HashSet<>();
+        for (TransformationUtility utility : utilityList) {
+            TransformationUtility utilityClone = utility.clone();
+            utilityClone.setParent(groupClone, utility.getOrder());
+            groupClone.utilityList.add(utilityClone);
+            groupClone.utilityNames.add(utilityClone.getName());
+        }
+
+        return groupClone;
     }
 
 }

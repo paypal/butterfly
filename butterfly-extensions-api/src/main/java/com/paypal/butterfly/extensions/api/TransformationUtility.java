@@ -29,10 +29,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * does modify the project
  *
  * IMPORTANT:
- * Every TransformationUtility subclass MUST be a Java bean, which means they must have
- * a public no arguments default constructor, and also public setters and getters for all
- * their properties. In addition to that, every setter must return the
- * TransformationUtility instance.
+ * Every TransformationUtility subclass MUST have a public no arguments default constructor,
+ * and also public setters and getters for all properties they want to expose via {@link #set(String, String)}.
+ * In addition to that, every setter must return the TransformationUtility instance.
  * </br>
  * Also, every TransformationUtility subclass must override {@link #clone()} and every utility
  * specific property defined in the subclass must be copied from the original
@@ -94,12 +93,12 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     private String contextAttributeName = null;
 
     // Map of properties to be set later, during transformation time.
-    // The keys must be utility Java bean property names, and the values
+    // The keys must be utility Java property names, and the values
     // must be transformation context attribute names
     private Map<String, String> latePropertiesAttributes = new HashMap<String, String>();
 
     // Map of properties to be set later, during transformation time.
-    // The keys must be utility Java bean property names, and the values
+    // The keys must be utility Java property names, and the values
     // must be the setter methods
     private Map<String, Method> latePropertiesSetters = new HashMap<String, Method>();
 
@@ -369,7 +368,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * cheap, especially because it happens during transformation time.
      * So, use it only when really necessary.
      *
-     * @param propertyName the transformation utility Java bean property name
+     * @param propertyName the transformation utility Java property name
      * @param contextAttributeName the name of the transformation context attribute whose
      *                             value will be set as the property value right before
      *                             execution
@@ -737,9 +736,9 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         if (failedDependency != null) {
             String details;
             if (failedDependencyResult != null) {
-                details = String.format("'%s' has been skipped because its dependency %s resulted in %s", getName(), failedDependency, failedDependencyResult);
+                details = String.format("%s was skipped because its dependency %s resulted in %s", getName(), failedDependency, failedDependencyResult);
             } else {
-                details = String.format("'%s' has been skipped because its dependency %s has not been executed yet", getName(), failedDependency);
+                details = String.format("%s was skipped because its dependency %s has not been executed yet", getName(), failedDependency);
             }
             return PerformResult.skippedDependency(this, details);
         }
@@ -851,17 +850,17 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         TransformationUtility<TU> clone = (TransformationUtility<TU>) super.clone();
 
         // Properties we do NOT want to be in the clone (they are being initialized)
-        clone.order = -1;
-        clone.parent = null;
-        clone.name = null;
-        clone.relativePath = "";
-        clone.absoluteFile = null;
-        clone.absoluteFileFromContextAttribute = null;
-        clone.additionalRelativePath = null;
-        clone.contextAttributeName = null;
         clone.hasBeenPerformed = new AtomicBoolean(false);
 
         // Properties we want to be in the clone (they are being copied from original object)
+        clone.order = this.order;
+        clone.parent = this.parent;
+        clone.name = this.name;
+        clone.relativePath = this.relativePath;
+        clone.absoluteFile = this.absoluteFile;
+        clone.absoluteFileFromContextAttribute = this.absoluteFileFromContextAttribute;
+        clone.additionalRelativePath = this.additionalRelativePath;
+        clone.contextAttributeName = this.contextAttributeName;
         clone.latePropertiesAttributes = new HashMap<String, String>();
         clone.latePropertiesSetters = new HashMap<String, Method>();
         clone.latePropertiesAttributes.putAll(this.latePropertiesAttributes);
@@ -873,6 +872,48 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         clone.utilityCondition = this.utilityCondition;
 
         return clone;
+    }
+
+    /**
+     * Creates and returns a brand new utility object using the original as a template,
+     * and setting to the copy most of the attributes of the original one.
+     * It will not copy though all attributes that define the identity of the original one, which are:
+     * <ol>
+     *  <li>parent</li>
+     *  <li>name</li>
+     *  <li>order</li>
+     *  <li>file relative and absolute path</li>
+     *  <li>context attribute name</li>
+     * </ol>
+     *
+     * @return this utility instance
+     */
+    public TransformationUtility<TU> copy() throws CloneNotSupportedException {
+        TransformationUtility<TU> copy = (TransformationUtility<TU>) super.clone();
+
+        // Properties we do NOT want to be in the copy (they are being initialized)
+        copy.order = -1;
+        copy.parent = null;
+        copy.name = null;
+        copy.relativePath = "";
+        copy.absoluteFile = null;
+        copy.absoluteFileFromContextAttribute = null;
+        copy.additionalRelativePath = null;
+        copy.contextAttributeName = null;
+        copy.hasBeenPerformed = new AtomicBoolean(false);
+
+        // Properties we want to be in the copy (they are being copied from original object)
+        copy.latePropertiesAttributes = new HashMap<String, String>();
+        copy.latePropertiesSetters = new HashMap<String, Method>();
+        copy.latePropertiesAttributes.putAll(this.latePropertiesAttributes);
+        copy.latePropertiesSetters.putAll(this.latePropertiesSetters);
+        copy.abortOnFailure = this.abortOnFailure;
+        copy.saveResult = this.saveResult;
+        copy.ifConditionAttributeName = this.ifConditionAttributeName;
+        copy.unlessConditionAttributeName = this.unlessConditionAttributeName;
+        copy.utilityCondition = this.utilityCondition;
+
+        return copy;
     }
 
     /**

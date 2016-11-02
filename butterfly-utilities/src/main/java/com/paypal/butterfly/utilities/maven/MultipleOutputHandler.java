@@ -17,15 +17,15 @@ import org.slf4j.LoggerFactory;
  * 
  * @author mcrockett, facarvalho
  */
-class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<Class<? extends MavenInvocationOutputHandler>, Object>> {
+class MultipleOutputHandler implements MavenInvocationOutputHandler<MultipleOutputHandler, Map<Class<? extends MavenInvocationOutputHandler>, Object>> {
 
     private static final Logger logger = LoggerFactory.getLogger(MultipleOutputHandler.class);
 
     /* Contains all output handlers */
-    private final Set<MavenInvocationOutputHandler<Object>> handlers = new HashSet<>();
+    private final Set<MavenInvocationOutputHandler> handlers = new HashSet<>();
 
     /* Contains output handlers that have thrown an exception and the exception thrown */
-    private final Map<MavenInvocationOutputHandler<Object>, Exception> failedHandlers = new HashMap<>();
+    private final Map<MavenInvocationOutputHandler, Exception> failedHandlers = new HashMap<>();
     private boolean executionStarted = false;
 
     /**
@@ -37,7 +37,7 @@ class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<Class<? 
     @Override
     public void consumeLine(String line) {
         executionStarted = true;
-        for (MavenInvocationOutputHandler<Object> handler : handlers) {
+        for (MavenInvocationOutputHandler handler : handlers) {
             if (false == failedHandlers.containsKey(handler)) {
                 try {
                     handler.consumeLine(line);
@@ -66,7 +66,7 @@ class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<Class<? 
 
         Map<Class<? extends MavenInvocationOutputHandler>, Object> results = new HashMap<Class<? extends MavenInvocationOutputHandler>, Object>();
 
-        for (MavenInvocationOutputHandler<?> handler : handlers) {
+        for (MavenInvocationOutputHandler handler : handlers) {
             if (false == failedHandlers.containsKey(handler)) {
                 results.put(handler.getClass(), handler.getResult());
             } else {
@@ -84,11 +84,22 @@ class MultipleOutputHandler implements MavenInvocationOutputHandler<Map<Class<? 
      * @throws IllegalStateException - if execution has started, a
      * handler cannot be added.
      */
-    void register(MavenInvocationOutputHandler<Object> handler) throws IllegalStateException {
+    void register(MavenInvocationOutputHandler handler) throws IllegalStateException {
         if (true == executionStarted) {
             throw new IllegalStateException("Execution has started. Not allowed to register new handlers.");
         } else if (null != handler) {
             handlers.add(handler);
         }
     }
+
+    @Override
+    public MultipleOutputHandler copy() {
+        MultipleOutputHandler copy = new MultipleOutputHandler();
+        for (MavenInvocationOutputHandler handler : handlers) {
+            copy.handlers.add((MavenInvocationOutputHandler) handler.copy());
+        }
+
+        return copy;
+    }
+
 }

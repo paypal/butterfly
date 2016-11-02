@@ -92,7 +92,11 @@ public class RunScript extends TransformationUtility<RunScript> {
             }
 
             Object evalResult = engine.eval(script);
-            result = TUExecutionResult.value(this, evalResult);
+            if (evalResult != null) {
+                result = TUExecutionResult.value(this, evalResult);
+            } else {
+                result = TUExecutionResult.nullResult(this);
+            }
         } catch (ScriptException e) {
             result = TUExecutionResult.error(this, e);
         }

@@ -1,12 +1,11 @@
 package com.paypal.butterfly.utilities.operations.text;
 
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
-import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -28,8 +27,6 @@ import java.util.regex.Pattern;
  * @author facarvalho
  */
 public class InsertText extends TransformationOperation<InsertText> {
-
-    private static final Logger logger = LoggerFactory.getLogger(InsertText.class);
 
     /**
      * The text can be inserted:
@@ -311,14 +308,14 @@ public class InsertText extends TransformationOperation<InsertText> {
 
     @Override
     public InsertText clone() throws CloneNotSupportedException {
-        InsertText clonedInsertText = null;
         try {
-            clonedInsertText = (InsertText) super.clone();
-            clonedInsertText.textFileUrl = new URL(this.textFileUrl.toString());
+            InsertText clone = (InsertText) super.clone();
+            clone.textFileUrl = new URL(this.textFileUrl.toString());
+            return clone;
         } catch (MalformedURLException e) {
-            logger.error(String.format("Error when cloning InsertText %s", getName()), e);
+            String exceptionMessage = String.format("Error when cloning %s", getName());
+            throw new TransformationUtilityException(exceptionMessage, e);
         }
-        return clonedInsertText;
     }
 
 }

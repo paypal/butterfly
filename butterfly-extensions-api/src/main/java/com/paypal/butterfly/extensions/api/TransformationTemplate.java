@@ -113,10 +113,62 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
      * @param attributes one or more transformation context attributes that hold list
      *                   of Files which the transformation operations should perform
      *                   against
+     *
+     * @return the utility name
      */
     @Override
     public final String addMultiple(TransformationOperation templateOperation, String... attributes) {
         return add(new MultipleOperations(templateOperation).setFiles(attributes));
+    }
+
+    /**
+     * Execute an utility in a loop a number times specified in {@code iterations}
+     *
+     * @param utility the utility to be executed each iteration of the loop. To execute more than one, use a {@link TransformationUtilityGroup}
+     * @param iterations the number of iterations to be executed
+     *
+     * @return the utility name
+     */
+    // TODO
+    // This Different than every other method here that adds TUs, this one is not part of TransformationUtlityList.
+    // It could be complex to add it to it (because of loops inside of UtilitiesGroups), but to be consistent, it should be added
+    public final String loop(TransformationUtility utility, int iterations) {
+        return add(new TransformationUtilityLoop(utility).setCondition(iterations));
+    }
+
+    /**
+     * Execute an utility in a loop while the value in {@link TransformationContext} attribute is true.
+     * The defined is specified based on its name, specified in {@code attribute}.
+     * If the attribute value is not a boolean, or if non-existent, it will be treated as false.
+     *
+     * @param utility the utility to be executed each iteration of the loop. To execute more than one, use a {@link TransformationUtilityGroup}
+     * @param attribute the name of the transformation context attribute to hold the loop condition
+     *
+     * @return the utility name
+     */
+    // TODO
+    // This Different than every other method here that adds TUs, this one is not part of TransformationUtlityList.
+    // It could be complex to add it to it (because of loops inside of UtilitiesGroups), but to be consistent, it should be added
+    public final String loop(TransformationUtility utility, String attribute) {
+        return add(new TransformationUtilityLoop(utility).setCondition(attribute));
+    }
+
+    /**
+     * Execute an utility in a loop while the execution value resulted by {@code condition} is true.
+     * The {@link TransformationUtility} object referenced by {@code condition} won't be saved to the {@link TransformationContext},
+     * it will be executed exclusively to the scope of this loop execution.
+     * Any result other than a boolean true value, including failures, will be treated as false.
+     *
+     * @param utility the utility to be executed each iteration of the loop. To execute more than one, use a {@link TransformationUtilityGroup}
+     * @param condition the {@link TransformationUtility} object whose execution result will be used as the loop condition
+     *
+     * @return the utility name
+     */
+    // TODO
+    // This Different than every other method here that adds TUs, this one is not part of TransformationUtlityList.
+    // It could be complex to add it to it (because of loops inside of UtilitiesGroups), but to be consistent, it should be added
+    public final String loop(TransformationUtility utility, TransformationUtility condition) {
+        return add(new TransformationUtilityLoop(utility).setCondition(condition));
     }
 
     @Override

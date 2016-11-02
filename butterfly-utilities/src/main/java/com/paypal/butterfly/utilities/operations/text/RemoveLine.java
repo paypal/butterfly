@@ -210,11 +210,11 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
 
             if (lineNumber != null) {
-                details = removeBasedOnLineNumber(reader, writer);
+                result = removeBasedOnLineNumber(reader, writer);
             } else {
-                details = removeBasedOnRegex(reader, writer);
+                result = removeBasedOnRegex(reader, writer);
             }
-            result = TOExecutionResult.success(this, details);
+            return result;
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);
         } finally {
@@ -249,7 +249,7 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
         return result;
     }
 
-    private String removeBasedOnLineNumber(BufferedReader reader, BufferedWriter writer) throws IOException {
+    private TOExecutionResult removeBasedOnLineNumber(BufferedReader reader, BufferedWriter writer) throws IOException {
         String currentLine;
         int n = 0;
         boolean firstLine = true;
@@ -265,10 +265,12 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
             firstLine = false;
         }
 
-        return String.format("File %s has had line number %d removed", getRelativePath(), lineNumber);
+        String details = String.format("File %s has had line number %d removed", getRelativePath(), lineNumber);
+
+        return TOExecutionResult.success(this, details);
     }
 
-    private String removeBasedOnRegex(BufferedReader reader, BufferedWriter writer) throws IOException {
+    private TOExecutionResult removeBasedOnRegex(BufferedReader reader, BufferedWriter writer) throws IOException {
         String currentLine;
         int n = 0;
         boolean foundFirstMatch = false;
@@ -287,7 +289,16 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
             firstLine = false;
         }
 
-        return String.format("File %s has had %d line(s) removed based on regular expression '%s'", getRelativePath(), n, regex);
+        String details = String.format("File %s has had %d line(s) removed based on regular expression '%s'", getRelativePath(), n, regex);
+
+        TOExecutionResult result;
+        if (n == 0) {
+            result = TOExecutionResult.noOp(this, details);
+        } else {
+            result = TOExecutionResult.success(this, details);
+        }
+
+        return result;
     }
 
     @Override

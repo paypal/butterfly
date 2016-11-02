@@ -11,7 +11,8 @@ import java.util.regex.Pattern;
  *
  * @author mcrockett
  */
-public class EnforcerGenericOutputHandler implements MavenInvocationOutputHandler<Set<String>> {
+public class EnforcerGenericOutputHandler implements MavenInvocationOutputHandler<EnforcerGenericOutputHandler, Set<String>> {
+
     private static final Pattern RULE_WARNING_LINE_MATCH_REGEX = Pattern.compile(".* Rule [\\d]+:.*");
     private static final String RULE_BEGINNING_PHRASE = "Rule ";
     private static final String MESSAGE_FORMAT = "%s '%s'.";
@@ -51,6 +52,11 @@ public class EnforcerGenericOutputHandler implements MavenInvocationOutputHandle
         } else {
             return Collections.unmodifiableSet(errorMessages);
         }
+    }
+
+    @Override
+    public EnforcerGenericOutputHandler copy() {
+        return new EnforcerGenericOutputHandler();
     }
 
 }
