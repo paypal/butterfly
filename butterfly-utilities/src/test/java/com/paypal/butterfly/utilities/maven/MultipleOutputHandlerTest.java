@@ -19,13 +19,14 @@ import org.testng.annotations.Test;
  * @author mcrockett
  */
 public class MultipleOutputHandlerTest {
-    private abstract class BogusMavenInvocationOutputHandler implements MavenInvocationOutputHandler<Object> {
+
+    private abstract class BogusMavenInvocationOutputHandler implements MavenInvocationOutputHandler<BogusMavenInvocationOutputHandler, Object> {
     }
 
     private MultipleOutputHandler multiHandler = null;
     
     @Mock
-    private MavenInvocationOutputHandler<Object> mockHandler;
+    private MavenInvocationOutputHandler mockHandler;
 
     @BeforeClass
     public void classSetup() throws Exception {
