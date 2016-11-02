@@ -65,7 +65,7 @@ public class PomRemoveManagedDependency extends AbstractArtifactPomOperation<Pom
             details = String.format("Managed dependency %s:%s has been removed from POM file %s", groupId, artifactId, relativePomFile);
             result = TOExecutionResult.success(this, details);
         } else {
-            details = String.format("Managed dependency %s:%s has not been removed from POM file %s because it is not present", groupId, artifactId, relativePomFile);
+            details = String.format("Managed dependency %s:%s has NOT been removed from POM file %s because it is not present", groupId, artifactId, relativePomFile);
             switch (ifNotPresent) {
                 case Warn:
                     result = TOExecutionResult.warning(this, new TransformationOperationException(details));

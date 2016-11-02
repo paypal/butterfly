@@ -8,7 +8,8 @@ import java.util.regex.Pattern;
  *
  * @author mcrockett
  */
-public class GenericErrorOutputHandler implements MavenInvocationOutputHandler<String> {
+public class GenericErrorOutputHandler implements MavenInvocationOutputHandler<GenericErrorOutputHandler, String> {
+
     private static final Pattern GOAL_ERROR_LINE_MATCH_REGEX = Pattern.compile("\\[ERROR\\][\\s]*Failed to execute goal.*");
     private static final Pattern PROJECT_ERROR_LINE_MATCH_REGEX = Pattern.compile("\\[ERROR\\][\\s]*The project.*has [\\d]+ error.*");
     private static final String ERROR_PHRASE = "[ERROR] ";
@@ -59,6 +60,11 @@ public class GenericErrorOutputHandler implements MavenInvocationOutputHandler<S
         } else {
             return message;
         }
+    }
+
+    @Override
+    public GenericErrorOutputHandler copy() {
+        return new GenericErrorOutputHandler();
     }
 
 }
