@@ -5,7 +5,6 @@ import com.paypal.butterfly.extensions.api.*;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
-import com.paypal.butterfly.extensions.api.utilities.MultipleOperations;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.exception.TransformationException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -18,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -85,81 +83,57 @@ public class TransformationEngine {
      */
     private void perform(TransformationTemplate template, File transformedAppFolder) throws TransformationException {
         logger.info("====================================================================================================================================");
-        logger.info("Beginning transformation (template: {}, operations to be performed: {})", template.getClass().getName(), template.getOperationsCount());
+        logger.info("Beginning transformation");
 
         AtomicInteger operationsExecutionOrder = new AtomicInteger(1);
-
         TransformationContextImpl transformationContext = new TransformationContextImpl();
 
-        MultipleOperations multipleOperations;
         TransformationUtility utility;
-        PerformResult result;
         for(Object transformationUtilityObj: template.getUtilities()) {
             utility = (TransformationUtility) transformationUtilityObj;
-            result = perform(utility, transformedAppFolder, transformationContext, operationsExecutionOrder, null);
-            if(utility instanceof MultipleOperations) {
-                multipleOperations = (MultipleOperations) utility;
-                performMultiOperations(result, multipleOperations, transformedAppFolder, transformationContext, operationsExecutionOrder);
-            }
-            if (utility.isSaveResult()) {
-                // Saving the whole perform result, which is different from the value that resulted from the utility execution,
-                // saved in processUtilityExecutionResult
-
-                transformationContext.putResult(((TransformationUtility) transformationUtilityObj).getName(), result);
-            }
+            perform(utility, transformedAppFolder, transformationContext, operationsExecutionOrder, null);
         }
 
         logger.info("Transformation has been completed");
     }
 
-    private void performMultiOperations(PerformResult result, MultipleOperations multipleOperations, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger operationsExecutionOrder) throws TransformationException {
-        PerformResult.Type performResultType = result.getType();
-        if (!performResultType.equals(PerformResult.Type.EXECUTION_RESULT)) {
-            // TODO
-            return;
-        }
+    /*
+     * Perform a list of utilities in an application
+     */
+    private void perform(TransformationUtilityParent utilityParent, PerformResult result, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger operationsExecutionOrder) throws TransformationException {
         TUExecutionResult.Type executionResultType = (TUExecutionResult.Type) result.getExecutionResult().getType();
         if(!executionResultType.equals(TUExecutionResult.Type.VALUE)) {
-            // TODO
+            processUtilityExecutionResult((TransformationUtility) utilityParent, result, transformationContext);
             return;
         }
 
-        List<TransformationOperation> operations = (List<TransformationOperation>) ((TUExecutionResult) result.getExecutionResult()).getValue();
-        perform(operations, multipleOperations, transformedAppFolder, transformationContext, operationsExecutionOrder);
-        // FIXME saving multiple operation results need to be properly taken care of
-        // FIXME what if any of them fail?
-    }
-
-    /*
-     * Perform multiple operations in an application
-     */
-    // TODO how to deal with results here???
-    // First of all, Multiple operations must be converted to TO, instead of TU
-    private void perform(List<TransformationOperation> operations, MultipleOperations multipleOperations, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger outterOpExecOrder) throws TransformationException {
-        logger.info("\t{}\t - Executing {} over {} files", outterOpExecOrder.intValue(), multipleOperations.getTemplateOperation().getName(), operations.size());
+        logger.info("\t{}\t - Executing {}", operationsExecutionOrder.intValue(), utilityParent.getName());
 
         AtomicInteger innerOpExecOrder = new AtomicInteger(1);
-        for(TransformationOperation operation : operations) {
-            perform(operation, transformedAppFolder, transformationContext, innerOpExecOrder, outterOpExecOrder.intValue());
-            // FIXME the transformation context is not having a chance to save the result of every one of these. Only the template operation is having its result saved
+        PerformResult childResult;
+        for(TransformationUtility utility : utilityParent.getChildren()) {
+            childResult = perform(utility, transformedAppFolder, transformationContext, innerOpExecOrder, operationsExecutionOrder.intValue());
+            if (utility.isSaveResult()) {
+                // Saving the whole perform result, which is different from the value that resulted from the utility execution,
+                // saved in processUtilityExecutionResult
+
+                transformationContext.putResult(utility.getName(), childResult);
+            }
         }
 
-        outterOpExecOrder.incrementAndGet();
-
-        // TODO what should we do with individual multiple operations results?
-//        return result;
+        operationsExecutionOrder.incrementAndGet();
     }
 
     /*
      * Perform an transformation utility against an application. Notice that this utility can also be
      * actually a transformation operation
      */
-    private PerformResult perform(TransformationUtility utility, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger operationsExecutionOrder, Integer outterOrder) throws TransformationException {
+    private PerformResult perform(TransformationUtility utility, File transformedAppFolder, TransformationContextImpl transformationContext, AtomicInteger operationsExecutionOrder, Integer outerOrder) throws TransformationException {
         boolean isTO = utility instanceof TransformationOperation;
         String order = "-";
         if (isTO) {
-            if(outterOrder != null) {
-                order = String.format("%d.%d", outterOrder, operationsExecutionOrder.get());
+            if(outerOrder != null) {
+                order = String.format("%d.%d", outerOrder, operationsExecutionOrder.get());
             } else {
                 order = String.valueOf(operationsExecutionOrder.get());
             }
@@ -181,6 +155,9 @@ public class TransformationEngine {
                         processOperationExecutionResult(utility, result, order);
                     } else {
                         processUtilityExecutionResult(utility, result, transformationContext);
+                        if(utility instanceof TransformationUtilityParent) {
+                            perform((TransformationUtilityParent) utility, result, transformedAppFolder, transformationContext, operationsExecutionOrder);
+                        }
                     }
                     break;
                 case ERROR:
@@ -195,6 +172,12 @@ public class TransformationEngine {
             processError(utility, e, order);
         } finally {
             if (isTO) operationsExecutionOrder.incrementAndGet();
+            if (utility.isSaveResult()) {
+                // Saving the whole perform result, which is different from the value that resulted from the utility execution,
+                // saved in processUtilityExecutionResult
+
+                transformationContext.putResult(utility.getName(), result);
+            }
         }
         return result;
     }
@@ -244,14 +227,14 @@ public class TransformationEngine {
             String key = (utility.getContextAttributeName() != null ? utility.getContextAttributeName() : utility.getName());
             transformationContext.put(key, executionResult.getValue());
         }
-        switch (((TUExecutionResult) result.getExecutionResult()).getType()) {
+        switch (executionResult.getType()) {
             case NULL:
                 if (utility.isSaveResult() && logger.isDebugEnabled()) {
-                    logger.warn("\t-\t - {} ({}) has returned NULL", utility, utility.getName());
+                    logger.warn("\t-\t - {}. {} has returned NULL", utility, utility.getName());
                 }
                 break;
             case VALUE:
-                logger.debug("\t-\t - {} ({})", utility, utility.getName());
+                logger.debug("\t-\t - {}. Utility: {}. Result: {}", utility, utility.getName(), executionResult.getValue());
                 break;
             case WARNING:
                 processExecutionResultWarningType(utility, result, executionResult, "-");
