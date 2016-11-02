@@ -119,7 +119,7 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
 
     @Override
     public String getDescription() {
-        String executionCondition = (iterations != -1 ? iterations + " times" : (attribute != null ? "while " + attribute + " is true" : (condition != null ? "while " + condition.getName() + " is true" : null)));
+        String executionCondition = iterations != -1 ? iterations + " times" : (attribute != null ? "while " + attribute + " is true" : (condition != null ? "while " + condition.getName() + " is true" : null));
         return String.format(DESCRIPTION, executionCondition);
     }
 
@@ -141,7 +141,7 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
             iterateAgain = nextIteration <= iterations;
         } else if (attribute != null) {
             Object attributeValue = transformationContext.get(attribute);
-            iterateAgain = (attributeValue instanceof Boolean && ((Boolean) attributeValue).booleanValue());
+            iterateAgain = attributeValue instanceof Boolean && ((Boolean) attributeValue).booleanValue();
         } else if (condition != null) {
             TUExecutionResult executionResult = null;
             try {
@@ -152,7 +152,7 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
             }
             if (executionResult.getType().equals(TUExecutionResult.Type.VALUE)) {
                 Object executionValue = executionResult.getValue();
-                iterateAgain = (executionValue instanceof Boolean && ((Boolean) executionValue).booleanValue());
+                iterateAgain = executionValue instanceof Boolean && ((Boolean) executionValue).booleanValue();
             } else {
                 Exception exception = executionResult.getException();
                 if (exception == null) {

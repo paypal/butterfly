@@ -114,7 +114,6 @@ public class TransformationEngine {
         // TODO print number of \t based on depth of parents
         logger.info("\t{}\t - Executing utilities parent {}", order, utilityParent.getName());
 
-        PerformResult childResult;
         String childOrder;
         int i = 1;
         for(TransformationUtility utility : utilityParent.getChildren()) {
@@ -155,7 +154,7 @@ public class TransformationEngine {
                             /* Executing loops of utilities */
                             TUExecutionResult executionResult = (TUExecutionResult) result.getExecutionResult();
                             Object executionValue = executionResult.getValue();
-                            boolean iterate = (executionValue instanceof Boolean && ((Boolean) executionValue).booleanValue());
+                            boolean iterate = executionValue instanceof Boolean && ((Boolean) executionValue).booleanValue();
                             if (iterate) {
                                 TransformationUtilityLoop utilityLoop = (TransformationUtilityLoop) utility;
                                 String newOrder = String.format("%s.%s", order, utilityLoop.getNextIteration());

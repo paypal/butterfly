@@ -1,13 +1,11 @@
 package com.paypal.butterfly.utilities.operations.text;
 
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
-import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -29,8 +27,6 @@ import java.util.regex.Pattern;
  * @author facarvalho
  */
 public class InsertText extends TransformationOperation<InsertText> {
-
-    private static final Logger logger = LoggerFactory.getLogger(InsertText.class);
 
     /**
      * The text can be inserted:
