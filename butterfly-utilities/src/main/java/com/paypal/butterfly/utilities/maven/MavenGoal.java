@@ -81,7 +81,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
      */
     public MavenGoal setOutputHandlers(MavenInvocationOutputHandler... outputHandlers) {
         checkForNull("Output handlers", outputHandlers);
-        this.outputHandlers = Arrays.copyOf(outputHandlers, outputHandlers.length);
+        this.outputHandlers = outputHandlers;
         return this;
     }
 
@@ -184,5 +184,17 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
         return result;
     }
 
-}
+    @Override
+    public TransformationUtility<MavenGoal> clone() throws CloneNotSupportedException {
+        MavenGoal clone = (MavenGoal) super.clone();
+        clone.outputHandlers = new MavenInvocationOutputHandler[outputHandlers.length];
+        int i = 0;
+        for (MavenInvocationOutputHandler outputHandler : outputHandlers) {
+            clone.outputHandlers[i] = (MavenInvocationOutputHandler) outputHandler.copy();
+            i++;
+        }
+        clone.request = new DefaultInvocationRequest();
+        return clone;
+    }
 
+}

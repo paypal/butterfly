@@ -215,9 +215,6 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
 
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-
-        // FIXME this is not working when executed inside of a UtilitiesGroup
-
         Collection<File> files;
         Set<File> allFiles = new HashSet<File>();
 
@@ -298,7 +295,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
     }
 
     private TransformationOperation createClone(int order, File transformedAppFolder, File file) throws CloneNotSupportedException {
-        TransformationOperation operation = (TransformationOperation) templateOperation.clone();
+        TransformationOperation operation = (TransformationOperation) templateOperation.copy();
         operation.setParent(this, order);
         operation.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
 

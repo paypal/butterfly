@@ -61,7 +61,6 @@ public class TransformationUtilityGroup extends TransformationUtility<Transforma
         }
 
         utility.setParent(this, order);
-
         utilityNames.add(utility.getName());
 
         return utility.getName();
@@ -110,21 +109,23 @@ public class TransformationUtilityGroup extends TransformationUtility<Transforma
 
     @Override
     protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-// FIXME this won't work because clone doesn't propagate many essential attributes, such as the file, order, parent, etc
-//        List<TransformationUtility> utilityClonesList = new ArrayList<>();
-//
-//        try {
-//            for (TransformationUtility utility : utilityList) {
-//                utilityClonesList.add(utility.clone());
-//            }
-//        } catch (CloneNotSupportedException e) {
-//            TransformationUtilityException tue = new TransformationUtilityException("Transformation utility is not cloneable", e);
-//            return TUExecutionResult.error(this, tue);
-//        }
-//
-//        TUExecutionResult result = TUExecutionResult.value(this, utilityClonesList);
         TUExecutionResult result = TUExecutionResult.value(this, getChildren());
         return result;
+    }
+
+    @Override
+    public TransformationUtility<TransformationUtilityGroup> clone() throws CloneNotSupportedException {
+        TransformationUtilityGroup groupClone = (TransformationUtilityGroup) super.clone();
+        groupClone.utilityList = new ArrayList<>();
+        groupClone.utilityNames = new HashSet<>();
+        for (TransformationUtility utility : utilityList) {
+            TransformationUtility utilityClone = utility.clone();
+            utilityClone.setParent(groupClone, utility.getOrder());
+            groupClone.utilityList.add(utilityClone);
+            groupClone.utilityNames.add(utilityClone.getName());
+        }
+
+        return groupClone;
     }
 
 }
