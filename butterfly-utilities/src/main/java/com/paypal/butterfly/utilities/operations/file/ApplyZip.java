@@ -4,6 +4,7 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
@@ -113,14 +114,14 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
 
     @Override
     public ApplyZip clone() throws CloneNotSupportedException {
-        ApplyZip clonedApplyZip = null;
         try {
-            clonedApplyZip = (ApplyZip) super.clone();
-            clonedApplyZip.zipFileUrl = new URL(this.zipFileUrl.toString());
+            ApplyZip clone = (ApplyZip) super.clone();
+            clone.zipFileUrl = new URL(this.zipFileUrl.toString());
+            return clone;
         } catch (MalformedURLException e) {
-            logger.error(String.format("Error when cloning ApplyZip %s", getName()), e);
+            String exceptionMessage = String.format("Error when cloning %s", getName());
+            throw new TransformationUtilityException(exceptionMessage, e);
         }
-        return clonedApplyZip;
     }
 
 }
