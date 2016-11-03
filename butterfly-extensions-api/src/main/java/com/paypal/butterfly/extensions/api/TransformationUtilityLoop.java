@@ -26,7 +26,7 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
     // Possible ways to define the condition
     private int iterations = -1;
     private String attribute;
-    private TransformationUtility condition;
+    private UtilityCondition condition;
 
     // The next iteration to be executed, in case a number of iterations has been specified
     private int nextIteration = 1;
@@ -77,7 +77,7 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
         return this;
     }
 
-    public TransformationUtilityLoop setCondition(TransformationUtility condition) {
+    public TransformationUtilityLoop setCondition(UtilityCondition condition) {
         checkForNull("condition", condition);
         if (condition.getName() == null && getName() != null) {
             condition.setName(getName() + "_condition");

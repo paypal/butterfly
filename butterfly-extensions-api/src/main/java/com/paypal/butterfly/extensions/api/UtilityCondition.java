@@ -1,4 +1,4 @@
-package com.paypal.butterfly.extensions.api.utilities;
+package com.paypal.butterfly.extensions.api;
 
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 
