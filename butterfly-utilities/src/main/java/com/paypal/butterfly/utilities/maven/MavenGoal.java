@@ -200,13 +200,14 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     @Override
     public TransformationUtility<MavenGoal> clone() throws CloneNotSupportedException {
         MavenGoal clone = (MavenGoal) super.clone();
+        clone.multipleOutputHandler = new MultipleOutputHandler();
+        clone.request = new DefaultInvocationRequest();
         clone.outputHandlers = new MavenInvocationOutputHandler[outputHandlers.length];
         int i = 0;
         for (MavenInvocationOutputHandler outputHandler : outputHandlers) {
             clone.outputHandlers[i] = (MavenInvocationOutputHandler) outputHandler.copy();
             i++;
         }
-        clone.request = new DefaultInvocationRequest();
         return clone;
     }
 

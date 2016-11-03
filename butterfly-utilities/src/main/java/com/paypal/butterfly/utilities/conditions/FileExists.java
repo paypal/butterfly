@@ -2,7 +2,7 @@ package com.paypal.butterfly.utilities.conditions;
 
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.utilities.UtilityCondition;
+import com.paypal.butterfly.extensions.api.UtilityCondition;
 
 import java.io.File;
 

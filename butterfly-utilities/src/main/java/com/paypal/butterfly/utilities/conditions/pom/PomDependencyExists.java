@@ -2,7 +2,7 @@ package com.paypal.butterfly.utilities.conditions.pom;
 
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.utilities.UtilityCondition;
+import com.paypal.butterfly.extensions.api.UtilityCondition;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;

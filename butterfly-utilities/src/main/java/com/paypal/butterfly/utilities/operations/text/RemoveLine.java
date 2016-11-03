@@ -214,7 +214,6 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
             } else {
                 result = removeBasedOnRegex(reader, writer);
             }
-            return result;
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);
         } finally {

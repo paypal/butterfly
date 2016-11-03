@@ -26,7 +26,7 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
     // Possible ways to define the condition
     private int iterations = -1;
     private String attribute;
-    private TransformationUtility condition;
+    private UtilityCondition condition;
 
     // The next iteration to be executed, in case a number of iterations has been specified
     private int nextIteration = 1;
@@ -77,7 +77,7 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
         return this;
     }
 
-    public TransformationUtilityLoop setCondition(TransformationUtility condition) {
+    public TransformationUtilityLoop setCondition(UtilityCondition condition) {
         checkForNull("condition", condition);
         if (condition.getName() == null && getName() != null) {
             condition.setName(getName() + "_condition");
@@ -119,7 +119,16 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
 
     @Override
     public String getDescription() {
-        String executionCondition = iterations != -1 ? iterations + " times" : (attribute != null ? "while " + attribute + " is true" : (condition != null ? "while " + condition.getName() + " is true" : null));
+        String executionCondition = "UNDEFINED_CONDITION";
+
+        if (iterations != -1) {
+            executionCondition = iterations + " times";
+        } else if (attribute != null) {
+            executionCondition = "while " + attribute + " is true";
+        } else if (condition != null) {
+            executionCondition = "while " + condition.getName() + " is true";
+        }
+
         return String.format(DESCRIPTION, executionCondition);
     }
 
@@ -135,7 +144,6 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
      */
     @Override
     protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-        String warningMessage;
         boolean iterateAgain = false;
         if (iterations >= 2) {
             iterateAgain = nextIteration <= iterations;

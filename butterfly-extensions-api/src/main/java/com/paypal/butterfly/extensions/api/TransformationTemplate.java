@@ -160,14 +160,14 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
      * Any result other than a boolean true value, including failures, will be treated as false.
      *
      * @param utility the utility to be executed each iteration of the loop. To execute more than one, use a {@link TransformationUtilityGroup}
-     * @param condition the {@link TransformationUtility} object whose execution result will be used as the loop condition
+     * @param condition the {@link UtilityCondition} object whose execution result will be used as the loop condition
      *
      * @return the utility name
      */
     // TODO
     // This Different than every other method here that adds TUs, this one is not part of TransformationUtlityList.
     // It could be complex to add it to it (because of loops inside of UtilitiesGroups), but to be consistent, it should be added
-    public final String loop(TransformationUtility utility, TransformationUtility condition) {
+    public final String loop(TransformationUtility utility, UtilityCondition condition) {
         return add(new TransformationUtilityLoop(utility).setCondition(condition));
     }
 
