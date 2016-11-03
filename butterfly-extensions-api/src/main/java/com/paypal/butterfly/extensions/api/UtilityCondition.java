@@ -1,6 +1,4 @@
-package com.paypal.butterfly.extensions.api.utilities;
-
-import com.paypal.butterfly.extensions.api.TransformationUtility;
+package com.paypal.butterfly.extensions.api;
 
 /**
  * Condition to determine if a transformation utility
