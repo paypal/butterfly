@@ -1,7 +1,5 @@
 package com.paypal.butterfly.extensions.api;
 
-import com.paypal.butterfly.extensions.api.TransformationUtility;
-
 /**
  * Condition to determine if a transformation utility
  * should be executed or not
