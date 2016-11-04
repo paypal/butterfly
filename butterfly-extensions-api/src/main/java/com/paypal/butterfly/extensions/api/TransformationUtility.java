@@ -104,6 +104,10 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     // Abort the whole transformation if this operation fails
     private boolean abortOnFailure = false;
 
+    // A message to be logged if a fail happens and transformation
+    // has to be aborted
+    private String abortionMessage;
+
     // See comments in isSaveResult method
     private boolean saveResult = true;
 
@@ -595,6 +599,33 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     public final TU abortOnFailure(boolean abort) {
         abortOnFailure = abort;
         return (TU) this;
+    }
+
+    /**
+     * If set to true, abort the whole transformation if validation or execution fails.
+     * If not, just state a warning, aborts the operation execution only.
+     * <strong>Notice that abortion here means interrupting the transformation.
+     * It does not mean rolling back the changes that have might already been done
+     * by this transformation operation by the time it failed<strong/>
+     *
+     * @param abortionMessage a message to be logged if a fail happens and transformation
+     *                        has to be aborted
+     * @param abort
+     * @return
+     */
+    public final TU abortOnFailure(boolean abort, String abortionMessage) {
+        abortOnFailure = abort;
+        this.abortionMessage = abortionMessage;
+        return (TU) this;
+    }
+
+    /**
+     * Returns a message to be logged if a fail happens and transformation has to be aborted
+     *
+     * @return a message to be logged if a fail happens and transformation has to be aborted
+     */
+    public String getAbortionMessage() {
+        return abortionMessage;
     }
 
     /**
