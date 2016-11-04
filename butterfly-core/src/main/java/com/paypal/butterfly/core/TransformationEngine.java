@@ -194,7 +194,10 @@ public class TransformationEngine {
 
     private void processError(TransformationUtility utility, Exception e, String order) throws TransformationException {
         if (utility.abortOnFailure()) {
-            logger.error("*** Transformation will be aborted due to failure in {}  ***", utility.getName());
+            logger.error("*** Transformation will be aborted due to failure in {} ***", utility.getName());
+            if (utility.getAbortionMessage() != null) {
+                logger.error("*** {} ***", utility.getAbortionMessage());
+            }
             logger.error("*** Description: {}", utility.getDescription());
             logger.error("*** Cause: {}", e.getMessage());
 
