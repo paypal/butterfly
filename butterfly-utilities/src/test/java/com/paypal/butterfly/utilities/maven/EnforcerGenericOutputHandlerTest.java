@@ -60,27 +60,38 @@ public class EnforcerGenericOutputHandlerTest {
 
     @Test
     public void canHandleSampleOutput() throws IOException{
-        EnforcerGenericOutputHandler handler = new EnforcerGenericOutputHandler();
-        InputStream inputStream = getClass().getResourceAsStream("/sample_maven_output_various_failures.txt");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        String line = reader.readLine();
+        InputStream inputStream = null;
+        BufferedReader reader = null;
+        try {
+            EnforcerGenericOutputHandler handler = new EnforcerGenericOutputHandler();
+            inputStream = getClass().getResourceAsStream("/sample_maven_output_various_failures.txt");
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line = reader.readLine();
 
-        while (null != line) {
-            handler.consumeLine(line);
-            line = reader.readLine();
-        }
+            while (null != line) {
+                handler.consumeLine(line);
+                line = reader.readLine();
+            }
 
-        Set<String> results = handler.getResult();
-        String[] expectedResults = {
-                EnforcerGenericOutputHandler.createMessage("Rule 2: org.apache.maven.plugins.enforcer.FailOnLowerVersionOverride failed with message:","Application dependencies' version are lower than the version used by raptor:"),
-                EnforcerGenericOutputHandler.createMessage("Rule 0: org.apache.maven.plugins.enforcer.AlwaysFail failed with message:","Always fails!"),
-                EnforcerGenericOutputHandler.createMessage("Rule 1: org.apache.maven.plugins.enforcer.RequireMavenVersion failed with message:","Detected Maven Version: 3.1.1 is not in the allowed range 3.3.1."),
-        };
+            Set<String> results = handler.getResult();
+            String[] expectedResults = {
+                    EnforcerGenericOutputHandler.createMessage("Rule 2: org.apache.maven.plugins.enforcer.FailOnLowerVersionOverride failed with message:","Application dependencies' version are lower than the version used by raptor:"),
+                    EnforcerGenericOutputHandler.createMessage("Rule 0: org.apache.maven.plugins.enforcer.AlwaysFail failed with message:","Always fails!"),
+                    EnforcerGenericOutputHandler.createMessage("Rule 1: org.apache.maven.plugins.enforcer.RequireMavenVersion failed with message:","Detected Maven Version: 3.1.1 is not in the allowed range 3.3.1."),
+            };
 
-        Assert.assertEquals(results.size(), expectedResults.length);
+            Assert.assertEquals(results.size(), expectedResults.length);
 
-        for (int i = 0; i < expectedResults.length; i += 1) {
-            Assert.assertTrue(results.contains(expectedResults[i]));
+            for (int i = 0; i < expectedResults.length; i += 1) {
+                Assert.assertTrue(results.contains(expectedResults[i]));
+            }
+        } finally {
+            if(reader != null) {
+                reader.close();
+            }
+            if(inputStream != null) {
+                inputStream.close();
+            }
         }
     }
 }
