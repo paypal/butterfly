@@ -76,17 +76,28 @@ public class GenericErrorOutputHandlerTest {
 
     @Test
     public void canHandleSampleOutput() throws IOException{
-        GenericErrorOutputHandler handler = new GenericErrorOutputHandler();
-        InputStream inputStream = getClass().getResourceAsStream("/sample_maven_output_various_failures.txt");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        String line = reader.readLine();
+        InputStream inputStream = null;
+        BufferedReader reader = null;
+        try {
+            GenericErrorOutputHandler handler = new GenericErrorOutputHandler();
+            inputStream = getClass().getResourceAsStream("/sample_maven_output_various_failures.txt");
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line = reader.readLine();
 
-        while (null != line) {
-            handler.consumeLine(line);
-            line = reader.readLine();
+            while (null != line) {
+                handler.consumeLine(line);
+                line = reader.readLine();
+            }
+
+            Assert.assertEquals(handler.getResult(), "Failed to execute goal org.apache.maven.plugins:maven-enforcer-plugin:1.3.1:enforce (enforce) on project client: Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed. -> [Help 1]");
+        } finally {
+            if(reader != null) {
+                reader.close();
+            }
+            if(inputStream != null) {
+                inputStream.close();
+            }
         }
-
-        Assert.assertEquals(handler.getResult(), "Failed to execute goal org.apache.maven.plugins:maven-enforcer-plugin:1.3.1:enforce (enforce) on project client: Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed. -> [Help 1]");
     }
 }
 
