@@ -45,7 +45,11 @@ public class CopyFile extends AbstractCopy<CopyFile> {
         if(toRelative != null) {
             fileTo = new File(transformedAppFolder, toRelative);
         } else {
-            fileTo = (File) transformationContext.get(toAbsoluteAttribute);
+            if (additionalRelativePath == null) {
+                fileTo = (File) transformationContext.get(toAbsoluteAttribute);
+            } else {
+                fileTo = new File((File) transformationContext.get(toAbsoluteAttribute), additionalRelativePath);
+            }
         }
 
         try {

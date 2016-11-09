@@ -39,13 +39,13 @@ public class PomRemovePlugin extends AbstractArtifactPomOperation<PomRemovePlugi
 
     @Override
     public PomRemovePlugin warnIfNotPresent() {
-        ifNotPresent = IfNotPresent.Fail;
+        ifNotPresent = IfNotPresent.Warn;
         return this;
     }
 
     @Override
     public PomRemovePlugin noOpIfNotPresent() {
-        ifNotPresent = IfNotPresent.Fail;
+        ifNotPresent = IfNotPresent.NoOp;
         return this;
     }
 

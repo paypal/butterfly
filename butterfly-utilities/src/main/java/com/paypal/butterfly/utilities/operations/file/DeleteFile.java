@@ -11,7 +11,7 @@ import java.io.IOException;
 
 /**
  * Operation for single file deletion
- * <strong>Important: the term file here refers to both file and folder</strong>
+ * <strong>Important: the term file here means file or folder</strong>
  *
  * @author facarvalho
  */
