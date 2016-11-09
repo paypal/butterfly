@@ -263,7 +263,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     /*
      * Returns a relative path that is in compliance with the current OS in terms of file separator
      */
-    private static String normalizeRelativePathSeparator(String _relativePath) {
+    protected static String normalizeRelativePathSeparator(String _relativePath) {
         if(_relativePath != null) {
             _relativePath = _relativePath.replace('/', File.separatorChar).replace('\\', File.separatorChar);
         }
