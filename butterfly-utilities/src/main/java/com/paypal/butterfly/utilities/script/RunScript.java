@@ -4,7 +4,6 @@ import com.paypal.butterfly.extensions.api.ExecutionResult;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
-import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -13,7 +12,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This utility executes a script and saves the result after evaluating.
