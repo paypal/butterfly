@@ -10,6 +10,10 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.io.File;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This utility executes a script and saves the result after evaluating.
@@ -24,11 +28,10 @@ public class RunScript extends TransformationUtility<RunScript> {
 
     private static final String DESCRIPTION = "Executes script '%s' and saves its evaluation result";
 
-    private static final String KEY_NAME = "a%s";
-
     private String script;
     private String language = "js";
-    private String[] attributeNames;
+    private Map<String, String> attributes = new HashMap<>();
+    private Map<String, Object> objects = new HashMap<>();
 
     public RunScript() {
     }
@@ -49,11 +52,17 @@ public class RunScript extends TransformationUtility<RunScript> {
         return this;
     }
 
-    public RunScript setAttributeNames(String... attributeNames) {
-        if(attributeNames == null || attributeNames.length == 0){
-            throw new TransformationDefinitionException("Attribute names cannot be null or empty");
-        }
-        this.attributeNames = attributeNames;
+    public RunScript addAttribute(String key, String attributeName) {
+        checkForBlankString("key", key);
+        checkForBlankString("attributeName", attributeName);
+        attributes.put(key, attributeName);
+        return this;
+    }
+
+    public RunScript addObject(String key, Object object) {
+        checkForBlankString("key", key);
+        checkForNull("object", object);
+        objects.put(key, object);
         return this;
     }
 
@@ -65,8 +74,12 @@ public class RunScript extends TransformationUtility<RunScript> {
         return language;
     }
 
-    public String[] getAttributeNames() {
-        return attributeNames.clone();
+    public Map<String, String> getAttributes() {
+        return Collections.unmodifiableMap(attributes);
+    }
+
+    public Map<String, Object> getObjects() {
+        return Collections.unmodifiableMap(objects);
     }
 
     @Override
@@ -85,9 +98,17 @@ public class RunScript extends TransformationUtility<RunScript> {
             String key;
             Object value;
 
-            for (int i = 0; i < attributeNames.length; i++) {
-                key = String.format(KEY_NAME, i + 1);
-                value = transformationContext.get(attributeNames[i]);
+            // Adding attributes
+            for (Object attributeKey : attributes.keySet().toArray()) {
+                key = (String) attributeKey;
+                value = transformationContext.get(attributes.get(key));
+                engine.put(key, value);
+            }
+
+            // Adding objects
+            for (Object objectKey : objects.keySet().toArray()) {
+                key = (String) objectKey;
+                value = objects.get(key);
                 engine.put(key, value);
             }
 
