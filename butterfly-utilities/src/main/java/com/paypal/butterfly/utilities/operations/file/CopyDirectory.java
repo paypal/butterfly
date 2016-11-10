@@ -64,7 +64,11 @@ public class CopyDirectory extends AbstractCopy<CopyDirectory> {
         if(toRelative != null) {
             fileTo = new File(transformedAppFolder, toRelative);
         } else {
-            fileTo = (File) transformationContext.get(toAbsoluteAttribute);
+            if (additionalRelativePath == null) {
+                fileTo = (File) transformationContext.get(toAbsoluteAttribute);
+            } else {
+                fileTo = new File((File) transformationContext.get(toAbsoluteAttribute), additionalRelativePath);
+            }
         }
 
         return fileTo;

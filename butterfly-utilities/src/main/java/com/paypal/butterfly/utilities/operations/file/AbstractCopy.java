@@ -23,6 +23,10 @@ abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
     // Only one should be set between this and {@code toRelative}
     protected String toAbsoluteAttribute = null;
 
+    // An additional relative path to be added to the absolute file
+    // coming from the transformation context
+    protected String additionalRelativePath = null;
+
     /**
      * Abstract copy operation to be specialized for more specific purposes, such as single
      * file copy, or directory copy.
@@ -35,7 +39,7 @@ abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
     }
 
     public void setDescription(String description) {
-        checkForEmptyString("Description", description);
+        checkForBlankString("Description", description);
         this.description = description;
     }
 
@@ -53,7 +57,7 @@ abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
      * @param toRelative relative location where to copy the file to
      */
     public TO setToRelative(String toRelative) {
-        checkForEmptyString("Relative Location", toRelative);
+        checkForBlankString("Relative Location", toRelative);
         this.toRelative = toRelative;
         this.toAbsoluteAttribute = null;
         return (TO) this;
@@ -73,8 +77,34 @@ abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
      * @return this transformation operation instance
      */
     public TO setToAbsolute(String attributeName) {
-        checkForEmptyString("Absolute Location", attributeName);
+        checkForBlankString("Absolute Location", attributeName);
         this.toAbsoluteAttribute = attributeName;
+        this.toRelative = null;
+        return (TO) this;
+    }
+
+    /**
+     * The name of the transformation context attribute that holds
+     * the absolute location where to copy the file to.
+     * </br>
+     * If the relative location is known during transformation definition time,
+     * then don't use this setter, use {@link #setToRelative(String)} instead.
+     * </br>
+     * By setting this attribute name, the relative location is automatically set to {@code null}
+     *
+     * @param attributeName name of the transformation context attribute that holds
+     *                      the absolute location where to copy the file to
+     * @param additionalRelativePath an additional relative path to be added to the absolute
+     *                               file coming from the transformation context. The path
+     *                               separator will be normalized, similar to what happens
+     *                               in {@link #relative(String)}
+     * @return this transformation operation instance
+     */
+    public TO setToAbsolute(String attributeName,  String additionalRelativePath) {
+        checkForBlankString("attributeName", attributeName);
+        checkForBlankString("additionalRelativePath", additionalRelativePath);
+        this.toAbsoluteAttribute = attributeName;
+        this.additionalRelativePath = normalizeRelativePathSeparator(additionalRelativePath);
         this.toRelative = null;
         return (TO) this;
     }
