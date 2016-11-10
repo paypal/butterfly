@@ -8,8 +8,9 @@ import com.paypal.butterfly.facade.exception.TemplateResolutionException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.modules.testng.PowerMockTestCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -24,6 +25,9 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 public class ButteflyFacadeImplTest extends PowerMockTestCase {
 
+
+    private static final Logger logger = LoggerFactory.getLogger(ButteflyFacadeImplTest.class);
+
     @InjectMocks
     private ButterflyFacadeImpl butterflyFacadeImpl;
 
@@ -34,7 +38,8 @@ public class ButteflyFacadeImplTest extends PowerMockTestCase {
     private TransformationEngine transformationEngine;
 
     private ExtensionRegistry extensionRegistry_test = new ExtensionRegistry();
-    private File applicationFolder = new File(System.getProperty("user.dir") + "\\testTransformation");
+
+    private File applicationFolder = new File(this.getClass().getClassLoader().getResource("testTransformation").getFile());
 
 
     @Test
@@ -46,140 +51,64 @@ public class ButteflyFacadeImplTest extends PowerMockTestCase {
     }
 
     @Test
-    public void testAutomaticResolutionAsNull() {
-        try {
-            when(extensionRegistry.getExtensions()).thenReturn(extensionRegistry_test.getExtensions());
-            Assert.assertEquals(null ,butterflyFacadeImpl.automaticResolution(new File(System.getProperty("user.dir") + "\\testTransformation1")));
-        }catch(TemplateResolutionException ex) {
-            ex.printStackTrace();
-        }
+    public void testAutomaticResolutionAsNull() throws TemplateResolutionException {
+      when(extensionRegistry.getExtensions()).thenReturn(extensionRegistry_test.getExtensions());
+      Assert.assertEquals(null ,butterflyFacadeImpl.automaticResolution(new File("testTransformation1")));
     }
 
     @Test
-    public void testAutomaticResolutionAsNotNull() {
-        try {
-            when(extensionRegistry.getExtensions()).thenReturn(extensionRegistry_test.getExtensions());
-            Assert.assertEquals(SampleTransformationTemplate.class,butterflyFacadeImpl.automaticResolution(applicationFolder));
-        }catch(TemplateResolutionException ex) {
-            ex.printStackTrace();
-        }
+    public void testAutomaticResolutionAsNotNull() throws TemplateResolutionException {
+      when(extensionRegistry.getExtensions()).thenReturn(extensionRegistry_test.getExtensions());
+      Assert.assertEquals(SampleTransformationTemplate.class,butterflyFacadeImpl.automaticResolution(applicationFolder));
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testTransformWithTemplateAsEmptyString() {
-        try {
-            butterflyFacadeImpl.transform(applicationFolder,"");
-        }catch(ButterflyException ex) {
-            ex.printStackTrace();
-        }
+    public void testTransformWithTemplateAsEmptyString() throws ButterflyException {
+       butterflyFacadeImpl.transform(applicationFolder,"");
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testTransformWithTemplateAsNull() {
-        try {
-            butterflyFacadeImpl.transform(applicationFolder,(String) null);
-        }catch(ButterflyException ex) {
-            ex.printStackTrace();
-        }
+    public void testTransformWithTemplateAsNull() throws ButterflyException {
+        butterflyFacadeImpl.transform(applicationFolder,(String) null);
+
     }
 
 
     @Test(expectedExceptions = InternalException.class)
-    public void testTransformWithInValidTemplate() {
-        try {
-            butterflyFacadeImpl.transform(applicationFolder,"TestTemplate");
-        }catch(ButterflyException ex) {
-            ex.printStackTrace();
-        }
+    public void testTransformWithInValidTemplate() throws ButterflyException {
+      butterflyFacadeImpl.transform(applicationFolder,"TestTemplate");
     }
 
     @Test
-    public void testTransformWithValidTemplate() {
-        try {
-            boolean appFolderExists = applicationFolder.mkdirs();
-            if(appFolderExists) {
-                butterflyFacadeImpl.transform(applicationFolder, "com.paypal.butterfly.core.SampleTransformationTemplate");
-            } else {
-                Assert.assertTrue(false);
-            }
-        }catch(ButterflyException ex) {
-            ex.printStackTrace();
-        }
+    public void testTransformWithValidTemplate() throws ButterflyException {
+         butterflyFacadeImpl.transform(applicationFolder, "com.paypal.butterfly.core.SampleTransformationTemplate");
     }
 
 
     @Test(expectedExceptions = InternalException.class)
-    public void testTransformWithAbstractTemplate() {
-        try {
-            butterflyFacadeImpl.transform(applicationFolder,"com.paypal.butterfly.core.SampleAbstractTransformationTemplate");
-        }catch(ButterflyException ex) {
-            ex.printStackTrace();
-        }
+    public void testTransformWithAbstractTemplate() throws ButterflyException {
+         butterflyFacadeImpl.transform(applicationFolder,"com.paypal.butterfly.core.SampleAbstractTransformationTemplate");
     }
-
 
     @Test
-    public void testTransformWithValidTemplateAsClass() {
-        try {
-            boolean appFolderExists = applicationFolder.mkdirs();
-            if(appFolderExists) {
-                butterflyFacadeImpl.transform(applicationFolder,SampleTransformationTemplate.class);
-            }else {
-                Assert.assertTrue(false);
-            }
-        }catch(ButterflyException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testTransformWithValidUpgradePathInvalidAppFolder() {
-        try {
-            UpgradePath  upgradePath = new UpgradePath(SampleUpgradeStep.class);
-            butterflyFacadeImpl.transform(applicationFolder,upgradePath);
-        }catch(ButterflyException ex) {
-            ex.printStackTrace();
-        }
+    public void testTransformWithValidTemplateAsClass() throws ButterflyException {
+         butterflyFacadeImpl.transform(applicationFolder,SampleTransformationTemplate.class);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testTransformWithInValidUpgradePath() {
-        try {
-            boolean appFolderExists = applicationFolder.mkdirs();
-            if(appFolderExists) {
-                butterflyFacadeImpl.transform(applicationFolder, (UpgradePath) null);
-            }else {
-                Assert.assertTrue(false);
-            }
-
-        }catch(ButterflyException ex) {
-            ex.printStackTrace();
-        }
+    public void testTransformWithValidUpgradePathInvalidAppFolder() throws ButterflyException {
+        UpgradePath  upgradePath = new UpgradePath(SampleUpgradeStep.class);
+        butterflyFacadeImpl.transform(new File("testTransformation1"),upgradePath);
     }
 
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testTransformWithInValidUpgradePath() throws ButterflyException {
+          butterflyFacadeImpl.transform(applicationFolder, (UpgradePath) null);
+    }
 
     @Test
-    public void testTransformWithValidUpgradePath() {
-        try {
-            boolean appFolderExists = applicationFolder.mkdirs();
-            if(appFolderExists) {
-                UpgradePath  upgradePath = new UpgradePath(SampleUpgradeStep.class);
-                butterflyFacadeImpl.transform(applicationFolder,upgradePath);
-            } else {
-                Assert.assertTrue(false);
-            }
-
-        }catch(ButterflyException ex) {
-            ex.printStackTrace();
-        }
+    public void testTransformWithValidUpgradePath() throws ButterflyException {
+        UpgradePath  upgradePath = new UpgradePath(SampleUpgradeStep.class);
+        butterflyFacadeImpl.transform(applicationFolder,upgradePath);
     }
-
-
-    @AfterMethod
-    public void tearDown() {
-        boolean deleted = applicationFolder.exists()? applicationFolder.delete():false;
-        System.out.println("In tearDown:" + deleted);
-    }
-
 }
