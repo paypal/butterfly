@@ -1,8 +1,8 @@
 package com.paypal.butterfly.utilities.text;
 
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
-import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 
 import java.io.File;
@@ -63,11 +63,15 @@ public class StringFormat extends TransformationUtility<StringFormat> {
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         TUExecutionResult result = null;
 
-        String[] attributeValues = new String[attributeNames.length];
-        for (int i = 0; i < attributeNames.length; i++) {
-            attributeValues[i] = (String) transformationContext.get(attributeNames[i]);
+        if (attributeNames != null) {
+            String[] attributeValues = new String[attributeNames.length];
+            for (int i = 0; i < attributeNames.length; i++) {
+                attributeValues[i] = (String) transformationContext.get(attributeNames[i]);
+            }
+            result = TUExecutionResult.value(this, String.format(format, attributeValues));
+        } else {
+            result = TUExecutionResult.warning(this, format, "No attributes have been specified");
         }
-        result = TUExecutionResult.value(this, String.format(format, attributeValues));
 
         return result;
     }
