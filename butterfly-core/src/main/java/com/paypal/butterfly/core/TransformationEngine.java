@@ -222,7 +222,7 @@ public class TransformationEngine {
                 logger.debug("\t{}\t - {}", order, executionResult.getDetails());
                 break;
             case WARNING:
-                processExecutionResultWarningType(utility, result, executionResult, order);
+                processExecutionResultWarningType(utility, executionResult, order);
                 break;
             case ERROR:
                 processError(utility, executionResult.getException(), order);
@@ -252,7 +252,7 @@ public class TransformationEngine {
                 logger.debug("\t-\t - [{}][Result: {}][Utility: {}]", StringUtils.abbreviate(utility.toString(), 240),  StringUtils.abbreviate(executionResult.getValue().toString(), 120), utility.getName());
                 break;
             case WARNING:
-                processExecutionResultWarningType(utility, result, executionResult, "-");
+                processExecutionResultWarningType(utility, executionResult, "-");
                 break;
             case ERROR:
                 processError(utility, executionResult.getException(), "-");
@@ -263,14 +263,14 @@ public class TransformationEngine {
         }
     }
 
-    private void processExecutionResultWarningType(TransformationUtility utility, PerformResult result, ExecutionResult executionResult, String order) {
+    private void processExecutionResultWarningType(TransformationUtility utility, ExecutionResult executionResult, String order) {
         logger.warn("\t{}\t -  '{}' has successfully been executed, but it has warnings, see debug logs for further details. Utility name: {}", order, utility.getDescription(), utility.getName());
         if (logger.isDebugEnabled()) {
-            if (result.getWarnings().size() == 0) {
-                logger.warn("\t\t\t * Warning message: {}", result.getDetails());
+            if (executionResult.getWarnings().size() == 0) {
+                logger.warn("\t\t\t * Warning message: {}", executionResult.getDetails());
             } else {
                 logger.warn("\t\t\t * Execution details: {}", executionResult.getDetails());
-                logger.warn("\t\t\t * Warnings (see debug logs for further details):");
+                logger.warn("\t\t\t * Warnings:");
                 for (Object warning : executionResult.getWarnings()) {
                     String message = String.format("\t\t\t\t - %s: %s", warning.getClass().getName(), ((Exception) warning).getMessage());
                     logger.warn(message, warning);
