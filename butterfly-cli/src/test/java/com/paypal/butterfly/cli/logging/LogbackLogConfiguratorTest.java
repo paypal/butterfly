@@ -1,4 +1,4 @@
-package com.paypal.butterfly.cli;
+package com.paypal.butterfly.cli.logging;
 
 import ch.qos.logback.classic.LoggerContext;
 import org.mockito.InjectMocks;
@@ -14,10 +14,10 @@ import org.testng.annotations.Test;
  *
  * @author vkuncham
  */
-public class LogbackVerboseConfiguratorTest extends PowerMockTestCase {
+public class LogbackLogConfiguratorTest extends PowerMockTestCase {
 
     @InjectMocks
-    private LogbackVerboseConfigurator logbackVerboseConfigurator;
+    private LogbackLogConfigurator logbackVerboseConfigurator;
 
     @Mock
     private static final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -26,7 +26,7 @@ public class LogbackVerboseConfiguratorTest extends PowerMockTestCase {
     public void testVerboseOn() {
         Assert.assertNotNull(logbackVerboseConfigurator);
         Assert.assertNotNull(loggerContext);
-        logbackVerboseConfigurator.verboseMode(true);
+        logbackVerboseConfigurator.debugMode(true);
         Assert.assertTrue(loggerContext.getLogger("com.paypal.butterfly").getLevel() == ch.qos.logback.classic.Level.DEBUG);
     }
 
@@ -35,7 +35,7 @@ public class LogbackVerboseConfiguratorTest extends PowerMockTestCase {
     public void testVerboseOff() {
         Assert.assertNotNull(logbackVerboseConfigurator);
         Assert.assertNotNull(loggerContext);
-        logbackVerboseConfigurator.verboseMode(false);
+        logbackVerboseConfigurator.debugMode(false);
         Assert.assertTrue(loggerContext.getLogger("com.paypal.butterfly").getLevel() == ch.qos.logback.classic.Level.INFO);
     }
 

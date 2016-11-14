@@ -73,20 +73,16 @@ public class TUExecutionResult extends ExecutionResult<TransformationUtility, TU
         return new TUExecutionResult(transformationUtility, value).setDetails(details);
     }
 
-    public static TUExecutionResult warning(TransformationUtility transformationUtility, Object value) {
-        return new TUExecutionResult(transformationUtility, Type.WARNING).setValue(value);
-    }
-
     public static TUExecutionResult warning(TransformationUtility transformationUtility, Object value, String details) {
         return new TUExecutionResult(transformationUtility, Type.WARNING).setValue(value).setDetails(details);
     }
 
     public static TUExecutionResult warning(TransformationUtility transformationUtility, Object value, Exception exception) {
-        return new TUExecutionResult(transformationUtility, Type.WARNING).setValue(value).setException(exception);
+        return new TUExecutionResult(transformationUtility, Type.WARNING).setValue(value).addWarning(exception);
     }
 
     public static TUExecutionResult warning(TransformationUtility transformationUtility, Object value, Exception exception, String details) {
-        return new TUExecutionResult(transformationUtility, Type.WARNING).setValue(value).setException(exception).setDetails(details);
+        return new TUExecutionResult(transformationUtility, Type.WARNING).setValue(value).addWarning(exception).setDetails(details);
     }
 
     public static TUExecutionResult error(TransformationUtility transformationUtility, Exception exception) {

@@ -1,5 +1,6 @@
 *.class
 target/
+logs/
 test-output/
 
 # Package Files #
