@@ -15,7 +15,7 @@ import java.util.List;
 public class ExtensionRegistryTest {
 
     @Test
-    public void testValidExtensionRegistry_1() {
+    public void testValidExtensionRegistry() {
         ExtensionRegistry extensionRegistry  = new ExtensionRegistry();
         List<Extension> extensions = extensionRegistry.getExtensions();
         Assert.assertEquals(extensions.size(),2);
