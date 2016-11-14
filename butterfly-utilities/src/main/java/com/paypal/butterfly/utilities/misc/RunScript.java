@@ -1,4 +1,4 @@
-package com.paypal.butterfly.utilities.script;
+package com.paypal.butterfly.utilities.misc;
 
 import com.paypal.butterfly.extensions.api.ExecutionResult;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;

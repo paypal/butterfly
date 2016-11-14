@@ -47,7 +47,7 @@ public final class UpgradePath {
         try {
             this.firstStep = firstStepClass.newInstance();
         } catch (InstantiationException e) {
-            String exceptionMessage = "Upgrade step class " + firstStepClass + " could not be instantiated. Run Butterfly in verbose mode, double check if its extension has been properly registered, and also double check if it complies with Butterfly extensions API";
+            String exceptionMessage = "Upgrade step class " + firstStepClass + " could not be instantiated. Run Butterfly in debug mode, double check if its extension has been properly registered, and also double check if it complies with Butterfly extensions API";
             logger.error(exceptionMessage, e);
             throw new ButterflyRuntimeException(exceptionMessage, e);
         } catch (IllegalAccessException e) {

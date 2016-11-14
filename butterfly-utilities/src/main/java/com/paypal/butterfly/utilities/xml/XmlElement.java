@@ -18,7 +18,11 @@ import java.util.regex.Pattern;
 
 /**
  * Utility that results in the value of an element,
- * or one of its attributes, in a XML file
+ * or one of its attributes, in a XML file.
+ * </br>
+ * <strong>Note: if more than one element match
+ * the specified XML element, the very first
+ * one will be used</strong>
  *
  * @author facarvalho
  */
