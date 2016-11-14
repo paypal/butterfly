@@ -21,19 +21,28 @@ public class ApplicationTest {
                 (new File(this.getClass().getClassLoader().getResource("testTransformation").getFile())));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class,
+            expectedExceptionsMessageRegExp= "Invalid application folder test_transformed"
+    )
     public void testSetInValidFolder() {
         application.setFolder(new File("test_transformed"));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+
+    @Test(expectedExceptions = IllegalArgumentException.class,
+            expectedExceptionsMessageRegExp= "Invalid application folder null"
+        )
     public void testSetFolderAsNull() {
         application.setFolder(null);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+
+    @Test(expectedExceptions = IllegalArgumentException.class,
+            expectedExceptionsMessageRegExp= "Invalid application folder .*"
+    )
     public void testSetFolderWithNoDirectory() {
-        application.setFolder(new File(this.getClass().getClassLoader().getResource("testTransformation/test.properties").getFile()));
+        application.setFolder(new File(
+                this.getClass().getClassLoader().getResource("testTransformation/test.properties").getFile()));
     }
 
     @Test

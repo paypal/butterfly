@@ -1,5 +1,6 @@
 package com.paypal.butterfly.core;
 
+import com.paypal.butterfly.core.sample.ExtensionSampleOne;
 import com.paypal.butterfly.extensions.api.Extension;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -18,18 +19,8 @@ public class ExtensionRegistryTest {
         ExtensionRegistry extensionRegistry  = new ExtensionRegistry();
         List<Extension> extensions = extensionRegistry.getExtensions();
         Assert.assertTrue(extensions.size() == 2);
-        Extension extension = extensions.get(0);
-        Assert.assertTrue(extension instanceof ExtensionSampleOne);
-    }
-
-
-    @Test
-    public void testValidExtensionRegistry_2() {
-        ExtensionRegistry extensionRegistry  = new ExtensionRegistry();
-        List<Extension> extensions = extensionRegistry.getExtensions();
-        Assert.assertTrue(extensions.size() == 2);
-        Extension extension = extensions.get(1);
-        Assert.assertTrue(extension instanceof ExtensionSampleOne);
+        Assert.assertTrue(extensions.get(0) instanceof ExtensionSampleOne);
+        Assert.assertTrue(extensions.get(1) instanceof ExtensionSampleOne);
     }
 
 }

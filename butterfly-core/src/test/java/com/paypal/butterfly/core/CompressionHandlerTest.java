@@ -1,8 +1,7 @@
 package com.paypal.butterfly.core;
 
+import com.paypal.butterfly.core.sample.SampleTransformationTemplate;
 import org.apache.commons.io.FileUtils;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
@@ -15,32 +14,25 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.powermock.api.mockito.PowerMockito.when;
-
 /**
  * CompressionHandlerTest
  *
  * Created by vkuncham on 10/31/2016.
  */
-
 @PrepareForTest(FileUtils.class)
 public class CompressionHandlerTest extends PowerMockTestCase {
 
     private static final Logger logger = LoggerFactory.getLogger(CompressionHandlerTest.class);
-
-    @InjectMocks
-    private CompressionHandler compressionHandler;
-
-    @Mock
-    private Transformation transformation;
-
+    private CompressionHandler compressionHandler = new CompressionHandler();
     private File transformedApplicationLocation;
+    private TemplateTransformation transformation;
 
     @Test
     public void testCompressionWithValidFilePath() throws IOException {
-        Assert.assertNotNull(transformation);
+
         transformedApplicationLocation = new File(this.getClass().getClassLoader().getResource("testTransformation").getFile());
-        when(transformation.getTransformedApplicationLocation()).thenReturn(transformedApplicationLocation);
+        transformation= new TemplateTransformation(new Application(transformedApplicationLocation),new SampleTransformationTemplate(),null);
+        transformation.setTransformedApplicationLocation(transformedApplicationLocation);
         PowerMockito.mockStatic(FileUtils.class);
         compressionHandler.compress(transformation);
         Assert.assertTrue(new File(transformation.getTransformedApplicationLocation().getAbsolutePath() + ".zip").exists());
@@ -49,9 +41,9 @@ public class CompressionHandlerTest extends PowerMockTestCase {
 
     @Test
     public void testCompressionWithInValidFilePath() {
-        Assert.assertNotNull(transformation);
-        transformedApplicationLocation = new File("test1_transformed");
-        when(transformation.getTransformedApplicationLocation()).thenReturn(transformedApplicationLocation);
+        transformedApplicationLocation = new File(this.getClass().getClassLoader().getResource("testTransformation").getFile());
+        transformation= new TemplateTransformation(new Application(transformedApplicationLocation),new SampleTransformationTemplate(),null);
+        transformation.setTransformedApplicationLocation(new File("test1_transformed"));
         compressionHandler.compress(transformation);
         Assert.assertFalse(new File(transformation.getTransformedApplicationLocation().getAbsolutePath() + ".zip").exists());
         Assert.assertFalse(new File(transformation.getTransformedApplicationLocation().getAbsolutePath()).exists());

@@ -1,4 +1,4 @@
-package com.paypal.butterfly.core;
+package com.paypal.butterfly.core.sample;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;

@@ -1,4 +1,4 @@
-package com.paypal.butterfly.core;
+package com.paypal.butterfly.core.sample;
 
 /**
  * Created by vkuncham on 11/4/2016.
