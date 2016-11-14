@@ -18,7 +18,7 @@ public class ExtensionRegistryTest {
     public void testValidExtensionRegistry_1() {
         ExtensionRegistry extensionRegistry  = new ExtensionRegistry();
         List<Extension> extensions = extensionRegistry.getExtensions();
-        Assert.assertTrue(extensions.size() == 2);
+        Assert.assertEquals(extensions.size(),2);
         Assert.assertTrue(extensions.get(0) instanceof ExtensionSampleOne);
         Assert.assertTrue(extensions.get(1) instanceof ExtensionSampleOne);
     }
