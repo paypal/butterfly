@@ -66,53 +66,53 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public void transform(File applicationFolder, String templateClassName) throws ButterflyException {
-        transform(applicationFolder, templateClassName, new Configuration());
+    public File transform(File applicationFolder, String templateClassName) throws ButterflyException {
+        return transform(applicationFolder, templateClassName, new Configuration());
     }
 
     @Override
-    public void transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException {
+    public File transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException {
         if(StringUtils.isBlank(templateClassName)) {
             throw new IllegalArgumentException("Template class name cannot be blank");
         }
         try {
             Class<TransformationTemplate> templateClass = (Class<TransformationTemplate>) Class.forName(templateClassName);
-            transform(applicationFolder, templateClass, configuration);
+            return transform(applicationFolder, templateClass, configuration);
         } catch (ClassNotFoundException e) {
-            String exceptionMessage = "Template class " + templateClassName + " not found. Run Butterfly in verbose mode and double check if its extension has been properly registered";
+            String exceptionMessage = "Template class " + templateClassName + " not found. Run Butterfly in debug mode and double check if its extension has been properly registered";
             logger.error(exceptionMessage, e);
             throw new InternalException(exceptionMessage, e);
         }
     }
 
     @Override
-    public void transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) throws ButterflyException {
-        transform(applicationFolder, templateClass, new Configuration());
+    public File transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) throws ButterflyException {
+        return transform(applicationFolder, templateClass, new Configuration());
     }
 
     @Override
-    public void transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException {
+    public File transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException {
         TransformationTemplate template = getTemplate(templateClass);
         Application application = new Application(applicationFolder);
         Transformation transformation = new TemplateTransformation(application, template, configuration);
 
-        transform(transformation);
+        return transform(transformation);
     }
 
     @Override
-    public void transform(File applicationFolder, UpgradePath upgradePath) throws ButterflyException {
-        transform(applicationFolder, upgradePath, new Configuration());
+    public File transform(File applicationFolder, UpgradePath upgradePath) throws ButterflyException {
+        return transform(applicationFolder, upgradePath, new Configuration());
     }
 
     @Override
-    public void transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) throws ButterflyException {
+    public File transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) throws ButterflyException {
         Application application = new Application(applicationFolder);
         Transformation transformation = new UpgradePathTransformation(application, upgradePath, configuration);
 
-        transform(transformation);
+        return transform(transformation);
     }
 
-    private void transform(Transformation transformation) throws ButterflyException {
+    private File transform(Transformation transformation) throws ButterflyException {
         Configuration configuration = transformation.getConfiguration();
         if (logger.isDebugEnabled()) {
             logger.debug("Transformation configuration: {}", configuration);
@@ -123,6 +123,8 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
         if(configuration.isZipOutput()){
             compressionHandler.compress(transformation);
         }
+
+        return transformation.getTransformedApplicationLocation();
     }
 
     private TransformationTemplate getTemplate(Class<? extends TransformationTemplate> templateClass) {
@@ -133,7 +135,7 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
             TransformationTemplate template = templateClass.newInstance();
             return template;
         } catch (InstantiationException e) {
-            String exceptionMessage = "Template class " + templateClass + " could not be instantiated. Run Butterfly in verbose mode, double check if its extension has been properly registered, and also double check if it complies with Butterfly extensions API";
+            String exceptionMessage = "Template class " + templateClass + " could not be instantiated. Run Butterfly in debug mode, double check if its extension has been properly registered, and also double check if it complies with Butterfly extensions API";
             logger.error(exceptionMessage, e);
             throw new InternalException(exceptionMessage, e);
         } catch (IllegalAccessException e) {
