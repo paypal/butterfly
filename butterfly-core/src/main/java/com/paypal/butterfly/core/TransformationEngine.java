@@ -195,13 +195,16 @@ public class TransformationEngine {
     private void processError(TransformationUtility utility, Exception e, String order) throws TransformationException {
         if (utility.abortOnFailure()) {
             logger.error("*** Transformation will be aborted due to failure in {} ***", utility.getName());
-            if (utility.getAbortionMessage() != null) {
-                logger.error("*** {} ***", utility.getAbortionMessage());
+            String abortionMessage = utility.getAbortionMessage();
+            if (abortionMessage != null) {
+                logger.error("*** {} ***", abortionMessage);
             }
             logger.error("*** Description: {}", utility.getDescription());
             logger.error("*** Cause: {}", e.getMessage());
+            logger.error("*** Exception stack trace:", e);
 
-            throw new TransformationException(utility.getName() + " failed when performing transformation", e);
+            String exceptionMessage = (abortionMessage != null ? abortionMessage : utility.getName() + " failed when performing transformation");
+            throw new TransformationException(exceptionMessage, e);
         } else {
             logger.error("\t{}\t -  '{}' has failed. See debug logs for further details. Utility name: {}", order, utility.getDescription(), utility.getName());
             if(logger.isDebugEnabled()) {
