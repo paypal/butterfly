@@ -1,7 +1,7 @@
 package com.paypal.butterfly.cli;
 
-import com.paypal.butterfly.cli.logging.LogFileDefiner;
 import com.paypal.butterfly.cli.logging.LogConfigurator;
+import com.paypal.butterfly.cli.logging.LogFileDefiner;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
@@ -10,7 +10,6 @@ import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.exception.TemplateResolutionException;
-import com.paypal.butterfly.facade.exception.TransformationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -144,11 +143,13 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             logger.info("----------------------------------------------");
             logger.info("Transformed application folder: {}", transformedApplicationLocation);
             logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
-        } catch (TransformationException e) {
-            logger.error("A transformation error has occurred", e);
-            return 1;
         } catch (ButterflyException e) {
-            logger.error("An error has occurred", e);
+            logger.info("");
+            logger.info("--------------------------------------------------------------------------------------------");
+            logger.error("*** Transformation has been aborted due to:");
+            logger.error("*** {}", e.getMessage());
+            logger.info("--------------------------------------------------------------------------------------------");
+            logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
             return 1;
         } catch (ClassNotFoundException e) {
             logger.error("The specified transformation template class has not been found", e);
