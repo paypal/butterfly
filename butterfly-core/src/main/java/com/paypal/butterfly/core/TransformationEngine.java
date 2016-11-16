@@ -62,6 +62,7 @@ public class TransformationEngine {
      * Upgrade the application based on an upgrade path (from an original version to a target version)
      */
     private void perform(UpgradePath upgradePath, File transformedAppFolder) throws TransformationException {
+        logger.info("");
         logger.info("====================================================================================================================================");
         logger.info("\tUpgrade path from version {} to version {}", upgradePath.getOriginalVersion(), upgradePath.getUpgradeVersion());
 
@@ -69,6 +70,7 @@ public class TransformationEngine {
         while (upgradePath.hasNext()) {
             upgradeStep = upgradePath.next();
 
+            logger.info("");
             logger.info("====================================================================================================================================");
             logger.info("\tUpgrade step");
             logger.info("\t\t* from version: {}", upgradeStep.getCurrentVersion());
