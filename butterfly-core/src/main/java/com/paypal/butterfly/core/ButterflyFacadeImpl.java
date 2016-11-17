@@ -7,6 +7,7 @@ import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
+import com.paypal.butterfly.facade.TransformationResult;
 import com.paypal.butterfly.facade.exception.TemplateResolutionException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -66,12 +67,12 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public File transform(File applicationFolder, String templateClassName) throws ButterflyException {
+    public TransformationResult transform(File applicationFolder, String templateClassName) throws ButterflyException {
         return transform(applicationFolder, templateClassName, new Configuration());
     }
 
     @Override
-    public File transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException {
+    public TransformationResult transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException {
         if(StringUtils.isBlank(templateClassName)) {
             throw new IllegalArgumentException("Template class name cannot be blank");
         }
@@ -86,12 +87,12 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public File transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) throws ButterflyException {
+    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) throws ButterflyException {
         return transform(applicationFolder, templateClass, new Configuration());
     }
 
     @Override
-    public File transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException {
+    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException {
         TransformationTemplate template = getTemplate(templateClass);
         Application application = new Application(applicationFolder);
         Transformation transformation = new TemplateTransformation(application, template, configuration);
@@ -100,31 +101,31 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public File transform(File applicationFolder, UpgradePath upgradePath) throws ButterflyException {
+    public TransformationResult transform(File applicationFolder, UpgradePath upgradePath) throws ButterflyException {
         return transform(applicationFolder, upgradePath, new Configuration());
     }
 
     @Override
-    public File transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) throws ButterflyException {
+    public TransformationResult transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) throws ButterflyException {
         Application application = new Application(applicationFolder);
         Transformation transformation = new UpgradePathTransformation(application, upgradePath, configuration);
 
         return transform(transformation);
     }
 
-    private File transform(Transformation transformation) throws ButterflyException {
+    private TransformationResult transform(Transformation transformation) throws ButterflyException {
         Configuration configuration = transformation.getConfiguration();
         if (logger.isDebugEnabled()) {
             logger.debug("Transformation configuration: {}", configuration);
         }
 
-        transformationEngine.perform(transformation);
+        TransformationResult transformationResult = transformationEngine.perform(transformation);
 
         if(configuration.isZipOutput()){
             compressionHandler.compress(transformation);
         }
 
-        return transformation.getTransformedApplicationLocation();
+        return transformationResult;
     }
 
     private TransformationTemplate getTemplate(Class<? extends TransformationTemplate> templateClass) {
