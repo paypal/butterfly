@@ -9,6 +9,7 @@ import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
+import com.paypal.butterfly.facade.TransformationResult;
 import com.paypal.butterfly.facade.exception.TemplateResolutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,24 +126,33 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             }
             logger.info("Application to be transformed: {}", applicationFolder);
             logger.info("Transformation template class: {}", templateClass.getName());
-            File transformedApplicationLocation = null;
+            TransformationResult transformationResult = null;
             if (UpgradeStep.class.isAssignableFrom(templateClass)) {
                 Class<? extends UpgradeStep> firstStepClass = (Class<? extends UpgradeStep>) templateClass;
                 String upgradeVersion = (String) optionSet.valueOf(CLI_OPTION_UPGRADE_VERSION);
                 UpgradePath upgradePath = new UpgradePath(firstStepClass, upgradeVersion);
 
                 logger.info("Performing upgrade from version {} to version {} (it might take a few seconds)", upgradePath.getOriginalVersion(), upgradePath.getUpgradeVersion());
-                transformedApplicationLocation = butterflyFacade.transform(applicationFolder, upgradePath, configuration);
+                transformationResult = butterflyFacade.transform(applicationFolder, upgradePath, configuration);
             } else {
                 logger.info("Performing transformation (it might take a few seconds)");
-                transformedApplicationLocation = butterflyFacade.transform(applicationFolder, templateClass, configuration);
+                transformationResult = butterflyFacade.transform(applicationFolder, templateClass, configuration);
             }
             logger.info("");
             logger.info("----------------------------------------------");
             logger.info("Application has been transformed successfully!");
             logger.info("----------------------------------------------");
-            logger.info("Transformed application folder: {}", transformedApplicationLocation);
-            logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
+            logger.info("Transformed application folder: {}", transformationResult.getTransformedApplicationLocation());
+            logger.info("Check log file for details: {}", LogFileDefiner.getLogFile());
+            if (transformationResult.hasManualInstructions()) {
+                logger.info("");
+                logger.info(" **************************************************************************************");
+                logger.info(" *** THIS APPLICATION REQUIRES POST-TRANSFORMATION MANUAL INSTRUCTIONS");
+                logger.info(" *** Read manual instructions document for further details:");
+                logger.info(" *** {}", transformationResult.getManualInstructionsFile());
+                logger.info(" **************************************************************************************");
+                logger.info("");
+            }
         } catch (ButterflyException e) {
             logger.info("");
             logger.info("--------------------------------------------------------------------------------------------");

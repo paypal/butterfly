@@ -3,8 +3,10 @@ package com.paypal.butterfly.cli;
 import com.paypal.butterfly.cli.logging.LogConfigurator;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
+import com.paypal.butterfly.facade.TransformationResult;
 import com.test.SampleExtension;
 import com.test.SampleTransformationTemplate;
 import org.mockito.InjectMocks;
@@ -12,6 +14,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -36,6 +40,17 @@ public class ButterflyCliTest extends PowerMockTestCase {
 
     @Mock
     private LogConfigurator logConfigurator;
+
+    @BeforeMethod
+    public void beforeTest() throws ButterflyException {
+        TransformationResult mockResult = Mockito.mock(TransformationResult.class);
+        Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(String.class))).thenReturn(mockResult);
+        Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(String.class), Mockito.any(Configuration.class))).thenReturn(mockResult);
+        Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(Class.class))).thenReturn(mockResult);
+        Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(Class.class), Mockito.any(Configuration.class))).thenReturn(mockResult);
+        Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(UpgradePath.class))).thenReturn(mockResult);
+        Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(UpgradePath.class), Mockito.any(Configuration.class))).thenReturn(mockResult);
+    }
 
     /**
      * To Test listing of extensions

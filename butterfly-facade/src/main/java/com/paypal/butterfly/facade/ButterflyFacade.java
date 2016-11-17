@@ -46,9 +46,9 @@ public interface ButterflyFacade {
      *
      * @param applicationFolder application folder
      * @param templateClassName transformation template class name
-     * @return the transformed application folder
+     * @return the transformation result object
      */
-    File transform(File applicationFolder, String templateClassName) throws ButterflyException;
+    TransformationResult transform(File applicationFolder, String templateClassName) throws ButterflyException;
 
     /**
      * Transform an application, and also accept an additional
@@ -57,18 +57,18 @@ public interface ButterflyFacade {
      * @param applicationFolder application folder
      * @param templateClassName transformation template class name
      * @param configuration Butterfly configuration object
-     * @return the transformed application folder
+     * @return the transformation result object
      */
-    File transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException;
+    TransformationResult transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException;
 
     /**
      * Transform an application
      *
      * @param applicationFolder application folder
      * @param templateClass transformation template class
-     * @return the transformed application folder
+     * @return the transformation result object
      */
-    File transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) throws ButterflyException;
+    TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) throws ButterflyException;
 
     /**
      * Transform an application, and also accept an additional
@@ -77,18 +77,18 @@ public interface ButterflyFacade {
      * @param applicationFolder application folder
      * @param templateClass transformation template class
      * @param configuration Butterfly configuration object
-     * @return the transformed application folder
+     * @return the transformation result object
      */
-    File transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException;
+    TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException;
 
     /**
      * Upgrade an application based on an upgrade path
      *
      * @param applicationFolder application folder
      * @param upgradePath upgrade path object used to upgrade this application
-     * @return the transformed application folder
+     * @return the transformation result object
      */
-    File transform(File applicationFolder, UpgradePath upgradePath) throws ButterflyException;
+    TransformationResult transform(File applicationFolder, UpgradePath upgradePath) throws ButterflyException;
 
     /**
      * Transform an application based on an upgrade path, and also accept an additional
@@ -97,8 +97,8 @@ public interface ButterflyFacade {
      * @param applicationFolder application folder
      * @param upgradePath upgrade path object used to upgrade this application
      * @param configuration Butterfly configuration object
-     * @return the transformed application folder
+     * @return the transformation result object
      */
-    File transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) throws ButterflyException;
+    TransformationResult transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) throws ButterflyException;
 
 }

@@ -164,13 +164,13 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
             } else {
                 Exception exception = executionResult.getException();
                 if (exception == null) {
-                    return TUExecutionResult.warning(this, false, "Condition template has not returned a value");
+                    return TUExecutionResult.warning(this, "Condition template has not returned a value", false);
                 } else {
-                    return TUExecutionResult.warning(this, false, exception);
+                    return TUExecutionResult.warning(this, exception, false);
                 }
             }
         } else {
-            return TUExecutionResult.warning(this, false, "No condition has been specified");
+            return TUExecutionResult.warning(this, "No condition has been specified", false);
         }
 
         return TUExecutionResult.value(this, iterateAgain);

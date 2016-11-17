@@ -14,7 +14,8 @@ import org.springframework.context.annotation.Import;
         ExtensionRegistry.class,
         ButterflyFacadeImpl.class,
         TransformationEngine.class,
-        CompressionHandler.class
+        CompressionHandler.class,
+        MdFileManualInstructionsHandler.class
 })
 public class ButterflyCoreConfig {
 }

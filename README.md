@@ -10,5 +10,5 @@ Read [CLI documentation](butterfly-cli/README.md) to find out how to run Butterf
 
 ## CI and ECI Jobs
 
-- [Butterfly-Deploy] (https://ci.paypalcorp.com/Butterfly-CI-8588/job/Butterfly-Deploy/)
+- [Butterfly-Deploy](https://ci.paypalcorp.com/Butterfly-CI-8588/job/Butterfly-Deploy/)
 - [Butterfly-ECI](https://ci.paypalcorp.com/Butterfly-ECI-Job-3315/)

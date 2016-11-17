@@ -190,9 +190,9 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
                     e = new TransformationUtilityException(String.format("Maven goals %s execution failed with exit code %d", Arrays.toString(goals), exitCode));
                 }
                 if (warnOnError) {
-                    result = TUExecutionResult.warning(this, outputHandlersResult, e);
+                    result = TUExecutionResult.warning(this, e, outputHandlersResult);
                 } else {
-                    result = TUExecutionResult.error(this, outputHandlersResult, e);
+                    result = TUExecutionResult.error(this, e, outputHandlersResult);
                 }
             }
         } catch (Exception e) {
@@ -200,7 +200,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
                 Exception invocationException = invocationResult.getExecutionException();
                 if (invocationException != null) {
                     if (warnOnError) {
-                        result = TUExecutionResult.warning(this, null, e);
+                        result = TUExecutionResult.warning(this, e, null);
                     } else {
                         result = TUExecutionResult.error(this, invocationException);
                     }
@@ -209,7 +209,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
 
             if (result == null) {
                 if (warnOnError) {
-                    result = TUExecutionResult.warning(this, null, e);
+                    result = TUExecutionResult.warning(this, e, null);
                 } else {
                     result = TUExecutionResult.error(this, e);
                 }
