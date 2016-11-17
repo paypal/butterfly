@@ -69,7 +69,7 @@ public class LoadFile extends TransformationUtility<LoadFile> {
                 TransformationUtilityException e = new TransformationUtilityException(exceptionMessage);
                 result = TUExecutionResult.error(this, e);
             } else {
-                File fileFromInputStream = File.createTempFile("butterfly", getName());
+                File fileFromInputStream = File.createTempFile("butterfly", getName().replace(':', '_'));
                 FileUtils.copyInputStreamToFile(inputStream, fileFromInputStream);
                 result = TUExecutionResult.value(this, fileFromInputStream);
             }
