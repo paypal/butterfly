@@ -1,20 +1,15 @@
 package com.paypal.butterfly.utilities.maven;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
-
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import org.apache.maven.shared.invoker.*;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Utility to run one or more Maven goals against a specific Maven POM file
@@ -40,6 +35,8 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     private InvocationResult invocationResult = null;
 
     private Invoker invoker = new DefaultInvoker();
+
+    private boolean warnOnError = false;
 
     /**
      * Utility to run one or more Maven goals against a specific Maven POM file
@@ -114,6 +111,19 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     }
 
     /**
+     * If this is set to true, then in case the maven goal command
+     * does not succeed, then a warn result type will be returned,
+     * instead of error. The default value is error
+     *
+     * @param warnOnError
+     * @return this utility instance
+     */
+    public MavenGoal setWarnOnError(boolean warnOnError) {
+        this.warnOnError = warnOnError;
+        return this;
+    }
+
+    /**
      * Return the Maven goals to be executed
      *
      * @return the Maven goals to be executed
@@ -179,18 +189,30 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
                 if (e == null) {
                     e = new TransformationUtilityException(String.format("Maven goals %s execution failed with exit code %d", Arrays.toString(goals), exitCode));
                 }
-                result = TUExecutionResult.error(this, outputHandlersResult, e);
+                if (warnOnError) {
+                    result = TUExecutionResult.warning(this, e, outputHandlersResult);
+                } else {
+                    result = TUExecutionResult.error(this, e, outputHandlersResult);
+                }
             }
         } catch (Exception e) {
             if (invocationResult != null) {
                 Exception invocationException = invocationResult.getExecutionException();
                 if (invocationException != null) {
-                    result = TUExecutionResult.error(this, invocationException);
+                    if (warnOnError) {
+                        result = TUExecutionResult.warning(this, e, null);
+                    } else {
+                        result = TUExecutionResult.error(this, invocationException);
+                    }
                 }
             }
 
             if (result == null) {
-                result = TUExecutionResult.error(this, e);
+                if (warnOnError) {
+                    result = TUExecutionResult.warning(this, e, null);
+                } else {
+                    result = TUExecutionResult.error(this, e);
+                }
             }
         }
 

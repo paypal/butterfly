@@ -2,9 +2,12 @@ package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.api.PerformResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
+import com.paypal.butterfly.extensions.api.utilities.ManualInstruction;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,6 +21,7 @@ class TransformationContextImpl implements TransformationContext {
 
     private Map<String, Object> attributes = new HashMap<>();
     private Map<String, PerformResult> results = new HashMap<>();
+    private List<ManualInstruction> manualInstructions = new ArrayList<>();
 
     @Override
     public Object get(String name) {
@@ -76,4 +80,49 @@ class TransformationContextImpl implements TransformationContext {
         }
         results.put(name, resultObject);
     }
+
+    /**
+     * Adds a new manual instruction object to the list. In the end of the transformation
+     *
+     * @param manualInstruction the manual instruction object to be added to the list
+     */
+    void addManualInstruction(ManualInstruction manualInstruction) {
+        if(manualInstruction == null) {
+            throw new IllegalArgumentException("Manual instruction object cannot be null");
+        }
+        manualInstructions.add(manualInstruction);
+    }
+
+    /**
+     * Returns true if there are manual instructions
+     * registered to this transformation context
+     *
+     * @return true if there are manual instructions
+     * registered to this transformation context
+     */
+    boolean hasManualInstructions() {
+        return manualInstructions.size() > 0;
+    }
+
+    List<ManualInstruction> getManualInstructions() {
+        return manualInstructions;
+    }
+
+    /**
+     * This is a factory method for transformation context objects.
+     * A transformation context instance can be created from scratch,
+     * or it can be created based on a previous context
+     *
+     * @param previousTransformationContext the previous context object, which can lend some
+     *                                      characteristics for the new one
+     * @return the new transformation context object
+     */
+    static TransformationContextImpl getTransformationContext(TransformationContextImpl previousTransformationContext) {
+        TransformationContextImpl context = new TransformationContextImpl();
+        if (previousTransformationContext != null) {
+            context.manualInstructions.addAll(previousTransformationContext.manualInstructions);
+        }
+        return context;
+    }
+
 }

@@ -5,19 +5,26 @@ import com.paypal.butterfly.extensions.api.*;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
+import com.paypal.butterfly.extensions.api.utilities.ManualInstruction;
 import com.paypal.butterfly.facade.Configuration;
+import com.paypal.butterfly.facade.TransformationResult;
 import com.paypal.butterfly.facade.exception.TransformationException;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The transformation engine in charge of
@@ -31,8 +38,19 @@ public class TransformationEngine {
     private static final Logger logger = LoggerFactory.getLogger(TransformationEngine.class);
 
     // This is used to create a timestamp to be applied as suffix in the transformed application folder
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
     private static final String ORDER_FORMAT = "%s.%d";
+
+    private Collection<TransformationListener> transformationListeners;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @PostConstruct
+    public void setupListeners() {
+        Map<String, TransformationListener> beans = applicationContext.getBeansOfType(TransformationListener.class);
+        transformationListeners = beans.values();
+    }
 
     /**
      * Perform an application transformation based on the specified {@link Transformation}
@@ -41,56 +59,91 @@ public class TransformationEngine {
      * @param transformation the transformation object
      * @throws TransformationException if the transformation is aborted for any reason
      */
-    public void perform(Transformation transformation) throws TransformationException {
+    public TransformationResult perform(Transformation transformation) throws TransformationException {
         if(logger.isDebugEnabled()) {
             logger.debug("Requested transformation: {}", transformation);
         }
         File transformedAppFolder = prepareOutputFolder(transformation);
 
+        TransformationContextImpl transformationContext;
         if (transformation instanceof UpgradePathTransformation) {
             UpgradePath upgradePath = ((UpgradePathTransformation) transformation).getUpgradePath();
-            perform(upgradePath, transformedAppFolder);
+            transformationContext = perform(upgradePath, transformedAppFolder);
         } else if (transformation instanceof TemplateTransformation) {
             TransformationTemplate template = ((TemplateTransformation) transformation).getTemplate();
-            perform(template, transformedAppFolder);
+            transformationContext = perform(template, transformedAppFolder, null);
         } else {
             throw new TransformationException("Transformation type not recognized");
+        }
+
+        triggerPostTransformationEvents(transformation, transformationContext);
+
+        TransformationResult transformationResult = new TransformationResultImpl(
+                transformation.getConfiguration(),
+                transformedAppFolder,
+                transformation.getManualInstructionsFile());
+
+        return transformationResult;
+    }
+
+    private void triggerPostTransformationEvents(Transformation transformation, TransformationContextImpl transformationContext) {
+        for (TransformationListener listener : transformationListeners) {
+            listener.postTransformation(transformation, transformationContext);
         }
     }
 
     /*
      * Upgrade the application based on an upgrade path (from an original version to a target version)
      */
-    private void perform(UpgradePath upgradePath, File transformedAppFolder) throws TransformationException {
+    private TransformationContextImpl perform(UpgradePath upgradePath, File transformedAppFolder) throws TransformationException {
+        logger.info("");
         logger.info("====================================================================================================================================");
         logger.info("\tUpgrade path from version {} to version {}", upgradePath.getOriginalVersion(), upgradePath.getUpgradeVersion());
 
         UpgradeStep upgradeStep;
+        TransformationContextImpl previousContext = null;
         while (upgradePath.hasNext()) {
             upgradeStep = upgradePath.next();
 
+            logger.info("");
             logger.info("====================================================================================================================================");
             logger.info("\tUpgrade step");
             logger.info("\t\t* from version: {}", upgradeStep.getCurrentVersion());
             logger.info("\t\t* to version: {}", upgradeStep.getNextVersion());
 
-            perform(upgradeStep, transformedAppFolder);
+            // The context passed to this method call is not the same as the one returned,
+            // although the variable holding them is the same
+            previousContext = perform(upgradeStep, transformedAppFolder, previousContext);
         }
+
+        return previousContext;
     }
 
     /*
      * Transform the application based on a single transformation template. Notice that this transformation
      * template can also be an upgrade step
      */
-    private void perform(TransformationTemplate template, File transformedAppFolder) throws TransformationException {
+    private TransformationContextImpl perform(TransformationTemplate template, File transformedAppFolder, TransformationContextImpl previousTransformationContext) throws TransformationException {
         logger.info("====================================================================================================================================");
         logger.info("Beginning transformation");
 
+        TransformationContextImpl transformationContext = perform(template.getUtilities(), transformedAppFolder, previousTransformationContext);
+
+        logger.info("Transformation has been completed");
+
+        return transformationContext;
+    }
+
+    /*
+     * Performs a list of transformation utilities against an application.
+     * Notice that any of those utilities can be operations
+     */
+    private TransformationContextImpl perform(List<TransformationUtility> utilities, File transformedAppFolder, TransformationContextImpl previousTransformationContext) throws TransformationException {
         int operationsExecutionOrder = 1;
-        TransformationContextImpl transformationContext = new TransformationContextImpl();
+        TransformationContextImpl transformationContext = TransformationContextImpl.getTransformationContext(previousTransformationContext);
 
         TransformationUtility utility;
-        for(Object transformationUtilityObj: template.getUtilities()) {
+        for(Object transformationUtilityObj: utilities) {
             utility = (TransformationUtility) transformationUtilityObj;
             perform(utility, transformedAppFolder, transformationContext, String.valueOf(operationsExecutionOrder));
             if (utility instanceof TransformationOperation || utility instanceof TransformationUtilityParent) {
@@ -98,7 +151,7 @@ public class TransformationEngine {
             }
         }
 
-        logger.info("Transformation has been completed");
+        return transformationContext;
     }
 
     /*
@@ -169,6 +222,10 @@ public class TransformationEngine {
 
                             /* Executing utilities parents */
                             perform((TransformationUtilityParent) utility, result, transformedAppFolder, transformationContext, order);
+                        } else if(utility instanceof ManualInstruction) {
+
+                            /* Adding manual instruction */
+                            transformationContext.addManualInstruction((ManualInstruction) utility);
                         }
                     }
                     break;
@@ -195,13 +252,16 @@ public class TransformationEngine {
     private void processError(TransformationUtility utility, Exception e, String order) throws TransformationException {
         if (utility.abortOnFailure()) {
             logger.error("*** Transformation will be aborted due to failure in {} ***", utility.getName());
-            if (utility.getAbortionMessage() != null) {
-                logger.error("*** {} ***", utility.getAbortionMessage());
+            String abortionMessage = utility.getAbortionMessage();
+            if (abortionMessage != null) {
+                logger.error("*** {} ***", abortionMessage);
             }
             logger.error("*** Description: {}", utility.getDescription());
             logger.error("*** Cause: {}", e.getMessage());
+            logger.error("*** Exception stack trace:", e);
 
-            throw new TransformationException(utility.getName() + " failed when performing transformation", e);
+            String exceptionMessage = (abortionMessage != null ? abortionMessage : utility.getName() + " failed when performing transformation");
+            throw new TransformationException(exceptionMessage, e);
         } else {
             logger.error("\t{}\t -  '{}' has failed. See debug logs for further details. Utility name: {}", order, utility.getDescription(), utility.getName());
             if(logger.isDebugEnabled()) {
@@ -292,7 +352,7 @@ public class TransformationEngine {
         logger.info("Original application folder:\t\t" + application.getFolder());
 
         File originalAppParent = application.getFolder().getParentFile();
-        String transformedAppFolderName = application.getFolder().getName() + "-transformed-" + getCurrentTimeStamp();
+        String transformedAppFolderName = application.getFolder().getName() + "-transformed-" + simpleDateFormat.format(new Date());
 
         File transformedAppFolder;
 
@@ -328,11 +388,6 @@ public class TransformationEngine {
             throw ie;
         }
         return transformedAppFolder;
-    }
-
-    @SuppressFBWarnings("STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE")
-    public static String getCurrentTimeStamp() {
-        return simpleDateFormat.format(new Date());
     }
 
 }

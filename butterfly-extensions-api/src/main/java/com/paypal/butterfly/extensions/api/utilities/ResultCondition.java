@@ -98,7 +98,7 @@ public class ResultCondition extends UtilityCondition<ResultCondition> {
 
         if (result == null) {
             String warningMessage = "There is no utility result associated with name " + utilityName;
-            return TUExecutionResult.warning(this, false, warningMessage);
+            return TUExecutionResult.warning(this, warningMessage, false);
         }
 
         PerformResult.Type resultType = result.getType();

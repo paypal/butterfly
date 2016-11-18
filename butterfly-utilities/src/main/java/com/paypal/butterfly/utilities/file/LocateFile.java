@@ -13,7 +13,9 @@ import java.io.File;
  * location specified. It does not find files, it just results
  * to a {@link File} object based on the input information.
  * This utility also allows to locate a file going up in parent
- * levels from the specified file.
+ * levels from the specified file. If the specified file does
+ * not exist, or if the coordinates don't make sense, an error
+ * is returned
  *
  * @author facarvalho
  */
@@ -68,6 +70,10 @@ public class LocateFile extends TransformationUtility<LocateFile> {
             }
             if (locatedFile == null) {
                 String message = String.format("File to be located reached limit of files hierarchy, parent level %d is too deep", parentLevel);
+                TransformationOperationException e = new TransformationOperationException(message);
+                result = TUExecutionResult.error(this, e);
+            } else if (!locatedFile.exists()) {
+                String message = String.format("File to be located does not exist");
                 TransformationOperationException e = new TransformationOperationException(message);
                 result = TUExecutionResult.error(this, e);
             } else {
