@@ -15,10 +15,10 @@ import java.util.List;
 public class ExtensionRegistryTest {
 
     @Test
-    public void testValidExtensionRegistry_1() {
+    public void testValidExtensionRegistry() {
         ExtensionRegistry extensionRegistry  = new ExtensionRegistry();
         List<Extension> extensions = extensionRegistry.getExtensions();
-        Assert.assertTrue(extensions.size() == 2);
+        Assert.assertEquals(extensions.size(),2);
         Assert.assertTrue(extensions.get(0) instanceof ExtensionSampleOne);
         Assert.assertTrue(extensions.get(1) instanceof ExtensionSampleOne);
     }
