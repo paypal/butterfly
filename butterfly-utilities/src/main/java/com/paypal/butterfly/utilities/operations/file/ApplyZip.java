@@ -76,7 +76,7 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
         File folder = getAbsoluteFile(transformedAppFolder, transformationContext);
         FileOutputStream fileOutputStream = null;
         TOExecutionResult result = null;
-        File zipFileDescriptor = new File("");
+        File zipFileDescriptor = null;
         try {
             ReadableByteChannel readableByteChannel = Channels.newChannel(zipFileUrl.openStream());
 
@@ -102,7 +102,9 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
                     result.addWarning(e);
                 }
             }
-            FileUtils.deleteQuietly(zipFileDescriptor);
+            if(zipFileDescriptor!=null) {
+                FileUtils.deleteQuietly(zipFileDescriptor);
+            }
         }
         return result;
     }
