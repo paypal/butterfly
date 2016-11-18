@@ -2,7 +2,7 @@ package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.api.PerformResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.utilities.ManualInstruction;
+import com.paypal.butterfly.extensions.api.utilities.ManualInstructionRecord;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ class TransformationContextImpl implements TransformationContext {
 
     private Map<String, Object> attributes = new HashMap<>();
     private Map<String, PerformResult> results = new HashMap<>();
-    private List<ManualInstruction> manualInstructions = new ArrayList<>();
+    private List<ManualInstructionRecord> manualInstructionsRecord = new ArrayList<>();
 
     @Override
     public Object get(String name) {
@@ -84,13 +84,13 @@ class TransformationContextImpl implements TransformationContext {
     /**
      * Adds a new manual instruction object to the list. In the end of the transformation
      *
-     * @param manualInstruction the manual instruction object to be added to the list
+     * @param manualInstructionRecord the manual instruction record to be added to the list
      */
-    void addManualInstruction(ManualInstruction manualInstruction) {
-        if(manualInstruction == null) {
-            throw new IllegalArgumentException("Manual instruction object cannot be null");
+    void registerManualInstruction(ManualInstructionRecord manualInstructionRecord) {
+        if(manualInstructionRecord == null) {
+            throw new IllegalArgumentException("Manual instruction record object cannot be null");
         }
-        manualInstructions.add(manualInstruction);
+        manualInstructionsRecord.add(manualInstructionRecord);
     }
 
     /**
@@ -101,11 +101,11 @@ class TransformationContextImpl implements TransformationContext {
      * registered to this transformation context
      */
     boolean hasManualInstructions() {
-        return manualInstructions.size() > 0;
+        return manualInstructionsRecord.size() > 0;
     }
 
-    List<ManualInstruction> getManualInstructions() {
-        return manualInstructions;
+    List<ManualInstructionRecord> getManualInstructionsRecord() {
+        return manualInstructionsRecord;
     }
 
     /**
@@ -120,7 +120,7 @@ class TransformationContextImpl implements TransformationContext {
     static TransformationContextImpl getTransformationContext(TransformationContextImpl previousTransformationContext) {
         TransformationContextImpl context = new TransformationContextImpl();
         if (previousTransformationContext != null) {
-            context.manualInstructions.addAll(previousTransformationContext.manualInstructions);
+            context.manualInstructionsRecord.addAll(previousTransformationContext.manualInstructionsRecord);
         }
         return context;
     }

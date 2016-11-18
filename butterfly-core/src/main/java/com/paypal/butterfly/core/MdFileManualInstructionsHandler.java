@@ -1,6 +1,6 @@
 package com.paypal.butterfly.core;
 
-import com.paypal.butterfly.extensions.api.utilities.ManualInstruction;
+import com.paypal.butterfly.extensions.api.utilities.ManualInstructionRecord;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,9 +60,9 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
             String instructionDescription;
             File instructionFile;
             URL instructionResource;
-            for (ManualInstruction manualInstruction : transformationContext.getManualInstructions()) {
-                instructionDescription = manualInstruction.getDescription();
-                instructionResource = manualInstruction.getResource();
+            for (ManualInstructionRecord manualInstructionRecord : transformationContext.getManualInstructionsRecord()) {
+                instructionDescription = manualInstructionRecord.getDescription();
+                instructionResource = manualInstructionRecord.getResource();
 
                 instructionFile = new File(manualInstructionsDir, getResourceFileName(instructionResource));
                 FileUtils.copyURLToFile(instructionResource, instructionFile);

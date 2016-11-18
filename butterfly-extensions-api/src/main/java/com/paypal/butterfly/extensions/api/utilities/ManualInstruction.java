@@ -23,10 +23,10 @@ public class ManualInstruction extends TransformationUtility<ManualInstruction> 
 
     private String description;
     private String resourceName;
-    private URL resource;
 
     public ManualInstruction(String description, String resourceName) {
         setSaveResult(false);
+
         setDescription(description);
         setResourceName(resourceName);
     }
@@ -57,21 +57,18 @@ public class ManualInstruction extends TransformationUtility<ManualInstruction> 
         return resourceName;
     }
 
-    public URL getResource() {
-        return resource;
-    }
-
     @Override
     protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         TUExecutionResult result = null;
 
-        resource = getClass().getClassLoader().getResource(resourceName);
+        URL resource = getClass().getClassLoader().getResource(resourceName);
         if (resource == null) {
             String exceptionMessage = String.format("Resource %s could not be found in the classpath", resourceName);
             TransformationUtilityException e = new TransformationUtilityException(exceptionMessage);
             result = TUExecutionResult.error(this, e);
         } else {
-            result = TUExecutionResult.nullResult(this);
+            ManualInstructionRecord manualInstructionRecord = new ManualInstructionRecord(description, resource);
+            result = TUExecutionResult.value(this, manualInstructionRecord);
         }
 
         return result;
