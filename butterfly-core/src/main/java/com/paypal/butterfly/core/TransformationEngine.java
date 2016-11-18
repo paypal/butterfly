@@ -6,6 +6,7 @@ import com.paypal.butterfly.extensions.api.exception.TransformationUtilityExcept
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.extensions.api.utilities.ManualInstruction;
+import com.paypal.butterfly.extensions.api.utilities.ManualInstructionRecord;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
 import com.paypal.butterfly.facade.exception.TransformationException;
@@ -201,12 +202,13 @@ public class TransformationEngine {
                     if (isTO) {
                         processOperationExecutionResult(utility, result, order);
                     } else {
+                        TUExecutionResult executionResult = (TUExecutionResult) result.getExecutionResult();
+                        Object executionValue = executionResult.getValue();
+
                         processUtilityExecutionResult(utility, result, transformationContext);
                         if (utility instanceof TransformationUtilityLoop) {
 
                             /* Executing loops of utilities */
-                            TUExecutionResult executionResult = (TUExecutionResult) result.getExecutionResult();
-                            Object executionValue = executionResult.getValue();
                             boolean iterate = executionValue instanceof Boolean && ((Boolean) executionValue).booleanValue();
                             if (iterate) {
                                 TransformationUtilityLoop utilityLoop = (TransformationUtilityLoop) utility;
@@ -225,7 +227,7 @@ public class TransformationEngine {
                         } else if(utility instanceof ManualInstruction) {
 
                             /* Adding manual instruction */
-                            transformationContext.addManualInstruction((ManualInstruction) utility);
+                            transformationContext.registerManualInstruction((ManualInstructionRecord) executionValue);
                         }
                     }
                     break;
