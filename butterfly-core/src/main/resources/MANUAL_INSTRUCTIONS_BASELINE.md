@@ -6,6 +6,6 @@ This application has been transformed by Butterfly. However, to complete the tra
 Follow the list of instructions below and complete each one of them in this order.
 
 After you finish all of them, don't forget to remove this document and all manual instruction documents.
-
-
+</br>
+</br>
 
