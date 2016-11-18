@@ -93,7 +93,7 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
 
     private String getResourceFileName(URL instructionResource) {
         String resourceName = instructionResource.getFile();
-        int i = resourceName.lastIndexOf(File.separatorChar);
+        int i = resourceName.lastIndexOf("/");
         return resourceName.substring(i + 1);
     }
 
