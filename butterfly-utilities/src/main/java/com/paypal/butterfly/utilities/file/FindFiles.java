@@ -93,7 +93,7 @@ public class FindFiles extends TransformationUtility<FindFiles> {
         TUExecutionResult result = null;
 
         if(files.size() == 0) {
-            result = TUExecutionResult.warning(this, new ArrayList<File>(files), "No files have been found");
+            result = TUExecutionResult.warning(this, "No files have been found", new ArrayList<File>(files));
         } else {
             result = TUExecutionResult.value(this, new ArrayList<File>(files));
         }

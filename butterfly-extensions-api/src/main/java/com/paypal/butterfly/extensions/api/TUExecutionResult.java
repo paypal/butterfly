@@ -69,19 +69,19 @@ public class TUExecutionResult extends ExecutionResult<TransformationUtility, TU
         return new TUExecutionResult(transformationUtility, value);
     }
 
-    public static TUExecutionResult value(TransformationUtility transformationUtility, Object value, String details) {
+    public static TUExecutionResult value(TransformationUtility transformationUtility, String details, Object value) {
         return new TUExecutionResult(transformationUtility, value).setDetails(details);
     }
 
-    public static TUExecutionResult warning(TransformationUtility transformationUtility, Object value, String details) {
+    public static TUExecutionResult warning(TransformationUtility transformationUtility, String details, Object value) {
         return new TUExecutionResult(transformationUtility, Type.WARNING).setValue(value).setDetails(details);
     }
 
-    public static TUExecutionResult warning(TransformationUtility transformationUtility, Object value, Exception exception) {
+    public static TUExecutionResult warning(TransformationUtility transformationUtility, Exception exception, Object value) {
         return new TUExecutionResult(transformationUtility, Type.WARNING).setValue(value).addWarning(exception);
     }
 
-    public static TUExecutionResult warning(TransformationUtility transformationUtility, Object value, Exception exception, String details) {
+    public static TUExecutionResult warning(TransformationUtility transformationUtility, Exception exception, String details, Object value) {
         return new TUExecutionResult(transformationUtility, Type.WARNING).setValue(value).addWarning(exception).setDetails(details);
     }
 
@@ -89,11 +89,7 @@ public class TUExecutionResult extends ExecutionResult<TransformationUtility, TU
         return new TUExecutionResult(transformationUtility, exception);
     }
 
-    public static TUExecutionResult error(TransformationUtility transformationUtility, Exception exception, String details) {
-        return new TUExecutionResult(transformationUtility, exception).setDetails(details);
-    }
-
-    public static TUExecutionResult error(TransformationUtility transformationUtility, Object value, Exception exception) {
+    public static TUExecutionResult error(TransformationUtility transformationUtility, Exception exception, Object value) {
         return new TUExecutionResult(transformationUtility, exception).setValue(value);
     }
 
