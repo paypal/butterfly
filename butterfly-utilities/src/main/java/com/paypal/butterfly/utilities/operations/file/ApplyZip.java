@@ -76,20 +76,19 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
         File folder = getAbsoluteFile(transformedAppFolder, transformationContext);
         FileOutputStream fileOutputStream = null;
         TOExecutionResult result = null;
-
+        File zipFileDescriptor = null;
         try {
             ReadableByteChannel readableByteChannel = Channels.newChannel(zipFileUrl.openStream());
 
             int p = zipFileUrl.getPath().lastIndexOf("/") + 1;
             String fileName = zipFileUrl.getPath().substring(p);
 
-            File zipFileDescriptor = new File(folder, fileName);
+            zipFileDescriptor = new File(folder, fileName);
             fileOutputStream = new FileOutputStream(zipFileDescriptor);
             fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
 
             ZipFile zipFile = new ZipFile(zipFileDescriptor);
             zipFile.extractAll(zipFileDescriptor.getParent());
-            FileUtils.deleteQuietly(zipFileDescriptor);
 
             String details = String.format("Zip file '%s' has been downloaded and decompressed into %s", zipFileUrl, getRelativePath(transformedAppFolder, zipFileDescriptor.getParentFile()));
             result = TOExecutionResult.success(this, details);
@@ -103,8 +102,10 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
                     result.addWarning(e);
                 }
             }
+            if(zipFileDescriptor!=null) {
+                FileUtils.deleteQuietly(zipFileDescriptor);
+            }
         }
-
         return result;
     }
 
