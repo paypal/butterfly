@@ -22,10 +22,7 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The transformation engine in charge of
@@ -64,20 +61,23 @@ public class TransformationEngine {
         if(logger.isDebugEnabled()) {
             logger.debug("Requested transformation: {}", transformation);
         }
-        File transformedAppFolder = prepareOutputFolder(transformation);
 
-        TransformationContextImpl transformationContext;
+        File transformedAppFolder = prepareOutputFolder(transformation);
+        List<TransformationContextImpl> transformationContexts;
+
         if (transformation instanceof UpgradePathTransformation) {
             UpgradePath upgradePath = ((UpgradePathTransformation) transformation).getUpgradePath();
-            transformationContext = perform(upgradePath, transformedAppFolder);
+            transformationContexts = perform(upgradePath, transformedAppFolder);
         } else if (transformation instanceof TemplateTransformation) {
             TransformationTemplate template = ((TemplateTransformation) transformation).getTemplate();
-            transformationContext = perform(template, transformedAppFolder, null);
+            TransformationContextImpl transformationContext = perform(template, transformedAppFolder, null);
+            transformationContexts = new ArrayList<>();
+            transformationContexts.add(transformationContext);
         } else {
             throw new TransformationException("Transformation type not recognized");
         }
 
-        triggerPostTransformationEvents(transformation, transformationContext);
+        triggerPostTransformationEvents(transformation, transformationContexts);
 
         TransformationResult transformationResult = new TransformationResultImpl(
                 transformation.getConfiguration(),
@@ -87,19 +87,21 @@ public class TransformationEngine {
         return transformationResult;
     }
 
-    private void triggerPostTransformationEvents(Transformation transformation, TransformationContextImpl transformationContext) {
+    private void triggerPostTransformationEvents(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
         for (TransformationListener listener : transformationListeners) {
-            listener.postTransformation(transformation, transformationContext);
+            listener.postTransformation(transformation, transformationContexts);
         }
     }
 
     /*
      * Upgrade the application based on an upgrade path (from an original version to a target version)
      */
-    private TransformationContextImpl perform(UpgradePath upgradePath, File transformedAppFolder) throws TransformationException {
+    private List<TransformationContextImpl> perform(UpgradePath upgradePath, File transformedAppFolder) throws TransformationException {
         logger.info("");
         logger.info("====================================================================================================================================");
         logger.info("\tUpgrade path from version {} to version {}", upgradePath.getOriginalVersion(), upgradePath.getUpgradeVersion());
+
+        List<TransformationContextImpl> transformationContexts = new ArrayList<>();
 
         UpgradeStep upgradeStep;
         TransformationContextImpl previousContext = null;
@@ -115,9 +117,10 @@ public class TransformationEngine {
             // The context passed to this method call is not the same as the one returned,
             // although the variable holding them is the same
             previousContext = perform(upgradeStep, transformedAppFolder, previousContext);
+            transformationContexts.add(previousContext);
         }
 
-        return previousContext;
+        return transformationContexts;
     }
 
     /*
@@ -129,6 +132,7 @@ public class TransformationEngine {
         logger.info("Beginning transformation");
 
         TransformationContextImpl transformationContext = perform(template.getUtilities(), transformedAppFolder, previousTransformationContext);
+        transformationContext.setTransformationTemplate(template);
 
         logger.info("Transformation has been completed");
 

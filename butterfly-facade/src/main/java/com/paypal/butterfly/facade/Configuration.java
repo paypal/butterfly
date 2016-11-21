@@ -24,41 +24,6 @@ public class Configuration {
         // configuration to take place
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Configuration)) {
-            return false;
-        }
-        if (!Configuration.class.isAssignableFrom(obj.getClass())) {
-            return false;
-        }
-        final Configuration configuration = (Configuration)obj;
-        if(!(this.zipOutput == configuration.isZipOutput())) {
-            return false;
-        }
-        if (this.outputFolder == null && configuration.getOutputFolder() != null) {
-            return false;
-        }
-        if (this.outputFolder != null && configuration.getOutputFolder() == null) {
-            return false;
-        }
-        if(this.outputFolder != null && configuration.getOutputFolder() != null && !this.outputFolder.equals(configuration.getOutputFolder())) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this.outputFolder).append(this.zipOutput).toHashCode();
-    }
-
     /**
      * @see {@link Configuration}
      * @see {@link #setOutputFolder(File)}
@@ -127,4 +92,40 @@ public class Configuration {
     public String toString() {
         return String.format(TO_STRING_FORMAT, outputFolder, zipOutput);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Configuration)) {
+            return false;
+        }
+        if (!Configuration.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        final Configuration configuration = (Configuration)obj;
+        if(!(this.zipOutput == configuration.isZipOutput())) {
+            return false;
+        }
+        if (this.outputFolder == null && configuration.getOutputFolder() != null) {
+            return false;
+        }
+        if (this.outputFolder != null && configuration.getOutputFolder() == null) {
+            return false;
+        }
+        if(this.outputFolder != null && configuration.getOutputFolder() != null && !this.outputFolder.equals(configuration.getOutputFolder())) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(this.outputFolder).append(this.zipOutput).toHashCode();
+    }
+
 }

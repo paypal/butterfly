@@ -21,8 +21,11 @@ public abstract class Transformation {
     // The location where to place the transformed application
     private File transformedApplicationLocation;
 
-    // Text file containing manual instructions (if any)
+    // Text file containing main manual instructions document (if any)
     private File manualInstructionsFile;
+
+    // Directory containing manual instructions documents (if any)
+    private File manualInstructionsDir;
 
     Transformation(Application application, Configuration configuration) {
         this.application = application;
@@ -35,6 +38,10 @@ public abstract class Transformation {
 
     void setManualInstructionsFile(File manualInstructionsFile) {
         this.manualInstructionsFile = manualInstructionsFile;
+    }
+
+    void setManualInstructionsDir(File manualInstructionsDir) {
+        this.manualInstructionsDir = manualInstructionsDir;
     }
 
     Application getApplication() {
@@ -51,6 +58,10 @@ public abstract class Transformation {
 
     File getManualInstructionsFile() {
         return manualInstructionsFile;
+    }
+
+    File getManualInstructionsDir() {
+        return manualInstructionsDir;
     }
 
 }

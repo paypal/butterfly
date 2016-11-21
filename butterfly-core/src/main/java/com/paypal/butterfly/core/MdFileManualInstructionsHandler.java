@@ -1,14 +1,19 @@
 package com.paypal.butterfly.core;
 
+import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.extensions.api.utilities.ManualInstructionRecord;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * This class processes all {@link com.paypal.butterfly.extensions.api.utilities.ManualInstruction}
@@ -20,75 +25,111 @@ import java.nio.charset.Charset;
 @Component
 public class MdFileManualInstructionsHandler implements TransformationListener {
 
+    private static final String MANUAL_INSTRUCTIONS_MAIN_FILE = "MANUAL_INSTRUCTIONS_%s.md";
     private static final String MANUAL_INSTRUCTIONS_BASELINE_FILE = "MANUAL_INSTRUCTIONS_BASELINE.md";
-    private static final String MANUAL_INSTRUCTIONS_FILE_NAME = "POST_TRANSFORMATION_MANUAL_INSTRUCTIONS.md";
-    private static final String MANUAL_INSTRUCTIONS_DIR = "butterfly_manual_instructions";
+    private static final String MANUAL_INSTRUCTIONS_DIR = "BUTTERFLY_MANUAL_INSTRUCTIONS";
+    private static final String SECTION_TITLE_FORMAT = System.lineSeparator() + "### Manual instructions upgrading to version %s" + System.lineSeparator() + System.lineSeparator();
     private static final String DESCRIPTION_LINE_FORMAT = "1. [%s](%s/%s)" + System.lineSeparator();
-    private static final int BUFFER_SIZE = 1024;
 
     private static final Logger logger = LoggerFactory.getLogger(MdFileManualInstructionsHandler.class);
 
     @Override
-    public void postTransformation(Transformation transformation, TransformationContextImpl transformationContext) {
-        if (!transformationContext.hasManualInstructions()) {
-            logger.debug("This transformation has no manual instructions");
+    public void postTransformation(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
+        if (!hasManualInstructions(transformationContexts)) {
             return;
         }
 
-        OutputStream outputStream = null;
-        InputStream inputStream = null;
-
         try {
-            File transformedAppFolder = transformation.getTransformedApplicationLocation();
+            File mainManualInstructionsFile = createMainManualInstructionsFile(transformation);
 
-            // Creating manual instructions directory
-            File manualInstructionsDir = new File(transformedAppFolder, MANUAL_INSTRUCTIONS_DIR);
-            if (!manualInstructionsDir.mkdir()) {
-                logger.error("Manual instructions directory could not be created");
-                return;
+            // Here the idea is to differentiate between a transformation made of one single transformation template,
+            // and one made of upgrade steps, because we want to print a section title per upgrade
+            // steps in the main instructions file, in case of upgrade paths. By the way,
+            // this information could be held at the Transformation object actually (potential future improvement)
+
+            if (transformationContexts.size() == 1) {
+                createManualInstrutionDocument(transformation, transformationContexts.get(0));
+            } else {
+                for (TransformationContextImpl transformationContext : transformationContexts) {
+                    if (transformationContext.hasManualInstructions()) {
+                        addSectionTitle(mainManualInstructionsFile, transformationContext.getTransformationTemplate());
+                        createManualInstrutionDocument(transformation, transformationContext);
+                    }
+                }
             }
-
-            // Preparing manual instructions file to be written
-            File manualInstructionsFile = new File(transformedAppFolder, MANUAL_INSTRUCTIONS_FILE_NAME);
-            outputStream = new FileOutputStream(manualInstructionsFile);
-
-            // Writing baseline content
-            inputStream = getClass().getClassLoader().getResourceAsStream(MANUAL_INSTRUCTIONS_BASELINE_FILE);
-            appendData(outputStream, inputStream);
-            inputStream.close();
-
-            String instructionDescription;
-            File instructionFile;
-            URL instructionResource;
-            for (ManualInstructionRecord manualInstructionRecord : transformationContext.getManualInstructionsRecord()) {
-                instructionDescription = manualInstructionRecord.getDescription();
-                instructionResource = manualInstructionRecord.getResource();
-
-                instructionFile = new File(manualInstructionsDir, getResourceFileName(instructionResource));
-                FileUtils.copyURLToFile(instructionResource, instructionFile);
-
-                addInstructionDescription(outputStream, instructionDescription, manualInstructionsDir, instructionFile);
-
-                logger.debug("Manual instruction document {} generated", instructionFile.getName());
-            }
-
-            transformation.setManualInstructionsFile(manualInstructionsFile);
-
-            logger.debug("Manual instructions documents have been generated");
         } catch (IOException e) {
             logger.error("Exception happened when generating manual instructions", e);
-        } finally {
-            if (outputStream != null) try {
-                outputStream.close();
-            } catch (IOException e) {
-                logger.error("Exception happened when closing " + MANUAL_INSTRUCTIONS_FILE_NAME + " file", e);
-            }
-            if (inputStream != null) try {
-                inputStream.close();
-            } catch (IOException e) {
-                logger.error("Exception happened when closing " + MANUAL_INSTRUCTIONS_BASELINE_FILE + " file", e);
+        }
+    }
+
+    private boolean hasManualInstructions(List<TransformationContextImpl> transformationContexts) {
+        if (transformationContexts.size() == 0) {
+            logger.debug("There are no transformation contexts to be processed");
+            return false;
+        }
+        for (TransformationContextImpl transformationContext : transformationContexts) {
+            if (transformationContext.hasManualInstructions()) {
+                return true;
             }
         }
+        return false;
+    }
+
+    private File createMainManualInstructionsFile(Transformation transformation) throws IOException {
+        try {
+            final String timestamp = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+
+            // Creating manual instructions directory
+            File transformedAppFolder = transformation.getTransformedApplicationLocation();
+            String manualInstructiondDirName = String.format("%s_%s", MANUAL_INSTRUCTIONS_DIR, timestamp);
+            File manualInstructionsDir = new File(transformedAppFolder, manualInstructiondDirName);
+            if (!manualInstructionsDir.mkdir()) {
+                throw new IOException("Manual instructions directory " + manualInstructionsDir + " could not be created");
+            }
+
+            // Creating manual instructions baseline file
+            String manualInstructiondFileName = String.format(MANUAL_INSTRUCTIONS_MAIN_FILE, timestamp);
+            File manualInstructionsFile = new File(transformedAppFolder, manualInstructiondFileName);
+            URL baselineFileURL = getClass().getClassLoader().getResource(MANUAL_INSTRUCTIONS_BASELINE_FILE);
+            FileUtils.copyURLToFile(baselineFileURL, manualInstructionsFile);
+
+            transformation.setManualInstructionsDir(manualInstructionsDir);
+            transformation.setManualInstructionsFile(manualInstructionsFile);
+
+            logger.debug("Baseline manual instruction file has been created");
+
+            return manualInstructionsFile;
+        } catch (IOException e) {
+            throw new IOException("Exception happened when creating baseline manual instruction file", e);
+        }
+    }
+
+    private void addSectionTitle(File mainManualInstructionsFile, TransformationTemplate transformationTemplate) throws IOException {
+        UpgradeStep upgradeStep = (UpgradeStep) transformationTemplate;
+        String sectionTile = String.format(SECTION_TITLE_FORMAT, upgradeStep.getNextVersion());
+        org.codehaus.plexus.util.FileUtils.fileAppend(mainManualInstructionsFile.getAbsolutePath(), sectionTile);
+    }
+
+    private void createManualInstrutionDocument(Transformation transformation, TransformationContextImpl transformationContext) throws IOException {
+        File manualInstructionsDir = transformation.getManualInstructionsDir();
+
+        String instructionDescription;
+        File instructionFile;
+        URL instructionResource;
+
+        for (ManualInstructionRecord manualInstructionRecord : transformationContext.getManualInstructionsRecord()) {
+            instructionDescription = manualInstructionRecord.getDescription();
+            instructionResource = manualInstructionRecord.getResource();
+
+            instructionFile = new File(manualInstructionsDir, getResourceFileName(instructionResource));
+            FileUtils.copyURLToFile(instructionResource, instructionFile);
+
+            addInstructionDescription(transformation.getManualInstructionsFile(), instructionDescription, manualInstructionsDir, instructionFile);
+
+            logger.debug("Manual instruction document {} generated", instructionFile.getName());
+        }
+
+        logger.debug("Manual instructions documents have been generated");
     }
 
     private String getResourceFileName(URL instructionResource) {
@@ -97,31 +138,9 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
         return resourceName.substring(i + 1);
     }
 
-    private void addInstructionDescription(OutputStream outputStream, String description, File manualInstructionsDir, File instructionFile) throws IOException {
+    private void addInstructionDescription(File manualInstructionsFile, String description, File manualInstructionsDir, File instructionFile) throws IOException {
         String descriptionLine = String.format(DESCRIPTION_LINE_FORMAT, description, manualInstructionsDir.getName(), instructionFile.getName());
-        outputStream.write(descriptionLine.getBytes(Charset.defaultCharset()));
-    }
-
-    private void appendData(OutputStream outputStream, InputStream inputStream) throws IOException {
-        BufferedInputStream bufferedInputStream = null;
-
-        try {
-            bufferedInputStream = new BufferedInputStream(inputStream);
-
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int available;
-
-            while ((available = bufferedInputStream.available()) > 0) {
-                if (available > BUFFER_SIZE) {
-                    available = BUFFER_SIZE;
-                }
-                bufferedInputStream.read(buffer, 0, available);
-                outputStream.write(buffer, 0, available);
-            }
-        } finally {
-            if(inputStream != null) inputStream.close();
-            if(bufferedInputStream != null) bufferedInputStream.close();
-        }
+        org.codehaus.plexus.util.FileUtils.fileAppend(manualInstructionsFile.getAbsolutePath(), descriptionLine);
     }
 
 }

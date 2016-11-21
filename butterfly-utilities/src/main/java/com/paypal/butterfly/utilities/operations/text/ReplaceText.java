@@ -128,14 +128,12 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
         File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader reader = null;
         BufferedWriter writer = null;
-        String details;
         TOExecutionResult result = null;
 
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
-            details = replace(reader, writer);
-            result = TOExecutionResult.success(this, details);
+            result = replace(reader, writer);
         } catch (IOException e) {
             result = TOExecutionResult.error(this,  e);
         } finally {
@@ -155,13 +153,14 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
         }
 
         boolean bDeleted = fileToBeChanged.delete();
+        String details;
         if(bDeleted) {
             if (!tempFile.renameTo(fileToBeChanged)) {
                 details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
                 TransformationOperationException e = new TransformationOperationException(details);
                 result = TOExecutionResult.error(this, e);
             }
-        }else {
+        } else {
             details = String.format("Error when deleting %s", getRelativePath(transformedAppFolder, fileToBeChanged));
             TransformationOperationException e = new TransformationOperationException(details);
             result = TOExecutionResult.error(this, e);
@@ -170,7 +169,7 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
         return result;
     }
 
-    private String replace(BufferedReader reader, BufferedWriter writer) throws IOException {
+    private TOExecutionResult replace(BufferedReader reader, BufferedWriter writer) throws IOException {
         String currentLine;
         int n = 0;
         boolean foundFirstMatch = false;
@@ -189,7 +188,15 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
             firstLine = false;
         }
 
-        return String.format("File %s has had %d line(s) where text replacement was applied based on regular expression '%s'", getRelativePath(), n, regex);
+        String details = String.format("File %s has had %d line(s) where text replacement was applied based on regular expression '%s'", getRelativePath(), n, regex);
+        TOExecutionResult result = null;
+        if (n > 0) {
+            result = TOExecutionResult.success(this, details);
+        } else {
+            result = TOExecutionResult.noOp(this, details);
+        }
+
+        return result;
     }
 
     @Override

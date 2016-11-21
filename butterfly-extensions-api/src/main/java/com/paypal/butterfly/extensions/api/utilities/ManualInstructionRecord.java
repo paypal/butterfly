@@ -1,5 +1,7 @@
 package com.paypal.butterfly.extensions.api.utilities;
 
+import com.paypal.butterfly.extensions.api.TransformationTemplate;
+
 import java.net.URL;
 
 /**
@@ -9,12 +11,18 @@ import java.net.URL;
  */
 public class ManualInstructionRecord {
 
+    private TransformationTemplate transformationTemplate;
     private String description;
     private URL resource;
 
-    ManualInstructionRecord(String description, URL resource) {
+    ManualInstructionRecord(TransformationTemplate transformationTemplate, String description, URL resource) {
+        setTransformationTemplate(transformationTemplate);
         setDescription(description);
         setResource(resource);
+    }
+
+    private void setTransformationTemplate(TransformationTemplate transformationTemplate) {
+        this.transformationTemplate = transformationTemplate;
     }
 
     private void setDescription(String description) {
@@ -23,6 +31,10 @@ public class ManualInstructionRecord {
 
     private void setResource(URL resource) {
         this.resource = resource;
+    }
+
+    public TransformationTemplate getTransformationTemplate() {
+        return transformationTemplate;
     }
 
     public String getDescription() {
