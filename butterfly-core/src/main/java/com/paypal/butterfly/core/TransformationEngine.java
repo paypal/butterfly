@@ -63,7 +63,7 @@ public class TransformationEngine {
         }
 
         File transformedAppFolder = prepareOutputFolder(transformation);
-        List<TransformationContextImpl> transformationContexts = new ArrayList<>();
+        List<TransformationContextImpl> transformationContexts;
 
         if (transformation instanceof UpgradePathTransformation) {
             UpgradePath upgradePath = ((UpgradePathTransformation) transformation).getUpgradePath();
