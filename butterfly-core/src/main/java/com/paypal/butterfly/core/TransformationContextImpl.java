@@ -2,6 +2,7 @@ package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.api.PerformResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
+import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.utilities.ManualInstructionRecord;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,9 +20,17 @@ import java.util.Map;
  */
 class TransformationContextImpl implements TransformationContext {
 
+    private TransformationTemplate transformationTemplate;
     private Map<String, Object> attributes = new HashMap<>();
     private Map<String, PerformResult> results = new HashMap<>();
     private List<ManualInstructionRecord> manualInstructionsRecord = new ArrayList<>();
+
+    void setTransformationTemplate(TransformationTemplate transformationTemplate) {
+        if(transformationTemplate == null) {
+            throw new IllegalArgumentException("Transformation template object cannot be null");
+        }
+        this.transformationTemplate = transformationTemplate;
+    }
 
     @Override
     public Object get(String name) {
@@ -94,6 +103,17 @@ class TransformationContextImpl implements TransformationContext {
     }
 
     /**
+     * Returns the {@link TransformationTemplate} object
+     * whose execution originated this context object
+     *
+     * @return the {@link TransformationTemplate} object
+     * whose execution originated this context object
+     */
+    TransformationTemplate getTransformationTemplate() {
+        return transformationTemplate;
+    }
+
+    /**
      * Returns true if there are manual instructions
      * registered to this transformation context
      *
@@ -119,9 +139,6 @@ class TransformationContextImpl implements TransformationContext {
      */
     static TransformationContextImpl getTransformationContext(TransformationContextImpl previousTransformationContext) {
         TransformationContextImpl context = new TransformationContextImpl();
-        if (previousTransformationContext != null) {
-            context.manualInstructionsRecord.addAll(previousTransformationContext.manualInstructionsRecord);
-        }
         return context;
     }
 

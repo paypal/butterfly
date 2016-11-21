@@ -1,9 +1,6 @@
 package com.paypal.butterfly.extensions.api.utilities;
 
-import com.paypal.butterfly.extensions.api.ExecutionResult;
-import com.paypal.butterfly.extensions.api.TUExecutionResult;
-import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.TransformationUtility;
+import com.paypal.butterfly.extensions.api.*;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.File;
@@ -67,7 +64,7 @@ public class ManualInstruction extends TransformationUtility<ManualInstruction> 
             TransformationUtilityException e = new TransformationUtilityException(exceptionMessage);
             result = TUExecutionResult.error(this, e);
         } else {
-            ManualInstructionRecord manualInstructionRecord = new ManualInstructionRecord(description, resource);
+            ManualInstructionRecord manualInstructionRecord = new ManualInstructionRecord(getTransformationTemplate(), description, resource);
             result = TUExecutionResult.value(this, manualInstructionRecord);
         }
 

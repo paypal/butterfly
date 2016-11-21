@@ -224,6 +224,19 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     }
 
     /**
+     * Returns the transformation template this utility belongs to
+     *
+     * @return  the transformation template this utility belongs to
+     */
+    public TransformationTemplate getTransformationTemplate() {
+        TransformationUtilityParent parent = getParent();
+        while (!(parent instanceof TransformationTemplate)) {
+            parent = ((TransformationUtility) parent).getParent();
+        }
+        return (TransformationTemplate) parent;
+    }
+
+    /**
      * Returns a short one line, but SPECIFIC, description about the transformation
      * utility, including mentioning the files and/or folders
      * to be manipulated. This is supposed to be an one line statement about the
