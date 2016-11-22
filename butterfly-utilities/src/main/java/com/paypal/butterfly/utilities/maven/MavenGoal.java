@@ -199,20 +199,12 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
             if (invocationResult != null) {
                 Exception invocationException = invocationResult.getExecutionException();
                 if (invocationException != null) {
-                    if (warnOnError) {
-                        result = TUExecutionResult.warning(this, e, null);
-                    } else {
-                        result = TUExecutionResult.error(this, invocationException);
-                    }
+                    result = TUExecutionResult.error(this, invocationException);
                 }
             }
 
             if (result == null) {
-                if (warnOnError) {
-                    result = TUExecutionResult.warning(this, e, null);
-                } else {
-                    result = TUExecutionResult.error(this, e);
-                }
+                result = TUExecutionResult.error(this, e);
             }
         }
 
