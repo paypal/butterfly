@@ -19,3 +19,5 @@ test-output/
 hs_err_pid*
 
 .DS_Store
+
+release_steps.txt
