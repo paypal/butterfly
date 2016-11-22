@@ -151,8 +151,11 @@ public class ButterflyCliRunner extends ButterflyCliOption {
                 logger.info(" *** Read manual instructions document for further details:");
                 logger.info(" *** {}", transformationResult.getManualInstructionsFile());
                 logger.info(" **************************************************************************************");
-                logger.info("");
             }
+            logger.info("");
+            logger.info("Help us to improve Butterfly by answering this survey (see the link below). It should take less than 5 minutes!.");
+            logger.info("https://go/butterfly-survey");
+            logger.info("");
         } catch (ButterflyException e) {
             logger.info("");
             logger.info("--------------------------------------------------------------------------------------------");
