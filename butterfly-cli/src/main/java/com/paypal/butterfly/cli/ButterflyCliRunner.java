@@ -5,6 +5,7 @@ import com.paypal.butterfly.cli.logging.LogFileDefiner;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
+import com.paypal.butterfly.extensions.api.exception.ButterflyRuntimeException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.facade.ButterflyFacade;
@@ -156,7 +157,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             logger.info("Help us to improve Butterfly by answering this survey (see the link below). It should take less than 5 minutes!.");
             logger.info("https://go/butterfly-survey");
             logger.info("");
-        } catch (ButterflyException e) {
+        } catch (ButterflyException | ButterflyRuntimeException e) {
             logger.info("");
             logger.info("--------------------------------------------------------------------------------------------");
             logger.error("*** Transformation has been aborted due to:");
