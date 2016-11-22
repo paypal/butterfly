@@ -53,13 +53,23 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
                 for (TransformationContextImpl transformationContext : transformationContexts) {
                     if (transformationContext.hasManualInstructions()) {
                         addSectionTitle(mainManualInstructionsFile, transformationContext.getTransformationTemplate());
-                        createManualInstrutionDocument(transformation, transformationContext);
+                        File manualInstrutionDocumentFolder = createManualInstrutionDocumentFolder(transformation, transformationContext);
+                        createManualInstrutionDocument(transformation, transformationContext, manualInstrutionDocumentFolder);
                     }
                 }
             }
         } catch (IOException e) {
             logger.error("Exception happened when generating manual instructions", e);
         }
+    }
+
+    private File createManualInstrutionDocumentFolder(Transformation transformation, TransformationContextImpl transformationContext) throws IOException {
+        UpgradeStep upgradeStep = (UpgradeStep) transformationContext.getTransformationTemplate();
+        File manualInstrutionDocumentFolder = new File(transformation.getManualInstructionsDir(), upgradeStep.getClass().getSimpleName());
+        if (!manualInstrutionDocumentFolder.mkdir()) {
+            throw new IOException("Manual instructions directory " + manualInstrutionDocumentFolder + " could not be created");
+        }
+        return manualInstrutionDocumentFolder;
     }
 
     private boolean hasManualInstructions(List<TransformationContextImpl> transformationContexts) {
@@ -111,6 +121,10 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
     }
 
     private void createManualInstrutionDocument(Transformation transformation, TransformationContextImpl transformationContext) throws IOException {
+        createManualInstrutionDocument(transformation, transformationContext, null);
+    }
+
+    private void createManualInstrutionDocument(Transformation transformation, TransformationContextImpl transformationContext, File manualInstrutionDocumentFolder) throws IOException {
         File manualInstructionsDir = transformation.getManualInstructionsDir();
 
         String instructionDescription;
@@ -121,9 +135,12 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
             instructionDescription = manualInstructionRecord.getDescription();
             instructionResource = manualInstructionRecord.getResource();
 
-            instructionFile = new File(manualInstructionsDir, getResourceFileName(instructionResource));
+            if (manualInstrutionDocumentFolder == null) {
+                instructionFile = new File(manualInstructionsDir, getResourceFileName(instructionResource));
+            } else {
+                instructionFile = new File(manualInstrutionDocumentFolder, getResourceFileName(instructionResource));
+            }
             FileUtils.copyURLToFile(instructionResource, instructionFile);
-
             addInstructionDescription(transformation.getManualInstructionsFile(), instructionDescription, manualInstructionsDir, instructionFile);
 
             logger.debug("Manual instruction document {} generated", instructionFile.getName());
@@ -139,7 +156,13 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
     }
 
     private void addInstructionDescription(File manualInstructionsFile, String description, File manualInstructionsDir, File instructionFile) throws IOException {
-        String descriptionLine = String.format(DESCRIPTION_LINE_FORMAT, description, manualInstructionsDir.getName(), instructionFile.getName());
+        String filePath = "";
+        if (!instructionFile.getParentFile().equals(manualInstructionsDir)) {
+            filePath = instructionFile.getParentFile().getName() + "/";
+        }
+        filePath = filePath.concat(instructionFile.getName());
+
+        String descriptionLine = String.format(DESCRIPTION_LINE_FORMAT, description, manualInstructionsDir.getName(), filePath);
         org.codehaus.plexus.util.FileUtils.fileAppend(manualInstructionsFile.getAbsolutePath(), descriptionLine);
     }
 
