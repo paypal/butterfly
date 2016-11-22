@@ -1,11 +1,16 @@
 package com.paypal.butterfly.extensions.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * The execution result of a {@link TransformationUtility}
  *
  * @author facarvalho
  */
 public class TUExecutionResult extends ExecutionResult<TransformationUtility, TUExecutionResult, TUExecutionResult.Type> {
+
+    private static final Logger logger = LoggerFactory.getLogger(TUExecutionResult.class);
 
     public enum Type {
         // No error happened, but for some reason the TU didn't result in any value (for example, when it was supposed to
@@ -98,8 +103,9 @@ public class TUExecutionResult extends ExecutionResult<TransformationUtility, TU
     }
 
     private TUExecutionResult setValue(Object value) {
-        if(value == null) {
-            throw new IllegalArgumentException("Value must not be null");
+        if(value == null && getType().equals(Type.VALUE)) {
+            setType(Type.NULL);
+            logger.warn("TU result object for {} has been changed from VALUE to NULL, since its value object is null", getSource().getName());
         }
         this.value = value;
         return this;
