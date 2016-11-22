@@ -3,6 +3,7 @@ package com.paypal.butterfly.utilities.conditions;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.UtilityCondition;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.File;
 
@@ -26,11 +27,16 @@ public class FileExists extends UtilityCondition<FileExists> {
 
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
-        boolean exists = pomFile.exists();
-        TUExecutionResult result = TUExecutionResult.value(this, exists);
+        boolean exists = false;
 
-        return result;
+        try {
+            File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
+            exists = pomFile.exists();
+        } catch (TransformationUtilityException e) {
+            return TUExecutionResult.warning(this, e, exists);
+        }
+
+        return TUExecutionResult.value(this, exists);
     }
 
 }
