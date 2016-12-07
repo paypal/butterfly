@@ -867,7 +867,8 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * automatically saved in the transformation context as a new
      * attribute, whose key is the name of the transformation utility.
      *
-     * @param transformedAppFolder
+     * @param transformedAppFolder the folder where the transformed application code is
+     * @param transformationContext the transformation context object
      *
      * @return an object with the result of this execution, to be better defined
      * by the concrete utility class, since its type is generic
