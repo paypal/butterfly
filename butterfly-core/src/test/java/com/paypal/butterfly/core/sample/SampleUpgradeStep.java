@@ -8,6 +8,7 @@ import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
  * Created by vkuncham on 11/7/2016.
  */
 public class SampleUpgradeStep extends UpgradeStep {
+
     @Override
     public String getNextVersion() {
         return null;
@@ -32,4 +33,15 @@ public class SampleUpgradeStep extends UpgradeStep {
     public String getDescription() {
         return "Raptor Butterfly extension";
     }
+
+    @Override
+    public String getApplicationType() {
+        return null;
+    }
+
+    @Override
+    public String getApplicationName() {
+        return null;
+    }
+
 }

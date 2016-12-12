@@ -18,4 +18,14 @@ public class SampleTransformationTemplate extends TransformationTemplate {
         return null;
     }
 
+    @Override
+    public String getApplicationType() {
+        return null;
+    }
+
+    @Override
+    public String getApplicationName() {
+        return null;
+    }
+
 }

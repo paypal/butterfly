@@ -3,13 +3,11 @@ package com.paypal.butterfly.core;
 import com.paypal.butterfly.extensions.api.PerformResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.metrics.TransformationStatistics;
 import com.paypal.butterfly.extensions.api.utilities.ManualInstructionRecord;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Transformation context implementation
@@ -23,13 +21,27 @@ class TransformationContextImpl implements TransformationContext {
     private TransformationTemplate transformationTemplate;
     private Map<String, Object> attributes = new HashMap<>();
     private Map<String, PerformResult> results = new HashMap<>();
-    private List<ManualInstructionRecord> manualInstructionsRecord = new ArrayList<>();
+    private List<ManualInstructionRecord> manualInstructionRecords = new ArrayList<>();
+    private boolean successfulTransformation = false;
+    private boolean collectStats = false;
+    private TransformationStatisticsImpl statistics;
+    private String upgradeCorrelationId;
+
+    void setCollectStats(boolean collectStats) {
+        this.collectStats = collectStats;
+        if (collectStats) {
+            statistics = new TransformationStatisticsImpl();
+        }
+    }
 
     void setTransformationTemplate(TransformationTemplate transformationTemplate) {
         if(transformationTemplate == null) {
             throw new IllegalArgumentException("Transformation template object cannot be null");
         }
         this.transformationTemplate = transformationTemplate;
+        if (upgradeCorrelationId == null) {
+            upgradeCorrelationId = String.format("%s_%s", transformationTemplate.getExtensionClass().getSimpleName(), UUID.randomUUID().toString());
+        }
     }
 
     @Override
@@ -88,6 +100,10 @@ class TransformationContextImpl implements TransformationContext {
             throw new IllegalArgumentException("Result object cannot be null");
         }
         results.put(name, resultObject);
+
+        if (collectStats) {
+            statistics.registerResult(resultObject);
+        }
     }
 
     /**
@@ -99,7 +115,15 @@ class TransformationContextImpl implements TransformationContext {
         if(manualInstructionRecord == null) {
             throw new IllegalArgumentException("Manual instruction record object cannot be null");
         }
-        manualInstructionsRecord.add(manualInstructionRecord);
+        manualInstructionRecords.add(manualInstructionRecord);
+
+        if (collectStats) {
+            statistics.addManualInstruction();
+        }
+    }
+
+    void setSuccessfulTransformation(boolean successfulTransformation) {
+        this.successfulTransformation = successfulTransformation;
     }
 
     /**
@@ -121,11 +145,19 @@ class TransformationContextImpl implements TransformationContext {
      * registered to this transformation context
      */
     boolean hasManualInstructions() {
-        return manualInstructionsRecord.size() > 0;
+        return manualInstructionRecords.size() > 0;
     }
 
-    List<ManualInstructionRecord> getManualInstructionsRecord() {
-        return manualInstructionsRecord;
+    List<ManualInstructionRecord> getManualInstructionRecords() {
+        return manualInstructionRecords;
+    }
+
+    boolean isSuccessfulTransformation() {
+        return successfulTransformation;
+    }
+
+    TransformationStatistics getStatistics() {
+        return statistics;
     }
 
     /**
@@ -139,7 +171,15 @@ class TransformationContextImpl implements TransformationContext {
      */
     static TransformationContextImpl getTransformationContext(TransformationContextImpl previousTransformationContext) {
         TransformationContextImpl context = new TransformationContextImpl();
+        if (previousTransformationContext != null) {
+            context.upgradeCorrelationId = previousTransformationContext.upgradeCorrelationId;
+        }
+        context.setCollectStats(true);
         return context;
+    }
+
+    String getUpgradeCorrelationId() {
+        return upgradeCorrelationId;
     }
 
 }
