@@ -1,6 +1,7 @@
 package com.paypal.butterfly.cli;
 
 import com.paypal.butterfly.cli.logging.LogFileDefiner;
+import com.paypal.butterfly.facade.ButterflyProperties;
 import joptsimple.OptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,13 @@ public class ButterflyCliApp extends ButterflyCliOption {
     }
 
     private static void setBanner() {
-        banner = String.format("Butterfly application transformation tool version %s", VersionHelper.getButterflyVersion());
+
+        // Ideally the version should be gotten from the façade Spring bean.
+        // However, it is not available this early, so we are getting it directly
+        // from the CLI artifact, assuming that the CLI jar will always bring together
+        // the exact same version of butterfly-core, which is the component to officially
+        // define Butterfly version
+        banner = String.format("Butterfly application transformation tool version %s", ButterflyProperties.getString("butterfly.version"));
     }
 
     public static File getButterflyHome() {
