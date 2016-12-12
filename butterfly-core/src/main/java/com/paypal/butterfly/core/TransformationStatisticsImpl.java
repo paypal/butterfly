@@ -15,24 +15,12 @@ class TransformationStatisticsImpl implements TransformationStatistics {
 
     // Number of operations performed
     private int operationsCount = 0;
+    
+    // Perform results
+    private PerformResults performResults = new PerformResults();
 
-    // Statistics per perform result
-    private int performResultErrorCount = 0;
-    private int performResultExecutionResultCount = 0;
-    private int performResultSkippedConditionCount = 0;
-    private int performResultSkippedDependencyCount = 0;
-
-    // Statistics per execution result for TUs
-    private int tuExecutionResultNullCount = 0;
-    private int tuExecutionResultValueCount = 0;
-    private int tuExecutionResultWarningCount = 0;
-    private int tuExecutionResultErrorCount = 0;
-
-    // Statistics per execution result for TOs
-    private int toExecutionResultNoOpCount = 0;
-    private int toExecutionResultSuccessCount = 0;
-    private int toExecutionResultWarningCount = 0;
-    private int toExecutionResultErrorCount = 0;
+    // Execution results
+    private ExecutionResults executionResults = new ExecutionResults();
 
     // Number of necessary manual instructions (if any)
     private int manualInstructionsCount = 0;
@@ -43,17 +31,17 @@ class TransformationStatisticsImpl implements TransformationStatistics {
 
         switch (result.getType()) {
             case ERROR:
-                performResultErrorCount ++;
+                performResults.errorCount ++;
                 break;
             case EXECUTION_RESULT:
-                performResultExecutionResultCount++;
+                performResults.executionResultCount++;
                 executionResult = result.getExecutionResult();
                 break;
             case SKIPPED_CONDITION:
-                performResultSkippedConditionCount++;
+                performResults.skippedConditionCount++;
                 break;
             case SKIPPED_DEPENDENCY:
-                performResultSkippedDependencyCount++;
+                performResults.skippedDependencyCount++;
                 break;
         }
 
@@ -65,16 +53,16 @@ class TransformationStatisticsImpl implements TransformationStatistics {
                 TOExecutionResult toExecutionResult = (TOExecutionResult) executionResult;
                 switch (toExecutionResult.getType()) {
                     case NO_OP:
-                        toExecutionResultNoOpCount++;
+                        executionResults.operations.noOpCount++;
                         break;
                     case SUCCESS:
-                        toExecutionResultSuccessCount++;
+                        executionResults.operations.successCount++;
                         break;
                     case WARNING:
-                        toExecutionResultWarningCount++;
+                        executionResults.operations.warningCount++;
                         break;
                     case ERROR:
-                        toExecutionResultErrorCount++;
+                        executionResults.operations.errorCount++;
                         break;
                 }
             }
@@ -84,16 +72,16 @@ class TransformationStatisticsImpl implements TransformationStatistics {
                 TUExecutionResult tuExecutionResult = (TUExecutionResult) executionResult;
                 switch (tuExecutionResult.getType()) {
                     case NULL:
-                        tuExecutionResultNullCount++;
+                        executionResults.utilities.nullCount++;
                         break;
                     case VALUE:
-                        tuExecutionResultValueCount++;
+                        executionResults.utilities.valueCount++;
                         break;
                     case WARNING:
-                        tuExecutionResultWarningCount++;
+                        executionResults.utilities.warningCount++;
                         break;
                     case ERROR:
-                        tuExecutionResultErrorCount++;
+                        executionResults.utilities.errorCount++;
                         break;
                 }
             }
@@ -116,62 +104,62 @@ class TransformationStatisticsImpl implements TransformationStatistics {
 
     @Override
     public int getPerformResultErrorCount() {
-        return performResultErrorCount;
+        return performResults.errorCount;
     }
 
     @Override
     public int getPerformResultExecutionResultCount() {
-        return performResultExecutionResultCount;
+        return performResults.executionResultCount;
     }
 
     @Override
     public int getPerformResultSkippedConditionCount() {
-        return performResultSkippedConditionCount;
+        return performResults.skippedConditionCount;
     }
 
     @Override
     public int getPerformResultSkippedDependencyCount() {
-        return performResultSkippedDependencyCount;
+        return performResults.skippedDependencyCount;
     }
 
     @Override
     public int getTUExecutionResultNullCount() {
-        return tuExecutionResultNullCount;
+        return executionResults.utilities.nullCount;
     }
 
     @Override
     public int getTUExecutionResultValueCount() {
-        return tuExecutionResultValueCount;
+        return executionResults.utilities.valueCount;
     }
 
     @Override
     public int getTUExecutionResultWarningCount() {
-        return tuExecutionResultWarningCount;
+        return executionResults.utilities.warningCount;
     }
 
     @Override
     public int getTUExecutionResultErrorCount() {
-        return tuExecutionResultErrorCount;
+        return executionResults.utilities.errorCount;
     }
 
     @Override
     public int getTOExecutionResultNoOpCount() {
-        return toExecutionResultNoOpCount;
+        return executionResults.operations.noOpCount;
     }
 
     @Override
     public int getTOExecutionResultSuccessCount() {
-        return toExecutionResultSuccessCount;
+        return executionResults.operations.successCount;
     }
 
     @Override
     public int getTOExecutionResultWarningCount() {
-        return toExecutionResultWarningCount;
+        return executionResults.operations.warningCount;
     }
 
     @Override
     public int getTOExecutionResultErrorCount() {
-        return toExecutionResultErrorCount;
+        return executionResults.operations.errorCount;
     }
 
     @Override
@@ -179,4 +167,33 @@ class TransformationStatisticsImpl implements TransformationStatistics {
         return manualInstructionsCount;
     }
 
+    // Statistics per perform result
+    private static class PerformResults {
+        private int errorCount = 0;
+        private int executionResultCount = 0;
+        private int skippedConditionCount = 0;
+        private int skippedDependencyCount = 0;
+    }
+    
+    private static class ExecutionResults {
+        private TU utilities = new TU();
+        private TO operations = new TO();
+
+        // Statistics per execution result for TUs
+        private static class TU {
+            private int nullCount = 0;
+            private int valueCount = 0;
+            private int warningCount = 0;
+            private int errorCount = 0;
+        }
+
+        // Statistics per execution result for TOs
+        private static class TO {
+            private int noOpCount = 0;
+            private int successCount = 0;
+            private int warningCount = 0;
+            private int errorCount = 0;
+        }
+    }
+    
 }
