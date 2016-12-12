@@ -34,22 +34,6 @@ class TransformationStatisticsImpl implements TransformationStatistics {
     private int toExecutionResultWarningCount = 0;
     private int toExecutionResultErrorCount = 0;
 
-    // Totals
-    private int performTotal = 0;
-    private int skippedTotal = 0;
-    private int executionTotal = 0;
-    private int toExecutionTotal = 0;
-    private int tuExecutionTotal = 0;
-    private int executionErrorTotal = 0;
-
-    // Rates
-    private float performErrorRate = 0;
-    private float executionErrorRate = 0;
-    private float toExecutionErrorRate = 0;
-    private float toExecutionWarningRate = 0;
-    private float tuExecutionErrorRate = 0;
-    private float tuExecutionWarningRate = 0;
-
     // Number of necessary manual instructions (if any)
     private int manualInstructionsCount = 0;
 
@@ -114,27 +98,6 @@ class TransformationStatisticsImpl implements TransformationStatistics {
                 }
             }
         }
-
-        updateTotals();
-        updateRates();
-    }
-
-    private void updateTotals() {
-        performTotal = utilitiesCount + operationsCount;
-        skippedTotal = performResultSkippedConditionCount + performResultSkippedDependencyCount;
-        toExecutionTotal = toExecutionResultErrorCount + toExecutionResultNoOpCount + toExecutionResultSuccessCount + toExecutionResultWarningCount;
-        tuExecutionTotal = tuExecutionResultErrorCount + tuExecutionResultNullCount + tuExecutionResultValueCount + tuExecutionResultWarningCount;
-        executionTotal = tuExecutionTotal + toExecutionTotal;
-        executionErrorTotal = toExecutionResultErrorCount + tuExecutionResultErrorCount;
-    }
-
-    private void updateRates() {
-        if (performTotal > 0) performErrorRate = 100 * (float) performResultErrorCount / performTotal;
-        if (executionTotal > 0) executionErrorRate = 100 * (float) executionErrorTotal / executionTotal;
-        if (toExecutionTotal > 0) toExecutionErrorRate = 100 * (float) toExecutionResultErrorCount / toExecutionTotal;
-        if (toExecutionTotal > 0) toExecutionWarningRate = 100 * (float) toExecutionResultWarningCount / toExecutionTotal;
-        if (tuExecutionTotal > 0) tuExecutionErrorRate = 100 * (float) tuExecutionResultErrorCount / tuExecutionTotal;
-        if (tuExecutionTotal > 0) tuExecutionWarningRate =  100 * (float) tuExecutionResultWarningCount / tuExecutionTotal;
     }
 
     void addManualInstruction() {
@@ -214,66 +177,6 @@ class TransformationStatisticsImpl implements TransformationStatistics {
     @Override
     public int getManualInstructionsCount() {
         return manualInstructionsCount;
-    }
-
-    @Override
-    public int getPerformTotal() {
-        return performTotal;
-    }
-
-    @Override
-    public int getSkippedTotal() {
-        return skippedTotal;
-    }
-
-    @Override
-    public int getExecutionTotal() {
-        return executionTotal;
-    }
-
-    @Override
-    public int getTOExecutionTotal() {
-        return toExecutionTotal;
-    }
-
-    @Override
-    public int getTUExecutionTotal() {
-        return tuExecutionTotal;
-    }
-
-    @Override
-    public int getExecutionErrorTotal() {
-        return executionErrorTotal;
-    }
-
-    @Override
-    public float getPerformErrorRate() {
-        return performErrorRate;
-    }
-
-    @Override
-    public float getExecutionErrorRate() {
-        return executionErrorRate;
-    }
-
-    @Override
-    public float getTOExecutionErrorRate() {
-        return toExecutionErrorRate;
-    }
-
-    @Override
-    public float getTOExecutionWarningRate() {
-        return toExecutionWarningRate;
-    }
-
-    @Override
-    public float getTUExecutionErrorRate() {
-        return tuExecutionErrorRate;
-    }
-
-    @Override
-    public float getTUExecutionWarningRate() {
-        return tuExecutionWarningRate;
     }
 
 }
