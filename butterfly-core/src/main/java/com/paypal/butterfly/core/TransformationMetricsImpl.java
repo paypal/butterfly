@@ -5,6 +5,8 @@ import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
 import com.paypal.butterfly.extensions.api.metrics.TransformationStatistics;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.facade.ButterflyProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,6 +19,8 @@ import java.util.UUID;
  * @author facarvalho
  */
 public class TransformationMetricsImpl implements TransformationMetrics {
+
+    private static final Logger logger = LoggerFactory.getLogger(TransformationMetricsImpl.class);
 
     private transient TransformationContextImpl transformationContext;
     private transient TransformationTemplate transformationTemplate;
@@ -34,6 +38,7 @@ public class TransformationMetricsImpl implements TransformationMetrics {
     private boolean successfulTransformation = false;
     private TransformationStatistics statistics;
     private String upgradeCorrelationId;
+    private String metricsId;
 
     public TransformationMetricsImpl(TransformationContextImpl transformationContext) {
         setTransformationContext(transformationContext);
@@ -75,6 +80,12 @@ public class TransformationMetricsImpl implements TransformationMetrics {
         requiresManualInstructions = transformationContext.hasManualInstructions();
         successfulTransformation = transformationContext.isSuccessfulTransformation();
         statistics = transformationContext.getStatistics();
+
+        metricsId =  UUID.randomUUID().toString();
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Metrics generated: {}", metricsId);
+        }
     }
 
     @Override
