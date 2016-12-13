@@ -133,6 +133,7 @@ public class TransformationEngine {
 
         TransformationContextImpl transformationContext = perform(template.getUtilities(), transformedAppFolder, previousTransformationContext);
         transformationContext.setTransformationTemplate(template);
+        transformationContext.setSuccessfulTransformation(true);
 
         logger.info("Transformation has been completed");
 

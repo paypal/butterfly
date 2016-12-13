@@ -17,6 +17,13 @@ import java.util.List;
 public interface ButterflyFacade {
 
     /**
+     * Returns Butterfly version
+     *
+     * @return Butterfly version
+     */
+    String getButterflyVersion();
+
+    /**
      * Returns an unmodifiable list of all registered extensions
      *
      * @return an unmodifiable list of all registered extensions

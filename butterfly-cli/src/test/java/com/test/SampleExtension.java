@@ -41,4 +41,14 @@ class DummyTransformationTemplate extends TransformationTemplate {
     public String getDescription() {
         return null;
     }
+
+    @Override
+    public String getApplicationType() {
+        return null;
+    }
+
+    @Override
+    public String getApplicationName() {
+        return null;
+    }
 }

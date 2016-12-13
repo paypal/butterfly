@@ -8,6 +8,7 @@ import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
+import com.paypal.butterfly.facade.ButterflyProperties;
 import com.paypal.butterfly.facade.exception.TemplateResolutionException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,6 +29,8 @@ import java.util.Set;
 @Component
 public class ButterflyFacadeImpl implements ButterflyFacade {
 
+    private static final String VERSION = ButterflyProperties.getString("butterfly.version");
+
     private static final Logger logger = LoggerFactory.getLogger(ButterflyFacadeImpl.class);
 
     @Autowired
@@ -38,6 +41,11 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
 
     @Autowired
     private CompressionHandler compressionHandler;
+
+    @Override
+    public String getButterflyVersion() {
+        return VERSION;
+    }
 
     @Override
     public List<Extension> getRegisteredExtensions() {

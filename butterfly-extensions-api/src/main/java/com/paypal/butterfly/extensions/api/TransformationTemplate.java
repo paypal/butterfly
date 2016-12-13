@@ -217,4 +217,24 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
         return getName();
     }
 
+    /**
+     * Returns the type of the transformed application,
+     * Returns null if the application type is unknown.
+     * This method is used mostly for meta-data purposes,
+     * such as when providing transformation metrics.
+     *
+     * @return the type of the transformed application
+     */
+    public abstract String getApplicationType();
+
+    /**
+     * Returns the name of the transformed application,
+     * Returns null if the application name is unknown.
+     * This method is used mostly for meta-data purposes,
+     * such as when providing transformation metrics.
+     *
+     * @return the name of the transformed application
+     */
+    public abstract String getApplicationName();
+
 }

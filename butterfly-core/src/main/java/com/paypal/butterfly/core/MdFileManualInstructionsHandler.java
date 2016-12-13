@@ -131,7 +131,7 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
         File instructionFile;
         URL instructionResource;
 
-        for (ManualInstructionRecord manualInstructionRecord : transformationContext.getManualInstructionsRecord()) {
+        for (ManualInstructionRecord manualInstructionRecord : transformationContext.getManualInstructionRecords()) {
             instructionDescription = manualInstructionRecord.getDescription();
             instructionResource = manualInstructionRecord.getResource();
 
