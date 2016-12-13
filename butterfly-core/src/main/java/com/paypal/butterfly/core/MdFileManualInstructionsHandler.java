@@ -63,6 +63,11 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
         }
     }
 
+    @Override
+    public void postTransformationAbort(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
+        // Nothing to be done here
+    }
+
     private File createManualInstrutionDocumentFolder(Transformation transformation, TransformationContextImpl transformationContext) throws IOException {
         UpgradeStep upgradeStep = (UpgradeStep) transformationContext.getTransformationTemplate();
         File manualInstrutionDocumentFolder = new File(transformation.getManualInstructionsDir(), upgradeStep.getClass().getSimpleName());
@@ -143,10 +148,8 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
             FileUtils.copyURLToFile(instructionResource, instructionFile);
             addInstructionDescription(transformation.getManualInstructionsFile(), instructionDescription, manualInstructionsDir, instructionFile);
 
-            logger.debug("Manual instruction document {} generated", instructionFile.getName());
+            logger.debug("Manual instruction document generated: {}", instructionFile.getAbsolutePath());
         }
-
-        logger.debug("Manual instructions documents have been generated");
     }
 
     private String getResourceFileName(URL instructionResource) {

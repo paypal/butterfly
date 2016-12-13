@@ -1,6 +1,7 @@
 package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.metrics.AbortDetails;
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
 import com.paypal.butterfly.extensions.api.metrics.TransformationStatistics;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
@@ -38,6 +39,7 @@ public class TransformationMetricsImpl implements TransformationMetrics {
     private boolean successfulTransformation = false;
     private TransformationStatistics statistics;
     private String upgradeCorrelationId;
+    private AbortDetails abortDetails;
     private String metricsId;
 
     public TransformationMetricsImpl(TransformationContextImpl transformationContext) {
@@ -80,12 +82,11 @@ public class TransformationMetricsImpl implements TransformationMetrics {
         requiresManualInstructions = transformationContext.hasManualInstructions();
         successfulTransformation = transformationContext.isSuccessfulTransformation();
         statistics = transformationContext.getStatistics();
+        abortDetails = transformationContext.getAbortDetails();
 
         metricsId =  UUID.randomUUID().toString();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Metrics generated: {}", metricsId);
-        }
+        logger.info("Metrics generated: {}", metricsId);
     }
 
     @Override
@@ -151,6 +152,16 @@ public class TransformationMetricsImpl implements TransformationMetrics {
     @Override
     public String getUpgradeCorrelationId() {
         return upgradeCorrelationId;
+    }
+
+    @Override
+    public String getMetricsId() {
+        return metricsId;
+    }
+
+    @Override
+    public AbortDetails getAbortDetails() {
+        return abortDetails;
     }
 
 }
