@@ -2,6 +2,7 @@ package com.paypal.butterfly.metrics.couchdb;
 
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetricsListener;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.lightcouch.CouchDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.List;
 
+@SuppressFBWarnings("UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS")
 @Configuration
 public class CouchDbMetricsConfig {
 
@@ -22,14 +24,26 @@ public class CouchDbMetricsConfig {
         return new TransformationMetricsListener() {
 
             private CouchDbClient dbClient;
+            private Exception ex;
 
             @PostConstruct
             public void postConstruct() {
-                dbClient = new CouchDbClient();
+                try {
+                    dbClient = new CouchDbClient();
+                } catch(Exception ex) {
+                    this.ex = ex;
+                }
             }
 
             @Override
             public void notify(List<TransformationMetrics> metricsList) {
+                if (dbClient == null) {
+                    if (logger.isDebugEnabled()) {
+                        logger.warn("Exception when creating Couch DB client, metrics will not be persisted in Couch DB. Double check Couch DB configuration file, server and your network.", ex);
+                    }
+                    return;
+                }
+
                 if (logger.isDebugEnabled()) {
                     logger.debug("Persisting transformation metrics in CouchDB");
                 }
@@ -43,7 +57,9 @@ public class CouchDbMetricsConfig {
 
             @PreDestroy
             public void preDestroy() {
-                dbClient.shutdown();
+                if (dbClient != null) {
+                    dbClient.shutdown();
+                }
             }
 
         };

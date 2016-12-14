@@ -3,8 +3,10 @@ package com.paypal.butterfly.core;
 import com.paypal.butterfly.extensions.api.PerformResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.metrics.AbortDetails;
 import com.paypal.butterfly.extensions.api.metrics.TransformationStatistics;
 import com.paypal.butterfly.extensions.api.utilities.ManualInstructionRecord;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -16,16 +18,18 @@ import java.util.*;
  *
  * @author facarvalho
  */
+@SuppressFBWarnings("URF_UNREAD_FIELD")
 class TransformationContextImpl implements TransformationContext {
 
     private TransformationTemplate transformationTemplate;
     private Map<String, Object> attributes = new HashMap<>();
     private Map<String, PerformResult> results = new HashMap<>();
     private List<ManualInstructionRecord> manualInstructionRecords = new ArrayList<>();
-    private boolean successfulTransformation = false;
+    private boolean successfulTransformation = true;
     private boolean collectStats = false;
     private TransformationStatisticsImpl statistics;
     private String upgradeCorrelationId;
+    private AbortDetails abortDetails;
 
     void setCollectStats(boolean collectStats) {
         this.collectStats = collectStats;
@@ -122,10 +126,6 @@ class TransformationContextImpl implements TransformationContext {
         }
     }
 
-    void setSuccessfulTransformation(boolean successfulTransformation) {
-        this.successfulTransformation = successfulTransformation;
-    }
-
     /**
      * Returns the {@link TransformationTemplate} object
      * whose execution originated this context object
@@ -180,6 +180,15 @@ class TransformationContextImpl implements TransformationContext {
 
     String getUpgradeCorrelationId() {
         return upgradeCorrelationId;
+    }
+
+    void transformationAborted(Exception ex, String abortMessage, String utilityName) {
+        successfulTransformation = false;
+        abortDetails = new AbortDetails(ex, abortMessage, utilityName);
+    }
+
+    AbortDetails getAbortDetails() {
+        return abortDetails;
     }
 
 }

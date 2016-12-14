@@ -114,4 +114,8 @@ public interface TransformationMetrics {
      */
     String getUpgradeCorrelationId();
 
+    String getMetricsId();
+
+    AbortDetails getAbortDetails();
+
 }

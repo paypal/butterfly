@@ -34,6 +34,15 @@ public class MetricsHandler implements TransformationListener {
 
     @Override
     public void postTransformation(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
+        generateMetrics(transformationContexts);
+    }
+
+    @Override
+    public void postTransformationAbort(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
+        generateMetrics(transformationContexts);
+    }
+
+    private void generateMetrics(List<TransformationContextImpl> transformationContexts) {
         List<TransformationMetrics> metricsList = new ArrayList<>();
         TransformationMetrics metrics;
         for (TransformationContextImpl transformationContext : transformationContexts) {
