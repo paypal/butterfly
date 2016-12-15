@@ -86,7 +86,9 @@ public class TransformationMetricsImpl implements TransformationMetrics {
 
         metricsId =  UUID.randomUUID().toString();
 
-        logger.info("Metrics generated: {}", metricsId);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Metrics generated: {}", metricsId);
+        }
     }
 
     @Override
