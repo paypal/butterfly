@@ -4,6 +4,7 @@ import com.paypal.butterfly.extensions.api.ExecutionResult;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -92,6 +93,14 @@ public class RunScript extends TransformationUtility<RunScript> {
         try {
             ScriptEngineManager mgr = new ScriptEngineManager();
             ScriptEngine engine = mgr.getEngineByName(language);
+
+            //No js engine for Open JDK 7 Version
+            if(engine == null) {
+                String exceptionMessage = String.format("Script engine named %s could not be found", language);
+                TransformationUtilityException e = new TransformationUtilityException(exceptionMessage);
+                result = TUExecutionResult.error(this, e);
+                return result;
+            }
 
             String key;
             Object value;
