@@ -4,10 +4,13 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
+
+import static com.paypal.butterfly.utilities.operations.EolBufferedReader.*;
 
 /**
  * Operation to replace text in a text file
@@ -174,18 +177,14 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
         int n = 0;
         boolean foundFirstMatch = false;
         final Pattern pattern = Pattern.compile("(.*)" + regex + "(.*)");
-        boolean firstLine = true;
-        while((currentLine = reader.readLine()) != null) {
-            if((!firstOnly || !foundFirstMatch) && pattern.matcher(currentLine).matches()) {
+        EolBufferedReader eolReader = new EolBufferedReader(reader);
+        while((currentLine = eolReader.readLineKeepStartEOL()) != null) {
+            if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEOL(currentLine)).matches()) {
                 foundFirstMatch = true;
                 n++;
                 currentLine = currentLine.replaceAll(regex, replacement);
             }
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
-            }
             writer.write(currentLine);
-            firstLine = false;
         }
 
         String details = String.format("File %s has had %d line(s) where text replacement was applied based on regular expression '%s'", getRelativePath(), n, regex);

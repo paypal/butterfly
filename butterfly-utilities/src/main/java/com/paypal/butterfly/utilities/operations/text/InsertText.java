@@ -6,12 +6,16 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import com.paypal.butterfly.utilities.operations.EolBufferedReader;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
+
+import static com.paypal.butterfly.utilities.operations.EolBufferedReader.*;
 
 /**
  * Operation to insert text into another text file.
@@ -161,7 +165,6 @@ public class InsertText extends TransformationOperation<InsertText> {
     }
 
     @Override
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
     protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
 
@@ -233,17 +236,24 @@ public class InsertText extends TransformationOperation<InsertText> {
         return result;
     }
 
+    @SuppressFBWarnings("NP_LOAD_OF_KNOWN_NULL_VALUE")
     private String insertAtSpecificLine(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer) throws IOException {
         String currentLine;
         int n = 0;
-        while((currentLine = readerOriginalFile.readLine()) != null) {
+        EolBufferedReader eolReaderOriginalFile = new EolBufferedReader(readerOriginalFile);
+        EolBufferedReader eolReaderText = new EolBufferedReader(readerText);
+        while((currentLine = eolReaderOriginalFile.readLineKeepEndEOL()) != null) {
             n++;
             writer.write(currentLine);
-            writer.write(System.lineSeparator());
             if (n == lineNumber) {
-                while((currentLine = readerText.readLine()) != null) {
+                if (!endsWithEOL(currentLine)) {
+                    writer.newLine();
+                }
+                while((currentLine = eolReaderText.readLineKeepEndEOL()) != null) {
                     writer.write(currentLine);
-                    writer.write(System.lineSeparator());
+                }
+                if (!endsWithEOL(currentLine)) {
+                    writer.newLine();
                 }
             }
         }
@@ -256,20 +266,15 @@ public class InsertText extends TransformationOperation<InsertText> {
         int n = 0;
         boolean foundFirstMatch = false;
         final Pattern pattern = Pattern.compile(regex);
-        boolean firstLine = true;
-        while((currentLine = readerOriginalFile.readLine()) != null) {
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
-            }
+        EolBufferedReader eolReaderOriginalFile = new EolBufferedReader(readerOriginalFile);
+        EolBufferedReader eolReaderText = new EolBufferedReader(readerText);
+        while((currentLine = eolReaderOriginalFile.readLineKeepStartEOL()) != null) {
             writer.write(currentLine);
-            firstLine = false;
-            if((!firstOnly || !foundFirstMatch) && pattern.matcher(currentLine).matches()) {
+            if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEOL(currentLine)).matches()) {
                 foundFirstMatch = true;
                 n++;
-                while((currentLine = readerText.readLine()) != null) {
-                    writer.write(System.lineSeparator());
+                while((currentLine = eolReaderText.readLineKeepStartEOL()) != null) {
                     writer.write(currentLine);
-                    firstLine = false;
                 }
             }
         }
@@ -287,20 +292,14 @@ public class InsertText extends TransformationOperation<InsertText> {
 
     private String concat(BufferedReader readerText, BufferedReader readerOriginalFile, BufferedWriter writer) throws IOException {
         String currentLine;
-        boolean firstLine = true;
-        while((currentLine = readerOriginalFile.readLine()) != null) {
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
-            }
+        EolBufferedReader eolReaderOriginalFile = new EolBufferedReader(readerOriginalFile);
+        EolBufferedReader eolReaderText = new EolBufferedReader(readerText);
+        while((currentLine = eolReaderOriginalFile.readLineKeepStartEOL()) != null) {
             writer.write(currentLine);
-            firstLine = false;
         }
-        while((currentLine = readerText.readLine()) != null) {
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
-            }
+        writer.newLine();
+        while((currentLine = eolReaderText.readLineKeepStartEOL()) != null) {
             writer.write(currentLine);
-            firstLine = false;
         }
 
         return String.format("Text has been inserted from %s to %s at the end of the file", textFileUrl, getRelativePath());
