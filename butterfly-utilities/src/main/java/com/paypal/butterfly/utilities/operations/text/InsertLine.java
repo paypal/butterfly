@@ -5,10 +5,13 @@ import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
+
+import static com.paypal.butterfly.utilities.operations.EolBufferedReader.removeEOL;
 
 /**
  * Operation to insert new line(s) into a text file.
@@ -232,40 +235,35 @@ public class InsertLine extends TransformationOperation<InsertLine> {
         return result;
     }
 
-    private String insertAtSpecificLine(BufferedReader readerOriginalFile, BufferedWriter writer) throws IOException {
+    private String insertAtSpecificLine(BufferedReader reader, BufferedWriter writer) throws IOException {
         String currentLine;
         int n = 0;
-        while((currentLine = readerOriginalFile.readLine()) != null) {
+        EolBufferedReader eolReader = new EolBufferedReader(reader);
+        while((currentLine = eolReader.readLineKeepEndEOL()) != null) {
             n++;
             if (n == lineNumber) {
                 writer.write(newLine);
                 writer.write(System.lineSeparator());
             }
             writer.write(currentLine);
-            writer.write(System.lineSeparator());
         }
 
         return String.format("A new line has been inserted into %s after line number %d", getRelativePath(), lineNumber);
     }
 
-    private String insertAfterRegex(BufferedReader readerOriginalFile, BufferedWriter writer, boolean firstOnly) throws IOException {
+    private String insertAfterRegex(BufferedReader reader, BufferedWriter writer, boolean firstOnly) throws IOException {
         String currentLine;
         int n = 0;
         boolean foundFirstMatch = false;
         final Pattern pattern = Pattern.compile(regex);
-        boolean firstLine = true;
-        while((currentLine = readerOriginalFile.readLine()) != null) {
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
-            }
+        EolBufferedReader eolReader = new EolBufferedReader(reader);
+        while((currentLine = eolReader.readLineKeepStartEOL()) != null) {
             writer.write(currentLine);
-            firstLine = false;
-            if((!firstOnly || !foundFirstMatch) && pattern.matcher(currentLine).matches()) {
+            if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEOL(currentLine)).matches()) {
                 foundFirstMatch = true;
                 n++;
                 writer.write(System.lineSeparator());
                 writer.write(newLine);
-                firstLine = false;
             }
         }
 
@@ -280,13 +278,11 @@ public class InsertLine extends TransformationOperation<InsertLine> {
         return result;
     }
 
-    private String concat(BufferedReader readerOriginalFile, BufferedWriter writer) throws IOException {
+    private String concat(BufferedReader reader, BufferedWriter writer) throws IOException {
         String currentLine;
         boolean firstLine = true;
-        while((currentLine = readerOriginalFile.readLine()) != null) {
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
-            }
+        EolBufferedReader eolReader = new EolBufferedReader(reader);
+        while((currentLine = eolReader.readLineKeepStartEOL()) != null) {
             writer.write(currentLine);
             firstLine = false;
         }

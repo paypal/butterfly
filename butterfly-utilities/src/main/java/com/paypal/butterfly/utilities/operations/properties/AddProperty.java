@@ -4,12 +4,15 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.regex.Pattern;
+
+import static com.paypal.butterfly.utilities.operations.EolBufferedReader.removeEOL;
 
 /**
  * Operation to add a new property to a properties file.
@@ -115,23 +118,18 @@ public class AddProperty extends TransformationOperation<AddProperty> {
         String currentLine;
         boolean foundFirstMatch = false;
         final Pattern pattern = Pattern.compile(regex + "(.*)");
-        boolean firstLine = true;
-        while((currentLine = reader.readLine()) != null) {
-            if(!foundFirstMatch && pattern.matcher(currentLine).matches()) {
+        EolBufferedReader eolReader = new EolBufferedReader(reader);
+        while((currentLine = eolReader.readLineKeepStartEOL()) != null) {
+            if(!foundFirstMatch && pattern.matcher(removeEOL(currentLine)).matches()) {
                 foundFirstMatch = true;
                 //Replace the Property Key and Value (entire line)
                 currentLine = currentLine.replaceAll(".+", replacement);
             }
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
-            }
             writer.write(currentLine);
-            firstLine = false;
         }
 
         return String.format("Property '%s' value replaced with %s' at '%s'", propertyName, propertyValue, getRelativePath());
     }
-
 
     /**
      * To add a new property to the property file.
