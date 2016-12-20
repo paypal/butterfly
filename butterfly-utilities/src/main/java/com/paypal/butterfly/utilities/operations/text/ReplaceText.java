@@ -128,6 +128,13 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
     protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
+
+        if (!fileToBeChanged.exists()) {
+            // TODO Should this be done as pre-validation?
+            FileNotFoundException ex = new FileNotFoundException("File to be modified has not been found");
+            return TOExecutionResult.error(this, ex);
+        }
+
         File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader reader = null;
         BufferedWriter writer = null;
