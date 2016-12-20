@@ -77,6 +77,17 @@ public class FindFile extends TransformationUtility<FindFile> {
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File searchRootFolder = getAbsoluteFile(transformedAppFolder, transformationContext);
+
+        if (!searchRootFolder.exists()) {
+            String details = String.format("No file named '%s' has been found by %s", fileName, getName());
+            if (failIfNotFound) {
+                TransformationUtilityException e = new TransformationUtilityException(details);
+                return TUExecutionResult.error(this, e);
+            } else {
+                return TUExecutionResult.nullResult(this, details);
+            }
+        }
+
         FindFiles findFiles = new FindFiles(fileName, true);
 
         TUExecutionResult result = null;
