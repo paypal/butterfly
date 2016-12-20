@@ -6,6 +6,7 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -55,6 +56,13 @@ public class AddLine extends TransformationOperation<AddLine> {
     @Override
     protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeModified = getAbsoluteFile(transformedAppFolder, transformationContext);
+
+        if (!fileToBeModified.exists()) {
+            // TODO Should this be done as pre-validation?
+            FileNotFoundException ex = new FileNotFoundException("File to be modified has not been found");
+            return TOExecutionResult.error(this, ex);
+        }
+
         TOExecutionResult result = null;
 
         try {
