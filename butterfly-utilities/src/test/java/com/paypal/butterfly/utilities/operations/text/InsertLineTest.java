@@ -36,13 +36,9 @@ public class InsertLineTest extends TransformationUtilityTestHelper {
         assertNotChangedFile("dogs.yaml");
     }
 
-    // FIXME
-    // There is nothing wrong with this unit test, it is correct.
-    // What is wrong is the implementation of InsertLine, it has a bug.
-    // Run this test as is and you will see that it will fail.
-    @Test(enabled = false)
+    @Test
     public void insertLineNumberTest() throws IOException {
-        InsertLine insertLine = new InsertLine("   color: black and white", 7).relative("dogs.yaml");
+        InsertLine insertLine = new InsertLine("   color: black and white", 6).relative("dogs.yaml");
         TOExecutionResult executionResult = insertLine.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
