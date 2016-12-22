@@ -4,6 +4,7 @@ import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetricsListener;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.lightcouch.CouchDbClient;
+import org.lightcouch.CouchDbException;
 import org.lightcouch.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +50,15 @@ public class CouchDbMetricsConfig {
                     logger.debug("Persisting transformation metrics in CouchDB");
                 }
 
-                List<Response> responses = dbClient.bulk(metricsList, false);
-
-                for (Response response : responses) {
-                    logger.info("Metrics record persisted in Couch DB with id {}", response.getId());
+                try {
+                    List<Response> responses = dbClient.bulk(metricsList, false);
+                    for (Response response : responses) {
+                        logger.info("Metrics record persisted in Couch DB with id {}", response.getId());
+                    }
+                } catch (CouchDbException ex) {
+                    if (logger.isDebugEnabled()) {
+                        logger.warn("Exception when persisting metrics in Couch DB. Double check Couch DB configuration file, server and your network.", ex);
+                    }
                 }
             }
 
