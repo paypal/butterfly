@@ -867,7 +867,8 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * automatically saved in the transformation context as a new
      * attribute, whose key is the name of the transformation utility.
      *
-     * @param transformedAppFolder
+     * @param transformedAppFolder the folder where the transformed application code is
+     * @param transformationContext the transformation context object
      *
      * @return an object with the result of this execution, to be better defined
      * by the concrete utility class, since its type is generic
@@ -875,12 +876,24 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     protected abstract ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext);
 
     /**
-     * Return true only if a file has been set, either via {@link #relative(String)} or {@link #absolute(String)}
+     * Return true only if a file has been set. Every {@link TransformationUtility} has its file set automatically by
+     * default to "" which means the root of the application. That is NOT the case though for {@link TransformationOperation}
+     * object, which must set them explicitly via {@link #relative(String)} or {@link #absolute(String)}.
      *
      * @return
      */
     public final boolean isFileSet() {
         return !(getRelativePath() == null && getAbsoluteFileFromContextAttribute() == null);
+    }
+
+    /**
+     * Return true only if a file has been set explicitly either via {@link #relative(String)} or {@link #absolute(String).
+     * If set via {@link #relative(String)} it will only return true if set to anything other than "", which would mean the root of the application.
+     *
+     * @return
+     */
+    public final boolean wasFileExplicitlySet() {
+        return !(StringUtils.isBlank(getRelativePath()) && getAbsoluteFileFromContextAttribute() == null);
     }
 
     @Override

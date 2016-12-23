@@ -4,12 +4,16 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.operations.EolBufferedReader;
+import com.paypal.butterfly.utilities.operations.EolHelper;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.regex.Pattern;
+
+import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
  * Operation to add a new property to a properties file.
@@ -115,23 +119,18 @@ public class AddProperty extends TransformationOperation<AddProperty> {
         String currentLine;
         boolean foundFirstMatch = false;
         final Pattern pattern = Pattern.compile(regex + "(.*)");
-        boolean firstLine = true;
-        while((currentLine = reader.readLine()) != null) {
-            if(!foundFirstMatch && pattern.matcher(currentLine).matches()) {
+        EolBufferedReader eolReader = new EolBufferedReader(reader);
+        while((currentLine = eolReader.readLineKeepStartEol()) != null) {
+            if(!foundFirstMatch && pattern.matcher(removeEol(currentLine)).matches()) {
                 foundFirstMatch = true;
                 //Replace the Property Key and Value (entire line)
                 currentLine = currentLine.replaceAll(".+", replacement);
             }
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
-            }
             writer.write(currentLine);
-            firstLine = false;
         }
 
         return String.format("Property '%s' value replaced with %s' at '%s'", propertyName, propertyValue, getRelativePath());
     }
-
 
     /**
      * To add a new property to the property file.
@@ -147,7 +146,7 @@ public class AddProperty extends TransformationOperation<AddProperty> {
             String[] propArray = {propertyName, propertyValue};
             String propertyKeyValue = "%s = %s";
             String propertyToBeAdded = String.format(propertyKeyValue, propArray);
-            FileUtils.fileAppend(fileToBeChanged.getAbsolutePath(), System.lineSeparator());
+            FileUtils.fileAppend(fileToBeChanged.getAbsolutePath(), EolHelper.findEolDefaultToOs(fileToBeChanged));
             FileUtils.fileAppend(fileToBeChanged.getAbsolutePath(), propertyToBeAdded);
             details = String.format("Property '%s' has been added and set to '%s' at '%s'", propertyName, propertyValue, getRelativePath());
             result = TOExecutionResult.success(this, details);

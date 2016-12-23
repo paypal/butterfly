@@ -5,10 +5,15 @@ import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.operations.EolBufferedReader;
+import com.paypal.butterfly.utilities.operations.EolHelper;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
+
+import static com.paypal.butterfly.utilities.operations.EolHelper.getEndEol;
+import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
  * Operation to insert new line(s) into a text file.
@@ -172,32 +177,37 @@ public class InsertLine extends TransformationOperation<InsertLine> {
     protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
 
+        if (!fileToBeChanged.exists()) {
+            // TODO Should this be done as pre-validation?
+            FileNotFoundException ex = new FileNotFoundException("File to be modified has not been found");
+            return TOExecutionResult.error(this, ex);
+        }
+
         File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader readerOriginalFile = null;
         BufferedWriter writer = null;
-        String details = null;
         TOExecutionResult result = null;
 
         try {
+            final String eol = EolHelper.findEolDefaultToOs(fileToBeChanged);
             readerOriginalFile = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
 
             switch (insertionMode) {
                 case LINE_NUMBER:
-                    details = insertAtSpecificLine(readerOriginalFile, writer);
+                    result = insertAtSpecificLine(readerOriginalFile, writer, eol);
                     break;
                 case REGEX_FIRST:
-                    details = insertAfterRegex(readerOriginalFile, writer, true);
+                    result = insertAfterRegex(readerOriginalFile, writer, true, eol);
                     break;
                 case REGEX_ALL:
-                    details = insertAfterRegex(readerOriginalFile, writer, false);
+                    result = insertAfterRegex(readerOriginalFile, writer, false, eol);
                     break;
                 default:
                 case CONCAT:
-                    details = concat(readerOriginalFile, writer);
+                    result = concat(readerOriginalFile, writer, eol);
                     break;
             }
-            result = TOExecutionResult.success(this, details);
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);
         } finally {
@@ -216,6 +226,7 @@ public class InsertLine extends TransformationOperation<InsertLine> {
             }
         }
 
+        String details;
         boolean bDeleted = fileToBeChanged.delete();
         if(bDeleted) {
             if (!tempFile.renameTo(fileToBeChanged)) {
@@ -232,70 +243,75 @@ public class InsertLine extends TransformationOperation<InsertLine> {
         return result;
     }
 
-    private String insertAtSpecificLine(BufferedReader readerOriginalFile, BufferedWriter writer) throws IOException {
+    private TOExecutionResult insertAtSpecificLine(BufferedReader reader, BufferedWriter writer, String eol) throws IOException {
         String currentLine;
         int n = 0;
-        while((currentLine = readerOriginalFile.readLine()) != null) {
+        EolBufferedReader eolReader = new EolBufferedReader(reader);
+        boolean newLineInserted = false;
+        while((currentLine = eolReader.readLineKeepEol()) != null) {
             n++;
             if (n == lineNumber) {
                 writer.write(newLine);
-                writer.write(System.lineSeparator());
+                writer.write(eol);
+                newLineInserted = true;
             }
             writer.write(currentLine);
-            writer.write(System.lineSeparator());
         }
 
-        return String.format("A new line has been inserted into %s after line number %d", getRelativePath(), lineNumber);
+        String details;
+        if (newLineInserted) {
+            details = String.format("A new line has been inserted into %s after line number %d", getRelativePath(), lineNumber);
+            return TOExecutionResult.success(this, details);
+        } else {
+            details = String.format("No line has been inserted into %s because line number does not exist %d", getRelativePath(), lineNumber);
+            return TOExecutionResult.noOp(this, details);
+        }
     }
 
-    private String insertAfterRegex(BufferedReader readerOriginalFile, BufferedWriter writer, boolean firstOnly) throws IOException {
+    private TOExecutionResult insertAfterRegex(BufferedReader reader, BufferedWriter writer, boolean firstOnly, String eol) throws IOException {
         String currentLine;
         int n = 0;
         boolean foundFirstMatch = false;
         final Pattern pattern = Pattern.compile(regex);
-        boolean firstLine = true;
-        while((currentLine = readerOriginalFile.readLine()) != null) {
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
-            }
+        EolBufferedReader eolReader = new EolBufferedReader(reader);
+
+        while((currentLine = eolReader.readLineKeepEol()) != null) {
             writer.write(currentLine);
-            firstLine = false;
-            if((!firstOnly || !foundFirstMatch) && pattern.matcher(currentLine).matches()) {
+            if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEol(currentLine)).matches()) {
                 foundFirstMatch = true;
                 n++;
-                writer.write(System.lineSeparator());
+                if (getEndEol(currentLine) == null) writer.write(eol);
                 writer.write(newLine);
-                firstLine = false;
+                writer.write(eol);
             }
         }
 
-        String result;
-
+        String details;
         if (foundFirstMatch) {
-            result = String.format("New line(s) has been inserted into %s after %d line(s) that matches regular expression '%s'", getRelativePath(), n, regex);
+            details = String.format("New line(s) has been inserted into %s after %d line(s) that matches regular expression '%s'", getRelativePath(), n, regex);
+            return TOExecutionResult.success(this, details);
         } else {
-            result = String.format("No new line has been inserted into %s, since no line has been found to match regular expression '%s'", getRelativePath(), regex);
+            details = String.format("No new line has been inserted into %s, since no line has been found to match regular expression '%s'", getRelativePath(), regex);
+            return TOExecutionResult.noOp(this, details);
         }
-
-        return result;
     }
 
-    private String concat(BufferedReader readerOriginalFile, BufferedWriter writer) throws IOException {
+    private TOExecutionResult concat(BufferedReader reader, BufferedWriter writer, String eol) throws IOException {
         String currentLine;
         boolean firstLine = true;
-        while((currentLine = readerOriginalFile.readLine()) != null) {
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
-            }
+        EolBufferedReader eolReader = new EolBufferedReader(reader);
+
+        while((currentLine = eolReader.readLineKeepStartEol()) != null) {
             writer.write(currentLine);
             firstLine = false;
         }
         if(!firstLine) {
-            writer.write(System.lineSeparator());
+            writer.write(eol);
         }
         writer.write(newLine);
 
-        return String.format("A new line has been inserted into %s at the end of the file", getRelativePath());
+        String details = String.format("A new line has been inserted into %s at the end of the file", getRelativePath());
+        return TOExecutionResult.success(this, details);
     }
 
     @Override

@@ -4,10 +4,13 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
+
+import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
  * Operation to remove a property from a properties file.
@@ -69,29 +72,25 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
             boolean foundFirstMatch = false;
             String regex = "("+propertyName+".*)";
             final Pattern pattern = Pattern.compile(regex);
-            boolean firstLine = true;
-            while((currentLine = reader.readLine()) != null) {
-                if(!foundFirstMatch && pattern.matcher(currentLine).matches()) {
+            EolBufferedReader eolReader = new EolBufferedReader(reader);
+            while((currentLine = eolReader.readLineKeepStartEol()) != null) {
+                if(!foundFirstMatch && pattern.matcher(removeEol(currentLine)).matches()) {
                     foundFirstMatch = true;
                     continue;
                 }
-                if(!firstLine) {
-                    writer.write(System.lineSeparator());
-                }
                 writer.write(currentLine);
-                firstLine = false;
             }
             //If it founds first match means, then it would be removed
-            if(foundFirstMatch) {
+            if (foundFirstMatch) {
                 details = String.format("Property '%s' has been removed from '%s'", propertyName, getRelativePath());
                 result = TOExecutionResult.success(this, details);
-            }else {
+            } else {
                 details = String.format("Property '%s' has NOT been removed from '%s' because it is not present on it", propertyName, getRelativePath());
                 result = TOExecutionResult.warning(this, details);
             }
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);
-        }finally {
+        } finally {
             try {
                 if (writer != null) try {
                     writer.close();

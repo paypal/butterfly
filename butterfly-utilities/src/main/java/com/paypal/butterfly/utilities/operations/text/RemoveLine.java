@@ -5,10 +5,13 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
+
+import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
  * Operation to remove one, or more, lines from a text file.
@@ -16,7 +19,7 @@ import java.util.regex.Pattern;
  * expression, or by the line number.
  * </br>
  * If the regular expression
- * is set, only the first found to match it will be removed,
+ * is set, only the first line found to match it will be removed,
  * unless {@link #setFirstOnly(boolean)} is set to false, then
  * all lines that match it will be removed.
  * </br>
@@ -106,18 +109,8 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
     }
 
     /**
-     * Operation to remove one, or more, lines from a text file.
-     * The line to be removed is chosen either based on a regular
-     * expression, or by the line number.
-     * </br>
-     * If the regular expression
-     * is set, only the first found to match it will be removed,
-     * unless {@link #setFirstOnly(boolean)} is set to false, then
-     * all lines that match it will be removed.
-     * </br>
-     * If a regular expression and a line number are both set,
-     * the line number will take precedence, and the regular expression
-     * will be ignored
+     * Operation to remove one line from a text file, based on a
+     * line number.
      *
      * @param lineNumber the number of the line to be removed
      */
@@ -156,7 +149,8 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
     /**
      * Sets the number of the line to be removed. Line number for first line is 1.
      * If this is set, it will determine the line to be removed, and the regular
-     * expression will be ignored.
+     * expression will be ignored. If the line number set does not exist in the file,
+     * no line will be removed.
      *
      * @param lineNumber the number of the line to be removed
      * @return
@@ -251,22 +245,24 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
     private TOExecutionResult removeBasedOnLineNumber(BufferedReader reader, BufferedWriter writer) throws IOException {
         String currentLine;
         int n = 0;
-        boolean firstLine = true;
-        while((currentLine = reader.readLine()) != null) {
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
-            }
+        boolean lineRemoved = false;
+        EolBufferedReader eolReader = new EolBufferedReader(reader);
+        while((currentLine = eolReader.readLineKeepStartEol()) != null) {
             n++;
             if(n == lineNumber) {
+                lineRemoved = true;
                 continue;
             }
             writer.write(currentLine);
-            firstLine = false;
         }
 
-        String details = String.format("File %s has had line number %d removed", getRelativePath(), lineNumber);
-
-        return TOExecutionResult.success(this, details);
+        if (lineRemoved) {
+            String details = String.format("File %s has had line number %d removed", getRelativePath(), lineNumber);
+            return TOExecutionResult.success(this, details);
+        } else {
+            String details = String.format("File %s has had no lines removed, since line %s does not exist", getRelativePath(), lineNumber);
+            return TOExecutionResult.noOp(this, details);
+        }
     }
 
     private TOExecutionResult removeBasedOnRegex(BufferedReader reader, BufferedWriter writer) throws IOException {
@@ -275,14 +271,15 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
         boolean foundFirstMatch = false;
         final Pattern pattern = Pattern.compile(regex);
         boolean firstLine = true;
-        while((currentLine = reader.readLine()) != null) {
-            if((!firstOnly || !foundFirstMatch) && pattern.matcher(currentLine).matches()) {
+        EolBufferedReader eolReader = new EolBufferedReader(reader);
+        while((currentLine = eolReader.readLineKeepStartEol()) != null) {
+            if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEol(currentLine)).matches()) {
                 foundFirstMatch = true;
                 n++;
                 continue;
             }
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
+            if(firstLine) {
+                currentLine = removeEol(currentLine);
             }
             writer.write(currentLine);
             firstLine = false;

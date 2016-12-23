@@ -63,21 +63,68 @@ public class TransformationEngine {
         }
 
         File transformedAppFolder = prepareOutputFolder(transformation);
-        List<TransformationContextImpl> transformationContexts;
+        List<TransformationContextImpl> transformationContexts = new ArrayList<>();
 
+        try {
+            TransformationResult transformationResult = perform(transformedAppFolder, transformation, transformationContexts);
+            postTransformationNotification(transformation, transformationContexts);
+
+            return transformationResult;
+        } catch (InternalTransformationException e) {
+            TransformationContextImpl abortedTransformationContext = e.getTransformationContext();
+            if (abortedTransformationContext != null) {
+                transformationContexts.add(abortedTransformationContext);
+            }
+            postTransformationAbortionNotification(transformation, transformationContexts);
+
+            throw e;
+        }
+    }
+
+    /*
+     * Notify transformation listeners about an successfully completed transformation
+     */
+    private void postTransformationNotification(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
+        List<TransformationContextImpl> transformationContextsUnmodifiableList = getTransformationContextsReadonlyList(transformationContexts);
+        for (TransformationListener listener : transformationListeners) {
+            listener.postTransformation(transformation, transformationContextsUnmodifiableList);
+        }
+    }
+
+    /*
+     * Notify transformation listeners about an aborted transformation
+     */
+    private void postTransformationAbortionNotification(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
+        List<TransformationContextImpl> transformationContextsUnmodifiableList = getTransformationContextsReadonlyList(transformationContexts);
+        for (TransformationListener listener : transformationListeners) {
+            listener.postTransformationAbort(transformation, transformationContextsUnmodifiableList);
+        }
+    }
+
+    /*
+     * Returns a list of transformation context objects to be passed to transformation listeners as part of a notification event.
+     * Listeners are not suppose to modify these transformation context objects, and that is why the need of this auxiliary method.
+     */
+    private List<TransformationContextImpl> getTransformationContextsReadonlyList(List<TransformationContextImpl> transformationContexts) {
+        // FIXME
+        // It would be better to create a new list with read-only DTOs from TransformationContextImpl objects,
+        // to then make it unmodifiable, and send to listeners. Otherwise listeners my change the context
+        // objects, which they are not supposed to to. Right now this implementation is not preventing listeners to
+        // modify transformation context objects.
+        return Collections.unmodifiableList(transformationContexts);
+    }
+
+    private TransformationResult perform(File transformedAppFolder, Transformation transformation, List<TransformationContextImpl> transformationContexts) throws InternalTransformationException {
         if (transformation instanceof UpgradePathTransformation) {
             UpgradePath upgradePath = ((UpgradePathTransformation) transformation).getUpgradePath();
-            transformationContexts = perform(upgradePath, transformedAppFolder);
+            perform(upgradePath, transformedAppFolder, transformationContexts);
         } else if (transformation instanceof TemplateTransformation) {
             TransformationTemplate template = ((TemplateTransformation) transformation).getTemplate();
             TransformationContextImpl transformationContext = perform(template, transformedAppFolder, null);
-            transformationContexts = new ArrayList<>();
             transformationContexts.add(transformationContext);
         } else {
-            throw new TransformationException("Transformation type not recognized");
+            throw new InternalTransformationException("Transformation type not recognized", null);
         }
-
-        triggerPostTransformationEvents(transformation, transformationContexts);
 
         TransformationResult transformationResult = new TransformationResultImpl(
                 transformation.getConfiguration(),
@@ -87,21 +134,13 @@ public class TransformationEngine {
         return transformationResult;
     }
 
-    private void triggerPostTransformationEvents(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
-        for (TransformationListener listener : transformationListeners) {
-            listener.postTransformation(transformation, transformationContexts);
-        }
-    }
-
     /*
      * Upgrade the application based on an upgrade path (from an original version to a target version)
      */
-    private List<TransformationContextImpl> perform(UpgradePath upgradePath, File transformedAppFolder) throws TransformationException {
+    private void perform(UpgradePath upgradePath, File transformedAppFolder, List<TransformationContextImpl> transformationContexts) throws InternalTransformationException {
         logger.info("");
         logger.info("====================================================================================================================================");
         logger.info("\tUpgrade path from version {} to version {}", upgradePath.getOriginalVersion(), upgradePath.getUpgradeVersion());
-
-        List<TransformationContextImpl> transformationContexts = new ArrayList<>();
 
         UpgradeStep upgradeStep;
         TransformationContextImpl previousContext = null;
@@ -119,20 +158,17 @@ public class TransformationEngine {
             previousContext = perform(upgradeStep, transformedAppFolder, previousContext);
             transformationContexts.add(previousContext);
         }
-
-        return transformationContexts;
     }
 
     /*
      * Transform the application based on a single transformation template. Notice that this transformation
      * template can also be an upgrade step
      */
-    private TransformationContextImpl perform(TransformationTemplate template, File transformedAppFolder, TransformationContextImpl previousTransformationContext) throws TransformationException {
+    private TransformationContextImpl perform(TransformationTemplate template, File transformedAppFolder, TransformationContextImpl previousTransformationContext) throws InternalTransformationException {
         logger.info("====================================================================================================================================");
         logger.info("Beginning transformation");
 
-        TransformationContextImpl transformationContext = perform(template.getUtilities(), transformedAppFolder, previousTransformationContext);
-        transformationContext.setTransformationTemplate(template);
+        TransformationContextImpl transformationContext = perform(template, template.getUtilities(), transformedAppFolder, previousTransformationContext);
 
         logger.info("Transformation has been completed");
 
@@ -143,17 +179,23 @@ public class TransformationEngine {
      * Performs a list of transformation utilities against an application.
      * Notice that any of those utilities can be operations
      */
-    private TransformationContextImpl perform(List<TransformationUtility> utilities, File transformedAppFolder, TransformationContextImpl previousTransformationContext) throws TransformationException {
+    private TransformationContextImpl perform(TransformationTemplate template, List<TransformationUtility> utilities, File transformedAppFolder, TransformationContextImpl previousTransformationContext) throws InternalTransformationException {
         int operationsExecutionOrder = 1;
         TransformationContextImpl transformationContext = TransformationContextImpl.getTransformationContext(previousTransformationContext);
+        transformationContext.setTransformationTemplate(template);
 
-        TransformationUtility utility;
-        for(Object transformationUtilityObj: utilities) {
-            utility = (TransformationUtility) transformationUtilityObj;
-            perform(utility, transformedAppFolder, transformationContext, String.valueOf(operationsExecutionOrder));
-            if (utility instanceof TransformationOperation || utility instanceof TransformationUtilityParent) {
-                operationsExecutionOrder++;
+        try {
+            TransformationUtility utility;
+            for(Object transformationUtilityObj: utilities) {
+                utility = (TransformationUtility) transformationUtilityObj;
+                perform(utility, transformedAppFolder, transformationContext, String.valueOf(operationsExecutionOrder));
+                if (utility instanceof TransformationOperation || utility instanceof TransformationUtilityParent) {
+                    operationsExecutionOrder++;
+                }
             }
+        } catch (TransformationException e) {
+            // TODO save exception and abortion description into the transformationContext
+            throw new InternalTransformationException(e, transformationContext);
         }
 
         return transformationContext;
@@ -204,7 +246,7 @@ public class TransformationEngine {
                     break;
                 case EXECUTION_RESULT:
                     if (isTO) {
-                        processOperationExecutionResult(utility, result, order);
+                        processOperationExecutionResult(utility, result, order, transformationContext);
                     } else {
                         TUExecutionResult executionResult = (TUExecutionResult) result.getExecutionResult();
                         Object executionValue = executionResult.getValue();
@@ -236,7 +278,7 @@ public class TransformationEngine {
                     }
                     break;
                 case ERROR:
-                    processError(utility, result.getException(), order);
+                    processError(utility, result.getException(), order, transformationContext);
                     break;
                 default:
                     logger.error("\t{}\t - '{}' has resulted in an unexpected perform result type {}", order, utility.getName(), result.getType().name());
@@ -244,7 +286,7 @@ public class TransformationEngine {
             }
         } catch (TransformationUtilityException e) {
             result = PerformResult.error(utility, e);
-            processError(utility, e, order);
+            processError(utility, e, order, transformationContext);
         } finally {
             if (utility.isSaveResult()) {
                 // Saving the whole perform result, which is different from the value that resulted from the utility execution,
@@ -255,7 +297,7 @@ public class TransformationEngine {
         }
     }
 
-    private void processError(TransformationUtility utility, Exception e, String order) throws TransformationException {
+    private void processError(TransformationUtility utility, Exception e, String order, TransformationContextImpl transformationContext) throws TransformationException {
         if (utility.abortOnFailure()) {
             logger.error("*** Transformation will be aborted due to failure in {} ***", utility.getName());
             String abortionMessage = utility.getAbortionMessage();
@@ -267,6 +309,8 @@ public class TransformationEngine {
             logger.error("*** Exception stack trace:", e);
 
             String exceptionMessage = (abortionMessage != null ? abortionMessage : utility.getName() + " failed when performing transformation");
+            transformationContext.transformationAborted(e, exceptionMessage, utility.getName());
+
             throw new TransformationException(exceptionMessage, e);
         } else {
             logger.error("\t{}\t -  '{}' has failed. See debug logs for further details. Utility name: {}", order, utility.getDescription(), utility.getName());
@@ -276,7 +320,7 @@ public class TransformationEngine {
         }
     }
 
-    private void processOperationExecutionResult(TransformationUtility utility, PerformResult result, String order) throws TransformationException {
+    private void processOperationExecutionResult(TransformationUtility utility, PerformResult result, String order, TransformationContextImpl transformationContext) throws TransformationException {
         TOExecutionResult executionResult = (TOExecutionResult) result.getExecutionResult();
         switch (executionResult.getType()) {
             case SUCCESS:
@@ -291,7 +335,7 @@ public class TransformationEngine {
                 processExecutionResultWarningType(utility, executionResult, order);
                 break;
             case ERROR:
-                processError(utility, executionResult.getException(), order);
+                processError(utility, executionResult.getException(), order, transformationContext);
                 break;
             default:
                 processExecutionResultUnknownType(utility, executionResult, order);
@@ -321,7 +365,7 @@ public class TransformationEngine {
                 processExecutionResultWarningType(utility, executionResult, "-");
                 break;
             case ERROR:
-                processError(utility, executionResult.getException(), "-");
+                processError(utility, executionResult.getException(), "-", transformationContext);
                 break;
             default:
                 processExecutionResultUnknownType(utility, executionResult, "-");

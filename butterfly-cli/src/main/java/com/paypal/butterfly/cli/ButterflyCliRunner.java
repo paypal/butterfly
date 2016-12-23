@@ -154,7 +154,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
                 logger.info(" **************************************************************************************");
             }
             logger.info("");
-            logger.info("Help us to improve Butterfly by answering this survey (see the link below). It should take less than 5 minutes!.");
+            logger.info("Help us to improve Butterfly by answering this survey (see the link below). It should take less than 5 minutes!");
             logger.info("https://go/butterfly-survey");
             logger.info("");
         } catch (ButterflyException | ButterflyRuntimeException e) {

@@ -227,12 +227,21 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
 
         boolean multipleFiles = true;
         if (allFiles.size() == 0) {
-            // This means this multiple operation is not supposed to be executed
-            // based on multiple files, but based on multiple configuration
-            // Because of that, the single file the multiple operations should
-            // run against is defined as usual
-            allFiles.add(getAbsoluteFile(transformedAppFolder, transformationContext));
-            multipleFiles = false;
+            if (wasFileExplicitlySet()) {
+                // This means this multiple operation is not supposed to be executed
+                // based on multiple files, but based on multiple configuration
+                // Because of that, the single file the multiple operations should
+                // run against is defined as usual
+                allFiles.add(getAbsoluteFile(transformedAppFolder, transformationContext));
+                multipleFiles = false;
+            } else {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Multiple operation %s has NO file to perform against, it will result in ZERO transformation operations", getName());
+                }
+                operations = new ArrayList<TransformationUtility>();
+                String message = String.format("Multiple operation %s resulted in 0 operations based on %s", getName(), templateOperation.getClass().getSimpleName());
+                return TUExecutionResult.value(this, getChildren()).setDetails(message);
+            }
         }
 
         boolean multipleConfigurations = false;

@@ -4,10 +4,13 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
+
+import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
  * Operation to replace text in a text file
@@ -125,6 +128,13 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
     protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
+
+        if (!fileToBeChanged.exists()) {
+            // TODO Should this be done as pre-validation?
+            FileNotFoundException ex = new FileNotFoundException("File to be modified has not been found");
+            return TOExecutionResult.error(this, ex);
+        }
+
         File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader reader = null;
         BufferedWriter writer = null;
@@ -174,18 +184,14 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
         int n = 0;
         boolean foundFirstMatch = false;
         final Pattern pattern = Pattern.compile("(.*)" + regex + "(.*)");
-        boolean firstLine = true;
-        while((currentLine = reader.readLine()) != null) {
-            if((!firstOnly || !foundFirstMatch) && pattern.matcher(currentLine).matches()) {
+        EolBufferedReader eolReader = new EolBufferedReader(reader);
+        while((currentLine = eolReader.readLineKeepStartEol()) != null) {
+            if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEol(currentLine)).matches()) {
                 foundFirstMatch = true;
                 n++;
                 currentLine = currentLine.replaceAll(regex, replacement);
             }
-            if(!firstLine) {
-                writer.write(System.lineSeparator());
-            }
             writer.write(currentLine);
-            firstLine = false;
         }
 
         String details = String.format("File %s has had %d line(s) where text replacement was applied based on regular expression '%s'", getRelativePath(), n, regex);

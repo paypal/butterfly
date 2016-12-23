@@ -28,8 +28,8 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
     private static final String MANUAL_INSTRUCTIONS_MAIN_FILE = "MANUAL_INSTRUCTIONS_%s.md";
     private static final String MANUAL_INSTRUCTIONS_BASELINE_FILE = "MANUAL_INSTRUCTIONS_BASELINE.md";
     private static final String MANUAL_INSTRUCTIONS_DIR = "BUTTERFLY_MANUAL_INSTRUCTIONS";
-    private static final String SECTION_TITLE_FORMAT = System.lineSeparator() + "### Manual instructions upgrading to version %s" + System.lineSeparator() + System.lineSeparator();
-    private static final String DESCRIPTION_LINE_FORMAT = "1. [%s](%s/%s)" + System.lineSeparator();
+    private static final String SECTION_TITLE_FORMAT = "%n### Manual instructions upgrading to version %s%n%n";
+    private static final String DESCRIPTION_LINE_FORMAT = "1. [%s](%s/%s)%n";
 
     private static final Logger logger = LoggerFactory.getLogger(MdFileManualInstructionsHandler.class);
 
@@ -61,6 +61,11 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
         } catch (IOException e) {
             logger.error("Exception happened when generating manual instructions", e);
         }
+    }
+
+    @Override
+    public void postTransformationAbort(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
+        // Nothing to be done here
     }
 
     private File createManualInstrutionDocumentFolder(Transformation transformation, TransformationContextImpl transformationContext) throws IOException {
@@ -131,7 +136,7 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
         File instructionFile;
         URL instructionResource;
 
-        for (ManualInstructionRecord manualInstructionRecord : transformationContext.getManualInstructionsRecord()) {
+        for (ManualInstructionRecord manualInstructionRecord : transformationContext.getManualInstructionRecords()) {
             instructionDescription = manualInstructionRecord.getDescription();
             instructionResource = manualInstructionRecord.getResource();
 
@@ -143,10 +148,8 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
             FileUtils.copyURLToFile(instructionResource, instructionFile);
             addInstructionDescription(transformation.getManualInstructionsFile(), instructionDescription, manualInstructionsDir, instructionFile);
 
-            logger.debug("Manual instruction document {} generated", instructionFile.getName());
+            logger.debug("Manual instruction document generated: {}", instructionFile.getAbsolutePath());
         }
-
-        logger.debug("Manual instructions documents have been generated");
     }
 
     private String getResourceFileName(URL instructionResource) {

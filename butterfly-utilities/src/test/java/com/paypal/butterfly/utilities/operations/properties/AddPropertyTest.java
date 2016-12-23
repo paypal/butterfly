@@ -1,138 +1,62 @@
 package com.paypal.butterfly.utilities.operations.properties;
 
-
-import com.paypal.butterfly.utilities.operations.properties.AddProperty;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
-import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Properties;
 
 /**
- * Unit Tests for Add Property operation.
- * Created by akumar46 on 9/30/2016.
+ * Unit test for {@link AddProperty}
+ *
+ * @author facarvalho
  */
-public class AddPropertyTest {
+public class AddPropertyTest extends TransformationUtilityTestHelper {
 
-    private File appFolder = new File(getClass().getResource("/").getFile());
-
-    /**
-     * Just to Clear the properties(Not a Unit Test) in add-test.properties (If Any) file before executing Add, Set and Remove Test cases.
-     * @throws IOException
-     */
-    @BeforeClass
-    public void setUp() throws IOException {
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
-        try {
-            inputStream = this.getClass().getResourceAsStream("/add-test.properties");
-            Properties properties = readPropertiesFile(inputStream);
-            properties.clear();
-            //Populate a Property in it
-            properties.setProperty("day", "friday");
-            outputStream = new FileOutputStream(this.getClass().getResource("/add-test.properties").getFile());
-            properties.store(outputStream, null);
-        } finally {
-            try {
-                if (inputStream != null) try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    //Do Nothing
-                }
-            } finally {
-                if(outputStream != null) try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    //Do Nothing
-                }
-            }
-        }
-    }
-
-    /**
-     * To Test Add Property Operation
-     * @throws IOException
-     */
     @Test
-    public void testAddProperty() throws IOException {
-        InputStream inputStream = null;
-        try {
-            AddProperty addProperty = new AddProperty();
-            //Add Property
-            TOExecutionResult toAddExecutionResult = addProperty.setPropertyName("color").setPropertyValue("green").relative("add-test.properties").execution(appFolder, null);
-            inputStream = this.getClass().getResourceAsStream("/add-test.properties");
-            Properties properties = readPropertiesFile(inputStream);
-            if(inputStream != null) {
-                inputStream.close();
-            }
-            Assert.assertTrue(properties.containsKey("color"));
-            Assert.assertEquals(properties.getProperty("color"), "green");
-            Assert.assertEquals(toAddExecutionResult.getType(), TOExecutionResult.Type.SUCCESS);
-        } catch (IOException e) {
-            Assert.fail();
-        } finally {
-            if(inputStream != null) {
-                inputStream.close();
-            }
-        }
+    public void successAddTest() throws IOException {
+        AddProperty addProperty = new AddProperty("zoo", "zoov").relative("application.properties");
+        TOExecutionResult executionResult = addProperty.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+
+        assertChangedFile("application.properties");
+        assertLineCount("application.properties", 1);
+
+        Properties properties = getProperties("application.properties");
+
+        Assert.assertEquals(properties.size(), 4);
+        Assert.assertEquals(properties.getProperty("bar"), "barv");
+        Assert.assertEquals(properties.getProperty("foo"), "foov");
+        Assert.assertEquals(properties.getProperty("foofoo"), "foofoov");
+        Assert.assertEquals(properties.getProperty("zoo"), "zoov");
     }
 
-    /**
-     * To Test Set Property Operation
-     * @throws IOException
-     */
     @Test
-    public void testSetProperty() throws IOException {
-        InputStream inputStream = null;
-        try {
-            AddProperty addProperty = new AddProperty();
-            //SetProperty ( Replace Property )
-            TOExecutionResult toSetExecutionResult = addProperty.setPropertyName("day").setPropertyValue("saturday").relative("add-test.properties").execution(appFolder, null);
-            //ReLoad the property file to compare
-            inputStream = this.getClass().getResourceAsStream("/add-test.properties");
-            Properties prop = readPropertiesFile(inputStream);
-            if (inputStream != null) {
-                inputStream.close();
-            }
-            Assert.assertEquals("saturday", prop.getProperty("day"));
-            Assert.assertEquals(toSetExecutionResult.getType(), TOExecutionResult.Type.SUCCESS);
-        } catch (IOException e) {
-            Assert.fail();
-        } finally {
-            if(inputStream != null) {
-                inputStream.close();
-            }
-        }
+    public void successSetTest() throws IOException {
+        AddProperty addProperty = new AddProperty("foo", "boo").relative("application.properties");
+        TOExecutionResult executionResult = addProperty.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+
+        assertChangedFile("application.properties");
+        assertSameLineCount("application.properties");
+
+        Properties properties = getProperties("application.properties");
+
+        Assert.assertEquals(properties.size(), 3);
+        Assert.assertEquals(properties.getProperty("bar"), "barv");
+        Assert.assertEquals(properties.getProperty("foo"), "boo");
+        Assert.assertEquals(properties.getProperty("foofoo"), "foofoov");
     }
 
-    /**
-     * To Test Add Property When No Property File Exists
-     */
-    @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
     @Test
-    public void testAddPropertyWhenNoFileExists() {
-        TOExecutionResult toExecResult = new AddProperty().setPropertyName("color").setPropertyValue("green").relative("add-test-dummy.properties").execution(appFolder, null);
-        Assert.assertEquals(toExecResult.getType(), TOExecutionResult.Type.ERROR);
-        Assert.assertEquals(toExecResult.getException().getClass(), FileNotFoundException.class);
+    public void fileDoesNotExistTest() {
+        AddProperty addProperty = new AddProperty("foo", "boo").relative("application_zeta.properties");
+        TOExecutionResult executionResult = addProperty.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
+        Assert.assertEquals(executionResult.getException().getClass(), FileNotFoundException.class);
     }
-
-    /**
-     * Helper method to read properties file. Haven't added this elsewhere as it is only for UT.
-     * @param inputStream
-     * @return Properties
-     * @throws TransformationDefinitionException
-     * @throws IOException
-     */
-    private Properties readPropertiesFile(InputStream inputStream) throws TransformationDefinitionException, IOException {
-        Properties properties = new Properties();
-        properties.load(inputStream);
-        return properties;
-    }
-
-
 
 }

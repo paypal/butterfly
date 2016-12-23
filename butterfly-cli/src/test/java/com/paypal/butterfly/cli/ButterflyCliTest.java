@@ -144,15 +144,6 @@ public class ButterflyCliTest extends PowerMockTestCase {
     }
 
     /**
-     * To Test Butterfly Version
-     */
-    @Test
-    public void testGetButterflyVersionFromProperties(){
-        String version = VersionHelper.getButterflyVersion();
-        Assert.assertNotNull(version);
-    }
-
-    /**
      * To Test the case where exception is expected when non existing directory is being used as output directory
      *
      * @throws IOException
