@@ -28,8 +28,8 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
     private static final String MANUAL_INSTRUCTIONS_MAIN_FILE = "MANUAL_INSTRUCTIONS_%s.md";
     private static final String MANUAL_INSTRUCTIONS_BASELINE_FILE = "MANUAL_INSTRUCTIONS_BASELINE.md";
     private static final String MANUAL_INSTRUCTIONS_DIR = "BUTTERFLY_MANUAL_INSTRUCTIONS";
-    private static final String SECTION_TITLE_FORMAT = System.lineSeparator() + "### Manual instructions upgrading to version %s" + System.lineSeparator() + System.lineSeparator();
-    private static final String DESCRIPTION_LINE_FORMAT = "1. [%s](%s/%s)" + System.lineSeparator();
+    private static final String SECTION_TITLE_FORMAT = "%n### Manual instructions upgrading to version %s%n%n";
+    private static final String DESCRIPTION_LINE_FORMAT = "1. [%s](%s/%s)%n";
 
     private static final Logger logger = LoggerFactory.getLogger(MdFileManualInstructionsHandler.class);
 

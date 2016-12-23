@@ -6,12 +6,14 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.operations.EolBufferedReader;
+import com.paypal.butterfly.utilities.operations.EolHelper;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-import static com.paypal.butterfly.utilities.operations.EolBufferedReader.removeEOL;
+import static com.paypal.butterfly.utilities.operations.EolHelper.getEndEol;
+import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
  * Operation to insert new line(s) into a text file.
@@ -187,22 +189,23 @@ public class InsertLine extends TransformationOperation<InsertLine> {
         TOExecutionResult result = null;
 
         try {
+            final String eol = EolHelper.findEolDefaultToOs(fileToBeChanged);
             readerOriginalFile = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
 
             switch (insertionMode) {
                 case LINE_NUMBER:
-                    result = insertAtSpecificLine(readerOriginalFile, writer);
+                    result = insertAtSpecificLine(readerOriginalFile, writer, eol);
                     break;
                 case REGEX_FIRST:
-                    result = insertAfterRegex(readerOriginalFile, writer, true);
+                    result = insertAfterRegex(readerOriginalFile, writer, true, eol);
                     break;
                 case REGEX_ALL:
-                    result = insertAfterRegex(readerOriginalFile, writer, false);
+                    result = insertAfterRegex(readerOriginalFile, writer, false, eol);
                     break;
                 default:
                 case CONCAT:
-                    result = concat(readerOriginalFile, writer);
+                    result = concat(readerOriginalFile, writer, eol);
                     break;
             }
         } catch (IOException e) {
@@ -240,16 +243,16 @@ public class InsertLine extends TransformationOperation<InsertLine> {
         return result;
     }
 
-    private TOExecutionResult insertAtSpecificLine(BufferedReader reader, BufferedWriter writer) throws IOException {
+    private TOExecutionResult insertAtSpecificLine(BufferedReader reader, BufferedWriter writer, String eol) throws IOException {
         String currentLine;
         int n = 0;
         EolBufferedReader eolReader = new EolBufferedReader(reader);
         boolean newLineInserted = false;
-        while((currentLine = eolReader.readLineKeepEndEOL()) != null) {
+        while((currentLine = eolReader.readLineKeepEol()) != null) {
             n++;
             if (n == lineNumber) {
                 writer.write(newLine);
-                writer.write(System.lineSeparator());
+                writer.write(eol);
                 newLineInserted = true;
             }
             writer.write(currentLine);
@@ -265,19 +268,21 @@ public class InsertLine extends TransformationOperation<InsertLine> {
         }
     }
 
-    private TOExecutionResult insertAfterRegex(BufferedReader reader, BufferedWriter writer, boolean firstOnly) throws IOException {
+    private TOExecutionResult insertAfterRegex(BufferedReader reader, BufferedWriter writer, boolean firstOnly, String eol) throws IOException {
         String currentLine;
         int n = 0;
         boolean foundFirstMatch = false;
         final Pattern pattern = Pattern.compile(regex);
         EolBufferedReader eolReader = new EolBufferedReader(reader);
-        while((currentLine = eolReader.readLineKeepStartEOL()) != null) {
+
+        while((currentLine = eolReader.readLineKeepEol()) != null) {
             writer.write(currentLine);
-            if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEOL(currentLine)).matches()) {
+            if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEol(currentLine)).matches()) {
                 foundFirstMatch = true;
                 n++;
-                writer.write(System.lineSeparator());
+                if (getEndEol(currentLine) == null) writer.write(eol);
                 writer.write(newLine);
+                writer.write(eol);
             }
         }
 
@@ -291,16 +296,17 @@ public class InsertLine extends TransformationOperation<InsertLine> {
         }
     }
 
-    private TOExecutionResult concat(BufferedReader reader, BufferedWriter writer) throws IOException {
+    private TOExecutionResult concat(BufferedReader reader, BufferedWriter writer, String eol) throws IOException {
         String currentLine;
         boolean firstLine = true;
         EolBufferedReader eolReader = new EolBufferedReader(reader);
-        while((currentLine = eolReader.readLineKeepStartEOL()) != null) {
+
+        while((currentLine = eolReader.readLineKeepStartEol()) != null) {
             writer.write(currentLine);
             firstLine = false;
         }
         if(!firstLine) {
-            writer.write(System.lineSeparator());
+            writer.write(eol);
         }
         writer.write(newLine);
 

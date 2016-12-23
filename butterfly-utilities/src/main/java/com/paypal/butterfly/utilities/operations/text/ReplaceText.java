@@ -10,7 +10,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-import static com.paypal.butterfly.utilities.operations.EolBufferedReader.*;
+import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
  * Operation to replace text in a text file
@@ -185,8 +185,8 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
         boolean foundFirstMatch = false;
         final Pattern pattern = Pattern.compile("(.*)" + regex + "(.*)");
         EolBufferedReader eolReader = new EolBufferedReader(reader);
-        while((currentLine = eolReader.readLineKeepStartEOL()) != null) {
-            if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEOL(currentLine)).matches()) {
+        while((currentLine = eolReader.readLineKeepStartEol()) != null) {
+            if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEol(currentLine)).matches()) {
                 foundFirstMatch = true;
                 n++;
                 currentLine = currentLine.replaceAll(regex, replacement);

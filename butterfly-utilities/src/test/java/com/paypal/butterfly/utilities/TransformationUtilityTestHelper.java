@@ -1,6 +1,5 @@
 package com.paypal.butterfly.utilities;
 
-import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.google.common.io.Files;
 import com.paypal.butterfly.extensions.api.TransformationContext;
@@ -9,12 +8,11 @@ import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import sample.code.Dog;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * Helper class to write unit tests for
@@ -32,13 +30,13 @@ public abstract class TransformationUtilityTestHelper {
     @BeforeClass
     public void beforeClass() throws URISyntaxException, IOException {
         appFolder = new File(getClass().getResource("/test-app").toURI());
-        transformedAppFolder = new File(appFolder.getParentFile(), "test-app_transformed");
     }
 
     @BeforeMethod
     public void beforeMethod() throws URISyntaxException, IOException {
-        FileUtils.deleteDirectory(transformedAppFolder);
+        transformedAppFolder = new File(appFolder.getParentFile(), "test-app_transformed_" + UUID.randomUUID().toString());
         FileUtils.copyDirectory(appFolder, transformedAppFolder);
+        System.out.printf("Transformed app folder: %s\n", transformedAppFolder.getAbsolutePath());
     }
 
     protected void assertChangedFile(String relativeFilePath) throws IOException {
