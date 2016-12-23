@@ -11,7 +11,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-import static com.paypal.butterfly.utilities.operations.EolBufferedReader.*;
+import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
  * Operation to remove one, or more, lines from a text file.
@@ -247,7 +247,7 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
         int n = 0;
         boolean lineRemoved = false;
         EolBufferedReader eolReader = new EolBufferedReader(reader);
-        while((currentLine = eolReader.readLineKeepStartEOL()) != null) {
+        while((currentLine = eolReader.readLineKeepStartEol()) != null) {
             n++;
             if(n == lineNumber) {
                 lineRemoved = true;
@@ -272,14 +272,14 @@ public class RemoveLine extends TransformationOperation<RemoveLine> {
         final Pattern pattern = Pattern.compile(regex);
         boolean firstLine = true;
         EolBufferedReader eolReader = new EolBufferedReader(reader);
-        while((currentLine = eolReader.readLineKeepStartEOL()) != null) {
-            if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEOL(currentLine)).matches()) {
+        while((currentLine = eolReader.readLineKeepStartEol()) != null) {
+            if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEol(currentLine)).matches()) {
                 foundFirstMatch = true;
                 n++;
                 continue;
             }
             if(firstLine) {
-                currentLine = removeEOL(currentLine);
+                currentLine = removeEol(currentLine);
             }
             writer.write(currentLine);
             firstLine = false;

@@ -3,6 +3,7 @@ package com.paypal.butterfly.utilities.operations.text;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.utilities.operations.EolHelper;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -66,7 +67,7 @@ public class AddLine extends TransformationOperation<AddLine> {
         TOExecutionResult result = null;
 
         try {
-            FileUtils.fileAppend(fileToBeModified.getAbsolutePath(), System.lineSeparator());
+            FileUtils.fileAppend(fileToBeModified.getAbsolutePath(), EolHelper.findEolDefaultToOs(fileToBeModified));
             FileUtils.fileAppend(fileToBeModified.getAbsolutePath(), newLine);
             String details =  "A new line has been added to file " + getRelativePath(transformedAppFolder, fileToBeModified);
             result = TOExecutionResult.success(this, details);

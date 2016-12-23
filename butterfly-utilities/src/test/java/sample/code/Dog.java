@@ -1,7 +1,5 @@
 package sample.code;
 
-import java.time.LocalDate;
-
 /**
  * This is a sample code for test purposes.
  * In this case, this is just a POJO representing dogs.
@@ -13,6 +11,7 @@ public class Dog {
     public String name;
     public String breed;
     public String color;
+    public boolean fixed;
 
     public Dog setName(String name) {
         this.name = name;
@@ -29,6 +28,11 @@ public class Dog {
         return this;
     }
 
+    public Dog setFixed(boolean fixed) {
+        this.fixed = fixed;
+        return this;
+    }
+
     public String getName() {
         return name;
     }
@@ -39,6 +43,10 @@ public class Dog {
 
     public String getColor() {
         return color;
+    }
+
+    public boolean isFixed() {
+        return fixed;
     }
 
 }

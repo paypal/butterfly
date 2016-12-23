@@ -10,7 +10,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-import static com.paypal.butterfly.utilities.operations.EolBufferedReader.removeEOL;
+import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
  * Operation to remove a property from a properties file.
@@ -73,8 +73,8 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
             String regex = "("+propertyName+".*)";
             final Pattern pattern = Pattern.compile(regex);
             EolBufferedReader eolReader = new EolBufferedReader(reader);
-            while((currentLine = eolReader.readLineKeepStartEOL()) != null) {
-                if(!foundFirstMatch && pattern.matcher(removeEOL(currentLine)).matches()) {
+            while((currentLine = eolReader.readLineKeepStartEol()) != null) {
+                if(!foundFirstMatch && pattern.matcher(removeEol(currentLine)).matches()) {
                     foundFirstMatch = true;
                     continue;
                 }

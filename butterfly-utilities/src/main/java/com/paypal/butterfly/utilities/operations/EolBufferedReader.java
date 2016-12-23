@@ -45,7 +45,7 @@ public class EolBufferedReader {
      *         stream has been reached
      * @throws IOException if an I/O error occurs
      */
-    public String readLineKeepEndEOL() throws IOException {
+    public String readLineKeepEol() throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         int read;
 
@@ -77,7 +77,9 @@ public class EolBufferedReader {
     }
 
     /**
-     * Reads a line of text preserving end-of-line (EOL) characters in the beginning of the line.
+     * Some times it might be preferable to read a text file line by line, but keeping the EOL character(s)
+     * in the beginning of the next line, instead of the in the end of the previous one.
+     * This method reads a line of text preserving end-of-line (EOL) characters in the beginning of the line.
      * A line is considered to be terminated by any one of a line feed ('\n'), a carriage return ('\r'),
      * or a carriage return followed immediately by a linefeed.
      *
@@ -86,7 +88,7 @@ public class EolBufferedReader {
      *         stream has been reached
      * @throws IOException if an I/O error occurs
      */
-    public String readLineKeepStartEOL() throws IOException {
+    public String readLineKeepStartEol() throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
 
         synchronized (monitor) {
@@ -126,100 +128,6 @@ public class EolBufferedReader {
      */
     public void close() throws IOException {
         reader.close();
-    }
-
-    /**
-     * Return a new String like the provided one but without any end-of-line (EOL) character.
-     * EOL characters can be a line feed ('\n'), a carriage return ('\r'),
-     * or a carriage return followed immediately by a linefeed. If the provided
-     * String has none it is returned as is.
-     *
-     * @param line the String whose EOL characters should be removed from
-     * @return a new String like the provided one but without any EOL character
-     *
-     * @throws {@link IllegalArgumentException} if {@code line} is null
-     */
-    public static String removeEOL(String line) {
-        if (line == null) {
-            throw new IllegalArgumentException("Line argument cannot be null");
-        }
-        return line.replaceAll("(\\n)|(\\r)|(\\r\\n)", "");
-    }
-
-    /**
-     * Returns true only if {@code line} starts with any end-of-line (EOL) character.
-     * EOL characters can be a line feed ('\n'), a carriage return ('\r'),
-     * or a carriage return followed immediately by a linefeed. If the provided
-     * String has none it is returned as is.
-     *
-     * @param line the text line to be evaluated
-     * @return true only if {@code line} starts with any end-of-line (EOL) character
-     * @throws {@link IllegalArgumentException} if {@code line} is null
-     */
-    public static boolean startsWithEOL(String line) {
-        if (line == null) {
-            throw new IllegalArgumentException("Line argument cannot be null");
-        }
-        return line.startsWith("\n") || line.startsWith("\r");
-    }
-
-    /**
-     * Returns true only if {@code line} ends with any end-of-line (EOL) character.
-     * EOL characters can be a line feed ('\n'), a carriage return ('\r'),
-     * or a carriage return followed immediately by a linefeed. If the provided
-     * String has none it is returned as is.
-     *
-     * @param line the text line to be evaluated
-     * @return true only if {@code line} ends with any end-of-line (EOL) character
-     * @throws {@link IllegalArgumentException} if {@code line} is null
-     */
-    public static boolean endsWithEOL(String line) {
-        if (line == null) {
-            throw new IllegalArgumentException("Line argument cannot be null");
-        }
-        return line.endsWith("\n") || line.endsWith("\r");
-    }
-
-    /**
-     * Returns end-of-line (EOL) character(s) present in the beginning of this line of text.
-     * If there is none, null is returned.
-     * EOL characters can be a line feed ('\n'), a carriage return ('\r'),
-     * or a carriage return followed immediately by a linefeed. If the provided
-     * String has none it is returned as is.
-     *
-     * @param line the text line to be evaluated
-     * @return end-of-line (EOL) character(s) present in the beginning of this line of text
-     * @throws {@link IllegalArgumentException} if {@code line} is null
-     */
-    public static String getStartEOL(String line) {
-        if (line == null) {
-            throw new IllegalArgumentException("Line argument cannot be null");
-        }
-        if (line.startsWith("\n")) return "\n";
-        if (line.startsWith("\r\n")) return "\r\n";
-        if (line.startsWith("\r")) return "\r";
-        return null;
-    }
-
-    /**
-     * Returns end-of-line (EOL) character(s) present in the end of this line of text.
-     * If there is none, null is returned.
-     * EOL characters can be a line feed ('\n'), a carriage return ('\r'),
-     * or a carriage return followed immediately by a linefeed. If the provided
-     * String has none it is returned as is.
-     *
-     * @param line the text line to be evaluated
-     * @return end-of-line (EOL) character(s) present in the end of this line of text
-     * @throws {@link IllegalArgumentException} if {@code line} is null
-     */
-    public static String getEndEOL(String line) {
-        if (line == null) {
-            throw new IllegalArgumentException("Line argument cannot be null");
-        }
-        if (line.endsWith("\r\n")) return "\r\n";
-        if (line.endsWith("\n")) return "\n";
-        if (line.endsWith("\r")) return "\r";
-        return null;
     }
 
 }

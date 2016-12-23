@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Unit test for {@link InsertLine}
@@ -76,6 +77,53 @@ public class InsertLineTest extends TransformationUtilityTestHelper {
         Map<String, Dog> dogs = (Map) getObjectFromYaml("dogs.yaml");
         Assert.assertEquals(dogs.get("Toby").getColor(), "gray");
         Assert.assertEquals(dogs.get("Mustache").getColor(), "gray");
+    }
+
+    @Test
+    public void insertConcatTest() throws IOException {
+        InsertLine insertLine = new InsertLine("   fixed: false", "(.*breed: pit bull.*)").relative("dogs.yaml");
+        TOExecutionResult executionResult = insertLine.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+
+        assertChangedFile("dogs.yaml");
+        assertLineCount("dogs.yaml", 1);
+
+        Map<String, Dog> dogs = (Map) getObjectFromYaml("dogs.yaml");
+
+        Assert.assertEquals(dogs.size(), 2);
+
+        Dog dog = dogs.get("Mustache");
+        Assert.assertEquals(dog.getName(), "Mustache");
+        Assert.assertEquals(dog.getBreed(), "pit bull");
+        Assert.assertEquals(dog.isFixed(), false);
+    }
+
+    @Test
+    public void oneLineNoEOLTest() throws IOException {
+        RemoveLine removeLine = new RemoveLine("(.*foo.*)").relative("application.properties").setFirstOnly(false);
+        TOExecutionResult executionResult = removeLine.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+
+        assertChangedFile("application.properties");
+        assertLineCount("application.properties", -2);
+
+        Properties properties = getProperties("application.properties");
+
+        Assert.assertEquals(properties.size(), 1);
+        Assert.assertEquals(properties.getProperty("bar"), "barv");
+
+        InsertLine insertLine = new InsertLine("p1=p1v", "(.*barv.*)").relative("application.properties");
+        executionResult = insertLine.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+
+        assertChangedFile("application.properties");
+        assertLineCount("application.properties", -1);
+
+        properties = getProperties("application.properties");
+
+        Assert.assertEquals(properties.size(), 2);
+        Assert.assertEquals(properties.getProperty("bar"), "barv");
+        Assert.assertEquals(properties.getProperty("p1"), "p1v");
     }
 
     @Test
