@@ -65,7 +65,7 @@ public class ContextAttributeRetriever<VT> extends TransformationUtility {
      */
     public VT getAttributeValue() {
         if (!executed) {
-            throw new IllegalStateException("This utility has not had a chance to be executed, retrieving the value, yet");
+            throw new IllegalStateException(getName() + " has not had a chance to be executed yet");
         }
         return attributeValue;
     }

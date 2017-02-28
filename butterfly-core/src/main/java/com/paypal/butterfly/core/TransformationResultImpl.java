@@ -12,21 +12,19 @@ import java.io.File;
  */
 class TransformationResultImpl implements TransformationResult {
 
-    private Configuration configuration;
+    private Transformation transformation;
     private File transformedApplicationLocation;
-    private File manualInstructionsFile;
 
-    TransformationResultImpl(Configuration configuration, File transformedApplicationLocation, File manualInstructionsFile) {
-        setConfiguration(configuration);
+    TransformationResultImpl(Transformation transformation, File transformedApplicationLocation) {
+        setTransformation(transformation);
         setTransformedApplicationLocation(transformedApplicationLocation);
-        setManualInstructionsFile(manualInstructionsFile);
     }
 
-    private void setConfiguration(Configuration configuration) {
-        if (configuration == null) {
-            throw new IllegalArgumentException("Configuration object cannot be null");
+    private void setTransformation(Transformation transformation) {
+        if (transformation == null) {
+            throw new IllegalArgumentException("Transformation object cannot be null");
         }
-        this.configuration = configuration;
+        this.transformation = transformation;
     }
 
     private void setTransformedApplicationLocation(File transformedApplicationLocation) {
@@ -36,13 +34,9 @@ class TransformationResultImpl implements TransformationResult {
         this.transformedApplicationLocation = transformedApplicationLocation;
     }
 
-    private void setManualInstructionsFile(File manualInstructionsFile) {
-        this.manualInstructionsFile = manualInstructionsFile;
-    }
-
     @Override
     public Configuration getConfiguration() {
-        return configuration;
+        return transformation.getConfiguration();
     }
 
     @Override
@@ -52,11 +46,11 @@ class TransformationResultImpl implements TransformationResult {
 
     @Override
     public boolean hasManualInstructions() {
-        return manualInstructionsFile != null;
+        return transformation.getManualInstructionsFile() != null;
     }
 
     @Override
     public File getManualInstructionsFile() {
-        return manualInstructionsFile;
+        return transformation.getManualInstructionsFile();
     }
 }

@@ -126,10 +126,7 @@ public class TransformationEngine {
             throw new InternalTransformationException("Transformation type not recognized", null);
         }
 
-        TransformationResult transformationResult = new TransformationResultImpl(
-                transformation.getConfiguration(),
-                transformedAppFolder,
-                transformation.getManualInstructionsFile());
+        TransformationResult transformationResult = new TransformationResultImpl(transformation, transformedAppFolder);
 
         return transformationResult;
     }

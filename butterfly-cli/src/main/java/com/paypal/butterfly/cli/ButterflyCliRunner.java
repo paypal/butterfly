@@ -68,14 +68,19 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             }
         }
 
+        logger.info("");
+
         File applicationFolder = (File) optionSet.valueOf(CLI_OPTION_ORIGINAL_APP_FOLDER);
+        if (!applicationFolder.exists()) {
+            logger.error("This application folder does not exist: {}", applicationFolder.getAbsolutePath());
+            return 1;
+        }
+
         File transformedApplicationFolder = (File) optionSet.valueOf(CLI_OPTION_TRANSFORMED_APP_FOLDER);
         boolean createZip = optionSet.has(CLI_OPTION_CREATE_ZIP);
 
         String templateClassName = null;
         Class<? extends TransformationTemplate> templateClass = null;
-
-        logger.info("");
 
         if (optionSet.has(CLI_OPTION_TEMPLATE)) {
             templateClassName = (String) optionSet.valueOf(CLI_OPTION_TEMPLATE);
@@ -153,9 +158,6 @@ public class ButterflyCliRunner extends ButterflyCliOption {
                 logger.info(" *** {}", transformationResult.getManualInstructionsFile());
                 logger.info(" **************************************************************************************");
             }
-            logger.info("");
-            logger.info("Help us to improve Butterfly by answering this survey (see the link below). It should take less than 5 minutes!");
-            logger.info("https://go/butterfly-survey");
             logger.info("");
         } catch (ButterflyException | ButterflyRuntimeException e) {
             logger.info("");
