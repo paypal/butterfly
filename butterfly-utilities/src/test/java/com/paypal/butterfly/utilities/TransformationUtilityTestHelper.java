@@ -10,6 +10,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.Properties;
 import java.util.UUID;
@@ -33,8 +34,8 @@ public abstract class TransformationUtilityTestHelper {
     }
 
     @BeforeMethod
-    public void beforeMethod() throws URISyntaxException, IOException {
-        transformedAppFolder = new File(appFolder.getParentFile(), "test-app_transformed_" + UUID.randomUUID().toString());
+    public void beforeMethod(Method method) throws URISyntaxException, IOException {
+        transformedAppFolder = new File(appFolder.getParentFile(), String.format("test-app_%s_%s_%s", method.getDeclaringClass().getSimpleName(), method.getName(), System.currentTimeMillis()));
         FileUtils.copyDirectory(appFolder, transformedAppFolder);
         System.out.printf("Transformed app folder: %s\n", transformedAppFolder.getAbsolutePath());
     }
