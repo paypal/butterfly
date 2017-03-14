@@ -1,4 +1,9 @@
 @echo off
-set SCRIPT_PATH=%cd%
-if "%BUTTERFLY_HOME%"=="" set BUTTERFLY_HOME=%SCRIPT_PATH%
-java -cp "%BUTTERFLY_HOME%\lib\*";"%BUTTERFLY_HOME%\extensions\*" com.paypal.butterfly.cli.ButterflyCliApp %*
+
+set __BUTTERFLY_HOME__=%~dp0
+
+if defined BUTTERFLY_HOME (
+  set __BUTTERFLY_HOME__=%BUTTERFLY_HOME%
+)
+
+java -cp "%__BUTTERFLY_HOME__%\lib\*";"%__BUTTERFLY_HOME__%\extensions\*" com.paypal.butterfly.cli.ButterflyCliApp %*
