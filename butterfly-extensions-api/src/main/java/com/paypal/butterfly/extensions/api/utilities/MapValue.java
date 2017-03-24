@@ -13,7 +13,7 @@ import java.util.Map;
  * This utility obtains a specific entry from a {@link Map} object stored in the transformation context,
  * and store its value as a new attribute in the transformation context. The name of the transformation
  * context attribute that holds the map object, and the key used to get the map entry, have to be specified.
- * </br>
+ * <br>
  * The new attribute saved into the transformation context is named based on the utility name, unless
  * {@link #setContextAttributeName(String)} is called, as usual, nothing new here.
  *
@@ -33,7 +33,7 @@ public class MapValue extends TransformationUtility<MapValue> {
      * This utility obtains a specific entry from a {@link Map} object stored in the transformation context,
      * and store its value as a new attribute in the transformation context. The name of the transformation
      * context attribute that holds the map object, and the key used to get the map entry, have to be specified.
-     * </br>
+     * <br>
      * The new attribute saved into the transformation context is named based on the utility name, unless
      * {@link #setContextAttributeName(String)} is called, as usual, nothing new here.
      */
@@ -44,7 +44,7 @@ public class MapValue extends TransformationUtility<MapValue> {
      * This utility obtains a specific entry from a {@link Map} object stored in the transformation context,
      * and store its value as a new attribute in the transformation context. The name of the transformation
      * context attribute that holds the map object, and the key used to get the map entry, have to be specified.
-     * </br>
+     * <br>
      * The new attribute saved into the transformation context is named based on the utility name, unless
      * {@link #setContextAttributeName(String)} is called, as usual, nothing new here.
      *
@@ -60,7 +60,7 @@ public class MapValue extends TransformationUtility<MapValue> {
      * Set the name of the transformation context attribute that holds the map object
      *
      * @param mapName the name of the transformation context attribute that holds the map object
-     * @return
+     * @return this utility instance
      */
     public MapValue setMapName(String mapName) {
         checkForBlankString("mapName", mapName);

@@ -11,7 +11,7 @@ import java.net.URL;
  * a transformation operation that is too complex to be automated, but still,
  * Butterfly should be aware of it, so that it can state to the user in the
  * end of the transformation.
- * </br>
+ * <br>
  * Every manual instruction is reported to the user in order in the end of the transformation.
  *
  * @author facarvalho

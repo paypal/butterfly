@@ -101,7 +101,7 @@ class TransformationContextImpl implements TransformationContext {
             throw new IllegalArgumentException("Result name cannot be null nor blank");
         }
         if(resultObject == null) {
-            throw new IllegalArgumentException("Result object cannot be null");
+            throw new IllegalArgumentException("Result object is null for key " + name);
         }
         results.put(name, resultObject);
 

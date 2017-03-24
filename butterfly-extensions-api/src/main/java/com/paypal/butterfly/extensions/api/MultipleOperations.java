@@ -20,12 +20,12 @@ import java.util.*;
  *     <li>Multiple configurations: multiple operations are defined based on different configurations,
  *     set via {@link #setProperties(String, String)}</li>
  * </ol>
- * </br>
+ * <br>
  * In other words, there are two possible ways to define multiple operations: multiple
  * files, or multiple configurations (different property values). It is also possible
  * to combine both, resulting in multiple operations to be executed against multiple files and
  * with multiple configurations.
- * </br>
+ * <br>
  * <strong>Important:</strong> when running against multiple files, any path set to this operation,
  * either relative or absolute, will be ignored, and set later at transformation time based on
  * the dynamically set multiple files. When running with multiple configurations, the properties set
@@ -78,12 +78,12 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
      *     <li>Multiple configurations: multiple operations are defined based on different configurations,
      *     set via {@link #setProperties(String, String)}</li>
      * </ol>
-     * </br>
+     * <br>
      * In other words, there are two possible ways to define multiple operations: multiple
      * files, or multiple configurations (different property values). It is also possible
      * to combine both, resulting in multiple operations to be executed against multiple files and
      * with multiple configurations.
-     * </br>
+     * <br>
      * <strong>Important:</strong> when running against multiple files, any path set to this operation,
      * either relative or absolute, will be ignored, and set later at transformation time based on
      * the dynamically set multiple files. When running with multiple configurations, the properties set
@@ -102,12 +102,12 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
      *     <li>Multiple configurations: multiple operations are defined based on different configurations,
      *     set via {@link #setProperties(String, String)}</li>
      * </ol>
-     * </br>
+     * <br>
      * In other words, there are two possible ways to define multiple operations: multiple
      * files, or multiple configurations (different property values). It is also possible
      * to combine both, resulting in multiple operations to be executed against multiple files and
      * with multiple configurations.
-     * </br>
+     * <br>
      * <strong>Important:</strong> when running against multiple files, any path set to this operation,
      * either relative or absolute, will be ignored, and set later at transformation time based on
      * the dynamically set multiple files. When running with multiple configurations, the properties set
@@ -140,7 +140,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
      * This setter is similar to {@link TransformationUtility#set(String, String)}, however it is more powerful, because
      * it allows setting, during transformation time, different properties values for each operation of a
      * {@link MultipleOperations}.
-     * </br>
+     * <br>
      * That being said, calling this method will only make a difference if this operation is executed as the
      * template operation for a multiple operations utility. That usually can be done by adding it to a
      * transformation template via {@link TransformationTemplate#addMultiple(TransformationOperation, String...)}
@@ -164,7 +164,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
 
     /**
      * Sets the template of transformation operation to be performed against all specified files.
-     * </br>
+     * <br>
      * <strong>Important:</strong> any path set to this operation, either relative
      * or absolute, will be ignored, and set later at transformation time based on
      * the dynamically set multiple files
