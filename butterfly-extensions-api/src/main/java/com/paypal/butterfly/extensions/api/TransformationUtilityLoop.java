@@ -140,7 +140,7 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
     /**
      * Returns, as its value, the condition to keep iterating over this loop
      *
-     * @return
+     * @return a value execution result with the condition to keep iterating over this loop
      */
     @Override
     protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {

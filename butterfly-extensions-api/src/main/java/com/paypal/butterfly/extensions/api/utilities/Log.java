@@ -13,7 +13,7 @@ import java.io.File;
  * Utility to provide logging statements during transformation time.
  * Since all it does is logging, it always returns null as result of
  * execution.
- * </br>
+ * <br>
  * If no log level is defined, then it will be set to INFO, except
  * when there is only one attribute and it is null. In this case
  * it will be set to WARNING

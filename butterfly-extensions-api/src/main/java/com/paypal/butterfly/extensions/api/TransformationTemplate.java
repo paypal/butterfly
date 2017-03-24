@@ -41,7 +41,7 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
      * Also, if no name has been set for this utility yet, the template
      * names the utility based on this template's name and the order of
      * execution.
-     * </br>
+     * <br>
      * This method also register the template within the utility, which
      * means a transformation utility instance can be registered to
      * ONLY ONE transformation template
@@ -87,7 +87,7 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
     /**
      * Adds a new transformation utility to the end of the list.
      * It sets the utility name before adding it though.
-     * </br>
+     * <br>
      * This method also register the template within the utility, which
      * means a transformation utility instance can be registered to
      * ONLY ONE transformation template
@@ -106,7 +106,7 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
     /**
      * Adds a special transformation utility to perform multiple transformation operations against
      * multiple files specified as a list, held as a transformation context attribute
-     * </br>
+     * <br>
      *
      * @param templateOperation a template of transformation operation to be performed
      *                          against all specified files

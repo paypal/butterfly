@@ -5,7 +5,7 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
 /**
  * This interface should be implemented by operations that expect to add elements,
  * standardizing in the TO what to do if the element to be added already exists.
- * </br>
+ * <br>
  * Examples of elements to be added by TOs: files, folders, properties in properties files,
  * POM dependencies, POM managed dependencies, POM plugins, POM managed plugins, POM properties, etc,
  *

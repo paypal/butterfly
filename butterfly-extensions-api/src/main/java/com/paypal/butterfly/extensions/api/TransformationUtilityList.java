@@ -37,7 +37,7 @@ public interface TransformationUtilityList extends TransformationUtilityParent {
     /**
      * Adds a special transformation utility to perform multiple transformation operations against
      * multiple files specified as a list, held as a transformation context attribute
-     * </br>
+     * <br>
      *
      * @param templateOperation a template of transformation operation to be performed
      *                          against all specified files
