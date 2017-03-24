@@ -433,6 +433,17 @@ public abstract class TransformationUtility<TU> implements Cloneable {
             try {
                 method = latePropertiesSetters.get(propertyName);
                 value = transformationContext.get(attributeName);
+
+                // Numeric values returned from {@link com.paypal.butterfly.utilities.misc.RunScript} might need to be converted,
+                // since Java script and Java data types differ.
+                if ((method.getParameterTypes()[0].getTypeName().equals("int") || method.getParameterTypes()[0].getTypeName().equals("Integer")) && value instanceof Long) {
+                    value = ((Long) value).intValue();
+                    logger.debug("Converting value from Long to int. Value came from {} and is being set for property {} in {}", attributeName, propertyName, name);
+                } else if ((method.getParameterTypes()[0].getTypeName().equals("short") || method.getParameterTypes()[0].getTypeName().equals("Short")) && value instanceof Long) {
+                    value = ((Long) value).shortValue();
+                    logger.debug("Converting value from Long to short. Value came from {} and is being set for property {} in {}", attributeName, propertyName, name);
+                }
+
                 method.invoke(this, value);
             } catch (TransformationDefinitionException e) {
                 String exceptionMessage = String.format("An error happened when setting property %s from context attribute %s in %s", propertyName, attributeName, name);
