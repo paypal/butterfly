@@ -727,6 +727,11 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * @param dependencies
      */
     public final TU dependsOn(String... dependencies) {
+        if (dependencies != null) {
+            for (String dependency : dependencies) {
+                if (StringUtils.isBlank(dependency)) throw new IllegalArgumentException("Dependencies cannot be null nor blank");
+            }
+        }
         this.dependencies = dependencies;
         return (TU) this;
     }
