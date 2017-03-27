@@ -561,7 +561,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         // Checking for UNLESS condition
         if(unlessConditionAttributeName != null) {
             Object conditionResult = transformationContext.get(unlessConditionAttributeName);
-            if (conditionResult == null || conditionResult instanceof Boolean && ((Boolean) conditionResult).booleanValue()) {
+            if (conditionResult != null && conditionResult instanceof Boolean && ((Boolean) conditionResult).booleanValue()) {
                 String details = String.format("%s was skipped due to failing 'unless' condition: %s", getName(), unlessConditionAttributeName);
                 return PerformResult.skippedCondition(this, details);
             }
