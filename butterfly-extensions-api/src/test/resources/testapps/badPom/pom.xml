@@ -2,23 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <badtag>
-        <groupId>com.ebay.raptor</groupId>
-        <artifactId>RaptorPlatform</artifactId>
-        <version>3.3.1</version>
-    </parent>
 
-    <groupId>com.paypal.raptor.samples</groupId>
-    <artifactId>rest331</artifactId>
-    <version>3.3.1-SNAPSHOT</version>
+	<badTag>This tag is here to make pom loading fail</badTag>
+
+    <groupId>com.test.123</groupId>
+    <artifactId>test123</artifactId>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
-    <name>calhadooputilserv application</name>
-    <description>Parent builder for all application modules</description>
-
-    <modules>
-        <module>rest331Api</module>
-        <module>rest331Service</module>
-    </modules>
+    <name>test application</name>
+    <description>Test Application</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -26,11 +18,11 @@
 
     <build>
         <plugins>
-            <!-- If you are not having tests or do not want to get code coverage, remove this plugin -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
+
 </project>
