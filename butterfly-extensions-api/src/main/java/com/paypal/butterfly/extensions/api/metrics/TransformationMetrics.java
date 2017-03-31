@@ -114,8 +114,35 @@ public interface TransformationMetrics {
      */
     String getUpgradeCorrelationId();
 
+    /**
+     * Returns an identifier for this metrics record
+     *
+     * @return an identifier for this metrics record
+     */
     String getMetricsId();
 
+    /**
+     * Returns details about the reason why the transformation
+     * associated with this metric record aborted. If it actually
+     * did not abort, then it returns null
+     *
+     * @return details about the reason why the transformation
+     * associated with this metric record aborted
+     */
     AbortDetails getAbortDetails();
+
+    /**
+     * Returns the absolute path to the original application code
+     *
+     * @return the absolute path to the original application code
+     */
+    String getOriginalApplicationLocation();
+
+    /**
+     * Returns the absolute path to the transformed application code
+     *
+     * @return the absolute path to the transformed application code
+     */
+    String getTransformedApplicationLocation();
 
 }

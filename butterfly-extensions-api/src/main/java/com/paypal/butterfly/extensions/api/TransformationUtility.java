@@ -16,22 +16,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Transformation utilities are executed against the to be transformed project,
  * based on the absolute project root folder defined in runtime, and a relative
  * path to a target file or folder, defined in compilation time.
- * </br>
+ * <br>
  * Transformation utilities MUST NOT apply any modification to the project though.
  * They are meant instead to only gather information about the project.
- * </br>
+ * <br>
  * An example of a transformation operation utility would be to find recursively
  * a particular file based on its name and from a particular location (which would
  * be relative to the project root folder)
  *
- * @see {@link TransformationOperation} for a specialized transformation utility that
+ * See {@link TransformationOperation} for a specialized transformation utility that
  * does modify the project
  *
  * IMPORTANT:
  * Every TransformationUtility subclass MUST have a public no arguments default constructor,
  * and also public setters and getters for all properties they want to expose via {@link #set(String, String)}.
  * In addition to that, every setter must return the TransformationUtility instance.
- * </br>
+ * <br>
  * Also, every TransformationUtility subclass must override {@link #clone()} and every utility
  * specific property defined in the subclass must be copied from the original
  * object to the clone object. Properties inherited from this class and its super classes
@@ -196,7 +196,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     /**
      * Register this utility to its parent, and also assign it a name
      * based on the parent name and order of execution.
-     * </br>
+     * <br>
      * Usually the parent is a {@link TransformationTemplate}
      *
      * @param parent the parent to be set to this utility
@@ -226,7 +226,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     /**
      * Returns the transformation template this utility belongs to
      *
-     * @return  the transformation template this utility belongs to
+     * @return the transformation template this utility belongs to
      */
     public TransformationTemplate getTransformationTemplate() {
         TransformationUtilityParent parent = getParent();
@@ -259,7 +259,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      *  <li>Two backward slashes (e.g. relative("myFolder\\file.txt")</li>
      * </ol>
      * The slashes are replaced by OS specific separator char in runtime.
-     * </br>
+     * <br>
      * <strong>The default value is ".". which means the root of the transformed application
      </strong>
      *
@@ -433,6 +433,17 @@ public abstract class TransformationUtility<TU> implements Cloneable {
             try {
                 method = latePropertiesSetters.get(propertyName);
                 value = transformationContext.get(attributeName);
+
+                // Numeric values returned from {@link com.paypal.butterfly.utilities.misc.RunScript} might need to be converted,
+                // since Java script and Java data types differ.
+                if ((method.getParameterTypes()[0].getTypeName().equals("int") || method.getParameterTypes()[0].getTypeName().equals("Integer")) && value instanceof Long) {
+                    value = ((Long) value).intValue();
+                    logger.debug("Converting value from Long to int. Value came from {} and is being set for property {} in {}", attributeName, propertyName, name);
+                } else if ((method.getParameterTypes()[0].getTypeName().equals("short") || method.getParameterTypes()[0].getTypeName().equals("Short")) && value instanceof Long) {
+                    value = ((Long) value).shortValue();
+                    logger.debug("Converting value from Long to short. Value came from {} and is being set for property {} in {}", attributeName, propertyName, name);
+                }
+
                 method.invoke(this, value);
             } catch (TransformationDefinitionException e) {
                 String exceptionMessage = String.format("An error happened when setting property %s from context attribute %s in %s", propertyName, attributeName, name);
@@ -457,7 +468,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * by setting the relative path to it, which is done usually via the constructor
      * or {@link #relative(String)}). That should be the chosen option whenever
      * the relative location is known during transformation template definition time.
-     * </br>
+     * <br>
      * However, sometimes that is not possible because that location will only be known
      * during transformation time. In cases like this, usually another utility is used to
      * find that location first, and then save it as transformation context attribute. In
@@ -514,7 +525,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     /**
      * Performs the transformation utility against
      * the application to be transformed
-     * </br>
+     * <br>
      * This is the one called by the transformation
      * engine, and regardless of any customization it
      * could have, it must always:
@@ -522,7 +533,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      *     <li>1- Call {@link #applyPropertiesFromContext(TransformationContext)}</li>
      *     <li>2- Call {@link #execution(File, TransformationContext)}</li>
      * </ol>
-     * </br>
+     * <br>
      * This method is NOT supposed to be overwritten,
      * unless you really know what you are doing.
      *
@@ -550,7 +561,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         // Checking for UNLESS condition
         if(unlessConditionAttributeName != null) {
             Object conditionResult = transformationContext.get(unlessConditionAttributeName);
-            if (conditionResult == null || conditionResult instanceof Boolean && ((Boolean) conditionResult).booleanValue()) {
+            if (conditionResult != null && conditionResult instanceof Boolean && ((Boolean) conditionResult).booleanValue()) {
                 String details = String.format("%s was skipped due to failing 'unless' condition: %s", getName(), unlessConditionAttributeName);
                 return PerformResult.skippedCondition(this, details);
             }
@@ -657,11 +668,11 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * This flag indicates whether the value produced by the transformation utility execution,
      * and also its result object as a whole, should both be saved in the transformation
      * context object.
-     * </br>
+     * <br>
      * In most cases it should do so, because that is the main purpose of
      * every transformation utility, to produce and share useful data with other
      * transformation utilities and operations.
-     * </br>
+     * <br>
      * However, there are rare cases,
      * for example {@link com.paypal.butterfly.extensions.api.utilities.Log},
      * where no value will be produced and nothing should be saved to the
@@ -695,7 +706,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * Add all transformation utilities this utility depends on.
      * Notice that this is not cumulative, meaning if this method has been called previously,
      * that dependencies set will be entirely replaced by this new one.
-     * </br>
+     * <br>
      * This notion of "dependency" among TUs help resilience in two ways:
      * <ol>
      *     <li>If TU B depends on TU A, and if TU A "fails"
@@ -716,7 +727,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      *     <li>{@link com.paypal.butterfly.extensions.api.TUExecutionResult.Type#ERROR} (for TUs only)</li>
      *     <li>{@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type#ERROR} (for TOs only)</li>
      * </ol>
-     * </br>
+     * <br>
      *
      * @see {@link #checkDependencies(TransformationContext)}
      * @see {@link Result#dependencyFailureCheck()}
@@ -727,6 +738,11 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * @param dependencies
      */
     public final TU dependsOn(String... dependencies) {
+        if (dependencies != null) {
+            for (String dependency : dependencies) {
+                if (StringUtils.isBlank(dependency)) throw new IllegalArgumentException("Dependencies cannot be null nor blank");
+            }
+        }
         this.dependencies = dependencies;
         return (TU) this;
     }
@@ -807,7 +823,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     /**
      * When set, this TU will only execute if this {@code utilityCondition} object,
      * executed right before this TU, result in true.
-     * </br>
+     * <br>
      * Differences between this approach and {@link #executeIf(String)}:
      * <ol>
      *     <li>Instead of relying on a TCA ({@link TransformationContext attribute}) with the condition result, this method is based on the direct execution of the {@link UtilityCondition} object</li>
@@ -975,7 +991,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     /**
      * Check if value is a blank String, if it is, then a
      * {@link TransformationDefinitionException) is thown.
-     * </br>
+     * <br>
      * This check is used for mandatory properties where value cannot be null
      * neither an empty string.
      *
@@ -992,7 +1008,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     /**
      * Check if value is an empty String, if it is, then a
      * {@link TransformationDefinitionException} is thrown.
-     * </br>
+     * <br>
      * This check is used for optional properties where value can be null,
      * but not an empty string.
      *
@@ -1009,7 +1025,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     /**
      * Check if value is null, if it is, then a
      * {@link TransformationDefinitionException} is thrown.
-     * </br>
+     * <br>
      * This check is used for mandatory non-String properties,
      * where value cannot be null
      *

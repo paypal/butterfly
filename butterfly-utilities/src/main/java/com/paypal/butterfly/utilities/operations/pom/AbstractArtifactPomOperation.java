@@ -93,10 +93,19 @@ public abstract class AbstractArtifactPomOperation<TO extends AbstractArtifactPo
     }
 
     protected Plugin getPlugin(Model model) {
+        if (model.getBuild() == null) {
+            return null;
+        }
         return getPluginInList(model.getBuild().getPlugins(), groupId, artifactId);
     }
 
     protected Plugin getPlugin(Model model, String groupId, String artifactId) {
+        if (model.getBuild() == null) {
+            return null;
+        }
+        if (model.getBuild().getPlugins() == null) {
+            return null;
+        }
         return getPluginInList(model.getBuild().getPlugins(), groupId, artifactId);
     }
 
@@ -105,6 +114,9 @@ public abstract class AbstractArtifactPomOperation<TO extends AbstractArtifactPo
     }
 
     protected Plugin getManagedPlugin(Model model, String groupId, String artifactId) {
+        if (model.getBuild() == null) {
+            return null;
+        }
         if (model.getBuild().getPluginManagement().getPlugins() == null) {
             return null;
         }

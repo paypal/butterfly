@@ -23,6 +23,7 @@ public class TransformationMetricsImpl implements TransformationMetrics {
 
     private static final Logger logger = LoggerFactory.getLogger(TransformationMetricsImpl.class);
 
+    private transient Transformation transformation;
     private transient TransformationContextImpl transformationContext;
     private transient TransformationTemplate transformationTemplate;
 
@@ -41,11 +42,21 @@ public class TransformationMetricsImpl implements TransformationMetrics {
     private String upgradeCorrelationId;
     private AbortDetails abortDetails;
     private String metricsId;
+    private String originalApplicationLocation;
+    private String transformedApplicationLocation;
 
-    public TransformationMetricsImpl(TransformationContextImpl transformationContext) {
+    public TransformationMetricsImpl(Transformation transformation, TransformationContextImpl transformationContext) {
+        setTransformation(transformation);
         setTransformationContext(transformationContext);
         setTransformationTemplate();
         setMetaData();
+    }
+
+    private void setTransformation(Transformation transformation) {
+        if (transformation == null) {
+            throw new IllegalArgumentException("transformation object cannot be null");
+        }
+        this.transformation = transformation;
     }
 
     private void setTransformationContext(TransformationContextImpl transformationContext) {
@@ -83,6 +94,8 @@ public class TransformationMetricsImpl implements TransformationMetrics {
         successfulTransformation = transformationContext.isSuccessfulTransformation();
         statistics = transformationContext.getStatistics();
         abortDetails = transformationContext.getAbortDetails();
+        originalApplicationLocation = transformation.getApplication().getFolder().getAbsolutePath();
+        transformedApplicationLocation = transformation.getTransformedApplicationLocation().getAbsolutePath();
 
         metricsId =  UUID.randomUUID().toString();
 
@@ -164,6 +177,16 @@ public class TransformationMetricsImpl implements TransformationMetrics {
     @Override
     public AbortDetails getAbortDetails() {
         return abortDetails;
+    }
+
+    @Override
+    public String getOriginalApplicationLocation() {
+        return originalApplicationLocation;
+    }
+
+    @Override
+    public String getTransformedApplicationLocation() {
+        return transformedApplicationLocation;
     }
 
 }

@@ -2,6 +2,7 @@
 target/
 logs/
 test-output/
+metrics/
 
 # Package Files #
 *.jar

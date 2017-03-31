@@ -5,7 +5,7 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
 /**
  * This interface should be implemented by operations that expect to change or modify elements,
  * standardizing in the TO what to do in the absence of the element to be manipulated.
- * </br>
+ * <br>
  * Examples of elements to be changed or removed: files, folders, properties in properties files,
  * POM dependencies, POM managed dependencies, POM plugins, POM managed plugins, POM properties, etc,
  *
