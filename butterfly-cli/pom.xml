@@ -64,11 +64,6 @@
             <artifactId>powermock-api-mockito</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-        	<groupId>com.paypal.raptor</groupId>
-            <artifactId>butterfly-raptor-extension</artifactId>
-            <version>1.3.0-SNAPSHOT</version>            
-        </dependency>
     </dependencies>
 
 </project>
