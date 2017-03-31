@@ -34,19 +34,19 @@ public class MetricsHandler implements TransformationListener {
 
     @Override
     public void postTransformation(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
-        generateMetrics(transformationContexts);
+        generateMetrics(transformation, transformationContexts);
     }
 
     @Override
     public void postTransformationAbort(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
-        generateMetrics(transformationContexts);
+        generateMetrics(transformation, transformationContexts);
     }
 
-    private void generateMetrics(List<TransformationContextImpl> transformationContexts) {
+    private void generateMetrics(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
         List<TransformationMetrics> metricsList = new ArrayList<>();
         TransformationMetrics metrics;
         for (TransformationContextImpl transformationContext : transformationContexts) {
-            metrics = new TransformationMetricsImpl(transformationContext);
+            metrics = new TransformationMetricsImpl(transformation, transformationContext);
             metricsList.add(metrics);
         }
 
