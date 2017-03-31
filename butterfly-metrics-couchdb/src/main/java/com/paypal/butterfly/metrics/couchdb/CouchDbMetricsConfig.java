@@ -8,8 +8,10 @@ import org.lightcouch.CouchDbException;
 import org.lightcouch.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -22,6 +24,7 @@ public class CouchDbMetricsConfig {
     private static final Logger logger = LoggerFactory.getLogger(CouchDbMetricsConfig.class);
 
     @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public TransformationMetricsListener couchDbMetrics() {
         return new TransformationMetricsListener() {
 
@@ -39,6 +42,13 @@ public class CouchDbMetricsConfig {
 
             @Override
             public void notify(List<TransformationMetrics> metricsList) {
+                if (metricsList.size() == 0) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("There is no metrics to be persisted in Couch DB");
+                    }
+                    return;
+                }
+
                 if (dbClient == null) {
                     if (logger.isDebugEnabled()) {
                         logger.warn("Exception when creating Couch DB client, metrics will not be persisted in Couch DB. Double check Couch DB configuration file, server and your network.", ex);
