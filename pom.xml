@@ -123,6 +123,7 @@
         <module>butterfly-cli</module>
         <module>butterfly-cli-package</module>
         <module>butterfly-metrics-couchdb</module>
+        <module>butterfly-metrics-file</module>
     </modules>
 
     <build>
