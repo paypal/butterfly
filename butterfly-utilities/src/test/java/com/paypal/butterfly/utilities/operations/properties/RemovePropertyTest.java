@@ -17,14 +17,14 @@ public class RemovePropertyTest extends TransformationUtilityTestHelper {
 
     @Test
     public void successRemoveTest() throws IOException {
-        RemoveProperty removeProperty = new RemoveProperty("bar").relative("application.properties");
+        RemoveProperty removeProperty = new RemoveProperty("bar").relative("/src/main/resources/application.properties");
         TOExecutionResult executionResult = removeProperty.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
-        assertChangedFile("application.properties");
-        assertLineCount("application.properties", -1);
+        assertChangedFile("/src/main/resources/application.properties");
+        assertLineCount("/src/main/resources/application.properties", -1);
 
-        Properties properties = getProperties("application.properties");
+        Properties properties = getProperties("/src/main/resources/application.properties");
 
         Assert.assertEquals(properties.size(), 2);
         Assert.assertEquals(properties.getProperty("foo"), "foov");
@@ -33,7 +33,7 @@ public class RemovePropertyTest extends TransformationUtilityTestHelper {
 
     @Test
     public void fileDoesNotExistTest() {
-        RemoveProperty removeProperty = new RemoveProperty("foo").relative("application_zeta.properties");
+        RemoveProperty removeProperty = new RemoveProperty("foo").relative("/src/main/resources/application_zeta.properties");
         TOExecutionResult executionResult = removeProperty.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
         Assert.assertEquals(executionResult.getException(), null);

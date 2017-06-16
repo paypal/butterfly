@@ -49,6 +49,9 @@ class MultipleOutputHandler implements MavenInvocationOutputHandler<MultipleOutp
                 }
             }
         }
+        if (logger.isDebugEnabled()) {
+            logger.debug("Maven execution: {}", line);
+        }
     }
 
     /**

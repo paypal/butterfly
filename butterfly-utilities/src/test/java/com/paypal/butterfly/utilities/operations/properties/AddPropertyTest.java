@@ -18,14 +18,14 @@ public class AddPropertyTest extends TransformationUtilityTestHelper {
 
     @Test
     public void successAddTest() throws IOException {
-        AddProperty addProperty = new AddProperty("zoo", "zoov").relative("application.properties");
+        AddProperty addProperty = new AddProperty("zoo", "zoov").relative("/src/main/resources/application.properties");
         TOExecutionResult executionResult = addProperty.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
-        assertChangedFile("application.properties");
-        assertLineCount("application.properties", 1);
+        assertChangedFile("/src/main/resources/application.properties");
+        assertLineCount("/src/main/resources/application.properties", 1);
 
-        Properties properties = getProperties("application.properties");
+        Properties properties = getProperties("/src/main/resources/application.properties");
 
         Assert.assertEquals(properties.size(), 4);
         Assert.assertEquals(properties.getProperty("bar"), "barv");
@@ -36,14 +36,14 @@ public class AddPropertyTest extends TransformationUtilityTestHelper {
 
     @Test
     public void successSetTest() throws IOException {
-        AddProperty addProperty = new AddProperty("foo", "boo").relative("application.properties");
+        AddProperty addProperty = new AddProperty("foo", "boo").relative("/src/main/resources/application.properties");
         TOExecutionResult executionResult = addProperty.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
-        assertChangedFile("application.properties");
-        assertSameLineCount("application.properties");
+        assertChangedFile("/src/main/resources/application.properties");
+        assertSameLineCount("/src/main/resources/application.properties");
 
-        Properties properties = getProperties("application.properties");
+        Properties properties = getProperties("/src/main/resources/application.properties");
 
         Assert.assertEquals(properties.size(), 3);
         Assert.assertEquals(properties.getProperty("bar"), "barv");
@@ -53,7 +53,7 @@ public class AddPropertyTest extends TransformationUtilityTestHelper {
 
     @Test
     public void fileDoesNotExistTest() {
-        AddProperty addProperty = new AddProperty("foo", "boo").relative("application_zeta.properties");
+        AddProperty addProperty = new AddProperty("foo", "boo").relative("/src/main/resources/application_zeta.properties");
         TOExecutionResult executionResult = addProperty.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         Assert.assertEquals(executionResult.getException().getClass(), FileNotFoundException.class);
