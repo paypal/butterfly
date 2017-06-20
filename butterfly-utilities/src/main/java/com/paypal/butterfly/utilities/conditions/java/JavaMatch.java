@@ -123,7 +123,11 @@ public class JavaMatch extends UtilityCondition<JavaMatch> {
                     fileInputStream.close();
                 }
             } catch (IOException e) {
-                result.addWarning(e);
+                if (result == null) {
+                    result = TUExecutionResult.error(this, e);
+                } else {
+                    result.addWarning(e);
+                }
             }
         }
 

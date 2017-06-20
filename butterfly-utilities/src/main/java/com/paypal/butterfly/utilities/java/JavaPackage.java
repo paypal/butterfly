@@ -1,7 +1,6 @@
 package com.paypal.butterfly.utilities.java;
 
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;

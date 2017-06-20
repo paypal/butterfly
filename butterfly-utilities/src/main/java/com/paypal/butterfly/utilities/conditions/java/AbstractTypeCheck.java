@@ -28,7 +28,7 @@ public abstract class AbstractTypeCheck<T extends AbstractTypeCheck> extends Jav
     }
 
     public AbstractTypeCheck(String specifiedTypeName) {
-        if (specifiedTypeName == null && specifiedTypeName.trim().length() == 0) {
+        if (specifiedTypeName == null || specifiedTypeName.trim().length() == 0) {
             throw new TransformationDefinitionException("Specified type cannot be empty");
         }
         this.specifiedTypeName = specifiedTypeName;
