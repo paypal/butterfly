@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  * {@link #absolute(String)} methods.
  * </br>
  * When evaluating multiple files, the criteria is configurable, and
- * can be al of them have the property, or at least one of them has it.
+ * can be all of them have the property, or at least one of them has it.
  * </br>
  * These three behaviors are set by the following methods:
  * <ol>

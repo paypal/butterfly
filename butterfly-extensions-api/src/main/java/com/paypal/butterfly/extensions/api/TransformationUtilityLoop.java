@@ -1,5 +1,6 @@
 package com.paypal.butterfly.extensions.api;
 
+import com.paypal.butterfly.extensions.api.conditions.UtilityCondition;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
@@ -90,7 +91,7 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
     private static final String CONDITION_NAME_FORMAT = "%s_%s_condition";
 
     @Override
-    TransformationUtilityLoop setName(String name) {
+    protected TransformationUtilityLoop setName(String name) {
         super.setName(name);
         if (template != null) template.setName(String.format(TEMPLATE_NAME_FORMAT, getName(), template.getClass().getSimpleName()));
         if (condition != null) condition.setName(String.format(CONDITION_NAME_FORMAT, getName(), condition.getClass().getSimpleName()));

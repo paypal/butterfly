@@ -5,7 +5,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.paypal.butterfly.extensions.api.ExecutionResult;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.UtilityCondition;
+import com.paypal.butterfly.extensions.api.conditions.SingleUtilityCondition;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.File;
@@ -24,7 +24,7 @@ import java.util.Set;
  *
  * @author facarvalho
  */
-public class JavaMatch extends UtilityCondition<JavaMatch> {
+public class JavaMatch extends SingleUtilityCondition<JavaMatch> {
 
     private static final String DESCRIPTION = "Check if Java class in '%s' matches all specified criteria";
 

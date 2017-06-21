@@ -1,6 +1,7 @@
 package com.paypal.butterfly.extensions.api.utilities;
 
 import com.paypal.butterfly.extensions.api.*;
+import com.paypal.butterfly.extensions.api.conditions.UtilityCondition;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import org.apache.commons.lang3.ArrayUtils;
 
