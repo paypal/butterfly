@@ -1,8 +1,5 @@
-package com.paypal.butterfly.extensions.api.conditions;
+package com.paypal.butterfly.extensions.api;
 
-import com.paypal.butterfly.extensions.api.ExecutionResult;
-import com.paypal.butterfly.extensions.api.TUExecutionResult;
-import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,8 +12,8 @@ import java.io.File;
  * be boolean. The criteria to this type of condition
  * is based on two files (when comparing if two XML files are equal
  * for example). For conditions
- * based on evaluating a single file see {@link SingleUtilityCondition}.
- * For conditions based on multiple files see {@link MultipleUtilityCondition}
+ * based on evaluating a single file see {@link SingleCondition}.
+ * For conditions based on multiple files see {@link MultipleConditions}
  *
  * IMPORTANT:
  * Every DoubleUtilityCondition subclass MUST be a Java bean, which means they must have
@@ -24,12 +21,12 @@ import java.io.File;
  * their properties. In addition to that, every setter must return the
  * DoubleUtilityCondition instance.
  *
- * @see SingleUtilityCondition
- * @see MultipleUtilityCondition
+ * @see SingleCondition
+ * @see MultipleConditions
  *
  * @author facarvalho
  */
-public abstract class DoubleUtilityCondition<DUC> extends UtilityCondition<DUC> {
+public abstract class DoubleCondition<DUC> extends UtilityCondition<DUC> {
 
     // The name of the transformation context attribute
     // that refers to the file to be compared against the baseline file
@@ -43,7 +40,7 @@ public abstract class DoubleUtilityCondition<DUC> extends UtilityCondition<DUC> 
      * is based on two files (when comparing if two XML files are equal
      * for example)
      */
-     public DoubleUtilityCondition() {
+     public DoubleCondition() {
     }
 
     /**

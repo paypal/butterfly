@@ -1,6 +1,6 @@
 package com.paypal.butterfly.utilities.conditions;
 
-import com.paypal.butterfly.extensions.api.conditions.DoubleUtilityCondition;
+import com.paypal.butterfly.extensions.api.DoubleCondition;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.w3c.dom.Document;
@@ -17,12 +17,12 @@ import java.io.IOException;
  * if their contents are equal. Attribute orders, comments and white
  * spaces are ignored during the comparison.
  * </br>
- * See {@link DoubleUtilityCondition}
+ * See {@link DoubleCondition}
  * to find out how to set the baseline and the comparison files
  *
  * @author facarvalho
  */
-public class CompareXMLFiles extends DoubleUtilityCondition<CompareXMLFiles> {
+public class CompareXMLFiles extends DoubleCondition<CompareXMLFiles> {
 
     private static final String DESCRIPTION = "Compare XML file %s to another one, return true only if their contents are equal";
 

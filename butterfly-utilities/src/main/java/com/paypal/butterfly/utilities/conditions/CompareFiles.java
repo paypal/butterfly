@@ -1,6 +1,6 @@
 package com.paypal.butterfly.utilities.conditions;
 
-import com.paypal.butterfly.extensions.api.conditions.DoubleUtilityCondition;
+import com.paypal.butterfly.extensions.api.DoubleCondition;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.commons.io.FileUtils;
 
@@ -11,12 +11,12 @@ import java.io.IOException;
  * This utility condition compares two files and returns true only
  * if their contents are identical.
  * </br>
- * See {@link DoubleUtilityCondition}
+ * See {@link DoubleCondition}
  * to find out how to set the baseline and the comparison files
  *
  * @author facarvalho
  */
-public class CompareFiles extends DoubleUtilityCondition<CompareFiles> {
+public class CompareFiles extends DoubleCondition<CompareFiles> {
 
     private static final String DESCRIPTION = "Compare file %s to another one, return true only if their contents are equal";
 

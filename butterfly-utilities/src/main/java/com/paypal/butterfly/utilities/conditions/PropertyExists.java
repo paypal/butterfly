@@ -1,6 +1,9 @@
 package com.paypal.butterfly.utilities.conditions;
 
+import com.paypal.butterfly.extensions.api.ExecutionResult;
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
+import com.paypal.butterfly.extensions.api.SingleCondition;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.File;
@@ -10,36 +13,15 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 /**
- * Condition to check if a particular property exists in one
- * or more properties files. Multiple files can be  specified (via {@link #setFiles(String...)}).
- * While one file can be specified by regular {@link #relative(String)} and
- * {@link #absolute(String)} methods.
- * </br>
- * When evaluating multiple files, the criteria is configurable, and
- * can be all of them have the property, or at least one of them has it.
- * </br>
- * These three behaviors are set by the following methods:
- * <ol>
- *     <li>{@link #singleFile()}</li>
- *     <li>{@link #multipleFilesAtLeastOne()}</li>
- *     <li>{@link #multipleFilesAll()}</li>
- * </ol>
- * <strong>Notes:</strong>
- * <ol>
- *     <li>{@link #singleFile()} is the default behavior if none is specified</li>
- *     <li>When a multiple files method is set, the file specified by {@link #relative(String)}
- *     or {@link #absolute(String)} is ignored</li>
- * </ol>
- * </br>
+ * Condition to check if a particular property exists in a property file.
  * The property name can be defined explicitly, via {@link #setPropertyName(String)},
  * or as a regular expression, via {@link #setPropertyNameRegex(String)}.
- * </br>
  *
  * @author facarvalho
  */
-public class PropertyExists extends AbstractCriteriaCondition<PropertyExists> {
+public class PropertyExists extends SingleCondition<PropertyExists> {
 
-    private static final String DESCRIPTION = "Check if property '%s' exists in one ore more properties files";
+    private static final String DESCRIPTION = "Check if property '%s' exists in a property file";
 
     private String propertyName;
     private String propertyNameRegex;
@@ -73,7 +55,7 @@ public class PropertyExists extends AbstractCriteriaCondition<PropertyExists> {
     }
 
     @Override
-    protected boolean eval(File transformedAppFolder, TransformationContext transformationContext, File file) {
+    protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
 
         // TODO
         // Move this to pre-validation method
@@ -84,6 +66,8 @@ public class PropertyExists extends AbstractCriteriaCondition<PropertyExists> {
         FileInputStream fileInputStream = null;
         boolean exists = false;
         TransformationUtilityException ex = null;
+
+        File file = getAbsoluteFile(transformedAppFolder, transformationContext);
 
         try {
             fileInputStream = new FileInputStream(file);
@@ -121,10 +105,10 @@ public class PropertyExists extends AbstractCriteriaCondition<PropertyExists> {
         }
 
         if (ex != null) {
-            throw ex;
+            return TUExecutionResult.error(this, ex);
         }
 
-        return exists;
+        return TUExecutionResult.value(this, exists);
     }
 
 }

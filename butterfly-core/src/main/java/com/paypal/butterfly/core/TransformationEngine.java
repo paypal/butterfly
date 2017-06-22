@@ -199,6 +199,47 @@ public class TransformationEngine {
     }
 
     /*
+     * Perform a condition against multiple files
+     */
+    private PerformResult perform(MultipleConditions utility, Set<File> files, File transformedAppFolder, TransformationContextImpl transformationContext) {
+
+        UtilityCondition condition;
+        boolean allMode = utility.getMode().equals(MultipleConditions.Mode.ALL);
+        boolean result = false;
+
+        for (File file : files) {
+            condition = utility.newConditionInstance(transformedAppFolder, file);
+
+            // This inner condition result object is intentionally not been saved to the transformation context.
+            // No need to do it, only the MultipleUtilityCondition PerformResult is relevant in this case
+            PerformResult innerPerformResult = condition.perform(transformedAppFolder, transformationContext);
+
+            if(innerPerformResult.getType().equals(PerformResult.Type.EXECUTION_RESULT) &&
+                    (innerPerformResult.getExecutionResult().getType().equals(TUExecutionResult.Type.VALUE)
+                    || innerPerformResult.getExecutionResult().getType().equals(TUExecutionResult.Type.WARNING))) {
+                result = (boolean) ((TUExecutionResult) innerPerformResult.getExecutionResult()).getValue();
+                if (!result && allMode || result && !allMode) {
+                    break;
+                }
+            } else {
+                Exception innerException;
+                if (innerPerformResult.getType().equals(PerformResult.Type.ERROR)) {
+                    innerException = innerPerformResult.getException();
+                } else {
+                    innerException = innerPerformResult.getExecutionResult().getException();
+                }
+                String exceptionMessage = String.format("Multiple utility condition execution failed when evaluating condition %s against file %s", condition.getName(), file.getAbsolutePath());
+                TransformationUtilityException outerException = new TransformationUtilityException(exceptionMessage, innerException);
+                TUExecutionResult multipleExecutionResult = TUExecutionResult.error(utility, outerException);
+                return PerformResult.executionResult(utility, multipleExecutionResult);
+            }
+        }
+
+        TUExecutionResult multipleExecutionResult = TUExecutionResult.value(utility, result);
+        return PerformResult.executionResult(utility, multipleExecutionResult);
+    }
+
+    /*
      * Perform a list of utilities in an application
      */
     private void perform(TransformationUtilityParent utilityParent, PerformResult result, File transformedAppFolder, TransformationContextImpl transformationContext, String order) throws TransformationException {
@@ -247,6 +288,12 @@ public class TransformationEngine {
                     } else {
                         TUExecutionResult executionResult = (TUExecutionResult) result.getExecutionResult();
                         Object executionValue = executionResult.getValue();
+
+                        /* Executing a condition against multiple files */
+                        if(utility instanceof MultipleConditions) {
+                            Set<File> files = (Set<File>) executionValue;
+                            result = perform((MultipleConditions) utility, files, transformedAppFolder, transformationContext);
+                        }
 
                         processUtilityExecutionResult(utility, result, transformationContext);
                         if (utility instanceof TransformationUtilityLoop) {

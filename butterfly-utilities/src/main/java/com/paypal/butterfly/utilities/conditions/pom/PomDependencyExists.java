@@ -1,8 +1,10 @@
 package com.paypal.butterfly.utilities.conditions.pom;
 
+import com.paypal.butterfly.extensions.api.ExecutionResult;
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
+import com.paypal.butterfly.extensions.api.SingleCondition;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import com.paypal.butterfly.utilities.conditions.AbstractCriteriaCondition;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -13,32 +15,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * Condition to check if a particular Maven dependency exists in one
- * or more Maven pom files. Multiple files can be  specified (via {@link #setFiles(String...)}).
- * While one file can be specified by regular {@link #relative(String)} and
- * {@link #absolute(String)} methods.
- * </br>
- * When evaluating multiple files, the criteria is configurable, and
- * can be al of them have the dependency, or at least one of them has it.
- * </br>
- * These three behaviors are set by the following methods:
- * <ol>
- *     <li>{@link #singleFile()}</li>
- *     <li>{@link #multipleFilesAtLeastOne()}</li>
- *     <li>{@link #multipleFilesAll()}</li>
- * </ol>
- * <strong>Notes:</strong>
- * <ol>
- *     <li>{@link #singleFile()} is the default behavior if none is specified</li>
- *     <li>When a multiple files method is set, the file specified by {@link #relative(String)}
- *     or {@link #absolute(String)} is ignored</li>
- * </ol>
+ * Condition to check if a particular Maven dependency exists in a Maven pom file
  *
  * @author facarvalho
  */
-public class PomDependencyExists extends AbstractCriteriaCondition<PomDependencyExists> {
+public class PomDependencyExists extends SingleCondition<PomDependencyExists> {
 
-    private static final String DESCRIPTION = "Check if dependency '%s:%s:%s' exists in one or more POM files";
+    private static final String DESCRIPTION = "Check if dependency '%s:%s:%s' exists in a POM file";
 
     private String groupId;
     private String artifactId;
@@ -48,26 +31,7 @@ public class PomDependencyExists extends AbstractCriteriaCondition<PomDependency
     }
 
     /**
-     * Condition to check if a particular Maven dependency exists in one
-     * or more Maven pom files. Multiple files can be  specified (via {@link #setFiles(String...)}).
-     * While one file can be specified by regular {@link #relative(String)} and
-     * {@link #absolute(String)} methods.
-     * </br>
-     * When evaluating multiple files, the criteria is configurable, and
-     * can be al of them have the dependency, or at least one of them has it.
-     * </br>
-     * These three behaviors are set by the following methods:
-     * <ol>
-     *     <li>{@link #singleFile()}</li>
-     *     <li>{@link #multipleFilesAtLeastOne()}</li>
-     *     <li>{@link #multipleFilesAll()}</li>
-     * </ol>
-     * <strong>Notes:</strong>
-     * <ol>
-     *     <li>{@link #singleFile()} is the default behavior if none is specified</li>
-     *     <li>When a multiple files method is set, the file specified by {@link #relative(String)}
-     *     or {@link #absolute(String)} is ignored</li>
-     * </ol>
+     * Condition to check if a particular Maven dependency exists in a Maven pom files
      *
      * @param groupId managed dependency group id
      * @param artifactId managed dependency artifact id
@@ -78,26 +42,7 @@ public class PomDependencyExists extends AbstractCriteriaCondition<PomDependency
     }
 
     /**
-     * Condition to check if a particular Maven dependency exists in one
-     * or more Maven pom files. Multiple files can be  specified (via {@link #setFiles(String...)}).
-     * While one file can be specified by regular {@link #relative(String)} and
-     * {@link #absolute(String)} methods.
-     * </br>
-     * When evaluating multiple files, the criteria is configurable, and
-     * can be al of them have the dependency, or at least one of them has it.
-     * </br>
-     * These three behaviors are set by the following methods:
-     * <ol>
-     *     <li>{@link #singleFile()}</li>
-     *     <li>{@link #multipleFilesAtLeastOne()}</li>
-     *     <li>{@link #multipleFilesAll()}</li>
-     * </ol>
-     * <strong>Notes:</strong>
-     * <ol>
-     *     <li>{@link #singleFile()} is the default behavior if none is specified</li>
-     *     <li>When a multiple files method is set, the file specified by {@link #relative(String)}
-     *     or {@link #absolute(String)} is ignored</li>
-     * </ol>
+     * Condition to check if a particular Maven dependency exists in a Maven pom files
      *
      * @param groupId managed dependency group id
      * @param artifactId managed dependency artifact id
@@ -144,11 +89,13 @@ public class PomDependencyExists extends AbstractCriteriaCondition<PomDependency
     }
 
     @Override
-    protected boolean eval(File transformedAppFolder, TransformationContext transformationContext, File file) {
+    protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         MavenXpp3Reader reader = new MavenXpp3Reader();
         FileInputStream fileInputStream = null;
         boolean exists = false;
         TransformationUtilityException ex = null;
+
+        File file = getAbsoluteFile(transformedAppFolder, transformationContext);
 
         try {
             fileInputStream = new FileInputStream(file);
@@ -180,10 +127,10 @@ public class PomDependencyExists extends AbstractCriteriaCondition<PomDependency
         }
 
         if (ex != null) {
-            throw ex;
+            return TUExecutionResult.error(this, ex);
         }
 
-        return exists;
+        return TUExecutionResult.value(this, exists);
     }
 
 }
