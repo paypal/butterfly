@@ -2,7 +2,7 @@ package com.paypal.butterfly.utilities.conditions;
 
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.UtilityCondition;
+import com.paypal.butterfly.extensions.api.conditions.SingleUtilityCondition;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * Condition to check if a particular criteria is met in one
- * or more properties files. Multiple files can be  specified (via {@link #setFiles(String...)}).
+ * or more files. Multiple files can be  specified (via {@link #setFiles(String...)}).
  * While one file can be specified by regular {@link #relative(String)} and
  * {@link #absolute(String)} methods.
  * </br>
@@ -35,7 +35,7 @@ import java.util.Set;
  *
  * @author facarvalho
  */
-public abstract class AbstractCriteriaCondition<C> extends UtilityCondition<C> {
+public abstract class AbstractCriteriaCondition<C> extends SingleUtilityCondition<C> {
 
     private enum Mode {
         SINGLE, MULTI_ONE, MULTI_ALL

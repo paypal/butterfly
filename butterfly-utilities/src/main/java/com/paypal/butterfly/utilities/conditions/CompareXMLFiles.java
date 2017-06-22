@@ -1,5 +1,6 @@
 package com.paypal.butterfly.utilities.conditions;
 
+import com.paypal.butterfly.extensions.api.conditions.DoubleUtilityCondition;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.w3c.dom.Document;
@@ -16,14 +17,14 @@ import java.io.IOException;
  * if their contents are equal. Attribute orders, comments and white
  * spaces are ignored during the comparison.
  * </br>
- * The first file is the one specified by {@link #relative(String)}
- * or {@link #absolute(String)}, while the second one is specified
- * as a String containing the name of the transformation context
- * attribute that holds the file.
+ * See {@link DoubleUtilityCondition}
+ * to find out how to set the baseline and the comparison files
  *
  * @author facarvalho
  */
-public class CompareXMLFiles extends AbstractCompareFiles<CompareXMLFiles> {
+public class CompareXMLFiles extends DoubleUtilityCondition<CompareXMLFiles> {
+
+    private static final String DESCRIPTION = "Compare XML file %s to another one, return true only if their contents are equal";
 
     @Override
     protected boolean compare(File baselineFile, File comparisonFile) {
@@ -50,6 +51,11 @@ public class CompareXMLFiles extends AbstractCompareFiles<CompareXMLFiles> {
         } catch (SAXException | IOException | ParserConfigurationException e) {
             throw new TransformationUtilityException("An exception has happened when comparing the two XML files", e);
         }
+    }
+
+    @Override
+    public String getDescription() {
+        return String.format(DESCRIPTION, getRelativePath());
     }
 
 }

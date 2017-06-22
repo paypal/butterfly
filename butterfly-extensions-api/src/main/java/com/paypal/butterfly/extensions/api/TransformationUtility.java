@@ -1,6 +1,7 @@
 package com.paypal.butterfly.extensions.api;
 
 
+import com.paypal.butterfly.extensions.api.conditions.UtilityCondition;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.commons.lang3.StringUtils;
@@ -155,7 +156,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * @param name
      * @return this transformation utility
      */
-    TU setName(String name) {
+    protected TU setName(String name) {
         if(StringUtils.isBlank(name)) {
             throw new TransformationDefinitionException(name + " cannot be blank");
         }

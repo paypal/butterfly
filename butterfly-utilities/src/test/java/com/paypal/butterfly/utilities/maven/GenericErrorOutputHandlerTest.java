@@ -39,7 +39,7 @@ public class GenericErrorOutputHandlerTest {
             handler = new GenericErrorOutputHandler();
             handler.consumeLine(invalidLines[i]);
             handler.consumeLine("some error line");
-            Assert.assertNull(handler.getResult());
+            Assert.assertEquals(handler.getResult(), "");
         }
     }
 
@@ -47,7 +47,7 @@ public class GenericErrorOutputHandlerTest {
     public void canHaveNullResultsIfNoTriggerFound(){
         GenericErrorOutputHandler handler = new GenericErrorOutputHandler();
         handler.consumeLine("asfasdfa");
-        Assert.assertNull(handler.getResult());
+        Assert.assertEquals(handler.getResult(), "");
     }
 
     @Test
