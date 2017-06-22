@@ -1,4 +1,4 @@
-package com.paypal.butterfly.extensions.api.conditions;
+package com.paypal.butterfly.extensions.api;
 
 /**
  * Condition to determine if a transformation utility
@@ -7,8 +7,8 @@ package com.paypal.butterfly.extensions.api.conditions;
  * be boolean. The criteria to this type of condition
  * is based on evaluating a single file (when checking if a particular
  * file contains a given word for example). For conditions
- * based on comparing two files see {@link DoubleUtilityCondition}.
- * For conditions based on multiple files see {@link MultipleUtilityCondition}
+ * based on comparing two files see {@link DoubleCondition}.
+ * For conditions based on multiple files see {@link MultipleConditions}
  *
  * IMPORTANT:
  * Every SingleUtilityCondition subclass MUST be a Java bean, which means they must have
@@ -16,10 +16,10 @@ package com.paypal.butterfly.extensions.api.conditions;
  * their properties. In addition to that, every setter must return the
  * SingleUtilityCondition instance.
  *
- * @see DoubleUtilityCondition
- * @see MultipleUtilityCondition
+ * @see DoubleCondition
+ * @see MultipleConditions
  *
  * @author facarvalho
  */
-public abstract class SingleUtilityCondition<SUC> extends UtilityCondition<SUC> {
+public abstract class SingleCondition<SUC> extends UtilityCondition<SUC> {
 }
