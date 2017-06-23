@@ -51,6 +51,9 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
     // to  by evaluated against the list of files
     private UtilityCondition conditionTemplate;
 
+    // This is used to set condition instances names
+    private int conditionInstanceCounter = 0;
+
     /**
      * Perform one transformation utility condition against multiple files,
      * returning true if at least one file meets the condition (default mode).
@@ -195,6 +198,10 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
         try {
             UtilityCondition condition = (UtilityCondition) conditionTemplate.copy();
             condition.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
+            condition.setSaveResult(false);
+
+            conditionInstanceCounter++;
+            condition.setName(String.format("%s-%d", conditionTemplate.getName(), conditionInstanceCounter));
 
             return condition;
         } catch (CloneNotSupportedException e) {

@@ -110,7 +110,7 @@ public class JavaMatch extends SingleCondition<JavaMatch> {
             // This should be done as part of validation, as soon as
             // TU validation is implemented
             if(compilationUnit.getTypes().size() == 0) {
-                return TUExecutionResult.error(this, new TransformationUtilityException("The specified Java class file has no declared types"));
+                return TUExecutionResult.warning(this, new TransformationUtilityException("This Java class file has no declared types: " + javaClassFile.getAbsolutePath()), false);
             }
 
             boolean match = evaluate(compilationUnit);

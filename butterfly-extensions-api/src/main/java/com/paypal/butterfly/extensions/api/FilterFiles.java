@@ -5,11 +5,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Utility to filter a list of files based on a given
- * {@link com.paypal.butterfly.extensions.api.UtilityCondition},
+ * {@link com.paypal.butterfly.extensions.api.SingleCondition},
  * returning in a sub-list of files
  *
  * @author facarvalho
@@ -21,17 +24,20 @@ public class FilterFiles extends TransformationUtility<FilterFiles> {
     private static final String DESCRIPTION = "Given a list of files and one condition, returns a sub-list containing all files that meet that condition";
 
     // Array of transformation context attributes that hold list of Files
-    // which the condition should be evaluated against.
+    // which the single condition should be evaluated against.
     // If more than one attribute is specified, all list of files will be
     // combined into a single one.
     private String[] filesAttributes;
 
-    // Condition to be evaluated against all files
-    private UtilityCondition conditionTemplate;
+    // Single condition to be evaluated against all files
+    private SingleCondition conditionTemplate;
+
+    // This is used to set condition instances names
+    private int conditionInstanceCounter = 0;
 
     /**
      * Utility to filter a list of files based on a given
-     * {@link com.paypal.butterfly.extensions.api.UtilityCondition},
+     * {@link com.paypal.butterfly.extensions.api.SingleCondition},
      * returning in a sub-list of files
      */
     public FilterFiles() {
@@ -39,18 +45,18 @@ public class FilterFiles extends TransformationUtility<FilterFiles> {
 
     /**
      * Utility to filter a list of files based on a given
-     * {@link com.paypal.butterfly.extensions.api.UtilityCondition},
+     * {@link com.paypal.butterfly.extensions.api.SingleCondition},
      * returning in a sub-list of files
      *
-     * @param conditionTemplate the condition template to be evaluated against all files
+     * @param conditionTemplate the single condition template to be evaluated against all files
      */
-    public FilterFiles(UtilityCondition conditionTemplate) {
+    public FilterFiles(SingleCondition conditionTemplate) {
         setConditionTemplate(conditionTemplate);
     }
 
     /**
      * Sets one or more transformation context attributes that hold list of Files
-     * which the condition should be evaluated against.
+     * which the single condition should be evaluated against.
      * If more than one attribute is specified, all list of files will be
      * combined into a single one
      *
@@ -64,14 +70,21 @@ public class FilterFiles extends TransformationUtility<FilterFiles> {
     }
 
     /**
-     * Set the condition template to be evaluated against all files
+     * Set the single condition template to be evaluated against all files
      *
-     * @param conditionTemplate the condition template to be evaluated against all files
+     * @param conditionTemplate the single condition template to be evaluated against all files
      * @return this transformation utility object
      */
-    public FilterFiles setConditionTemplate(UtilityCondition conditionTemplate) {
+    public FilterFiles setConditionTemplate(SingleCondition conditionTemplate) {
+        checkForNull("conditionTemplate", conditionTemplate);
         this.conditionTemplate = conditionTemplate;
         return this;
+    }
+
+    @Override
+    protected FilterFiles setName(String name) {
+        conditionTemplate.setName(String.format("%s-%s-TEMPLATE_CONDITION", name, conditionTemplate.getClass().getSimpleName()));
+        return super.setName(name);
     }
 
     @Override
@@ -91,11 +104,11 @@ public class FilterFiles extends TransformationUtility<FilterFiles> {
     }
 
     /**
-     * Return the condition template to be evaluated against all files
+     * Return the single condition template to be evaluated against all files
      *
-     * @return the condition template to be evaluated against all files
+     * @return the single condition template to be evaluated against all files
      */
-    public UtilityCondition getConditionTemplate() {
+    public SingleCondition getConditionTemplate() {
         return conditionTemplate;
     }
 
@@ -128,7 +141,7 @@ public class FilterFiles extends TransformationUtility<FilterFiles> {
     }
 
     /**
-     * Creates a new condition instance copying from this current
+     * Creates a new single condition instance copying from this current
      * object, but setting the file it should perform against based
      * on the input parameters
      *
@@ -136,14 +149,18 @@ public class FilterFiles extends TransformationUtility<FilterFiles> {
      * @param file the actual file to be performed against
      * @return
      */
-    public UtilityCondition newConditionInstance(File transformedAppFolder, File file) {
+    public SingleCondition newConditionInstance(File transformedAppFolder, File file) {
         try {
-            UtilityCondition condition = (UtilityCondition) conditionTemplate.copy();
+            SingleCondition condition = (SingleCondition) conditionTemplate.copy();
             condition.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
+            condition.setSaveResult(false);
+
+            conditionInstanceCounter++;
+            condition.setName(String.format("%s-%d", conditionTemplate.getName(), conditionInstanceCounter));
 
             return condition;
         } catch (CloneNotSupportedException e) {
-            String exceptionMessage = String.format("Error when preparing condition instance for %s", getName());
+            String exceptionMessage = String.format("Error when preparing single condition instance for %s", getName());
             throw new TransformationUtilityException(exceptionMessage, e);
         }
     }
