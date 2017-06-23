@@ -201,7 +201,7 @@ public class TransformationEngine {
     /*
      * Perform a condition against multiple files
      */
-    private PerformResult perform(MultipleConditions utility, Set<File> files, File transformedAppFolder, TransformationContextImpl transformationContext) {
+    private PerformResult perform(MultipleConditions utility, Set<File> files, File transformedAppFolder, TransformationContextImpl transformationContext) throws TransformationException {
 
         UtilityCondition condition;
         boolean allMode = utility.getMode().equals(MultipleConditions.Mode.ALL);
@@ -210,9 +210,8 @@ public class TransformationEngine {
         for (File file : files) {
             condition = utility.newConditionInstance(transformedAppFolder, file);
 
-            // This inner condition result object is intentionally not been saved to the transformation context.
-            // No need to do it, only the MultipleConditions PerformResult is relevant in this case
             PerformResult innerPerformResult = condition.perform(transformedAppFolder, transformationContext);
+            processUtilityExecutionResult(condition, innerPerformResult, transformationContext);
 
             if(innerPerformResult.getType().equals(PerformResult.Type.EXECUTION_RESULT) &&
                     (innerPerformResult.getExecutionResult().getType().equals(TUExecutionResult.Type.VALUE)
@@ -242,19 +241,17 @@ public class TransformationEngine {
     /*
      * Perform a filter in a list of files based on a condition
      */
-    private PerformResult perform(FilterFiles utility, Set<File> files, File transformedAppFolder, TransformationContextImpl transformationContext) {
+    private PerformResult perform(FilterFiles utility, Set<File> files, File transformedAppFolder, TransformationContextImpl transformationContext) throws TransformationException {
 
-        UtilityCondition condition;
+        SingleCondition condition;
         boolean conditionResult;
         List<File> subList = new ArrayList<>();
 
         for (File file : files) {
             condition = utility.newConditionInstance(transformedAppFolder, file);
 
-            // This inner condition result object is intentionally not been saved to the transformation context.
-            // No need to do it, only the FilterFiles PerformResult is relevant in this case
             PerformResult innerPerformResult = condition.perform(transformedAppFolder, transformationContext);
-
+            processUtilityExecutionResult(condition, innerPerformResult, transformationContext);
 
             if(innerPerformResult.getType().equals(PerformResult.Type.EXECUTION_RESULT) &&
                     (innerPerformResult.getExecutionResult().getType().equals(TUExecutionResult.Type.VALUE)
