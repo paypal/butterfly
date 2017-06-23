@@ -211,7 +211,7 @@ public class TransformationEngine {
             condition = utility.newConditionInstance(transformedAppFolder, file);
 
             // This inner condition result object is intentionally not been saved to the transformation context.
-            // No need to do it, only the MultipleUtilityCondition PerformResult is relevant in this case
+            // No need to do it, only the MultipleConditions PerformResult is relevant in this case
             PerformResult innerPerformResult = condition.perform(transformedAppFolder, transformationContext);
 
             if(innerPerformResult.getType().equals(PerformResult.Type.EXECUTION_RESULT) &&
@@ -228,7 +228,7 @@ public class TransformationEngine {
                 } else {
                     innerException = innerPerformResult.getExecutionResult().getException();
                 }
-                String exceptionMessage = String.format("Multiple utility condition execution failed when evaluating condition %s against file %s", condition.getName(), file.getAbsolutePath());
+                String exceptionMessage = String.format("Multiple utility condition %s execution failed when evaluating condition %s against file %s", utility.getName(), condition.getName(), file.getAbsolutePath());
                 TransformationUtilityException outerException = new TransformationUtilityException(exceptionMessage, innerException);
                 TUExecutionResult multipleExecutionResult = TUExecutionResult.error(utility, outerException);
                 return PerformResult.executionResult(utility, multipleExecutionResult);
@@ -237,6 +237,48 @@ public class TransformationEngine {
 
         TUExecutionResult multipleExecutionResult = TUExecutionResult.value(utility, result);
         return PerformResult.executionResult(utility, multipleExecutionResult);
+    }
+
+    /*
+     * Perform a filter in a list of files based on a condition
+     */
+    private PerformResult perform(FilterFiles utility, Set<File> files, File transformedAppFolder, TransformationContextImpl transformationContext) {
+
+        UtilityCondition condition;
+        boolean conditionResult;
+        List<File> subList = new ArrayList<>();
+
+        for (File file : files) {
+            condition = utility.newConditionInstance(transformedAppFolder, file);
+
+            // This inner condition result object is intentionally not been saved to the transformation context.
+            // No need to do it, only the FilterFiles PerformResult is relevant in this case
+            PerformResult innerPerformResult = condition.perform(transformedAppFolder, transformationContext);
+
+
+            if(innerPerformResult.getType().equals(PerformResult.Type.EXECUTION_RESULT) &&
+                    (innerPerformResult.getExecutionResult().getType().equals(TUExecutionResult.Type.VALUE)
+                            || innerPerformResult.getExecutionResult().getType().equals(TUExecutionResult.Type.WARNING))) {
+                conditionResult = (boolean) ((TUExecutionResult) innerPerformResult.getExecutionResult()).getValue();
+                if (conditionResult) {
+                    subList.add(file);
+                }
+            } else {
+                Exception innerException;
+                if (innerPerformResult.getType().equals(PerformResult.Type.ERROR)) {
+                    innerException = innerPerformResult.getException();
+                } else {
+                    innerException = innerPerformResult.getExecutionResult().getException();
+                }
+                String exceptionMessage = String.format("FilterFiles %s failed when evaluating condition %s against file %s", utility.getName(), condition.getName(), file.getAbsolutePath());
+                TransformationUtilityException outerException = new TransformationUtilityException(exceptionMessage, innerException);
+                TUExecutionResult multipleExecutionResult = TUExecutionResult.error(utility, outerException);
+                return PerformResult.executionResult(utility, multipleExecutionResult);
+            }
+        }
+
+        TUExecutionResult filterFilesExecutionResult = TUExecutionResult.value(utility, subList);
+        return PerformResult.executionResult(utility, filterFilesExecutionResult);
     }
 
     /*
@@ -289,13 +331,20 @@ public class TransformationEngine {
                         TUExecutionResult executionResult = (TUExecutionResult) result.getExecutionResult();
                         Object executionValue = executionResult.getValue();
 
-                        /* Executing a condition against multiple files */
                         if(utility instanceof MultipleConditions) {
+
+                            /* Executing a condition against multiple files */
                             Set<File> files = (Set<File>) executionValue;
                             result = perform((MultipleConditions) utility, files, transformedAppFolder, transformationContext);
+                        } else if(utility instanceof FilterFiles) {
+
+                            /* Execute a filter in a list of files based on a condition */
+                            Set<File> files = (Set<File>) executionValue;
+                            result = perform((FilterFiles) utility, files, transformedAppFolder, transformationContext);
                         }
 
                         processUtilityExecutionResult(utility, result, transformationContext);
+
                         if (utility instanceof TransformationUtilityLoop) {
 
                             /* Executing loops of utilities */

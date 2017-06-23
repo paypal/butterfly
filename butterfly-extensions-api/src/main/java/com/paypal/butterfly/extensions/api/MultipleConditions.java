@@ -145,18 +145,6 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
         return conditionTemplate;
     }
 
-    public UtilityCondition newConditionInstance(File transformedAppFolder, File file) {
-        try {
-            UtilityCondition condition = (UtilityCondition) conditionTemplate.copy();
-            condition.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
-
-            return condition;
-        } catch (CloneNotSupportedException e) {
-            String exceptionMessage = String.format("Error when preparing condition instance for multiple condition %s", getName());
-            throw new TransformationUtilityException(exceptionMessage, e);
-        }
-    }
-
     @Override
     public String getDescription() {
         return String.format(DESCRIPTION, conditionTemplate.getName());
@@ -169,7 +157,7 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
         // This should be done during validation
 
         if (conditionTemplate == null) {
-            TransformationUtilityException e = new TransformationUtilityException("No condition has been specified");
+            TransformationUtilityException e = new TransformationUtilityException("No condition template has been specified");
             return TUExecutionResult.error(this, e);
         }
 
@@ -192,6 +180,27 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
             details = String.format("Multiple condition %s resulted in a maximum of %d evaluations based on %s", getName(), allFiles.size(), conditionTemplate.getClass().getSimpleName());
         }
         return TUExecutionResult.value(this, allFiles).setDetails(details);
+    }
+
+    /**
+     * Creates a new condition instance copying from this current
+     * object, but setting the file it should perform against based
+     * on the input parameters
+     *
+     * @param transformedAppFolder the transformed application folder
+     * @param file the actual file to be performed against
+     * @return
+     */
+    public UtilityCondition newConditionInstance(File transformedAppFolder, File file) {
+        try {
+            UtilityCondition condition = (UtilityCondition) conditionTemplate.copy();
+            condition.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
+
+            return condition;
+        } catch (CloneNotSupportedException e) {
+            String exceptionMessage = String.format("Error when preparing condition instance for %s", getName());
+            throw new TransformationUtilityException(exceptionMessage, e);
+        }
     }
 
 }
