@@ -1,8 +1,11 @@
 package com.paypal.butterfly.cli;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.paypal.butterfly.cli.logging.LogFileDefiner;
 import com.paypal.butterfly.facade.ButterflyProperties;
 import joptsimple.OptionException;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -11,6 +14,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 /**
  * Butterfly CLI Spring Boot entry point
@@ -23,6 +27,8 @@ public class ButterflyCliApp extends ButterflyCliOption {
     private static File butterflyHome;
     private static String banner;
 
+    private static final Logger logger = LoggerFactory.getLogger(ButterflyCliApp.class);
+
     public static void main(String... arguments) throws IOException {
         setButterflyHome();
         setLogFileName(arguments);
@@ -30,9 +36,14 @@ public class ButterflyCliApp extends ButterflyCliOption {
 
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ButterflyCliApp.class, arguments);
         ButterflyCliRunner butterflyCliRunner = applicationContext.getBean(ButterflyCliRunner.class);
-        int status = butterflyCliRunner.run();
+        ButterflyCliRun run = butterflyCliRunner.run();
 
-        System.exit(status);
+        if (optionSet != null && optionSet.has(CLI_OPTION_RESULT_FILE)) {
+            run.setInputArguments(arguments);
+            writeResultFile(run);
+        }
+
+        System.exit(run.getExitStatus());
     }
 
     private static void setButterflyHome() {
@@ -76,6 +87,18 @@ public class ButterflyCliApp extends ButterflyCliOption {
 
     static String getBanner() {
         return banner;
+    }
+
+    private static void writeResultFile(ButterflyCliRun run) {
+        GsonBuilder gsonBuilder = new GsonBuilder().setPrettyPrinting();
+        Gson gson = gsonBuilder.create();
+        String runJsonString = gson.toJson(run);
+        File resultFile = (File) optionSet.valueOf(CLI_OPTION_RESULT_FILE);
+        try {
+            FileUtils.writeStringToFile(resultFile, runJsonString, Charset.defaultCharset());
+        } catch (IOException e) {
+            logger.error("Error when writing CLI result file", e);
+        }
     }
 
 }
