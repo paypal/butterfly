@@ -28,6 +28,7 @@ abstract class ButterflyCliOption {
     protected static final String CLI_OPTION_TEMPLATE_SHORTCUT = "s";
     protected static final String CLI_OPTION_AUTOMATIC_TEMPLATE_RESOLUTION = "a";
     protected static final String CLI_OPTION_UPGRADE_VERSION = "u";
+    protected static final String CLI_OPTION_RESULT_FILE = "r";
 
     protected static final OptionParser optionParser = new OptionParser();
     protected static OptionSet optionSet;
@@ -83,6 +84,12 @@ abstract class ButterflyCliOption {
 
         // Create Zip option
         optionParser.accepts(CLI_OPTION_CREATE_ZIP, "Outputs a zip file instead of a folder");
+
+        // Result file option
+        optionParser.accepts(CLI_OPTION_RESULT_FILE, "Creates a result file in JSON format containing details, not about the transformation itself, but about the CLI execution")
+                .withRequiredArg()
+                .ofType(File.class)
+                .describedAs("result file");
     }
 
     public static void setOptionSet(String... args) {

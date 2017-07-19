@@ -10,7 +10,7 @@ public class SampleTransformationTemplate extends TransformationTemplate {
 
     @Override
     public Class<? extends Extension> getExtensionClass() {
-        return ExtensionSampleOne.class;
+        return ExtensionSample.class;
     }
 
     @Override

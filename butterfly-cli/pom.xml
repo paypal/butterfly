@@ -29,6 +29,10 @@
             <version>5.0.2</version>
         </dependency>
         <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.paypal.butterfly</groupId>
             <artifactId>butterfly-facade</artifactId>
             <version>${project.version}</version>
