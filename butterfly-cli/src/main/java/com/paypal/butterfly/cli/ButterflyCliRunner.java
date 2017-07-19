@@ -6,13 +6,13 @@ import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.exception.ButterflyRuntimeException;
+import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.ButterflyProperties;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
-import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Butterfly CLI runner

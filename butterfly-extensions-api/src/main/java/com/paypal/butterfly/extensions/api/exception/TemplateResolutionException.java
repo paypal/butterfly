@@ -1,7 +1,5 @@
 package com.paypal.butterfly.extensions.api.exception;
 
-import com.paypal.butterfly.extensions.api.exception.ButterflyException;
-
 import java.io.File;
 
 /**

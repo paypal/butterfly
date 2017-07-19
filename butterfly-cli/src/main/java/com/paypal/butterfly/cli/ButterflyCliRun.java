@@ -1,6 +1,7 @@
 package com.paypal.butterfly.cli;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * This is just a POJO that represents an execution of
@@ -42,7 +43,7 @@ public class ButterflyCliRun {
     }
 
     public void setInputArguments(String[] inputArguments) {
-        this.inputArguments = inputArguments;
+        this.inputArguments = Arrays.copyOf(inputArguments, inputArguments.length);
     }
 
     public void setApplication(File application) {
@@ -83,5 +84,45 @@ public class ButterflyCliRun {
 
     public int getExitStatus() {
         return exitStatus;
+    }
+
+    public String getButterflyVersion() {
+        return butterflyVersion;
+    }
+
+    public String[] getInputArguments() {
+        return Arrays.copyOf(inputArguments, inputArguments.length);
+    }
+
+    public String getApplication() {
+        return application;
+    }
+
+    public String getTransformationTemplate() {
+        return transformationTemplate;
+    }
+
+    public String getTransformedApplication() {
+        return transformedApplication;
+    }
+
+    public String getLogFile() {
+        return logFile;
+    }
+
+    public String getManualInstructionsFile() {
+        return manualInstructionsFile;
+    }
+
+    public String getMetricsFile() {
+        return metricsFile;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public String getExceptionMessage() {
+        return exceptionMessage;
     }
 }
