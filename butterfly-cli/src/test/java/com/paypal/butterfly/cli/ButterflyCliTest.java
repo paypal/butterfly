@@ -71,16 +71,13 @@ public class ButterflyCliTest extends PowerMockTestCase {
         Assert.assertNotNull(butterflyCli);
         Assert.assertNotNull(facade);
 
-        List<Extension> extensions = new ArrayList<>();
-        when(facade.getRegisteredExtensions()).thenReturn(extensions);
-
         String[] arguments = {"-l", "-v"};
         butterflyCli.setOptionSet(arguments);
         
         int status = butterflyCli.run().getExitStatus();
 
         Assert.assertEquals(status, 0);
-        verify(facade, times(1)).getRegisteredExtensions();
+        verify(facade, times(1)).getRegisteredExtension();
     }
 
     /**
@@ -107,9 +104,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
      */
     @Test
     public void testTransformationWithShortcut() throws IOException, ButterflyException {
-        List<Extension> extensionsList = new ArrayList<>();
-        extensionsList.add(new SampleExtension());
-        Mockito.when(facade.getRegisteredExtensions()).thenReturn(extensionsList);
+        Mockito.when(facade.getRegisteredExtension()).thenReturn(new SampleExtension());
 
         String arguments[] = {"-i", sampleAppFolder.getAbsolutePath(), "-s", "2"};
         butterflyCli.setOptionSet(arguments);
@@ -128,9 +123,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
      */
     @Test
     public void testTransformationWithShortcutButIgnoringIt() throws IOException, ButterflyException {
-        List<Extension> extensionsList = new ArrayList<>();
-        extensionsList.add(new SampleExtension());
-        Mockito.when(facade.getRegisteredExtensions()).thenReturn(extensionsList);
+        Mockito.when(facade.getRegisteredExtension()).thenReturn(new SampleExtension());
 
         String arguments[] = {"-i", sampleAppFolder.getAbsolutePath(), "-t", "com.test.SampleTransformationTemplate", "-z", "-s", "2"};
         butterflyCli.setOptionSet(arguments);
@@ -138,7 +131,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
 
         Assert.assertEquals(status, 0);
         verify(facade, times(1)).transform(eq(sampleAppFolder), eq(com.test.SampleTransformationTemplate.class), eq(new Configuration(null, true)));
-        verify(facade, times(0)).getRegisteredExtensions();
+        verify(facade, times(0)).getRegisteredExtension();
     }
 
     /**

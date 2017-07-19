@@ -1,14 +1,14 @@
 package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.core.exception.InternalException;
-import com.paypal.butterfly.core.sample.ExtensionSampleOne;
+import com.paypal.butterfly.core.sample.ExtensionSample;
 import com.paypal.butterfly.core.sample.SampleTransformationTemplate;
 import com.paypal.butterfly.core.sample.SampleUpgradeStep;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.facade.Configuration;
-import com.paypal.butterfly.facade.exception.TemplateResolutionException;
+import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.modules.testng.PowerMockTestCase;
@@ -44,23 +44,22 @@ public class ButteflyFacadeImplTest extends PowerMockTestCase {
     private File applicationFolder = new File(this.getClass().getClassLoader().getResource("testTransformation").getFile());
 
     @Test
-    public void testGetRegisteredExtensions() {
-        when(extensionRegistry.getExtensions()).thenReturn(extensionRegistry_test.getExtensions());
-        List<Extension> list = butterflyFacadeImpl.getRegisteredExtensions();
-        Extension extension = list.get(0);
-        Assert.assertEquals(list.size(),2);
-        Assert.assertTrue(extension instanceof ExtensionSampleOne);
+    public void testGetRegisteredExtension() {
+        when(extensionRegistry.getExtension()).thenReturn(extensionRegistry_test.getExtension());
+        Extension extension = butterflyFacadeImpl.getRegisteredExtension();
+        Assert.assertNotNull(extension);
+        Assert.assertTrue(extension instanceof ExtensionSample);
     }
 
-    @Test
-    public void testAutomaticResolutionAsNull() throws TemplateResolutionException {
-      when(extensionRegistry.getExtensions()).thenReturn(extensionRegistry_test.getExtensions());
+    @Test(expectedExceptions = TemplateResolutionException.class, expectedExceptionsMessageRegExp = "No transformation template applies")
+    public void testAutomaticResolutionNoTemplate() throws TemplateResolutionException {
+      when(extensionRegistry.getExtension()).thenReturn(extensionRegistry_test.getExtension());
       Assert.assertEquals(butterflyFacadeImpl.automaticResolution(new File("testTransformation1")),null);
     }
 
     @Test
-    public void testAutomaticResolutionAsNotNull() throws TemplateResolutionException {
-      when(extensionRegistry.getExtensions()).thenReturn(extensionRegistry_test.getExtensions());
+    public void testAutomaticResolutionTemplate() throws TemplateResolutionException {
+        when(extensionRegistry.getExtension()).thenReturn(extensionRegistry_test.getExtension());
       Assert.assertEquals(butterflyFacadeImpl.automaticResolution(applicationFolder),SampleTransformationTemplate.class);
     }
 
@@ -91,7 +90,6 @@ public class ButteflyFacadeImplTest extends PowerMockTestCase {
         butterflyFacadeImpl.transform(applicationFolder, "com.paypal.butterfly.core.sample.SampleTransformationTemplate");
         verify(transformationEngine,times(1)).perform((TemplateTransformation) anyObject());
     }
-
 
     @Test(expectedExceptions = InternalException.class,
             expectedExceptionsMessageRegExp = "Template class class com.paypal.butterfly.core.sample." +

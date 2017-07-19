@@ -1,5 +1,6 @@
 package com.paypal.butterfly.extensions.api;
 
+import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.slf4j.Logger;
@@ -54,17 +55,16 @@ public abstract class Extension<E> {
 
     /**
      * Butterfly might be able to automatically identify the type of application
-     * and which transformation template to be applied to it. This automatic
-     * transformation template resolution is actually performed by each registered
-     * Extension class. Based on the application folder, and its content, each
-     * registered extension might decide which transformation template should be used
-     * to transform it. Only one or none can be chosen. If no one applies, null is
-     * returned.
+     * and its content, a transformation template might be chosen to transform it.
+     * and which transformation template to be applied to it. Based on the application folder,
+     * If no template applies to application content, a {@link TemplateResolutionException}
+     * is thrown explaining the reason why no template could be chosen.
      *
      * @param applicationFolder the folder where the code of the application to be transformed is
-     * @return the chosen transformation template class, or null, if no one applies
+     * @return the chosen transformation template
+     * @throws TemplateResolutionException if no template applies
      */
-    public abstract  Class<? extends TransformationTemplate> automaticResolution(File applicationFolder);
+    public abstract  Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException;
 
     /**
      * This is a convenience method in case the Extension subclass wants to implement its

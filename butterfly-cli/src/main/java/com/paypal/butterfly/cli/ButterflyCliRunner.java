@@ -12,7 +12,7 @@ import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.ButterflyProperties;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
-import com.paypal.butterfly.facade.exception.TemplateResolutionException;
+import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -127,8 +127,8 @@ public class ButterflyCliRunner extends ButterflyCliOption {
 
         // Setting extensions log level to DEBUG
         if(optionSet.has(CLI_OPTION_DEBUG)) {
-            List<Extension> registeredExtensions = butterflyFacade.getRegisteredExtensions();
-            for(Extension extension : registeredExtensions) {
+            Extension extension = butterflyFacade.getRegisteredExtension();
+            if (extension != null) {
                 logger.info("Setting DEBUG log level for extension {}", extension.getClass().getName());
                 logConfigurator.setLoggerLevel(extension.getClass().getPackage().getName(), Level.DEBUG);
             }
@@ -197,50 +197,41 @@ public class ButterflyCliRunner extends ButterflyCliOption {
     }
 
     private Class<? extends TransformationTemplate> getTemplateClass(int shortcut) {
-        List<Extension> registeredExtensions = butterflyFacade.getRegisteredExtensions();
+        Extension extension = butterflyFacade.getRegisteredExtension();
 
-        if(registeredExtensions.size() == 0) {
+        if(extension == null) {
             logger.info("There are no registered extensions");
             return null;
         }
 
-        Extension extension;
         int shortcutCount = 1;
-        for(Object extensionObj : registeredExtensions.toArray()) {
-            extension = (Extension) extensionObj;
-            for(Object templateObj : extension.getTemplateClasses().toArray()) {
-                if (shortcutCount == shortcut) {
-                    return (Class<? extends TransformationTemplate>) templateObj;
-                }
-                shortcutCount++;
+        for(Object templateObj : extension.getTemplateClasses().toArray()) {
+            if (shortcutCount == shortcut) {
+                return (Class<? extends TransformationTemplate>) templateObj;
             }
+            shortcutCount++;
         }
 
         return null;
     }
 
     private static void printExtensionsList(ButterflyFacade butterflyFacade) throws IllegalAccessException, InstantiationException {
-        List<Extension> registeredExtensions = butterflyFacade.getRegisteredExtensions();
-
-        if(registeredExtensions.size() == 0) {
+        Extension extension = butterflyFacade.getRegisteredExtension();
+        if(extension == null) {
             logger.info("There are no registered extensions");
             return;
         }
 
         logger.info("See registered extensions below (shortcut in parenthesis)");
 
-        Extension extension;
         Class<? extends TransformationTemplate> template;
         int shortcut = 1;
-        for(Object extensionObj : registeredExtensions.toArray()) {
-            extension = (Extension) extensionObj;
             System.out.printf("%n- %s: %s%n", extension, extension.getDescription());
             for(Object templateObj : extension.getTemplateClasses().toArray()) {
                 template = (Class<? extends TransformationTemplate>) templateObj;
                 System.out.printf("\t (%d) - [%s] \t %s \t %s%n", shortcut++, ExtensionTypeInitial.getFromClass(template), template.getName(), template.newInstance().getDescription());
 
             }
-        }
     }
 
     private void registerError(ButterflyCliRun run, String errorMessage) {

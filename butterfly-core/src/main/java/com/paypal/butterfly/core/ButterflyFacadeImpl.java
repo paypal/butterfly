@@ -9,7 +9,7 @@ import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
 import com.paypal.butterfly.facade.ButterflyProperties;
-import com.paypal.butterfly.facade.exception.TemplateResolutionException;
+import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Butterfly Façade implementation
@@ -48,30 +45,28 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public List<Extension> getRegisteredExtensions() {
-        return extensionRegistry.getExtensions();
+    public Extension getRegisteredExtension() {
+        return extensionRegistry.getExtension();
     }
 
     @Override
     public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException {
-        Set<Class<? extends TransformationTemplate>> resolvedTemplates = new HashSet<>();
-        Class<? extends TransformationTemplate> t = null;
-
-        for (Extension extension : extensionRegistry.getExtensions()) {
-            t = extension.automaticResolution(applicationFolder);
-            if (t != null) {
-                resolvedTemplates.add(t);
+        try {
+            Extension extension = extensionRegistry.getExtension();
+            if (extension == null) {
+                throw new TemplateResolutionException("No Butterfly extension has been registered");
             }
-        }
+            Class<? extends TransformationTemplate> chosenTemplate = extension.automaticResolution(applicationFolder);
 
-        if (resolvedTemplates.size() == 0) {
-            return null;
+            // Extension.automaticResolution must never return null. But still, just in case,
+            // checking here if it does, and then throwing the exception, honoring the Extension and ButterflyFacade contract
+            if (chosenTemplate == null) {
+                throw new TemplateResolutionException("No transformation template could be chosen");
+            }
+            return chosenTemplate;
+        } catch (IllegalStateException e) {
+            throw new TemplateResolutionException("Multiple Butterfly extensions have been registered", e);
         }
-        if (resolvedTemplates.size() == 1) {
-            return (Class<? extends TransformationTemplate>) resolvedTemplates.toArray()[0];
-        }
-
-        throw new TemplateResolutionException(resolvedTemplates);
     }
 
     @Override
