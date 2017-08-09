@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * This utility condition compares two files and returns true only
  * if their contents are identical.
- * </br>
+ * <br>
  * See {@link DoubleCondition}
  * to find out how to set the baseline and the comparison files
  *

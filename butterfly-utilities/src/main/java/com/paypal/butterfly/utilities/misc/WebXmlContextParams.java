@@ -23,7 +23,7 @@ import java.util.Map;
  * This utility parses a Java web deployment descriptor file (web.xml),
  * identifies all context parameters, and save them into a map, the key
  * being param-name and the value being param-value.
- * </br>
+ * <br>
  * <strong>Note: this utility does not validate the file's schema and content,
  * other than what it takes to identify all context-param elements at the document
  * element, and also their respective param-name and param-value elements</strong>

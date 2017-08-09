@@ -9,12 +9,12 @@ import java.io.Writer;
  * Operation to replace one, or more, lines from a text file.
  * The line to be replace is chosen either based on a regular
  * expression, or by the line number.
- * </br>
+ * <br>
  * If the regular expression
  * is set, only the first line found to match it will be replaced,
  * unless {@link #setFirstOnly(boolean)} is set to false, then
  * all lines that match it will be replaced.
- * </br>
+ * <br>
  * If a regular expression and a line number are both set,
  * the line number will take precedence, and the regular expression
  * will be ignored
@@ -34,12 +34,12 @@ public class ReplaceLine extends AbstractLineOperation<ReplaceLine> {
      * Operation to replace one, or more, lines from a text file.
      * The line to be replaced is chosen either based on a regular
      * expression, or by the line number.
-     * </br>
+     * <br>
      * If the regular expression
      * is set, only the first found to match it will be replaced,
      * unless {@link #setFirstOnly(boolean)} is set to false, then
      * all lines that match it will be replaced.
-     * </br>
+     * <br>
      * If a regular expression and a line number are both set,
      * the line number will take precedence, and the regular expression
      * will be ignored
@@ -53,12 +53,12 @@ public class ReplaceLine extends AbstractLineOperation<ReplaceLine> {
      * Operation to replace one, or more, lines from a text file.
      * The line to be replaced is chosen either based on a regular
      * expression, or by the line number.
-     * </br>
+     * <br>
      * If the regular expression
      * is set, only the first found to match it will be replaced,
      * unless {@link #setFirstOnly(boolean)} is set to false, then
      * all lines that match it will be replaced.
-     * </br>
+     * <br>
      * If a regular expression and a line number are both set,
      * the line number will take precedence, and the regular expression
      * will be ignored
@@ -81,12 +81,12 @@ public class ReplaceLine extends AbstractLineOperation<ReplaceLine> {
      * Operation to replace one, or more, lines from a text file.
      * The line to be replaced is chosen either based on a regular
      * expression, or by the line number.
-     * </br>
+     * <br>
      * If the regular expression
      * is set, only the first found to match it will be replaced,
      * unless {@link #setFirstOnly(boolean)} is set to false, then
      * all lines that match it will be replaced.
-     * </br>
+     * <br>
      * If a regular expression and a line number are both set,
      * the line number will take precedence, and the regular expression
      * will be ignored

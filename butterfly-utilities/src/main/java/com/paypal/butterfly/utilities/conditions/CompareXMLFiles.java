@@ -16,7 +16,7 @@ import java.io.IOException;
  * This utility condition compares two XML files and returns true only
  * if their contents are equal. Attribute orders, comments and white
  * spaces are ignored during the comparison.
- * </br>
+ * <br>
  * See {@link DoubleCondition}
  * to find out how to set the baseline and the comparison files
  *

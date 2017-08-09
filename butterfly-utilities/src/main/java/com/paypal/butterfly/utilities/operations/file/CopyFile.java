@@ -11,8 +11,8 @@ import java.io.IOException;
  * Operation to copy a file. The relative or absolute file is the
  * "from" file, while the "to" location is specified via {@link #setToRelative(String)}
  * or {@link #setToAbsolute(String)}
- * </br>
- * <strong>Note:<strong/> if you want to copy a set of specific files from one
+ * <br>
+ * <strong>Note:</strong> if you want to copy a set of specific files from one
  * location to another, then use a multiple transformation operation
  * (see {@code TransformationTemplate.addMultiple()}) with {@link CopyFile}. Now, if
  * you want to copy a directory and its content from one location to another, then

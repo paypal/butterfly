@@ -13,19 +13,18 @@ import java.util.List;
  * always recursive (includes sub-folders). If no file is
  * found, null is returned, unless {@link #failIfNotFound(boolean)} is set to true.
  * If multiple files are found, an error is returned.
- * </br>
+ * <br>
  * The root directory from where the search should take place
  * can be defined by {@link #relative(String)},
  * {@link #absolute(String)} or {@link #absolute(String, String)}.
  * If not set explicitly, then the search will happen from the root
  * of the transformed application, which is equivalent to setting
- * {@link #relative(String) to {@code "."}
- * </br>
+ * {@link #relative(String)} to {@code "."}
+ * <br>
  * If no file is found, a {@link com.paypal.butterfly.extensions.api.TUExecutionResult.Type#NULL}
  * is returned, unless {@link #failIfNotFound(boolean)} is set to true
- *
- * @see {@link FindFiles} for a better refined search
- * and to find multiple files
+ * <br>
+ * See {@link FindFiles} for a better refined search and to find multiple files.
  *
  * @author facarvalho
  */

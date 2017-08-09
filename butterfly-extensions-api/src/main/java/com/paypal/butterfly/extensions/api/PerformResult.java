@@ -80,8 +80,6 @@ public class PerformResult extends Result<TransformationUtility, PerformResult, 
      * This means the utility has not been executed because one or more
      * of its dependencies "failed". See {@link TransformationUtility#dependsOn(String...)}
      * for the dependency failure criteria definition
-     *
-     * @see {@link TransformationUtility#dependsOn(String...)}
      */
     public static PerformResult skippedDependency(TransformationUtility transformationUtility, String details) {
         PerformResult result = new PerformResult(transformationUtility, Type.SKIPPED_DEPENDENCY, details);

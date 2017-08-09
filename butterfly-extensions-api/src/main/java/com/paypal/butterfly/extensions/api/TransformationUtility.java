@@ -152,7 +152,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * If not set, a default name will be assigned at the
      * time it is added to a parent.
      *
-     * @param name
+     * @param name transformation utility instance name
      * @return this transformation utility
      */
     protected TU setName(String name) {
@@ -260,8 +260,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * </ol>
      * The slashes are replaced by OS specific separator char in runtime.
      * <br>
-     * <strong>The default value is ".". which means the root of the transformed application
-     </strong>
+     * <strong>The default value is ".". which means the root of the transformed application</strong>
      *
      * @param relativePath from the application root folder
      *  to the file or folder the transformation utility should be performed against
@@ -297,9 +296,10 @@ public abstract class TransformationUtility<TU> implements Cloneable {
 
     /**
      * Returns an absolute path to the file or folder the transformation
-     * utility is suppose to perform against
+     * utility is supposed to perform against
      *
      * @param transformedAppFolder
+     * @param transformationContext
      * @return an absolute path to the file or folder the transformation
      * utility is suppose to perform against
      */
@@ -475,14 +475,14 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * this case, this setter here can be used to set the absolute file location based
      * on such context attribute. Whenever this is set, the relative path attribute is
      * ignored.
+     * <br>
+     * See also {@link #getAbsoluteFile(File, TransformationContext)}, {@link #relative(String)}
+     * and {@link #getRelativePath()}
      *
      * @param contextAttributeName the name of the transformation context attribute whose
      *                             value will be set as the absolute file right before
      *                             execution
      * @return this transformation utility
-     * @see {@link #getAbsoluteFile(File, TransformationContext)}
-     * @see {@link #relative(String)}
-     * @see {@link #getRelativePath()}
      */
     public TU absolute(String contextAttributeName) {
         absoluteFileFromContextAttribute = contextAttributeName;
@@ -496,8 +496,9 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * the absolute file using a portion of the location (absolute) that is only known during
      * transformation time, plus also a second portion of the location (relative) that is
      * already known during definition time
-     *
-     * @see {@link #absolute(String, String)}
+     * <br>
+     * See also {@link #getAbsoluteFile(File, TransformationContext)}, {@link #relative(String)}
+     * and {@link #getRelativePath()}
      *
      * @param contextAttributeName the name of the transformation context attribute whose
      *                             value will be set as the absolute file right before
@@ -507,9 +508,6 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      *                               separator will be normalized, similar to what happens
      *                               in {@link #relative(String)}
      * @return this transformation utility
-     * @see {@link #getAbsoluteFile(File, TransformationContext)}
-     * @see {@link #relative(String)}
-     * @see {@link #getRelativePath()}
      */
     public TU absolute(String contextAttributeName, String additionalRelativePath) {
         absoluteFileFromContextAttribute = contextAttributeName;
@@ -615,7 +613,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * If not, just state a warning, aborts the operation execution only.
      * <strong>Notice that abortion here means interrupting the transformation.
      * It does not mean rolling back the changes that have might already been done
-     * by this transformation operation by the time it failed<strong/>
+     * by this transformation operation by the time it failed</strong>
      *
      * @param abort
      * @return
@@ -630,7 +628,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      * If not, just state a warning, aborts the operation execution only.
      * <strong>Notice that abortion here means interrupting the transformation.
      * It does not mean rolling back the changes that have might already been done
-     * by this transformation operation by the time it failed<strong/>
+     * by this transformation operation by the time it failed</strong>
      *
      * @param abortionMessage a message to be logged if a fail happens and transformation
      *                        has to be aborted
@@ -685,8 +683,13 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     }
 
     /**
-     * @see {@link #isSaveResult()}
-     * @param saveResult
+     * Sets whether or not the value produced by the transformation utility execution,
+     * and also its result object as a whole, should both be saved in the transformation
+     * context object. See also {@link #isSaveResult()}.
+     *
+     * @param saveResult if the value produced by the transformation utility execution,
+     * and also its result object as a whole, should both be saved in the transformation
+     * context object
      */
     protected TU setSaveResult(boolean saveResult) {
         this.saveResult = saveResult;
@@ -728,12 +731,14 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      *     <li>{@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type#ERROR} (for TOs only)</li>
      * </ol>
      * <br>
-     *
-     * @see {@link #checkDependencies(TransformationContext)}
-     * @see {@link Result#dependencyFailureCheck()}
-     * @see {@link TUExecutionResult#dependencyFailureCheck()}
-     * @see {@link TOExecutionResult#dependencyFailureCheck()}
-     * @see {@link PerformResult#dependencyFailureCheck()}
+     * See also:
+     * <ul>
+         * <li>{@link #checkDependencies(TransformationContext)}</li>
+         * <li>{@link Result#dependencyFailureCheck()}</li>
+         * <li>{@link TUExecutionResult#dependencyFailureCheck()}</li>
+         * <li>{@link TOExecutionResult#dependencyFailureCheck()}</li>
+         * <li>{@link PerformResult#dependencyFailureCheck()}</li>
+     * </ul>
      *
      * @param dependencies
      */
@@ -748,11 +753,10 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     }
 
     /**
-     * Returns dependencies
+     * Returns an unmodifiable list of names of utilities this utility instance depends on.
+     * See also {@link #dependsOn(String...)}.
      *
-     * @see {@link #dependsOn(String...)}
-     *
-     * @return
+     * @return an unmodifiable list of names of utilities this utility instance depends on
      */
     protected final List<String> getDependencies() {
         if (dependencies != null) {
@@ -832,7 +836,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      *     <li>The {@link UtilityCondition} object does not exist from a transformation template point of view. That means this method is totally different than adding a new {@link UtilityCondition} object by calling {@link TransformationTemplate#add(TransformationUtility)}.</li>
      *     <li>No TU can {@link #dependsOn(String...)} this {@link UtilityCondition} object.</li>
      * </ol>
-     * <strong>The actual {@link UtilityCondition} object is not the one used, but a clone of it<strong/>
+     * <strong>The actual {@link UtilityCondition} object is not the one used, but a clone of it</strong>
      *
      * @param utilityCondition the condition to be executed and evaluated right before this TU
      * @return this utility instance
@@ -903,7 +907,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     }
 
     /**
-     * Return true only if a file has been set explicitly either via {@link #relative(String)} or {@link #absolute(String).
+     * Return true only if a file has been set explicitly either via {@link #relative(String)} or {@link #absolute(String)}.
      * If set via {@link #relative(String)} it will only return true if set to anything other than "", which would mean the root of the application.
      *
      * @return
@@ -990,7 +994,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
 
     /**
      * Check if value is a blank String, if it is, then a
-     * {@link TransformationDefinitionException) is thown.
+     * {@link TransformationDefinitionException} is thrown.
      * <br>
      * This check is used for mandatory properties where value cannot be null
      * neither an empty string.

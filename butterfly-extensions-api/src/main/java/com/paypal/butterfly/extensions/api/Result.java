@@ -97,7 +97,7 @@ public abstract class Result<S, RT, T> {
      * This method is used to notify subclasses that
      * the result type might have to change due to the
      * addition of a warning.
-     * </br>
+     * <br>
      * Usually it should change from a successful type to a
      * warning type. In case the result is an error kind of
      * type, then it should remain as is.

@@ -14,12 +14,12 @@ import java.io.IOException;
  * folders are also copied to the destination location. If the destination directory
  * does not exist, it is created. But, if it does, then the content to be copied is
  * merged with the destination content, with the source taking precedence.
- * </br>
- * <strong>Note:<strong/> if all you want is to copy a set of specific files from one
+ * <br>
+ * <strong>Note:</strong> if all you want is to copy a set of specific files from one
  * location to another, then use a multiple transformation operation
  * (see {@code TransformationTemplate.addMultiple()}) with {@link CopyFile}
  *
- * @see {@link CopyFile}
+ * @see CopyFile
  *
  * @author facarvalho
  */

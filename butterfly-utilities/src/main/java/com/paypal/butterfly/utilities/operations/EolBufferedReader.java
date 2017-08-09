@@ -122,7 +122,7 @@ public class EolBufferedReader {
     }
 
     /**
-     * @see {@link Reader#close()}
+     * See {@link Reader#close()}.
      *
      * @throws IOException
      */
