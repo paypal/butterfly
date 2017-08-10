@@ -28,7 +28,7 @@ public abstract class Extension<E> {
     /**
      * Adds a new transformation template class to the set
      *
-     * @param templateClass
+     * @param templateClass the transformation template class to be added to the extension
      *
      * @return this extension
      */

@@ -1,5 +1,5 @@
 /**
- * Provides multiple transformation utility conditions, organized by type, each one having its own subpackage.
+ * Multiple transformation utility conditions, organized by type, each one having its own subpackage.
  * Transformation utility conditions are used to determine if a specific transformation utility
  * should be executed or not. Transformation utility condition is a special type of transformation utility that
  * always result in a boolean. The criteria to its condition can be based on a single file (when checking if a particular

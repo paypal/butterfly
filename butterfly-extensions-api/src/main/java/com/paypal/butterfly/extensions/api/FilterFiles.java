@@ -147,7 +147,7 @@ public class FilterFiles extends TransformationUtility<FilterFiles> {
      *
      * @param transformedAppFolder the transformed application folder
      * @param file the actual file to be performed against
-     * @return
+     * @return this transformation utility instance
      */
     public SingleCondition newConditionInstance(File transformedAppFolder, File file) {
         try {

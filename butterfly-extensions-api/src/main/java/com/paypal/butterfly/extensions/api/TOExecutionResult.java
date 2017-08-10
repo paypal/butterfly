@@ -44,6 +44,8 @@ public class TOExecutionResult extends ExecutionResult<TransformationOperation, 
     /**
      * Creates and returns a new {@link Type#NO_OP} result
      *
+     * @param transformationOperation the {@link TransformationOperation} object that produced this result
+     * @param details details about the result
      * @return the created result object
      */
     public static TOExecutionResult noOp(TransformationOperation transformationOperation, String details) {
@@ -53,6 +55,8 @@ public class TOExecutionResult extends ExecutionResult<TransformationOperation, 
     /**
      * Creates and returns a new {@link Type#SUCCESS} result
      *
+     * @param transformationOperation the {@link TransformationOperation} object that produced this result
+     * @param details details about the result
      * @return the created result object
      */
     public static TOExecutionResult success(TransformationOperation transformationOperation, String details) {
@@ -62,6 +66,7 @@ public class TOExecutionResult extends ExecutionResult<TransformationOperation, 
     /**
      * Creates and returns a new {@link Type#WARNING} result
      *
+     * @param transformationOperation the {@link TransformationOperation} object that produced this result
      * @return the created result object
      */
     public static TOExecutionResult warning(TransformationOperation transformationOperation) {
@@ -71,6 +76,8 @@ public class TOExecutionResult extends ExecutionResult<TransformationOperation, 
     /**
      * Creates and returns a new {@link Type#WARNING} result
      *
+     * @param transformationOperation the {@link TransformationOperation} object that produced this result
+     * @param details details about the result
      * @return the created result object
      */
     public static TOExecutionResult warning(TransformationOperation transformationOperation, String details) {
@@ -80,6 +87,8 @@ public class TOExecutionResult extends ExecutionResult<TransformationOperation, 
     /**
      * Creates and returns a new {@link Type#WARNING} result
      *
+     * @param transformationOperation the {@link TransformationOperation} object that produced this result
+     * @param exception the exception to be registered to the result object
      * @return the created result object
      */
     public static TOExecutionResult warning(TransformationOperation transformationOperation, Exception exception) {
@@ -89,6 +98,9 @@ public class TOExecutionResult extends ExecutionResult<TransformationOperation, 
     /**
      * Creates and returns a new {@link Type#WARNING} result
      *
+     * @param transformationOperation the {@link TransformationOperation} object that produced this result
+     * @param exception the exception to be registered to the result object
+     * @param details details about the result
      * @return the created result object
      */
     public static TOExecutionResult warning(TransformationOperation transformationOperation, Exception exception, String details) {
@@ -98,6 +110,8 @@ public class TOExecutionResult extends ExecutionResult<TransformationOperation, 
     /**
      * Creates and returns a new {@link Type#ERROR} result
      *
+     * @param transformationOperation the {@link TransformationOperation} object that produced this result
+     * @param exception the exception to be registered to the result object
      * @return the created result object
      */
     public static TOExecutionResult error(TransformationOperation transformationOperation, Exception exception) {
@@ -107,6 +121,9 @@ public class TOExecutionResult extends ExecutionResult<TransformationOperation, 
     /**
      * Creates and returns a new {@link Type#ERROR} result
      *
+     * @param transformationOperation the {@link TransformationOperation} object that produced this result
+     * @param exception the exception to be registered to the result object
+     * @param details details about the result
      * @return the created result object
      */
     public static TOExecutionResult error(TransformationOperation transformationOperation, Exception exception, String details) {

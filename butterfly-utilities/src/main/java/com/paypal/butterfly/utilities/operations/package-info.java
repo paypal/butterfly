@@ -1,5 +1,5 @@
 /**
- * Provides multiple transformation operations, organized by type, each one having its own subpackage.
+ * Multiple transformation operations, organized by type, each one having its own subpackage.
  * Transformation operation is a special type of transformation utility, which DOES apply modifications
  * to the project folder.
  * <br>
