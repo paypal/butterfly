@@ -11,10 +11,10 @@ import org.apache.maven.model.Model;
  * It allows changing anything but group id and artifact id.
  * It also allows removing specific configuration, letting them
  * to have default values, or be managed when applicable.
- * </br>
+ * <br>
  * If the dependency to be changed doesn't actually exist, it will result
  * in error
- * </br>
+ * <br>
  * Important: no check will be done here for possible reasons to break
  * the build, like the lack of version when the dependency is not managed
  *
@@ -48,10 +48,10 @@ public class PomChangeDependency extends AbstractArtifactPomOperation<PomChangeD
      * It allows changing anything but group id and artifact id.
      * It also allows removing specific configuration, letting them
      * to have default values, or be managed when applicable.
-     * </br>
+     * <br>
      * If the dependency to be changed doesn't actually exist, it will result
      * in error
-     * </br>
+     * <br>
      * Important: no check will be done here for possible reasons to break
      * the build, like the lack of version when the dependency is not managed
      *

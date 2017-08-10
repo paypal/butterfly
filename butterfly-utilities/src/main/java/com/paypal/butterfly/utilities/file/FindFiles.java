@@ -19,14 +19,14 @@ import java.util.Collection;
  * expression is set, then the search will be automatically recursive.
  * If no file path regular expression is set, then the search
  * is not recursive by default, but it may be set to as well.
- * </br>
+ * <br>
  * The root directory from where the search should take place
  * can be defined by {@link #relative(String)},
  * {@link #absolute(String)} or {@link #absolute(String, String)}.
  * If not set explicitly, then the search will happen from the root
  * of the transformed application, which is equivalent to setting
- * {@link #relative(String) to {@code "."}
- * </br>
+ * {@link #relative(String)} to {@code "."}
+ * <br>
  * If no files have been found, an empty list is returned and a
  * warning is stated in the result
  *
@@ -51,13 +51,13 @@ public class FindFiles extends TransformationUtility<FindFiles> {
      * necessarily recursive.
      * If no file path regular expression is set, then the search
      * is not recursive by default, but it may be set to as well.
-     * </br>
+     * <br>
      * The root directory from where the search should take place
      * can be defined by {@link #relative(String)},
      * {@link #absolute(String)} or {@link #absolute(String, String)}.
      * If not set explicitly, then the search will happen from the root
      * of the transformed application, which is equivalent to setting
-     * {@link #relative(String) to {@code "."}
+     * {@link #relative(String)} to {@code "."}
      *
      * @param nameRegex regular expression to be applied against file name during search
      * @param recursive if true, sub-folders will also be searched
@@ -75,13 +75,13 @@ public class FindFiles extends TransformationUtility<FindFiles> {
      * necessarily recursive.
      * If no file path regular expression is set, then the search
      * is not recursive by default, but it may be set to as well.
-     * </br>
+     * <br>
      * The root directory from where the search should take place
      * can be defined by {@link #relative(String)},
      * {@link #absolute(String)} or {@link #absolute(String, String)}.
      * If not set explicitly, then the search will happen from the root
      * of the transformed application, which is equivalent to setting
-     * {@link #relative(String) to {@code "."}
+     * {@link #relative(String)} to {@code "."}
      *
      * @param nameRegex regular expression to be applied against file name during search
      * @param pathRegex regular expression to be applied against file path during search
@@ -107,7 +107,7 @@ public class FindFiles extends TransformationUtility<FindFiles> {
 
     /**
      * Set regular expression to be used to match the file path
-     * during the search</br>
+     * during the search<br>
      * <strong>Important notes:</strong>
      * <ul>
      *      <li>Use forward slash as file separator. If the OS
@@ -138,7 +138,7 @@ public class FindFiles extends TransformationUtility<FindFiles> {
      * Set whether the search should be recursive or not.
      * If a file path regular expression has been set,
      * then this property will be automatically set to
-     * true.</br>
+     * true.<br>
      * <strong>Important: setting this to false automatically sets
      * the file path regular expression to null</strong>
      *

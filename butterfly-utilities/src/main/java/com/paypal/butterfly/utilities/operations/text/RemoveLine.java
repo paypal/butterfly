@@ -6,12 +6,12 @@ import java.io.Writer;
  * Operation to remove one, or more, lines from a text file.
  * The line to be removed is chosen either based on a regular
  * expression, or by the line number.
- * </br>
+ * <br>
  * If the regular expression
  * is set, only the first line found to match it will be removed,
  * unless {@link #setFirstOnly(boolean)} is set to false, then
  * all lines that match it will be removed.
- * </br>
+ * <br>
  * If a regular expression and a line number are both set,
  * the line number will take precedence, and the regular expression
  * will be ignored
@@ -28,12 +28,12 @@ public class RemoveLine extends AbstractLineOperation<RemoveLine> {
      * Operation to remove one, or more, lines from a text file.
      * The line to be removed is chosen either based on a regular
      * expression, or by the line number.
-     * </br>
+     * <br>
      * If the regular expression
      * is set, only the first found to match it will be removed,
      * unless {@link #setFirstOnly(boolean)} is set to false, then
      * all lines that match it will be removed.
-     * </br>
+     * <br>
      * If a regular expression and a line number are both set,
      * the line number will take precedence, and the regular expression
      * will be ignored
@@ -47,12 +47,12 @@ public class RemoveLine extends AbstractLineOperation<RemoveLine> {
      * Operation to remove one, or more, lines from a text file.
      * The line to be removed is chosen either based on a regular
      * expression, or by the line number.
-     * </br>
+     * <br>
      * If the regular expression
      * is set, only the first found to match it will be removed,
      * unless {@link #setFirstOnly(boolean)} is set to false, then
      * all lines that match it will be removed.
-     * </br>
+     * <br>
      * If a regular expression and a line number are both set,
      * the line number will take precedence, and the regular expression
      * will be ignored
@@ -68,12 +68,12 @@ public class RemoveLine extends AbstractLineOperation<RemoveLine> {
      * Operation to remove one, or more, lines from a text file.
      * The line to be removed is chosen either based on a regular
      * expression, or by the line number.
-     * </br>
+     * <br>
      * If the regular expression
      * is set, only the first found to match it will be removed,
      * unless {@link #setFirstOnly(boolean)} is set to false, then
      * all lines that match it will be removed.
-     * </br>
+     * <br>
      * If a regular expression and a line number are both set,
      * the line number will take precedence, and the regular expression
      * will be ignored

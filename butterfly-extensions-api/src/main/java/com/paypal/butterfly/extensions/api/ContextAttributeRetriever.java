@@ -9,7 +9,7 @@ import java.io.File;
  * fetch transformation context attributes, which
  * are always set during transformation time, post
  * transformation time.
- * </br>
+ * <br>
  * An example of usage of this feature would be implementing
  * {@link TransformationTemplate#getApplicationName()}. The
  * application name mostly will only be known after the transformation

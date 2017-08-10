@@ -17,7 +17,7 @@ import java.util.Set;
  * evaluation condition to result in true. For conditions
  * based on comparing two files see {@link DoubleCondition}.
  * For conditions based on evaluating a single file see {@link MultipleConditions}
- * </br>
+ * <br>
  * Note 1: if an evaluation against a specific file fails for any reason, then the
  * overall evaluation will be interrupted and result also in a failure.
  * Note 2: if the utility condition object (to be executed against the specified files)
@@ -88,7 +88,7 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
      * Sets one or more transformation context attributes that hold list of Files
      * which the condition should perform against.
      * If more than one attribute is specified, all list of files will be
-     * combined into a single one.</br>
+     * combined into a single one.<br>
      *
      * @param filesAttributes one or more transformation context attributes that hold list
      *                   of Files which the condition should perform
