@@ -40,7 +40,7 @@ public class XmlElement extends TransformationUtility<XmlElement> {
      * Result in the value of an element in a XML file.
      * See also {@link #setXmlElement(String)}.
      *
-     * @param xmlElement
+     * @param xmlElement the XML element
      */
     public XmlElement(String xmlElement) {
         setXmlElement(xmlElement);
@@ -52,7 +52,7 @@ public class XmlElement extends TransformationUtility<XmlElement> {
      * here should be set based on a path containing all its
      * parent elements separated by '.'. See the example bellow.
      * <br>
-     * To retrieve the value of the child' name set {@code xmlElement}
+     * To retrieve the value of the child name, set {@code xmlElement}
      * to {@code person.child.name}.
      * <br>
      * {@code

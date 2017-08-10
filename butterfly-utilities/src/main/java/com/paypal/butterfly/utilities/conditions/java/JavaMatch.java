@@ -54,24 +54,23 @@ public class JavaMatch extends SingleCondition<JavaMatch> {
     }
 
     /**
-     * Returns the set of conditions to be used to
+     * Returns the set of Java conditions to be used to
      * evaluate the specified class. The returned object
      * is not a copy and it is modifiable.
      *
-     * @return the set of conditions to be used to
-     * evaluate the specified class
+     * @return the set of Java conditions to be used to evaluate the specified class
      */
     public Set<JavaCondition> getConditions() {
         return conditions;
     }
 
     /**
-     * Sets the set of conditions to be used to
+     * Sets the set of Java conditions to be used to
      * evaluate the specified class. Any conditions
      * added previously will be discarded.
      *
-     * @return the set of conditions to be used to
-     * evaluate the specified class
+     * @param conditions the set of Java conditions to be used to evaluate the specified class
+     * @return this transformation utility condition instance
      */
     public JavaMatch setConditions(Set<JavaCondition> conditions) {
         checkForNull("conditions", conditions);
@@ -80,10 +79,10 @@ public class JavaMatch extends SingleCondition<JavaMatch> {
     }
 
     /**
-     * Add a new condition to be evaluated against the
-     * Java class.
+     * Add a new Java condition to be evaluated against the Java class.
      *
-     * @param condition
+     * @param condition a Java condition to be used to evaluate the specified class
+     * @return this transformation utility condition instance
      */
     public JavaMatch addCondition(JavaCondition condition) {
         checkForNull("condition", condition);

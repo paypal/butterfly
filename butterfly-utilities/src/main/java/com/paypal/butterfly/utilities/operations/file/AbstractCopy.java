@@ -55,6 +55,7 @@ abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
      * By setting this relative location, the absolute location attribute name is automatically set to {@code null}
      *
      * @param toRelative relative location where to copy the file to
+     * @return this transformation operation instance
      */
     public TO setToRelative(String toRelative) {
         checkForBlankString("Relative Location", toRelative);

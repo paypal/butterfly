@@ -3,8 +3,7 @@ package com.paypal.butterfly.utilities.maven;
 import java.util.regex.Pattern;
 
 /**
- * GenericErrorOutputHandler read lines from the maven output,
- * and creates a string indicating the validation failures.
+ * Read lines from the maven output, and creates a String indicating the validation failures.
  *
  * @author mcrockett
  */
@@ -34,7 +33,7 @@ public class GenericErrorOutputHandler implements MavenInvocationOutputHandler<G
     /**
      * Removes the log level and trims the string.
      *
-     * @param line
+     * @param line the line to be processed
      * @return a String with log level removed and trimmed.
      */
     public static String removeLogLevel(String line) {
