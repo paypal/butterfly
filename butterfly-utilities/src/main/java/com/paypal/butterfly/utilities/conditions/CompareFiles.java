@@ -8,11 +8,9 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * This utility condition compares two files and returns true only
- * if their contents are identical.
+ * Compares two files and returns true only if their contents are identical.
  * <br>
- * See {@link DoubleCondition}
- * to find out how to set the baseline and the comparison files
+ * See {@link com.paypal.butterfly.extensions.api.DoubleCondition} to find out how to set the baseline and the comparison files
  *
  * @author facarvalho
  */

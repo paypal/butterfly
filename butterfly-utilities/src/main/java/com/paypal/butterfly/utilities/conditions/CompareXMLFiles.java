@@ -13,8 +13,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * This utility condition compares two XML files and returns true only
- * if their contents are equal. Attribute orders, comments and white
+ * Compares two XML files and returns true only
+if their contents are equal. Attribute orders, comments and white
  * spaces are ignored during the comparison.
  * <br>
  * See {@link DoubleCondition}

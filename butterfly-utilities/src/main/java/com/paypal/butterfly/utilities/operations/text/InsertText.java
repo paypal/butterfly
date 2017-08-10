@@ -81,6 +81,8 @@ public class InsertText extends TransformationOperation<InsertText> {
      * unless another insertion method is specified
      * <br>
      * See {@link #setInsertionMode(InsertionMode)}
+     *
+     * @param textFileUrl the URL to the text to be inserted
      */
     public InsertText(URL textFileUrl) {
         setTextFileUrl(textFileUrl);
@@ -92,6 +94,9 @@ public class InsertText extends TransformationOperation<InsertText> {
      * <br>
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#LINE_NUMBER}
+     *
+     * @param textFileUrl the URL to the text to be inserted
+     * @param lineNumber the line number the text should be added at
      */
     public InsertText(URL textFileUrl, Integer lineNumber) {
         setTextFileUrl(textFileUrl);
@@ -106,6 +111,9 @@ public class InsertText extends TransformationOperation<InsertText> {
      * <br>
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#REGEX_FIRST}
+     *
+     * @param textFileUrl the URL to the text to be inserted
+     * @param regex the regular expression to find insertion points
      */
     public InsertText(URL textFileUrl, String regex) {
         setTextFileUrl(textFileUrl);
@@ -140,6 +148,7 @@ public class InsertText extends TransformationOperation<InsertText> {
     /**
      * Sets the line number the text should be added at.
      * Line number for first line is 1.
+     *
      * @param lineNumber the line number the text should be added at
      * @return this transformation operation instance
      */

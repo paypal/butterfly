@@ -74,6 +74,8 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * unless another insertion method is specified
      *
      * See {@link #setInsertionMode(InsertionMode)}.
+     *
+     * @param newLine the new line to be inserted
      */
     public InsertLine(String newLine) {
         setNewLine(newLine);
@@ -85,6 +87,9 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * <br>
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#LINE_NUMBER}
+     *
+     * @param newLine the new line to be inserted
+     * @param lineNumber the line number where the new line will be inserted
      */
     public InsertLine(String newLine, Integer lineNumber) {
         setNewLine(newLine);
@@ -99,6 +104,10 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * <br>
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#REGEX_FIRST}
+     *
+     * @param newLine the new line to be inserted
+     * @param regex the regular expression used to determine where
+     *              the new line should be inserted
      */
     public InsertLine(String newLine, String regex) {
         setNewLine(newLine);

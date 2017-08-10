@@ -128,7 +128,7 @@ public abstract class AbstractLineOperation<T extends AbstractLineOperation> ext
      * will be ignored
      *
      * @param regex the regular expression used to find the line(s) to be manipulated
-     * @return
+     * @return this transformation operation instance
      */
     public T setRegex(String regex) {
         checkForBlankString("Regex", regex);
@@ -141,8 +141,9 @@ public abstract class AbstractLineOperation<T extends AbstractLineOperation> ext
      * either the first line found to match it will be manipulated, or all
      * that match, depending on this field
      *
-     * @param firstOnly
-     * @return
+     * @param firstOnly if true, only the first line found to match the regular expression
+     *                  will be manipulated
+     * @return this transformation operation instance
      */
     public T setFirstOnly(boolean firstOnly) {
         this.firstOnly = firstOnly;
@@ -156,7 +157,7 @@ public abstract class AbstractLineOperation<T extends AbstractLineOperation> ext
      * no line will be manipulated.
      *
      * @param lineNumber the number of the line to be manipulated
-     * @return
+     * @return this transformation operation instance
      */
     public T setLineNumber(Integer lineNumber) {
         checkForNull("Line Number", lineNumber);
@@ -309,7 +310,7 @@ public abstract class AbstractLineOperation<T extends AbstractLineOperation> ext
      * @param lineToBeManipulated if it has an EOL character, it will be in the beginning, not in the end
      * @param writer used to manipulate the file to be changed
      * @return true only if anything has been written in {@code writer}
-     * @throws IOException
+     * @throws IOException if an IO operation fails
      */
     protected abstract boolean manipulateLine(String lineToBeManipulated, Writer writer) throws IOException;
 

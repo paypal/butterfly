@@ -113,9 +113,11 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     /**
      * If this is set to true, then in case the maven goal command
      * does not succeed, then a warn result type will be returned,
-     * instead of error. The default value is error
+     * instead of error. The default value is error.
      *
-     * @param warnOnError
+     * @param warnOnError whether, in case the maven goal command
+     * does not succeed, a warn result type should be returned,
+     * instead of error
      * @return this utility instance
      */
     public MavenGoal setWarnOnError(boolean warnOnError) {

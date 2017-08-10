@@ -152,7 +152,8 @@ public class ModelTree {
      * List of pom.xml files that, directly or not, are children of the root artifact
      * set in the artifacts tree
      *
-     * @return
+     * @return a list of pom.xml files that, directly or not, are children of the root artifact
+     * set in the artifacts tree
      */
     public List<File> getPomFilesInTree() {
         return pomFilesInTree;

@@ -46,6 +46,7 @@ public abstract class JavaCondition<T extends JavaCondition> {
      * value is false.
      *
      * @param negate the result should be negated or not
+     * @return this transformation utility condition instance
      */
     public T setNegate(boolean negate) {
         this.negate = negate;

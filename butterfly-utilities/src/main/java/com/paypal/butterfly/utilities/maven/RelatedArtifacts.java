@@ -31,6 +31,12 @@ public class RelatedArtifacts extends TransformationUtility<RelatedArtifacts> {
      * This transformation utility, given a list of pom.xml {@link File} objects and
      * a parent artifact, results in a sub-list of those pom.xml files containing only the ones
      * that are, directly or indirectly, a child of the specified parent artifact.
+     *
+     * @param parentGroupId parent group id
+     * @param parentArtifactId parent artifact id
+     * @param parentVersion parent version
+     * @param pomFilesAttribute the name of the transformation context attribute that contains
+     *                          a list of pom.xml files to be analyzed
      */
     public RelatedArtifacts(String parentGroupId, String parentArtifactId, String parentVersion, String pomFilesAttribute) {
         setParentGroupId(parentGroupId);

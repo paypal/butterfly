@@ -12,10 +12,11 @@ import java.io.*;
 public abstract class EolHelper {
 
     /**
-     * Finds out what EOL character(s) are used by the specific text file.
+     * Finds out what EOL character(s) are used by the specified text file.
      * If the specified file has no EOL characters null will be returned, and if more than
      * one type of EOL character(s) are used, the very first EOL occurrence will be returned.
      *
+     * @param textFile file to be analyzed based on its EOL character(s)
      * @return  the very first occurrence of EOL used in the specified text file, or null,
      *          if none is found
      * @throws IOException if any IO exception happens when opening and reading the text file
@@ -39,10 +40,11 @@ public abstract class EolHelper {
     }
 
     /**
-     * Finds out what EOL character(s) are used by the specific text file.
+     * Finds out what EOL character(s) are used by the specified text file.
      * If the specified file has no EOL characters the default OS EOL character(s) will be returned, and if more than
      * one type of EOL character(s) are used, the very first EOL occurrence will be returned.
      *
+     * @param textFile file to be analyzed based on its EOL character(s)
      * @return  the very first occurrence of EOL used in the specified text file, or the default OS EOL character(s),
      *          if none is found
      * @throws IOException if any IO exception happens when opening and reading the text file
