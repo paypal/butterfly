@@ -60,6 +60,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.4</version>
+                <configuration>
+                    <stylesheetfile>stylesheet.css</stylesheetfile>
+                    <excludePackageNames>com.paypal.butterfly.extensions.api.metrics</excludePackageNames>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -71,6 +75,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.4</version>
+                <configuration>
+                    <stylesheetfile>stylesheet.css</stylesheetfile>
+                    <excludePackageNames>com.paypal.butterfly.extensions.api.metrics</excludePackageNames>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>

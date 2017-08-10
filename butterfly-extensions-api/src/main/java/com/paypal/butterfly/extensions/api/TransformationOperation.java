@@ -2,7 +2,7 @@ package com.paypal.butterfly.extensions.api;
 
 
 /**
- * A transformation operation
+ * A transformation operation.
  *<br>
  * The default value for {@link #relative(String)} is {@code null}, which means
  * it must be set explicitly, unless an absolute path is set via {@link #absolute(String)}

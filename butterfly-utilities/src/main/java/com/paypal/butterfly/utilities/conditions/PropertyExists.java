@@ -13,7 +13,7 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 /**
- * Condition to check if a particular property exists in a property file.
+ * Check if a particular property exists in a property file.
  * The property name can be defined explicitly, via {@link #setPropertyName(String)},
  * or as a regular expression, via {@link #setPropertyNameRegex(String)}.
  *

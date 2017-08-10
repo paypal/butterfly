@@ -98,4 +98,32 @@
         </dependency>
     </dependencies>
 
+    <!-- Javadocs generated via mvn javadoc -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <configuration>
+                    <stylesheetfile>stylesheet.css</stylesheetfile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- Javadocs generated via mvn site, a link to the javadocs will be added in the Project Reports menu -->
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <configuration>
+                    <stylesheetfile>stylesheet.css</stylesheetfile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
 </project>
