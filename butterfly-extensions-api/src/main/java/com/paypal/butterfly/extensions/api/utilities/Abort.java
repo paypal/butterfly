@@ -46,6 +46,7 @@ public class Abort extends TransformationUtility<Abort> {
      * Set the reason to abort the transformation
      *
      * @param abortionMessage the reason to abort the transformation
+     * @return this transformation utility instance
      */
     public Abort setAbortionMessage(String abortionMessage) {
         abortOnFailure(true, abortionMessage);

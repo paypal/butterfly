@@ -106,6 +106,7 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
      *
      * @param conditionTemplate the utility condition template used to create conditions
      *                          to be evaluated against the list of files
+     * @return this utility condition instance
      */
     public MultipleConditions setConditionTemplate(UtilityCondition conditionTemplate) {
         checkForNull("conditionTemplate", conditionTemplate);
@@ -192,7 +193,7 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
      *
      * @param transformedAppFolder the transformed application folder
      * @param file the actual file to be performed against
-     * @return
+     * @return the new utility condition created based on this instance
      */
     public UtilityCondition newConditionInstance(File transformedAppFolder, File file) {
         try {

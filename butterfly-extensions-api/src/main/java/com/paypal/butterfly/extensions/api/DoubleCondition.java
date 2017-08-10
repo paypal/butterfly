@@ -92,7 +92,7 @@ public abstract class DoubleCondition<DUC> extends UtilityCondition<DUC> {
      *
      * @param baselineFile the baseline file used for comparison
      * @param comparisonFile the file to be compared against the baseline file
-     * @return
+     * @return this utility condition instance
      */
     protected abstract boolean compare(File baselineFile, File comparisonFile);
 

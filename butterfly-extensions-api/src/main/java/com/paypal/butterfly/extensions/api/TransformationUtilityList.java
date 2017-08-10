@@ -44,13 +44,14 @@ public interface TransformationUtilityList extends TransformationUtilityParent {
      * @param attributes one or more transformation context attributes that hold list
      *                   of Files which the transformation operations should perform
      *                   against
+     * @return the name of the special transformation utility that performs multiple transformation operations
      */
     String addMultiple(TransformationOperation templateOperation, String... attributes);
 
     /**
      * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list
      *
-     * @param logMessage
+     * @param logMessage the message to be logged
      */
     void log(String logMessage);
 
@@ -58,25 +59,33 @@ public interface TransformationUtilityList extends TransformationUtilityParent {
     /**
      * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list
      *
-     * @param logLevel
-     * @param logMessage
+     * @param logLevel the log level
+     * @param logMessage the message to be logged
      */
     void log(Level logLevel, String logMessage);
 
     /**
-     * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list
+     * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list.
+     * The log messages may contain placeholders to be replaced by transformation context
+     * attribute values. Use {@code {}} as placeholder marker.
      *
-     * @param logMessage
-     * @param attributeNames
+     * @param logMessage the message to be logged, containing {@code {}} placeholders to be replaced by
+     *                   transformation context attribute values
+     * @param attributeNames an array of names of transformation context attributes, whose values
+     *                       are going to be used in the log message
      */
     void log(String logMessage, String... attributeNames);
 
     /**
-     * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list
+     * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list.
+     * The log messages may contain placeholders to be replaced by transformation context
+     * attribute values. Use {@code {}} as placeholder marker.
      *
-     * @param logLevel
-     * @param logMessage
-     * @param attributeNames
+     * @param logLevel the log level
+     * @param logMessage the message to be logged, containing {@code {}} placeholders to be replaced by
+     *                   transformation context attribute values
+     * @param attributeNames an array of names of transformation context attributes, whose values
+     *                       are going to be used in the log message
      */
     void log(Level logLevel, String logMessage, String... attributeNames);
 
