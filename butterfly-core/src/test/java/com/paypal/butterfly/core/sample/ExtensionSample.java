@@ -2,10 +2,11 @@ package com.paypal.butterfly.core.sample;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 
 import java.io.File;
 
-public class ExtensionSampleOne extends Extension {
+public class ExtensionSample extends Extension {
 
     @Override
     public String getDescription() {
@@ -13,10 +14,9 @@ public class ExtensionSampleOne extends Extension {
     }
 
     @Override
-    public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) {
-
+    public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException {
         if(applicationFolder.getAbsolutePath().contains("testTransformation1")) {
-            return null;
+            throw new TemplateResolutionException("No transformation template applies");
         } else {
             return SampleTransformationTemplate.class;
         }

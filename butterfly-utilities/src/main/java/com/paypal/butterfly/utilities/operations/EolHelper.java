@@ -12,10 +12,11 @@ import java.io.*;
 public abstract class EolHelper {
 
     /**
-     * Finds out what EOL character(s) are used by the specific text file.
+     * Finds out what EOL character(s) are used by the specified text file.
      * If the specified file has no EOL characters null will be returned, and if more than
      * one type of EOL character(s) are used, the very first EOL occurrence will be returned.
      *
+     * @param textFile file to be analyzed based on its EOL character(s)
      * @return  the very first occurrence of EOL used in the specified text file, or null,
      *          if none is found
      * @throws IOException if any IO exception happens when opening and reading the text file
@@ -39,10 +40,11 @@ public abstract class EolHelper {
     }
 
     /**
-     * Finds out what EOL character(s) are used by the specific text file.
+     * Finds out what EOL character(s) are used by the specified text file.
      * If the specified file has no EOL characters the default OS EOL character(s) will be returned, and if more than
      * one type of EOL character(s) are used, the very first EOL occurrence will be returned.
      *
+     * @param textFile file to be analyzed based on its EOL character(s)
      * @return  the very first occurrence of EOL used in the specified text file, or the default OS EOL character(s),
      *          if none is found
      * @throws IOException if any IO exception happens when opening and reading the text file
@@ -61,7 +63,7 @@ public abstract class EolHelper {
      * @param line the String whose EOL characters should be removed from
      * @return a new String like the provided one but without any EOL character
      *
-     * @throws {@link IllegalArgumentException} if {@code line} is null
+     * @throws IllegalArgumentException if {@code line} is null
      */
     public static String removeEol(String line) {
         if (line == null) {
@@ -78,7 +80,7 @@ public abstract class EolHelper {
      *
      * @param line the text line to be evaluated
      * @return true only if {@code line} starts with any end-of-line (EOL) character
-     * @throws {@link IllegalArgumentException} if {@code line} is null
+     * @throws IllegalArgumentException if {@code line} is null
      */
     public static boolean startsWithEol(String line) {
         if (line == null) {
@@ -95,7 +97,7 @@ public abstract class EolHelper {
      *
      * @param line the text line to be evaluated
      * @return true only if {@code line} ends with any end-of-line (EOL) character
-     * @throws {@link IllegalArgumentException} if {@code line} is null
+     * @throws IllegalArgumentException if {@code line} is null
      */
     public static boolean endsWithEol(String line) {
         if (line == null) {
@@ -113,7 +115,7 @@ public abstract class EolHelper {
      *
      * @param line the text line to be evaluated
      * @return end-of-line (EOL) character(s) present in the beginning of this line of text
-     * @throws {@link IllegalArgumentException} if {@code line} is null
+     * @throws IllegalArgumentException if {@code line} is null
      */
     public static String getStartEol(String line) {
         if (line == null) {
@@ -134,7 +136,7 @@ public abstract class EolHelper {
      *
      * @param line the text line to be evaluated
      * @return end-of-line (EOL) character(s) present in the end of this line of text
-     * @throws {@link IllegalArgumentException} if {@code line} is null
+     * @throws IllegalArgumentException if {@code line} is null
      */
     public static String getEndEol(String line) {
         if (line == null) {

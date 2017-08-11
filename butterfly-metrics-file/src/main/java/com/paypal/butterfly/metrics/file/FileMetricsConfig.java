@@ -33,6 +33,10 @@ public class FileMetricsConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(FileMetricsConfig.class);
 
+    private static final int DEFAULT_NAME_METRICS_ID_FORMAT = 10;
+    private static final int DEFAULT_NAME_TRANSF_FOLDER_FORMAT = 20;
+    private static final int DEFAULT_NAME_FORMAT = DEFAULT_NAME_TRANSF_FOLDER_FORMAT;
+
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public TransformationMetricsListener fileMetrics() {
@@ -58,8 +62,7 @@ public class FileMetricsConfig {
                 // First metric, used here to get some meta-data to be used
                 // to name the metrics file
                 TransformationMetrics fm = metricsList.get(0);
-
-                String fileName = String.format("%s_%s.json", fm.getApplicationName(), fm.getTimestamp());
+                String fileName = getFileName(fm);
                 File file = new File("metrics", fileName);
 
                 try {
@@ -71,6 +74,24 @@ public class FileMetricsConfig {
                         logger.warn("It was not possible to write metrics to file", e);
                     }
                 }
+            }
+
+            private String getFileName(TransformationMetrics fm) {
+                String fileName;
+
+                switch (DEFAULT_NAME_FORMAT) {
+                    case DEFAULT_NAME_TRANSF_FOLDER_FORMAT:
+                        String transformedAppPath = fm.getTransformedApplicationLocation();
+                        String name = new File(transformedAppPath).getName();
+                        fileName = String.format("%s.json", name);
+                        break;
+                    case DEFAULT_NAME_METRICS_ID_FORMAT:
+                    default:
+                        fileName = String.format("%s_%s.json", fm.getApplicationName(), fm.getTimestamp());
+                        break;
+                }
+
+                return fileName;
             }
 
             private String objectToJson(List<TransformationMetrics> metricsList) {

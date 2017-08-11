@@ -24,8 +24,9 @@ import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
  *     <li>InsertionMode.REGEX_FIRST: Right after only the first line to match the specified regular expression</li>
  *     <li>InsertionMode.REGEX_ALL: Right after any line to match the specified regular expression</li>
  * </ol>
- * @see {@link #setInsertionMode(InsertionMode)}
- * @see {@link InsertionMode}
+ * See {@link #setInsertionMode(InsertionMode)}.
+
+ * @see InsertionMode
  * @author facarvalho
  */
 public class InsertLine extends TransformationOperation<InsertLine> {
@@ -59,8 +60,9 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      *     <li>InsertionMode.REGEX_FIRST: Right after only the first line to match the specified regular expression</li>
      *     <li>InsertionMode.REGEX_ALL: Right after any line to match the specified regular expression</li>
      * </ol>
-     * @see {@link #setInsertionMode(InsertionMode)}
-     * @see {@link InsertionMode}
+     * See {@link #setInsertionMode(InsertionMode)}.
+     *
+     * @see InsertionMode
      * @author facarvalho
      */
     public InsertLine() {
@@ -71,7 +73,9 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * The new line will be inserted at the end of the file,
      * unless another insertion method is specified
      *
-     * @see {@link #setInsertionMode(InsertionMode)}
+     * See {@link #setInsertionMode(InsertionMode)}.
+     *
+     * @param newLine the new line to be inserted
      */
     public InsertLine(String newLine) {
         setNewLine(newLine);
@@ -80,9 +84,12 @@ public class InsertLine extends TransformationOperation<InsertLine> {
     /**
      * Operation to insert a new line into a text file.
      * The new line will be inserted at the specified line number
-     * </br>
+     * <br>
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#LINE_NUMBER}
+     *
+     * @param newLine the new line to be inserted
+     * @param lineNumber the line number where the new line will be inserted
      */
     public InsertLine(String newLine, Integer lineNumber) {
         setNewLine(newLine);
@@ -94,9 +101,13 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * Operation to insert a new line into a text file.
      * The new line will be inserted right after only the first
      * line to match the specified regular expression
-     * </br>
+     * <br>
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#REGEX_FIRST}
+     *
+     * @param newLine the new line to be inserted
+     * @param regex the regular expression used to determine where
+     *              the new line should be inserted
      */
     public InsertLine(String newLine, String regex) {
         setNewLine(newLine);
@@ -151,10 +162,11 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * Sets the regular expression to find insertion points
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#REGEX_FIRST}, unless already set
-     * to {@link InsertionMode#REGEX_ALL}
+     * to {@link InsertionMode#REGEX_ALL}.
+     * <br>
+     * See {@link #setInsertionMode(InsertionMode)}.
      *
-     * @see {@link InsertionMode}
-     * @see {@link #setInsertionMode(InsertionMode)}
+     * @see InsertionMode
      * @param regex the regular expression to find insertion points
      * @return this transformation operation instance
      */

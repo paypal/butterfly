@@ -27,9 +27,9 @@ public class ExtensionRegistry {
     private List<Extension> extensions;
 
     private void setExtensions() {
-        logger.info("Searching for extensions");
+        logger.debug("Searching for extensions");
         Set<Class<? extends Extension>> extensionClasses = findExtensionClasses();
-        logger.info("Number of extensions found: " + extensionClasses.size());
+        logger.debug("Number of extensions found: " + extensionClasses.size());
 
         if(extensionClasses.size() == 0) {
             extensions = Collections.emptyList();
@@ -103,16 +103,38 @@ public class ExtensionRegistry {
         this.extensions = Collections.unmodifiableList(_extensions);
     }
 
+    // TODO
+    // Making it private while only one registered extension is supported
+    // Make it public if there is a need to support multiple extensions registration
     /**
      * Returns an immutable set of all registered extensions
      *
      * @return an immutable set of all registered extensions
      */
-    public List<Extension> getExtensions() {
+    private List<Extension> getExtensions() {
         if(extensions == null) {
             setExtensions();
         }
         return extensions;
+    }
+
+    // TODO
+    // Remove this method if there is a need to support multiple extensions registration
+    /**
+     * Get the registered extension. If no extension has been registered, return null.
+     * If multiple extensions have been registered, throw an {@link IllegalStateException}
+     *
+     * @throws IllegalStateException if multiple extensions have been registered
+     * @return the registered extension
+     */
+    public Extension getExtension() {
+        int numberOfExtensions = getExtensions().size();
+        if (numberOfExtensions > 1) {
+            throw new IllegalStateException("More than one Butterfly extension have been registered");
+        } else if (numberOfExtensions == 0) {
+            return null;
+        }
+        return (Extension) getExtensions().toArray()[0];
     }
 
 }

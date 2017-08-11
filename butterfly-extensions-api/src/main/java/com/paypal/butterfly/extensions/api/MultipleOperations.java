@@ -186,6 +186,13 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
         return super.setName(name);
     }
 
+    /**
+     * Return an array containing the name of transformation context attributes
+     * that hold the list of files the operations should be performed against
+     *
+     * @return an array containing the name of transformation context attributes
+     * that hold the list of files the operations should be performed against
+     */
     public String[] getFilesAttributes() {
         return Arrays.copyOf(filesAttributes, filesAttributes.length);
     }

@@ -46,12 +46,17 @@ public class ButterflyCliTest extends PowerMockTestCase {
     @BeforeMethod
     public void beforeTest() throws ButterflyException {
         TransformationResult mockResult = Mockito.mock(TransformationResult.class);
+
         Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(String.class))).thenReturn(mockResult);
         Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(String.class), Mockito.any(Configuration.class))).thenReturn(mockResult);
         Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(Class.class))).thenReturn(mockResult);
         Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(Class.class), Mockito.any(Configuration.class))).thenReturn(mockResult);
         Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(UpgradePath.class))).thenReturn(mockResult);
         Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(UpgradePath.class), Mockito.any(Configuration.class))).thenReturn(mockResult);
+
+        File file = new File("");
+        Mockito.when(mockResult.getTransformedApplicationLocation()).thenReturn(file);
+        Mockito.when(mockResult.getManualInstructionsFile()).thenReturn(file);
 
         sampleAppFolder = new File(this.getClass().getResource("/sample_app").getFile());
     }
@@ -66,16 +71,13 @@ public class ButterflyCliTest extends PowerMockTestCase {
         Assert.assertNotNull(butterflyCli);
         Assert.assertNotNull(facade);
 
-        List<Extension> extensions = new ArrayList<>();
-        when(facade.getRegisteredExtensions()).thenReturn(extensions);
-
         String[] arguments = {"-l", "-v"};
         butterflyCli.setOptionSet(arguments);
         
-        int status = butterflyCli.run();
+        int status = butterflyCli.run().getExitStatus();
 
         Assert.assertEquals(status, 0);
-        verify(facade, times(1)).getRegisteredExtensions();
+        verify(facade, times(1)).getRegisteredExtension();
     }
 
     /**
@@ -88,7 +90,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
     public void testTransformation() throws IOException, ButterflyException {
         String arguments[] = {"-i", sampleAppFolder.getAbsolutePath(), "-t", "com.test.SampleTransformationTemplate", "-v", "-z"};
         butterflyCli.setOptionSet(arguments);
-        int status = butterflyCli.run();
+        int status = butterflyCli.run().getExitStatus();
 
         Assert.assertEquals(status, 0);
         verify(facade, times(1)).transform(eq(sampleAppFolder), eq(com.test.SampleTransformationTemplate.class), eq(new Configuration(null, true)));
@@ -102,13 +104,11 @@ public class ButterflyCliTest extends PowerMockTestCase {
      */
     @Test
     public void testTransformationWithShortcut() throws IOException, ButterflyException {
-        List<Extension> extensionsList = new ArrayList<>();
-        extensionsList.add(new SampleExtension());
-        Mockito.when(facade.getRegisteredExtensions()).thenReturn(extensionsList);
+        Mockito.when(facade.getRegisteredExtension()).thenReturn(new SampleExtension());
 
         String arguments[] = {"-i", sampleAppFolder.getAbsolutePath(), "-s", "2"};
         butterflyCli.setOptionSet(arguments);
-        int status = butterflyCli.run();
+        int status = butterflyCli.run().getExitStatus();
 
         Assert.assertEquals(status, 0);
         verify(facade, times(1)).transform(eq(sampleAppFolder), eq(com.test.SampleTransformationTemplate.class), eq(new Configuration(null, false)));
@@ -123,17 +123,15 @@ public class ButterflyCliTest extends PowerMockTestCase {
      */
     @Test
     public void testTransformationWithShortcutButIgnoringIt() throws IOException, ButterflyException {
-        List<Extension> extensionsList = new ArrayList<>();
-        extensionsList.add(new SampleExtension());
-        Mockito.when(facade.getRegisteredExtensions()).thenReturn(extensionsList);
+        Mockito.when(facade.getRegisteredExtension()).thenReturn(new SampleExtension());
 
         String arguments[] = {"-i", sampleAppFolder.getAbsolutePath(), "-t", "com.test.SampleTransformationTemplate", "-z", "-s", "2"};
         butterflyCli.setOptionSet(arguments);
-        int status = butterflyCli.run();
+        int status = butterflyCli.run().getExitStatus();
 
         Assert.assertEquals(status, 0);
         verify(facade, times(1)).transform(eq(sampleAppFolder), eq(com.test.SampleTransformationTemplate.class), eq(new Configuration(null, true)));
-        verify(facade, times(0)).getRegisteredExtensions();
+        verify(facade, times(0)).getRegisteredExtension();
     }
 
     /**
@@ -143,7 +141,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
      */
     @Test
     public void testNoOptions() throws IOException {
-        int status = butterflyCli.run();
+        int status = butterflyCli.run().getExitStatus();
         Assert.assertEquals(status, 0);
     }
 
@@ -171,7 +169,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
         String currentDir = System.getProperty("user.dir");
         String arguments[] = {"-i", sampleAppFolder.getAbsolutePath(), "-t", "com.test.SampleTransformationTemplate", "-v", "-o", currentDir};
         butterflyCli.setOptionSet(arguments);
-        int status = butterflyCli.run();
+        int status = butterflyCli.run().getExitStatus();
 
         Assert.assertEquals(status, 0);
         verify(facade, times(1)).transform(eq(sampleAppFolder), eq(com.test.SampleTransformationTemplate.class), eq(new Configuration(new File(currentDir), false)));
@@ -182,7 +180,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
         Mockito.doReturn(SampleTransformationTemplate.class).when(facade).automaticResolution(Mockito.any(File.class));
         String arguments[] = {"-i", sampleAppFolder.getAbsolutePath(), "-a"};
         butterflyCli.setOptionSet(arguments);
-        int status = butterflyCli.run();
+        int status = butterflyCli.run().getExitStatus();
 
         verify(facade, times(1)).automaticResolution(eq(sampleAppFolder));
         verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(new Configuration(null, false)));
@@ -193,7 +191,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
     public void testAutomaticResolutionFailed() throws IOException, ButterflyException {
         String arguments[] = {"-i", sampleAppFolder.getAbsolutePath(), "-a"};
         butterflyCli.setOptionSet(arguments);
-        int status = butterflyCli.run();
+        int status = butterflyCli.run().getExitStatus();
 
         verify(facade, times(1)).automaticResolution(eq(sampleAppFolder));
         verify(facade, times(0)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(new Configuration(null, false)));
@@ -204,7 +202,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
     public void testUnexistentApplicationFolder() throws IOException, ButterflyException {
         String arguments[] = {"-i", "unexistent_folder", "-a"};
         butterflyCli.setOptionSet(arguments);
-        int status = butterflyCli.run();
+        int status = butterflyCli.run().getExitStatus();
 
         verify(facade, times(0)).automaticResolution(eq(sampleAppFolder));
         verify(facade, times(0)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(new Configuration(null, false)));

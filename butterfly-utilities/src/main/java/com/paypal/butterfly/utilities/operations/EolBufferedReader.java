@@ -122,9 +122,9 @@ public class EolBufferedReader {
     }
 
     /**
-     * @see {@link Reader#close()}
+     * See {@link Reader#close()}.
      *
-     * @throws IOException
+     * @throws IOException  If an I/O error occurs
      */
     public void close() throws IOException {
         reader.close();

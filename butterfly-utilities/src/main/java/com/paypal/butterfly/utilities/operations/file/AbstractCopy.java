@@ -6,8 +6,8 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
  * Abstract copy operation to be specialized for more specific purposes, such as single
  * file copy, or directory copy.
  *
- * @see {@link CopyFile}
- * @see {@link CopyDirectory}
+ * @see CopyFile
+ * @see CopyDirectory
  *
  * @author facarvalho
  */
@@ -31,8 +31,8 @@ abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
      * Abstract copy operation to be specialized for more specific purposes, such as single
      * file copy, or directory copy.
      *
-     * @see {@link CopyFile}
-     * @see {@link CopyDirectory}
+     * @see CopyFile
+     * @see CopyDirectory
      */
     protected AbstractCopy(String description) {
         setDescription(description);
@@ -45,16 +45,17 @@ abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
 
     /**
      * Set relative location where to copy the file to.
-     * </br>
+     * <br>
      * If the relative location is NOT known during transformation definition time,
-     * then don't set it (leaving as {@code null) and use {@link #setToAbsolute(String)}
+     * then don't set it (leaving as {@code null}) and use {@link #setToAbsolute(String)}
      * based on a transformation context attribute set by a
      * {@link com.paypal.butterfly.utilities.file.LocateFile}
      * transformation utility.
-     * </br>
+     * <br>
      * By setting this relative location, the absolute location attribute name is automatically set to {@code null}
      *
      * @param toRelative relative location where to copy the file to
+     * @return this transformation operation instance
      */
     public TO setToRelative(String toRelative) {
         checkForBlankString("Relative Location", toRelative);
@@ -66,10 +67,10 @@ abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
     /**
      * The name of the transformation context attribute that holds
      * the absolute location where to copy the file to.
-     * </br>
+     * <br>
      * If the relative location is known during transformation definition time,
      * then don't use this setter, use {@link #setToRelative(String)} instead.
-     * </br>
+     * <br>
      * By setting this attribute name, the relative location is automatically set to {@code null}
      *
      * @param attributeName name of the transformation context attribute that holds
@@ -86,10 +87,10 @@ abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
     /**
      * The name of the transformation context attribute that holds
      * the absolute location where to copy the file to.
-     * </br>
+     * <br>
      * If the relative location is known during transformation definition time,
      * then don't use this setter, use {@link #setToRelative(String)} instead.
-     * </br>
+     * <br>
      * By setting this attribute name, the relative location is automatically set to {@code null}
      *
      * @param attributeName name of the transformation context attribute that holds

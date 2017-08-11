@@ -18,14 +18,14 @@ public class AddLineTest extends TransformationUtilityTestHelper {
 
     @Test
     public void successAddTest() throws IOException {
-        AddLine addLine = new AddLine("zoo=zoov").relative("application.properties");
+        AddLine addLine = new AddLine("zoo=zoov").relative("/src/main/resources/application.properties");
         TOExecutionResult executionResult = addLine.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
-        assertChangedFile("application.properties");
-        assertLineCount("application.properties", 1);
+        assertChangedFile("/src/main/resources/application.properties");
+        assertLineCount("/src/main/resources/application.properties", 1);
 
-        Properties properties = getProperties("application.properties");
+        Properties properties = getProperties("/src/main/resources/application.properties");
 
         Assert.assertEquals(properties.size(), 4);
         Assert.assertEquals(properties.getProperty("bar"), "barv");
@@ -36,7 +36,7 @@ public class AddLineTest extends TransformationUtilityTestHelper {
 
     @Test
     public void fileDoesNotExistTest() {
-        AddLine addLine = new AddLine("zoo=zoov").relative("application_zeta.properties");
+        AddLine addLine = new AddLine("zoo=zoov").relative("/src/main/resources/application_zeta.properties");
         TOExecutionResult executionResult = addLine.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         Assert.assertEquals(executionResult.getException().getClass(), FileNotFoundException.class);

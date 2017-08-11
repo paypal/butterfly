@@ -29,9 +29,10 @@ import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
  * Notice concat is the default insertion mode. It is also important to state that the text to be inserted will
  * always start on a new line and, if not placed on the end of the file, the continuation of the original text
  * will follow in a new line, even if the inserted text does not end with a line break.
+ * <br>
+ * See {@link #setInsertionMode(InsertionMode)}
  *
- * @see {@link #setInsertionMode(InsertionMode)}
- * @see {@link InsertionMode}
+ * @see InsertionMode
  * @author facarvalho
  */
 public class InsertText extends TransformationOperation<InsertText> {
@@ -65,8 +66,10 @@ public class InsertText extends TransformationOperation<InsertText> {
      *     <li>InsertionMode.REGEX_FIRST: Right after only the first line to match the specified regular expression</li>
      *     <li>InsertionMode.REGEX_ALL: Right after any line to match the specified regular expression</li>
      * </ol>
-     * @see {@link #setInsertionMode(InsertionMode)}
-     * @see {@link InsertionMode}
+     * <br>
+     * See {@link #setInsertionMode(InsertionMode)}
+     *
+     * @see InsertionMode
      * @author facarvalho
      */
     public InsertText() {
@@ -76,8 +79,10 @@ public class InsertText extends TransformationOperation<InsertText> {
      * Operation to insert text into another text file.
      * The text will be inserted at the end of the file,
      * unless another insertion method is specified
+     * <br>
+     * See {@link #setInsertionMode(InsertionMode)}
      *
-     * @see {@link #setInsertionMode(InsertionMode)}
+     * @param textFileUrl the URL to the text to be inserted
      */
     public InsertText(URL textFileUrl) {
         setTextFileUrl(textFileUrl);
@@ -86,9 +91,12 @@ public class InsertText extends TransformationOperation<InsertText> {
     /**
      * Operation to insert text into another text file.
      * The text will be inserted at the specified line number
-     * </br>
+     * <br>
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#LINE_NUMBER}
+     *
+     * @param textFileUrl the URL to the text to be inserted
+     * @param lineNumber the line number the text should be added at
      */
     public InsertText(URL textFileUrl, Integer lineNumber) {
         setTextFileUrl(textFileUrl);
@@ -100,9 +108,12 @@ public class InsertText extends TransformationOperation<InsertText> {
      * Operation to insert text into another text file.
      * The text will be inserted right after only the first
      * line to match the specified regular expression
-     * </br>
+     * <br>
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#REGEX_FIRST}
+     *
+     * @param textFileUrl the URL to the text to be inserted
+     * @param regex the regular expression to find insertion points
      */
     public InsertText(URL textFileUrl, String regex) {
         setTextFileUrl(textFileUrl);
@@ -137,6 +148,7 @@ public class InsertText extends TransformationOperation<InsertText> {
     /**
      * Sets the line number the text should be added at.
      * Line number for first line is 1.
+     *
      * @param lineNumber the line number the text should be added at
      * @return this transformation operation instance
      */
@@ -151,9 +163,10 @@ public class InsertText extends TransformationOperation<InsertText> {
 
     /**
      * Sets the regular expression to find insertion points
+     * <br>
+     * See {@link #setInsertionMode(InsertionMode)}
      *
-     * @see {@link InsertionMode}
-     * @see {@link #setInsertionMode(InsertionMode)}
+     * @see InsertionMode
      * @param regex the regular expression to find insertion points
      * @return this transformation operation instance
      */

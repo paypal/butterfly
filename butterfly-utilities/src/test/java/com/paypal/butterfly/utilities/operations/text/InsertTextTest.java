@@ -22,35 +22,35 @@ public class InsertTextTest extends TransformationUtilityTestHelper {
 
     @Test
     public void noOpRegexTest() throws IOException {
-        InsertText insertText = new InsertText(billy).relative("dogs.yaml")
+        InsertText insertText = new InsertText(billy).relative("src/main/resources/dogs.yaml")
                 .setRegex("   breed: vira-lata").setInsertionMode(InsertText.InsertionMode.REGEX_FIRST);
         TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
 
-        assertNotChangedFile("dogs.yaml");
+        assertNotChangedFile("src/main/resources/dogs.yaml");
     }
 
     @Test
     public void noOpLineNumberTest() throws IOException {
-        InsertText insertText = new InsertText(billy).relative("dogs.yaml")
+        InsertText insertText = new InsertText(billy).relative("src/main/resources/dogs.yaml")
                 .setLineNumber(123).setInsertionMode(InsertText.InsertionMode.LINE_NUMBER);
         TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
 
-        assertNotChangedFile("dogs.yaml");
+        assertNotChangedFile("src/main/resources/dogs.yaml");
     }
 
     @Test
     public void insertLineNumberTest() throws IOException {
-        InsertText insertText = new InsertText(billy).relative("dogs.yaml")
+        InsertText insertText = new InsertText(billy).relative("src/main/resources/dogs.yaml")
                 .setInsertionMode(InsertText.InsertionMode.LINE_NUMBER).setLineNumber(1);
         TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
-        assertChangedFile("dogs.yaml");
-        assertLineCount("dogs.yaml", 3);
+        assertChangedFile("src/main/resources/dogs.yaml");
+        assertLineCount("src/main/resources/dogs.yaml", 3);
 
-        Map<String, Dog> dogs = (Map) getObjectFromYaml("dogs.yaml");
+        Map<String, Dog> dogs = (Map) getObjectFromYaml("src/main/resources/dogs.yaml");
 
         Assert.assertEquals(dogs.size(), 3);
 
@@ -61,15 +61,15 @@ public class InsertTextTest extends TransformationUtilityTestHelper {
 
     @Test
     public void insertFirstRegexTest() throws IOException {
-        InsertText insertText = new InsertText(billy).relative("dogs.yaml")
+        InsertText insertText = new InsertText(billy).relative("src/main/resources/dogs.yaml")
                 .setRegex("   breed: poodle").setInsertionMode(InsertText.InsertionMode.REGEX_FIRST);
         TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
-        assertChangedFile("dogs.yaml");
-        assertLineCount("dogs.yaml", 3);
+        assertChangedFile("src/main/resources/dogs.yaml");
+        assertLineCount("src/main/resources/dogs.yaml", 3);
 
-        Map<String, Dog> dogs = (Map) getObjectFromYaml("dogs.yaml");
+        Map<String, Dog> dogs = (Map) getObjectFromYaml("src/main/resources/dogs.yaml");
 
         Assert.assertEquals(dogs.size(), 3);
 
@@ -82,15 +82,15 @@ public class InsertTextTest extends TransformationUtilityTestHelper {
     public void insertAllRegexTest() throws IOException {
         URL changeDogs = getClass().getResource("/changeDogs.yaml");
 
-        InsertText insertText = new InsertText(changeDogs).relative("dogs.yaml")
+        InsertText insertText = new InsertText(changeDogs).relative("src/main/resources/dogs.yaml")
                 .setRegex("   breed: .*").setInsertionMode(InsertText.InsertionMode.REGEX_ALL);
         TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
-        assertChangedFile("dogs.yaml");
-        assertLineCount("dogs.yaml", 4);
+        assertChangedFile("src/main/resources/dogs.yaml");
+        assertLineCount("src/main/resources/dogs.yaml", 4);
 
-        Map<String, Dog> dogs = (Map) getObjectFromYaml("dogs.yaml");
+        Map<String, Dog> dogs = (Map) getObjectFromYaml("src/main/resources/dogs.yaml");
 
         Assert.assertEquals(dogs.size(), 2);
 
@@ -111,14 +111,14 @@ public class InsertTextTest extends TransformationUtilityTestHelper {
 
     @Test
     public void insertConcatTest() throws IOException {
-        InsertText insertText = new InsertText(billy).relative("dogs.yaml");
+        InsertText insertText = new InsertText(billy).relative("src/main/resources/dogs.yaml");
         TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
-        assertChangedFile("dogs.yaml");
-        assertLineCount("dogs.yaml", 3);
+        assertChangedFile("src/main/resources/dogs.yaml");
+        assertLineCount("src/main/resources/dogs.yaml", 3);
 
-        Map<String, Dog> dogs = (Map) getObjectFromYaml("dogs.yaml");
+        Map<String, Dog> dogs = (Map) getObjectFromYaml("src/main/resources/dogs.yaml");
 
         Assert.assertEquals(dogs.size(), 3);
 

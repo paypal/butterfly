@@ -1,6 +1,5 @@
 package com.paypal.butterfly.core.sample;
 
-import com.paypal.butterfly.core.sample.ExtensionSampleOne;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 
@@ -26,7 +25,7 @@ public class SampleUpgradeStep extends UpgradeStep {
 
     @Override
     public Class<? extends Extension> getExtensionClass() {
-        return ExtensionSampleOne.class;
+        return ExtensionSample.class;
     }
 
     @Override

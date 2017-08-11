@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 /**
  * Utility that results in the value of an element,
  * or one of its attributes, in a XML file.
- * </br>
+ * <br>
  * <strong>Note: if more than one element match
  * the specified XML element, the very first
  * one will be used</strong>
@@ -37,10 +37,10 @@ public class XmlElement extends TransformationUtility<XmlElement> {
     }
 
     /**
-     * Result in the value of an element in a XML file
+     * Result in the value of an element in a XML file.
+     * See also {@link #setXmlElement(String)}.
      *
-     * @see {@link #setXmlElement(String)}
-     * @param xmlElement
+     * @param xmlElement the XML element
      */
     public XmlElement(String xmlElement) {
         setXmlElement(xmlElement);
@@ -51,10 +51,10 @@ public class XmlElement extends TransformationUtility<XmlElement> {
      * the result of this transformation utility. The element specified
      * here should be set based on a path containing all its
      * parent elements separated by '.'. See the example bellow.
-     * </br>
-     * To retrieve the value of the child' name set {@code xmlElement}
+     * <br>
+     * To retrieve the value of the child name, set {@code xmlElement}
      * to {@code person.child.name}.
-     * </br>
+     * <br>
      * {@code
      *  <?xml version="1.0" encoding="UTF-8"?>
      *  <person>

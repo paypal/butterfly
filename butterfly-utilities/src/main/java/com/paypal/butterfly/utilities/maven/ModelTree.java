@@ -17,7 +17,7 @@ import java.util.List;
  * based on dependency among them, but specifying explicitly which Maven artifact should
  * be at the root of the tree. That means, if any artifact in the list is not a child,
  * directly or indirectly, of the root artifact, then it will end up no being in the tree.
- * </br>
+ * <br>
  * As a result of building this tree, it is possible to know, out of the initial pom.xml files list,
  * which ones actually inherit, directly or not, from the root artifact. The result is retrieved
  * by calling {@link #getPomFilesInTree()}
@@ -40,7 +40,7 @@ public class ModelTree {
      * based on dependency among them, but specifying explicitly which Maven artifact should
      * be at the root of the tree. That means, if any artifact in the list is not a child,
      * directly or indirectly, of the root artifact, then it will end up no being in the tree.
-     * </br>
+     * <br>
      * As a result of building this tree, it is possible to know, out of the initial pom.xml files list,
      * which ones actually inherit, directly or not, from the root artifact. The result is retrieved
      * by calling {@link #getPomFilesInTree()}
@@ -152,7 +152,8 @@ public class ModelTree {
      * List of pom.xml files that, directly or not, are children of the root artifact
      * set in the artifacts tree
      *
-     * @return
+     * @return a list of pom.xml files that, directly or not, are children of the root artifact
+     * set in the artifacts tree
      */
     public List<File> getPomFilesInTree() {
         return pomFilesInTree;

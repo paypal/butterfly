@@ -1,7 +1,6 @@
 package com.paypal.butterfly.utilities.java;
 
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
@@ -12,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Transformation utility to retrieve the package
@@ -41,9 +41,9 @@ public class JavaPackage extends TransformationUtility<JavaPackage> {
         try {
             fileInputStream = new FileInputStream(javaClassFile);
             CompilationUnit compilationUnit = JavaParser.parse(fileInputStream);
-            PackageDeclaration packageDeclaration = compilationUnit.getPackage();
-            result = TUExecutionResult.value(this, packageDeclaration.getPackageName());
-        } catch (FileNotFoundException|ParseException  e) {
+            Optional<PackageDeclaration> packageDeclaration = compilationUnit.getPackageDeclaration();
+            result = TUExecutionResult.value(this, packageDeclaration.get().getNameAsString());
+        } catch (FileNotFoundException  e) {
             result = TUExecutionResult.error(this, e);
         } finally {
             try {
