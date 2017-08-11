@@ -6,7 +6,6 @@ Butterfly is an application transformation tool. Read [this document](https://en
 
 Read [CLI documentation](butterfly-cli/README.md) to find out how to run Butterfly.
 
-## CI and ECI Jobs
+## ECI and Deploy Jenkins instance
 
-- [Butterfly-Deploy](https://ci.paypalcorp.com/Butterfly-CI-8588/job/Butterfly-Deploy/)
-- [Butterfly-ECI](https://ciapi-pilot.us-central1.gcp.dev.paypalinc.com/Butterfly-ECI-4122/job/Butterfly-ECI-4122_pullrequest/)
+- [Butterfly-Jenkins](https://ciapi-pilot.us-central1.gcp.dev.paypalinc.com/Butterfly-ECI-4122)
