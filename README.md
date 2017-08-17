@@ -8,4 +8,4 @@ Read [CLI documentation](butterfly-cli/README.md) to find out how to run Butterf
 
 ## ECI and Deploy Jenkins instance
 
-- [Butterfly-Jenkins](https://ciapi-pilot.us-central1.gcp.dev.paypalinc.com/Butterfly-ECI-4122)
+[Butterfly-Jenkins](https://ciapi-pilot.us-central1.gcp.dev.paypalinc.com/Butterfly-ECI-4122/view/all/).
