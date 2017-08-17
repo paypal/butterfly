@@ -78,7 +78,7 @@ public class ButterflyCliApp extends ButterflyCliOption {
         // from the CLI artifact, assuming that the CLI jar will always bring together
         // the exact same version of butterfly-core, which is the component to officially
         // define Butterfly version
-        banner = String.format("Butterfly application transformation tool version %s", ButterflyProperties.getString("butterfly.version"));
+        banner = String.format("Butterfly application transformation tool (version %s)", ButterflyProperties.getString("butterfly.version"));
     }
 
     public static File getButterflyHome() {

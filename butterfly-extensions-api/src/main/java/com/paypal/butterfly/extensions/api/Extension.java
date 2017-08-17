@@ -45,6 +45,13 @@ public abstract class Extension<E> {
     public abstract String getDescription();
 
     /**
+     * Returns the extension version
+     *
+     * @return the extension version
+     */
+    public abstract String getVersion();
+
+    /**
      * Returns a read-only set containing all transformation template classes
      *
      * @return a read-only set containing all transformation template classes
