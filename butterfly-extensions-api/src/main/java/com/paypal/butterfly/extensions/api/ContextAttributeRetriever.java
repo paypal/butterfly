@@ -28,9 +28,11 @@ public class ContextAttributeRetriever<VT> extends TransformationUtility {
     private boolean executed = false;
 
     public ContextAttributeRetriever() {
+        setSaveResult(false);
     }
 
     public ContextAttributeRetriever(String attributeName) {
+        setSaveResult(false);
         setAttributeName(attributeName);
     }
 
