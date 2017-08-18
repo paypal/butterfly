@@ -27,11 +27,14 @@ public class ButterflyCliApp extends ButterflyCliOption {
     private static File butterflyHome;
     private static String banner;
 
-    private static final Logger logger = LoggerFactory.getLogger(ButterflyCliApp.class);
+    private static Logger logger;
 
     public static void main(String... arguments) throws IOException {
         setButterflyHome();
         setLogFileName(arguments);
+
+        logger = LoggerFactory.getLogger(ButterflyCliApp.class);
+
         setBanner();
 
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ButterflyCliApp.class, arguments);
