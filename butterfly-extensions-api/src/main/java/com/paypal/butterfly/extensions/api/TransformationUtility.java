@@ -3,6 +3,7 @@ package com.paypal.butterfly.extensions.api;
 
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -540,6 +541,7 @@ public abstract class TransformationUtility<TU> implements Cloneable {
      *
      * @return the result
      */
+    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
     public PerformResult perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
         if(hasBeenPerformed.get()) {
             String exceptionMessage = String.format("Utility %s has already been performed", getName());
@@ -602,7 +604,20 @@ public abstract class TransformationUtility<TU> implements Cloneable {
             TransformationUtilityException ex = new TransformationUtilityException(exceptionMessage, e);
             return PerformResult.error(this, ex);
         } finally {
+            // This if and the following below, even though similar, address different execution paths,
+            // so they must both be here, do not remove none of them thinking that this is redundant code
+            if (result == null) {
+                String exceptionMessage = String.format("Utility %s has failed and has not produced any exception detailing the failure. This utility code might be defective, or you might be using a non supported JRE (such as Open JDK 1.7).", getName());
+                TransformationUtilityException ex = new TransformationUtilityException(exceptionMessage);
+                logger.error("", ex);
+            }
             hasBeenPerformed.set(true);
+        }
+
+        if (result == null) {
+            String exceptionMessage = String.format("Utility %s has failed and has not produced any exception detailing the failure. This utility code might be defective, since they must never return null.", getName());
+            TransformationUtilityException ex = new TransformationUtilityException(exceptionMessage);
+            result = PerformResult.error(this, ex);
         }
 
         return result;
@@ -890,10 +905,14 @@ public abstract class TransformationUtility<TU> implements Cloneable {
     }
 
     /**
-     * The implementation of this transformation utility.
+     * The implementation execution of this transformation utility.
      * The returned object is the result of the execution and is always
      * automatically saved in the transformation context as a new
-     * attribute, whose key is the name of the transformation utility.
+     * attribute (whose key is the name of the transformation utility), unless
+     * {@link #isSaveResult()} returns false.
+     * <br>
+     * <strong>Important: this method MUST NEVER return null, and it must catch its executions exceptions
+     * and wrap them into a {@link ExecutionResult} error object</strong>.
      *
      * @param transformedAppFolder the folder where the transformed application code is
      * @param transformationContext the transformation context object

@@ -9,7 +9,6 @@ import com.paypal.butterfly.extensions.api.TransformationUtility;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -43,7 +42,7 @@ public class JavaPackage extends TransformationUtility<JavaPackage> {
             CompilationUnit compilationUnit = JavaParser.parse(fileInputStream);
             Optional<PackageDeclaration> packageDeclaration = compilationUnit.getPackageDeclaration();
             result = TUExecutionResult.value(this, packageDeclaration.get().getNameAsString());
-        } catch (FileNotFoundException  e) {
+        } catch (Exception  e) {
             result = TUExecutionResult.error(this, e);
         } finally {
             try {

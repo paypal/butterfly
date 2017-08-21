@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,6 +61,10 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             logConfigurator.debugMode(true);
             logger.info("Debug mode is ON");
             logger.info("Butterfly home: {}", ButterflyCliApp.getButterflyHome());
+            logger.info("JAVA_HOME: {}", System.getenv("JAVA_HOME"));
+            logger.info("java.version: {}", System.getProperty("java.version"));
+            logger.info("java.runtime.version: {}", System.getProperty("java.runtime.version"));
+            logger.info("M2_HOME: {}", System.getenv("M2_HOME"));
         }
 
         if (optionSet.has(CLI_OPTION_LIST_EXTENSIONS)) {
@@ -225,12 +230,15 @@ public class ButterflyCliRunner extends ButterflyCliOption {
 
         Class<? extends TransformationTemplate> template;
         int shortcut = 1;
-            System.out.printf("%n- %s: %s%n", extension, extension.getDescription());
-            for(Object templateObj : extension.getTemplateClasses().toArray()) {
-                template = (Class<? extends TransformationTemplate>) templateObj;
-                System.out.printf("\t (%d) - [%s] \t %s \t %s%n", shortcut++, ExtensionTypeInitial.getFromClass(template), template.getName(), template.newInstance().getDescription());
 
-            }
+        String version = (StringUtils.isEmpty(extension.getVersion()) ? "" : String.format("(version %s)", extension.getVersion()));
+
+        System.out.printf("%n- %s: %s %s%n", extension, extension.getDescription(), version);
+        for(Object templateObj : extension.getTemplateClasses().toArray()) {
+            template = (Class<? extends TransformationTemplate>) templateObj;
+            System.out.printf("\t (%d) - [%s] \t %s \t %s%n", shortcut++, ExtensionTypeInitial.getFromClass(template), template.getName(), template.newInstance().getDescription());
+
+        }
     }
 
     private void registerError(ButterflyCliRun run, String errorMessage) {

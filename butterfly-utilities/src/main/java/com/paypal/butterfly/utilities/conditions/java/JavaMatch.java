@@ -3,14 +3,13 @@ package com.paypal.butterfly.utilities.conditions.java;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.paypal.butterfly.extensions.api.ExecutionResult;
+import com.paypal.butterfly.extensions.api.SingleCondition;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.SingleCondition;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -114,7 +113,7 @@ public class JavaMatch extends SingleCondition<JavaMatch> {
 
             boolean match = evaluate(compilationUnit);
             result = TUExecutionResult.value(this, match);
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             result = TUExecutionResult.error(this, e);
         } finally {
             try {

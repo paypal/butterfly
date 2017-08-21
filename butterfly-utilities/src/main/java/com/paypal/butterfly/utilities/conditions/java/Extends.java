@@ -3,6 +3,7 @@ package com.paypal.butterfly.utilities.conditions.java;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 import java.util.Optional;
@@ -43,9 +44,18 @@ public class Extends extends AbstractTypeCheck<Extends> {
 
     @Override
     protected int getNumberOfTypes(CompilationUnit compilationUnit) {
-        ClassOrInterfaceDeclaration type = (ClassOrInterfaceDeclaration) compilationUnit.getType(0);
-        NodeList<ClassOrInterfaceType> extendedTypes = type.getExtendedTypes();
-        return extendedTypes.size();
+        TypeDeclaration<?> typeDeclaration = compilationUnit.getType(0);
+        if (typeDeclaration instanceof ClassOrInterfaceDeclaration) {
+            ClassOrInterfaceDeclaration type = (ClassOrInterfaceDeclaration) compilationUnit.getType(0);
+            NodeList<ClassOrInterfaceType> extendedTypes = type.getExtendedTypes();
+            return extendedTypes.size();
+        }
+
+        // If typeDeclaration is not ClassOrInterfaceDeclaration, then it is
+        // EnumDeclaration or AnnotationDeclaration, and none of them have
+        // a getExtendedTypes operation
+
+        return 0;
     }
 
 }
