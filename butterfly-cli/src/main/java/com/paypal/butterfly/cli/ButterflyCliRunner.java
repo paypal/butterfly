@@ -61,6 +61,10 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             logConfigurator.debugMode(true);
             logger.info("Debug mode is ON");
             logger.info("Butterfly home: {}", ButterflyCliApp.getButterflyHome());
+            logger.info("JAVA_HOME: {}", System.getenv("JAVA_HOME"));
+            logger.info("java.version: {}", System.getProperty("java.version"));
+            logger.info("java.runtime.version: {}", System.getProperty("java.runtime.version"));
+            logger.info("M2_HOME: {}", System.getenv("M2_HOME"));
         }
 
         if (optionSet.has(CLI_OPTION_LIST_EXTENSIONS)) {
