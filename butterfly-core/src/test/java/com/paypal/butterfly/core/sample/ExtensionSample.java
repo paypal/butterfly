@@ -14,6 +14,11 @@ public class ExtensionSample extends Extension {
     }
 
     @Override
+    public String getVersion() {
+        return null;
+    }
+
+    @Override
     public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException {
         if(applicationFolder.getAbsolutePath().contains("testTransformation1")) {
             throw new TemplateResolutionException("No transformation template applies");

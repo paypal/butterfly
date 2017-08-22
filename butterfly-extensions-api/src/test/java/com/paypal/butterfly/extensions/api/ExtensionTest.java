@@ -25,6 +25,11 @@ public class ExtensionTest {
 			}
 
 			@Override
+			public String getVersion() {
+				return null;
+			}
+
+			@Override
 			public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) {
 				return null;
 			}

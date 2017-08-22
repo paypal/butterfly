@@ -251,6 +251,12 @@ public class TransformationEngine {
             condition = utility.newConditionInstance(transformedAppFolder, file);
 
             PerformResult innerPerformResult = condition.perform(transformedAppFolder, transformationContext);
+
+            // FIXME
+            // Check here the PerformResult type. It should be ExecutionResult, but if it is not, then decide what to do
+            // (what happens when the execution of a regular condition fails? does it return false? or does it do something else?),
+            // but definition `processUtilityExecutionResult` cannot be called, otherwise it will result in a NPE!
+
             processUtilityExecutionResult(condition, innerPerformResult, transformationContext);
 
             if(innerPerformResult.getType().equals(PerformResult.Type.EXECUTION_RESULT) &&
