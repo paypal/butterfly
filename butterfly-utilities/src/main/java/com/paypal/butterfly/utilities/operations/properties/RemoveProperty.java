@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
- * Operation to remove a property from a properties file.
+ * Removes a property from a properties file.
  *
  * @author facarvalho
  */

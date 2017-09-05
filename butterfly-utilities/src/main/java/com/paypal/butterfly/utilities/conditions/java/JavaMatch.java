@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This utility parses and evaluates the specified Java class file
+ * Parses and evaluates the specified Java class file
  * based on a set of {@link JavaCondition}. It returns true only
  * if they all are true. If the specified Java class file contains
  * more than one type, only the outer one will be considered

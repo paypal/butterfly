@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
- * Operation to insert text from one file into another text file.
+ * Inserts text from one file into another text file.
  * The text can be inserted:
  * <ol>
  *     <li>InsertionMode.CONCAT: At the final of the file (default)</li>

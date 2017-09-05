@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 /**
- * Utility that results in the value of an element,
+ * Retrieves the value of an element,
  * or one of its attributes, in a XML file.
  * <br>
  * <strong>Note: if more than one element match

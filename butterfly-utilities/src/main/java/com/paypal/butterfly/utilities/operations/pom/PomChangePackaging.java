@@ -4,7 +4,7 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.apache.maven.model.Model;
 
 /**
- * Operation to change the packaging of a Maven artifact, by changing its POM file
+ * Changes the packaging of a Maven artifact, by changing its POM file.
  *
  * @author facarvalho
  */

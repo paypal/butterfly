@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Operation to replace one, or more, lines from a text file.
+ * Replaces one, or more, lines from a text file.
  * The line to be replace is chosen either based on a regular
  * expression, or by the line number.
  * <br>

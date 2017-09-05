@@ -9,9 +9,9 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import java.util.Optional;
 
 /**
- * This condition evaluates if the specified
+ * Evaluates if the specified
  * compilation unit directly extends the
- * specified class
+ * specified class.
  *
  * @author facarvalho
  */

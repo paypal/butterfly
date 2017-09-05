@@ -8,7 +8,7 @@ import org.apache.maven.model.Plugin;
 import java.util.List;
 
 /**
- * Abstract Artifact POM operation
+ * Abstract Artifact POM operation.
  *
  * @author facarvalho
  */

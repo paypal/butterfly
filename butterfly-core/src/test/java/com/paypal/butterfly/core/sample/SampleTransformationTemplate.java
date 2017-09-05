@@ -15,7 +15,7 @@ public class SampleTransformationTemplate extends TransformationTemplate {
 
     @Override
     public String getDescription() {
-        return "Raptor Butterfly extension";
+        return "Butterfly extension";
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- * Operation to add a new line to the end of a file
+ * Adds a new line to the end of a file.
  *
  * @author facarvalho
  */

@@ -23,12 +23,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
-import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 
 /**
@@ -122,7 +120,7 @@ public class MavenGoalTest {
         Mockito.when(r.getExitCode()).thenReturn(1);
         Mockito.when(r.getExecutionException()).thenReturn(invokerException);
         Mockito.when(invoker.execute(request)).thenReturn(r);
-        mavenGoal.setOutputHandlers(new GenericErrorOutputHandler());
+        mavenGoal.setOutputHandlers(new GenericErrorsOutputHandler());
         TUExecutionResult result = mavenGoal.execution(new File("/blah/pom.xml"), null);
         Assert.assertEquals(result.getException(), invokerException);
         Assert.assertEquals(result.getValue(), null);
@@ -145,7 +143,7 @@ public class MavenGoalTest {
     public void isSelfMadeExceptionIfNonZeroExitCodeAndHandlerGetResultIsValidAndNoInvokerException() throws MavenInvocationException {
         InvocationResult r = Mockito.mock(InvocationResult.class);
         Map<Class<? extends MavenInvocationOutputHandler>, Object> value = new HashMap<Class<? extends MavenInvocationOutputHandler>, Object>();
-        value.put(new GenericErrorOutputHandler().getClass(), "Hello!");
+        value.put(new GenericErrorsOutputHandler().getClass(), "Hello!");
         Mockito.when(multipleOutputHandler.getResult()).thenReturn(value);
         Mockito.when(r.getExitCode()).thenReturn(1);
         Mockito.when(r.getExecutionException()).thenReturn(null);
@@ -159,7 +157,7 @@ public class MavenGoalTest {
     public void isInvokerExceptionWithResultDataIfNonZeroExitCodeAndHandlerGetResultIsValid() throws MavenInvocationException {
         InvocationResult r = Mockito.mock(InvocationResult.class);
         Map<Class<? extends MavenInvocationOutputHandler>, Object> value = new HashMap<Class<? extends MavenInvocationOutputHandler>, Object>();
-        value.put(new GenericErrorOutputHandler().getClass(), "Hello!");
+        value.put(new GenericErrorsOutputHandler().getClass(), "Hello!");
         CommandLineException invokerException = new CommandLineException("test error");
         Mockito.when(multipleOutputHandler.getResult()).thenReturn(value);
         Mockito.when(r.getExitCode()).thenReturn(1);
@@ -174,7 +172,7 @@ public class MavenGoalTest {
     public void isValidResultIfZeroErrorCode() throws MavenInvocationException {
         InvocationResult r = Mockito.mock(InvocationResult.class);
         Map<Class<? extends MavenInvocationOutputHandler>, Object> value = new HashMap<Class<? extends MavenInvocationOutputHandler>, Object>();
-        value.put(new GenericErrorOutputHandler().getClass(), "Hello!");
+        value.put(new GenericErrorsOutputHandler().getClass(), "Hello!");
         Mockito.when(multipleOutputHandler.getResult()).thenReturn(value);
         Mockito.when(r.getExitCode()).thenReturn(0);
         Mockito.when(r.getExecutionException()).thenReturn(null);

@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.Arrays;
 
 /**
- * This utility register a new transformation context
+ * Registers a new transformation context
  * attribute by applying one or more existent
  * String transformation context attributes to
  * {@link String#format(String, Object...)}.

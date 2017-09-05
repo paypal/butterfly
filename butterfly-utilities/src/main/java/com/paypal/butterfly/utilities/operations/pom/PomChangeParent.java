@@ -7,7 +7,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 
 /**
- * Operation to change the parent, or its version, in a Maven POM file
+ * Changes the parent, or its version, in a Maven POM file.
  *
  * @author facarvalho
  */

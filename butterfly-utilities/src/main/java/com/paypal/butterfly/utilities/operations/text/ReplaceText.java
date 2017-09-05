@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
- * Operation to replace text in a text file
+ * Replaces text in a text file
  * based on a regular expression.
  *
  * @author facarvalho

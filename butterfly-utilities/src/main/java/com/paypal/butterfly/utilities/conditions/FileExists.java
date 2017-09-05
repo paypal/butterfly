@@ -8,7 +8,7 @@ import com.paypal.butterfly.extensions.api.exception.TransformationUtilityExcept
 import java.io.File;
 
 /**
- * Check if a particular file or folder exists
+ * Checks if a particular file or folder exists.
  *
  * @author facarvalho
  */

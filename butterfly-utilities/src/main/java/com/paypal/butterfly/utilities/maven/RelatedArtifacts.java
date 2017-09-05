@@ -9,8 +9,8 @@ import java.io.File;
 import java.util.List;
 
 /**
- * This transformation utility, given a list of pom.xml {@link File} objects and
- * a parent artifact, results in a sub-list of those pom.xml files containing only the ones
+ * Given a list of pom.xml {@link File} objects and
+ * a parent artifact, this transformation utility results in a sub-list of those pom.xml files containing only the ones
  * that are, directly or indirectly, a child of the specified parent artifact.
  *
  * @author facarvalho

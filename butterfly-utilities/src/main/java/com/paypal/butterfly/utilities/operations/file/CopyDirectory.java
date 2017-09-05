@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Operation to copy a directory and its content from one location to another.
+ * Copies a directory and its content from one location to another.
  * The files to be copied include sub-folders and their files, coming rom relative
  * or absolute location. The path to the files to be copied are preserved, and those
  * folders are also copied to the destination location. If the destination directory

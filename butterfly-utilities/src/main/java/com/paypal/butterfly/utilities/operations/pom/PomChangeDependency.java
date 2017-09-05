@@ -7,7 +7,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 
 /**
- * Operation to change a dependency in a Maven POM file.
+ * Changes a dependency in a Maven POM file.
  * It allows changing anything but group id and artifact id.
  * It also allows removing specific configuration, letting them
  * to have default values, or be managed when applicable.

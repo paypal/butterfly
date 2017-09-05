@@ -10,8 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Operation for single file deletion
- * <strong>Important: the term file here means file or folder</strong>
+ * Deletes a single file or folder (empty or not).
  *
  * @author facarvalho
  */
@@ -20,8 +19,7 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
     private static final String DESCRIPTION = "Delete file %s";
 
     /**
-     * Operation for single file deletion
-     * <strong>Important: the term file here refers to both file and folder</strong>
+     * Deletes a single file or folder (empty or not).
      */
     public DeleteFile() {
     }

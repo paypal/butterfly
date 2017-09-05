@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * Transformation utility to retrieve the package
- * of a given Java class
+ * Retrieves the package
+ * of a given Java class.
  *
  * @author facarvalho
  */
