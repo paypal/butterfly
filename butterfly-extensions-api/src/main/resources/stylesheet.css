@@ -6,7 +6,7 @@ Overall document style
 @import url('resources/fonts/dejavu.css');
 
 body {
-    background-color: #f8f1ff;
+    background-color:#ffffff;
     color:#353833;
     font-family:'DejaVu Sans', Arial, Helvetica, sans-serif;
     font-size:14px;
@@ -114,7 +114,7 @@ Document title and Copyright styles
 Navigation bar styles
 */
 .bar {
-    background-color: #45007e;
+    background-color:#0085DC;
     color:#FFFFFF;
     padding:.8em .5em .4em .8em;
     height:auto;/*height:1.8em;*/
@@ -122,7 +122,7 @@ Navigation bar styles
     margin:0;
 }
 .topNav {
-    background-color: #45007e;
+    background-color:#0085DC;
     color:#FFFFFF;
     float:left;
     padding:0;
@@ -135,7 +135,7 @@ Navigation bar styles
 }
 .bottomNav {
     margin-top:10px;
-    background-color: #45007e;
+    background-color:#0085DC;
     color:#FFFFFF;
     float:left;
     padding:0;
@@ -185,7 +185,7 @@ ul.subNavList li{
     text-transform:uppercase;
 }
 .navBarCell1Rev {
-    background-color: #7ad9fe;
+    background-color:#F8981D;
     color:#253441;
     margin: auto 5px;
 }
@@ -400,7 +400,7 @@ Table styles
     padding-bottom:7px;
     display:inline-block;
     float:left;
-    background-color: #7ad9fe;
+    background-color:#F8981D;
     border: none;
     height:16px;
 }
@@ -412,7 +412,7 @@ Table styles
     margin-right:3px;
     display:inline-block;
     float:left;
-    background-color: #7ad9fe;
+    background-color:#F8981D;
     height:16px;
 }
 .memberSummary caption span.tableTab span {
@@ -423,7 +423,7 @@ Table styles
     margin-right:3px;
     display:inline-block;
     float:left;
-    background-color:#4D7A97;
+    background-color:#0085DC;
     height:16px;
 }
 .memberSummary caption span.tableTab, .memberSummary caption span.activeTableTab {
@@ -440,7 +440,7 @@ Table styles
     width:5px;
     position:relative;
     float:left;
-    background-color: #7ad9fe;
+    background-color:#F8981D;
 }
 .memberSummary .activeTableTab .tabEnd {
     display:none;
@@ -448,14 +448,14 @@ Table styles
     margin-right:3px;
     position:relative; 
     float:left;
-    background-color: #7ad9fe;
+    background-color:#F8981D;
 }
 .memberSummary .tableTab .tabEnd {
     display:none;
     width:5px;
     margin-right:3px;
     position:relative;
-    background-color:#4D7A97;
+    background-color:#0085DC;
     float:left;
 
 }

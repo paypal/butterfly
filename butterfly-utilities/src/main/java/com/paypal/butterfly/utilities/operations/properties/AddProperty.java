@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
- * Operation to add a new property to a properties file.
+ * Adds a new property to a properties file.
  * If the property already exists, its value is overwritten.
  *
  * @author facarvalho

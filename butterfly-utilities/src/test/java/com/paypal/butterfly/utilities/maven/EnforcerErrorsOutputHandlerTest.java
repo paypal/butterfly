@@ -12,10 +12,10 @@ import org.testng.annotations.Test;
 /**
  * @author mcrockett
  */
-public class EnforcerGenericOutputHandlerTest {
+public class EnforcerErrorsOutputHandlerTest {
     @Test
     public void hasValidRegularExpression() {
-        EnforcerGenericOutputHandler handler = null;
+        EnforcerErrorsOutputHandler handler = null;
 
         String[] validLines = {
                 "[WARNING] Rule 2: org.apache.maven.plugins.enforcer.FailOnLowerVersionOverride failed with message:",
@@ -30,14 +30,14 @@ public class EnforcerGenericOutputHandlerTest {
         };
 
         for(int i = 0; i < validLines.length; i += 1) {
-            handler = new EnforcerGenericOutputHandler();
+            handler = new EnforcerErrorsOutputHandler();
             handler.consumeLine(validLines[i]);
             handler.consumeLine("some error line");
             Assert.assertEquals(handler.getResult().size(), 1);
         }
 
         for(int i = 0; i < invalidLines.length; i += 1) {
-            handler = new EnforcerGenericOutputHandler();
+            handler = new EnforcerErrorsOutputHandler();
             handler.consumeLine(invalidLines[i]);
             handler.consumeLine("some error line");
             Assert.assertEquals(handler.getResult().size(), 0);
@@ -46,7 +46,7 @@ public class EnforcerGenericOutputHandlerTest {
 
     @Test
     public void canHaveNoResultsIfNoTriggerFound(){
-        EnforcerGenericOutputHandler handler = new EnforcerGenericOutputHandler();
+        EnforcerErrorsOutputHandler handler = new EnforcerErrorsOutputHandler();
         handler.consumeLine("asfasdfa");
         Set<String> results = handler.getResult();
         Assert.assertEquals(results.size(), 0);
@@ -54,7 +54,7 @@ public class EnforcerGenericOutputHandlerTest {
 
     @Test(expectedExceptions = IllegalStateException.class)
     public void throwsIfNoResultsBecauseExecutionHasntStarted(){
-        EnforcerGenericOutputHandler handler = new EnforcerGenericOutputHandler();
+        EnforcerErrorsOutputHandler handler = new EnforcerErrorsOutputHandler();
         handler.getResult();
     }
 
@@ -63,7 +63,7 @@ public class EnforcerGenericOutputHandlerTest {
         InputStream inputStream = null;
         BufferedReader reader = null;
         try {
-            EnforcerGenericOutputHandler handler = new EnforcerGenericOutputHandler();
+            EnforcerErrorsOutputHandler handler = new EnforcerErrorsOutputHandler();
             inputStream = getClass().getResourceAsStream("/sample_maven_output_various_failures.txt");
             reader = new BufferedReader(new InputStreamReader(inputStream));
             String line = reader.readLine();
@@ -75,15 +75,15 @@ public class EnforcerGenericOutputHandlerTest {
 
             Set<String> results = handler.getResult();
             String[] expectedResults = {
-                    EnforcerGenericOutputHandler.createMessage("Rule 2: org.apache.maven.plugins.enforcer.FailOnLowerVersionOverride failed with message:","Application dependencies' version are lower than the version used by raptor:"),
-                    EnforcerGenericOutputHandler.createMessage("Rule 0: org.apache.maven.plugins.enforcer.AlwaysFail failed with message:","Always fails!"),
-                    EnforcerGenericOutputHandler.createMessage("Rule 1: org.apache.maven.plugins.enforcer.RequireMavenVersion failed with message:","Detected Maven Version: 3.1.1 is not in the allowed range 3.3.1."),
+                    "Rule 2: org.apache.maven.plugins.enforcer.FailOnLowerVersionOverride failed with message: 'Application dependencies' version are lower than the version used by raptor:'.",
+                    "Rule 1: org.apache.maven.plugins.enforcer.RequireMavenVersion failed with message: 'Detected Maven Version: 3.1.1 is not in the allowed range 3.3.1.'.",
+                    "Rule 0: org.apache.maven.plugins.enforcer.AlwaysFail failed with message: 'Always fails!'."
             };
 
             Assert.assertEquals(results.size(), expectedResults.length);
 
-            for (int i = 0; i < expectedResults.length; i += 1) {
-                Assert.assertTrue(results.contains(expectedResults[i]));
+            for (String expectedResult : expectedResults) {
+                Assert.assertTrue(results.contains(expectedResult));
             }
         } finally {
             if(reader != null) {
@@ -94,5 +94,6 @@ public class EnforcerGenericOutputHandlerTest {
             }
         }
     }
+
 }
 

@@ -6,9 +6,9 @@ import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionExc
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * This condition evaluates the specified
+ * Evaluates the specified
  * compilation unit based on an abstract check
- * against a specified type
+ * against a specified type.
  *
  * @author facarvalho
  */

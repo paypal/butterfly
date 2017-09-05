@@ -9,7 +9,7 @@ import com.paypal.butterfly.extensions.api.exception.TransformationUtilityExcept
 import java.io.File;
 
 /**
- * Utility to locate a file based on the relative or absolute
+ * Locates a file based on the relative or absolute
  * location specified. It does not find files, it just results
  * to a {@link File} object based on the input information.
  * This utility also allows to locate a file going up in parent

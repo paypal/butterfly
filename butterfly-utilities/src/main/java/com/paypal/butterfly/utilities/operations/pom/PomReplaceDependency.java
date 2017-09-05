@@ -8,7 +8,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 
 /**
- * Operation to replace a dependency by another one in a POM file
+ * Replaces a dependency by another one in a POM file.
  *
  * @author facarvalho
  */

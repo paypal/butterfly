@@ -14,7 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * Abstract POM operation
+ * Abstract POM operation.
  *
  * @author facarvalho
  */

@@ -30,7 +30,7 @@ public class SampleUpgradeStep extends UpgradeStep {
 
     @Override
     public String getDescription() {
-        return "Raptor Butterfly extension";
+        return "Butterfly extension";
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 
 /**
- * Operation to add a new plugin to a POM file
+ * Adds a new plugin to a POM file.
  *
  * @author facarvalho
  */

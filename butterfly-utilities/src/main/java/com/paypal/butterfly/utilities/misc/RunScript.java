@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This utility executes a script and saves the result after evaluating.
+ * Executes a script and saves the result after evaluating.
  * The scripting language can be chosen, and Java is the default one.
  * Additionally, one or more transformation context attributes can be set in the script
  * during transformation time. Transformation context attributes placeholders can be put

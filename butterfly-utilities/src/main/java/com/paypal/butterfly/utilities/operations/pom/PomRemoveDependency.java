@@ -7,7 +7,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 
 /**
- * Operation to remove a dependency entry from a POM file
+ * Removes a dependency entry from a POM file.
  *
  * @author facarvalho
  */

@@ -107,6 +107,15 @@
                 <version>2.10.4</version>
                 <configuration>
                     <stylesheetfile>stylesheet.css</stylesheetfile>
+                    <sourceFileExcludes>
+                        <exclude>com/paypal/butterfly/utilities/operations/EolHelper.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/EolBufferedReader.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/AbstractArtifactPomOperation.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/AbstractPomOperation.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/text/AbstractLineOperation.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/maven/ModelTree.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/maven/MultipleOutputHandler.java</exclude>
+                    </sourceFileExcludes>
                 </configuration>
             </plugin>
         </plugins>
@@ -121,6 +130,15 @@
                 <version>2.10.4</version>
                 <configuration>
                     <stylesheetfile>stylesheet.css</stylesheetfile>
+                    <sourceFileExcludes>
+                        <exclude>com/paypal/butterfly/utilities/operations/EolHelper.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/EolBufferedReader.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/AbstractArtifactPomOperation.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/AbstractPomOperation.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/text/AbstractLineOperation.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/maven/ModelTree.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/maven/MultipleOutputHandler.java</exclude>
+                    </sourceFileExcludes>
                 </configuration>
             </plugin>
         </plugins>

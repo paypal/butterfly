@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Operation to copy a file. The relative or absolute file is the
+ * Copies a file. The relative or absolute file is the
  * "from" file, while the "to" location is specified via {@link #setToRelative(String)}
  * or {@link #setToAbsolute(String)}
  * <br>
@@ -28,7 +28,7 @@ public class CopyFile extends AbstractCopy<CopyFile> {
     private static final String DESCRIPTION = "Copy file %s to %s";
 
     /**
-     * Operation to copy a file. The relative or absolute file is the
+     * Copies a file. The relative or absolute file is the
      * "from" file, while the "to" location is specified via {@link #setToRelative(String)}
      * or {@link #setToAbsolute(String)}
      */

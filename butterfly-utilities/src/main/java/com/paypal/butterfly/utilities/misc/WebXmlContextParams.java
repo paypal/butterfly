@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This utility parses a Java web deployment descriptor file (web.xml),
+ * Parses a Java web deployment descriptor file (web.xml),
  * identifies all context parameters, and save them into a map, the key
  * being param-name and the value being param-value.
  * <br>

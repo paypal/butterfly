@@ -3,11 +3,11 @@ package com.paypal.butterfly.utilities.maven;
 import java.util.regex.Pattern;
 
 /**
- * Read lines from the maven output, and creates a String indicating the validation failures.
+ * Reads lines from the Maven execution output and produces as result a String stating the errors, if any.
  *
  * @author mcrockett
  */
-public class GenericErrorOutputHandler implements MavenInvocationOutputHandler<GenericErrorOutputHandler, String> {
+public class GenericErrorsOutputHandler implements MavenInvocationOutputHandler<GenericErrorsOutputHandler, String> {
 
     private static final Pattern GOAL_ERROR_LINE_MATCH_REGEX = Pattern.compile("\\[ERROR\\][\\s]*Failed to execute goal.*");
     private static final Pattern PROJECT_ERROR_LINE_MATCH_REGEX = Pattern.compile("\\[ERROR\\][\\s]*The project.*has [\\d]+ error.*");
@@ -26,7 +26,7 @@ public class GenericErrorOutputHandler implements MavenInvocationOutputHandler<G
      * @param details more details on the error
      * @return a String representation of the summary and details
      */
-    public static String createMessage(String summary, String details) {
+    private static String createMessage(String summary, String details) {
         return String.format(MSG_FORMAT, summary, details);
     }
 
@@ -36,7 +36,7 @@ public class GenericErrorOutputHandler implements MavenInvocationOutputHandler<G
      * @param line the line to be processed
      * @return a String with log level removed and trimmed.
      */
-    public static String removeLogLevel(String line) {
+    private static String removeLogLevel(String line) {
         return line.substring(ERROR_PHRASE.length()).trim();
     }
 
@@ -65,8 +65,8 @@ public class GenericErrorOutputHandler implements MavenInvocationOutputHandler<G
     }
 
     @Override
-    public GenericErrorOutputHandler copy() {
-        return new GenericErrorOutputHandler();
+    public GenericErrorsOutputHandler copy() {
+        return new GenericErrorsOutputHandler();
     }
 
 }

@@ -3,8 +3,7 @@ package com.paypal.butterfly.utilities.maven;
 import org.apache.maven.shared.invoker.InvocationOutputHandler;
 
 /**
- * MavenInvocationOutputHandlers read lines from the maven console output and
- * return data based on this output.
+ * Reads lines from the Maven execution console output and return data after evaluating it.
  *
  * @author mcrockett, facarvalho
  */

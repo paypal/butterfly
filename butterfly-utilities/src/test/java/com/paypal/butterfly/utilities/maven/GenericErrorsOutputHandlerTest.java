@@ -11,10 +11,10 @@ import org.testng.annotations.Test;
 /**
  * @author mcrockett
  */
-public class GenericErrorOutputHandlerTest {
+public class GenericErrorsOutputHandlerTest {
     @Test
     public void hasValidRegularExpression() {
-        GenericErrorOutputHandler handler = null;
+        GenericErrorsOutputHandler handler = null;
 
         String[] validLines = {
                 "[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.12.4:test (default-test) on project butterfly-utilities: There are test failures.",
@@ -29,14 +29,14 @@ public class GenericErrorOutputHandlerTest {
         };
 
         for(int i = 0; i < validLines.length; i += 1) {
-            handler = new GenericErrorOutputHandler();
+            handler = new GenericErrorsOutputHandler();
             handler.consumeLine(validLines[i]);
             handler.consumeLine("some error line");
             Assert.assertNotNull(handler.getResult());
         }
 
         for(int i = 0; i < invalidLines.length; i += 1) {
-            handler = new GenericErrorOutputHandler();
+            handler = new GenericErrorsOutputHandler();
             handler.consumeLine(invalidLines[i]);
             handler.consumeLine("some error line");
             Assert.assertEquals(handler.getResult(), "");
@@ -45,32 +45,24 @@ public class GenericErrorOutputHandlerTest {
 
     @Test
     public void canHaveNullResultsIfNoTriggerFound(){
-        GenericErrorOutputHandler handler = new GenericErrorOutputHandler();
+        GenericErrorsOutputHandler handler = new GenericErrorsOutputHandler();
         handler.consumeLine("asfasdfa");
         Assert.assertEquals(handler.getResult(), "");
-    }
-
-    @Test
-    public void removesLogLevelAndTrims(){
-        String line = "[ERROR]   The project blah blah has 2 errors        ";
-        Assert.assertEquals(GenericErrorOutputHandler.removeLogLevel(line), "The project blah blah has 2 errors");
     }
 
     @Test
     public void getsNextLineIfProjectError(){
         String summary = "[ERROR]   The project blah blah has 2 errors";
         String details = "[ERROR]     'dependencies.dependency.version' for com.github.javaparser:javaparser-core:jar is missing.";
-        String summaryOutput = GenericErrorOutputHandler.removeLogLevel(summary);
-        String detailsOutput = GenericErrorOutputHandler.removeLogLevel(details);
-        GenericErrorOutputHandler handler = new GenericErrorOutputHandler();
+        GenericErrorsOutputHandler handler = new GenericErrorsOutputHandler();
         handler.consumeLine(summary);
         handler.consumeLine(details);
-        Assert.assertEquals(handler.getResult(), GenericErrorOutputHandler.createMessage(summaryOutput, detailsOutput));
+        Assert.assertEquals(handler.getResult(), "The project blah blah has 2 errors 'dependencies.dependency.version' for com.github.javaparser:javaparser-core:jar is missing.");
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
     public void throwsIfNoResultsBecauseExecutionHasntStarted(){
-        GenericErrorOutputHandler handler = new GenericErrorOutputHandler();
+        GenericErrorsOutputHandler handler = new GenericErrorsOutputHandler();
         handler.getResult();
     }
 
@@ -79,7 +71,7 @@ public class GenericErrorOutputHandlerTest {
         InputStream inputStream = null;
         BufferedReader reader = null;
         try {
-            GenericErrorOutputHandler handler = new GenericErrorOutputHandler();
+            GenericErrorsOutputHandler handler = new GenericErrorsOutputHandler();
             inputStream = getClass().getResourceAsStream("/sample_maven_output_various_failures.txt");
             reader = new BufferedReader(new InputStreamReader(inputStream));
             String line = reader.readLine();

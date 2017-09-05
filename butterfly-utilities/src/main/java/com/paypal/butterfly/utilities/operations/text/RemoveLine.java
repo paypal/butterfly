@@ -3,7 +3,7 @@ package com.paypal.butterfly.utilities.operations.text;
 import java.io.Writer;
 
 /**
- * Operation to remove one, or more, lines from a text file.
+ * Removes one, or more, lines from a text file.
  * The line to be removed is chosen either based on a regular
  * expression, or by the line number.
  * <br>

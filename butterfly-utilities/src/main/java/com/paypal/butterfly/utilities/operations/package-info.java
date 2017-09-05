@@ -7,7 +7,7 @@
  * <ul>
  *     <li>Utilities never modify the application. Operations always do.</li>
  *     <li>Utilities usually return a value, but not necessarily. Operations never do.</li>
- *     <li>Utilities usually save its result in the transformation context, but not necessarily. Operations always do.</li>
+ *     <li>Utilities usually save its result meta-data object in the transformation context, but not necessarily. Operations always do.</li>
  *     <li>Operations allow multiple operations.</li>
  * </ul>
  *

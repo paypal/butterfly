@@ -15,7 +15,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * Condition to check if a particular Maven dependency exists in a Maven pom file
+ * Checks if a particular Maven dependency exists in a Maven pom file.
  *
  * @author facarvalho
  */

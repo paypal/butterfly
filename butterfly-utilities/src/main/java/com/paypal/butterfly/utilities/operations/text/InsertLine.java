@@ -16,7 +16,7 @@ import static com.paypal.butterfly.utilities.operations.EolHelper.getEndEol;
 import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
- * Operation to insert new line(s) into a text file.
+ * Inserts new line(s) into a text file.
  * The new line can be inserted:
  * <ol>
  *     <li>InsertionMode.CONCAT: At the final of the file (default)</li>

@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author facarvalho
  */
-public class ModelTree {
+class ModelTree {
 
     private ModelNode rootNode;
     private List<ModelNode> nodesInTree = new ArrayList<>();

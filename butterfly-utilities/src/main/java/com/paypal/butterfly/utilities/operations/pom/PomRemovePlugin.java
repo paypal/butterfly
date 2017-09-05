@@ -7,7 +7,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 
 /**
- * Operation to remove a plugin entry from a POM file
+ * Removes a plugin entry from a POM file.
  *
  * @author facarvalho
  */
