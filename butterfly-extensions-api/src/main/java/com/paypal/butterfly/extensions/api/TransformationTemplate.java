@@ -8,7 +8,7 @@ import java.util.*;
 
 /**
  * A transformation template is a set of transformation
- * utilities to be applied against an application to be transformed
+ * utilities to be applied against an application to be transformed.
  *
  * @author facarvalho
  */

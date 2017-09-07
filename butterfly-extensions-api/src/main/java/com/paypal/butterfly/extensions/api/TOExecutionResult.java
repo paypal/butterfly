@@ -1,7 +1,7 @@
 package com.paypal.butterfly.extensions.api;
 
 /**
- * The execution result of a {@link TransformationOperation}
+ * The execution result of a {@link TransformationOperation}.
  *
  * @author facarvalho
  */

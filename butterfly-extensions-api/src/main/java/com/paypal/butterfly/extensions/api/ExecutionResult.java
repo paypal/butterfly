@@ -1,8 +1,8 @@
 package com.paypal.butterfly.extensions.api;
 
 /**
- * Abstract type for transformation executions.
- * This is supposed to be specialized for TUs and TOs
+ * Abstract type for transformation execution results.
+ * This is supposed to be specialized for TUs and TOs.
  *
  * @author facarvalho
  */

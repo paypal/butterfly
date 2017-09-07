@@ -62,7 +62,13 @@
                 <version>2.10.4</version>
                 <configuration>
                     <stylesheetfile>stylesheet.css</stylesheetfile>
-                    <excludePackageNames>com.paypal.butterfly.extensions.api.metrics</excludePackageNames>
+                    <sourceFileExcludes>
+                        <exclude>com/paypal/butterfly/extensions/api/Result.java</exclude>
+                        <exclude>com/paypal/butterfly/extensions/api/TransformationUtilityList.java</exclude>
+                        <exclude>com/paypal/butterfly/extensions/api/TransformationUtilityParent.java</exclude>
+                        <exclude>com/paypal/butterfly/extensions/api/upgrade/UpgradePath.java</exclude>
+                        <exclude>com/paypal/butterfly/extensions/api/utilities/ManualInstructionRecord.java</exclude>
+                    </sourceFileExcludes>
                 </configuration>
             </plugin>
         </plugins>
@@ -77,7 +83,13 @@
                 <version>2.10.4</version>
                 <configuration>
                     <stylesheetfile>stylesheet.css</stylesheetfile>
-                    <excludePackageNames>com.paypal.butterfly.extensions.api.metrics</excludePackageNames>
+                    <sourceFileExcludes>
+                        <exclude>com/paypal/butterfly/extensions/api/Result.java</exclude>
+                        <exclude>com/paypal/butterfly/extensions/api/TransformationUtilityList.java</exclude>
+                        <exclude>com/paypal/butterfly/extensions/api/TransformationUtilityParent.java</exclude>
+                        <exclude>com/paypal/butterfly/extensions/api/upgrade/UpgradePath.java</exclude>
+                        <exclude>com/paypal/butterfly/extensions/api/utilities/ManualInstructionRecord.java</exclude>
+                    </sourceFileExcludes>
                 </configuration>
             </plugin>
         </plugins>

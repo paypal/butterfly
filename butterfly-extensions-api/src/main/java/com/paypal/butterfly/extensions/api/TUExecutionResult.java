@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The execution result of a {@link TransformationUtility}
+ * The execution result of a {@link TransformationUtility}.
  *
  * @author facarvalho
  */
