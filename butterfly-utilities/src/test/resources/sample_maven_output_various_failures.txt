@@ -2,19 +2,19 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] Reactor Build Order:
 [INFO] 
-[INFO] paymentapiplatserv application
+[INFO] appserv application
 [INFO] common
 [INFO] bridge-impl
 [INFO] client
-[INFO] paymentapiplatservService
+[INFO] appservService
 [INFO]                                                                         
 [INFO] ------------------------------------------------------------------------
-[INFO] Building paymentapiplatserv application 208.0.2-RC1-SNAPSHOT
+[INFO] Building appserv application 208.0.2-RC1-SNAPSHOT
 [INFO] ------------------------------------------------------------------------
 [INFO] 
-[INFO] --- maven-enforcer-plugin:1.3.1:enforce (enforce) @ paymentapiplatserv ---
-[INFO] Current project isn't entry project(Raptor Web Project or Raptor Batch Project), no validation needed.
-[INFO] start validating project:/Users/facarvalho/dev/butterfly/Butterfly-Samples/transformed-apps/paymentapiplatserv-develop_219-transformed-20161018102819979
+[INFO] --- maven-enforcer-plugin:1.3.1:enforce (enforce) @ appserv ---
+[INFO] Current project isn't entry project(Web Project or Batch Project), no validation needed.
+[INFO] start validating project:/Users/facarvalho/dev/butterfly/Butterfly-Samples/transformed-apps/appserv-develop_219-transformed-20161018102819979
 [INFO] Dependency validation complete!! No violations.
 [INFO] Plugin dependency validation complete!! No violations.
 [INFO]                                                                         
@@ -23,14 +23,14 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.3.1:enforce (enforce) @ common ---
-[INFO] Current project isn't entry project(Raptor Web Project or Raptor Batch Project), no validation needed.
-[INFO] start validating project:/Users/sample/dev/butterfly/Butterfly-Samples/transformed-apps/paymentapiplatserv-develop_219-transformed-20161018102819979/common
-[ERROR] Application dependencies' version are lower than the version used by raptor:
+[INFO] Current project isn't entry project(Web Project or Batch Project), no validation needed.
+[INFO] start validating project:/Users/sample/dev/butterfly/Butterfly-Samples/transformed-apps/appserv-develop_219-transformed-20161018102819979/common
+[ERROR] Application dependencies' version are lower than the version used by thr framework:
 [org.mockito.mockito-core, 1.9.5]
 [org.apache.commons.commons-lang3, 3.2]
 
 [WARNING] Rule 2: org.apache.maven.plugins.enforcer.FailOnLowerVersionOverride failed with message:
-Application dependencies' version are lower than the version used by raptor:
+Application dependencies' version are lower than the version used by the framework:
 [org.mockito.mockito-core, 1.9.5]
 [org.apache.commons.commons-lang3, 3.2]
 
@@ -45,9 +45,9 @@ Application dependencies' version are lower than the version used by raptor:
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.3.1:enforce (enforce) @ client ---
-[INFO] Current project isn't entry project(Raptor Web Project or Raptor Batch Project), no validation needed.
-[INFO] start validating project:/Users/sample/dev/butterfly/Butterfly-Samples/transformed-apps/paymentapiplatserv-develop_219-transformed-20161018102819979/client
-[ERROR] Application dependencies' version are lower than the version used by raptor:
+[INFO] Current project isn't entry project(Web Project or Batch Project), no validation needed.
+[INFO] start validating project:/Users/sample/dev/butterfly/Butterfly-Samples/transformed-apps/appserv-develop_219-transformed-20161018102819979/client
+[ERROR] Application dependencies' version are lower than the version used by the framework:
 [com.ebayinc.platform.mayfly.mayfly-client, 1.2.6-RELEASE]
 [com.fasterxml.jackson.datatype.jackson-datatype-joda, 2.2.1]
 [WARNING] Rule 0: org.apache.maven.plugins.enforcer.AlwaysFail failed with message:
@@ -56,23 +56,23 @@ Always fails!
 Detected Maven Version: 3.1.1 is not in the allowed range 3.3.1.
 
 [WARNING] Rule 2: org.apache.maven.plugins.enforcer.FailOnLowerVersionOverride failed with message:
-Application dependencies' version are lower than the version used by raptor:
+Application dependencies' version are lower than the version used by the framework:
 [com.ebayinc.platform.mayfly.mayfly-client, 1.2.6-RELEASE]
 [com.fasterxml.jackson.datatype.jackson-datatype-joda, 2.2.1]
 
 [INFO]                                                                         
 [INFO] ------------------------------------------------------------------------
-[INFO] Skipping paymentapiplatservService
+[INFO] Skipping appservService
 [INFO] This project has been banned from the build due to previous failures.
 [INFO] ------------------------------------------------------------------------
 [INFO] ------------------------------------------------------------------------
 [INFO] Reactor Summary:
 [INFO] 
-[INFO] paymentapiplatserv application .................... SUCCESS [0.244s]
+[INFO] appserv application .................... SUCCESS [0.244s]
 [INFO] common ............................................ FAILURE [0.007s]
 [INFO] bridge-impl ....................................... SKIPPED
 [INFO] client ............................................ FAILURE [0.005s]
-[INFO] paymentapiplatservService ......................... SKIPPED
+[INFO] appservService ......................... SKIPPED
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
