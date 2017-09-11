@@ -6,9 +6,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 
 /**
- * Condition to determine if a transformation utility
- * should be executed or not. Every
- * DoubleUtilityCondition subclass result type must always
+ * Transformation utility condition to determine if a transformation utility
+ * should be executed or not, based on a two files criteria. Every
+ * {@code DoubleUtilityCondition} subclass result type must always
  * be boolean. The criteria to this type of condition
  * is based on two files (when comparing if two XML files are equal
  * for example). For conditions

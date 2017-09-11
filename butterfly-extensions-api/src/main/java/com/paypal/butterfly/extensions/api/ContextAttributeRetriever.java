@@ -5,8 +5,7 @@ import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
 import java.io.File;
 
 /**
- * This transformation utility makes it possible to
- * fetch transformation context attributes post
+ * Transformation utility to fetch transformation context attributes post
  * transformation time, since they are always set
  * during transformation time.
  * <br>

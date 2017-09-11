@@ -1,7 +1,7 @@
 package com.paypal.butterfly.extensions.api;
 
 /**
- * Transformation context holds meta-data information
+ * Holds meta-data information
  * to be shared among transformation utility objects,
  * allowing communication among them, and helping the
  * transformation process.

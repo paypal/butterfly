@@ -1,9 +1,9 @@
 package com.paypal.butterfly.extensions.api;
 
 /**
- * Condition to determine if a transformation utility
- * should be executed or not. Every
- * SingleUtilityCondition subclass result type must always
+ * Transformation utility condition to determine if a transformation utility
+ * should be executed or not, based on a one file criteria. Every
+ * {@code SingleUtilityCondition} subclass result type must always
  * be boolean. The criteria to this type of condition
  * is based on evaluating a single file (when checking if a particular
  * file contains a given word for example). For conditions
