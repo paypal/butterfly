@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.Map;
 
 /**
- * This utility obtains a specific entry from a {@link Map} object stored in the transformation context,
+ * Obtains a specific entry from a {@link Map} object stored in the {@link TransformationContext},
  * and store its value as a new attribute in the transformation context. The name of the transformation
  * context attribute that holds the map object, and the key used to get the map entry, have to be specified.
  * <br>

@@ -3,9 +3,9 @@ package com.paypal.butterfly.extensions.api.operations;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
 /**
- * Abstract class with {@link ChangeOrRemoveElement} implementation ready for TOs that want to be so.
- * After extending this class, all the TO class needs to do is check {@code ifNotPresent}
- * when deciding its result type in case the element to be changed or removed is not present
+ * Convenience class with {@link ChangeOrRemoveElement} implementation ready for {@link TransformationOperation} subclasses.
+ * Protected instance variable {@code ifNotPresent} can be used when deciding the result type,
+ * in case the element to be changed or removed is not present.
  *
  * @author facarvalho
  */

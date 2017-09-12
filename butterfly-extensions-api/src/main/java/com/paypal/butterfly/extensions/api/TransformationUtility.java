@@ -14,12 +14,15 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * Gathers information about the project to be transformed without applying any modification on it.
+ * It is the key element of Butterfly transformation engine. The result information is saved in the
+ * {@link TransformationContext} object, to be used later by other transformation utilities.
+ * <br>
  * Transformation utilities are executed against the to be transformed project,
  * based on the absolute project root folder defined in runtime, and a relative
  * path to a target file or folder, defined in compilation time.
  * <br>
- * Transformation utilities MUST NOT apply any modification to the project though.
- * They are meant instead to only gather information about the project.
+ * Transformation utilities are also known by {@code TU}.
  * <br>
  * An example of a transformation operation utility would be to find recursively
  * a particular file based on its name and from a particular location (which would

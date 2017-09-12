@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The execution result of a {@link TransformationUtility}
+ * The meta-data object resulted after the {@link TransformationUtility} instance has been executed.
+ *
+ * @see TUExecutionResult
  *
  * @author facarvalho
  */
@@ -12,6 +14,9 @@ public class TUExecutionResult extends ExecutionResult<TransformationUtility, TU
 
     private static final Logger logger = LoggerFactory.getLogger(TUExecutionResult.class);
 
+    /**
+     * The type of result after the {@link TransformationUtility} instance has been executed.
+     */
     public enum Type {
         // No error happened, but for some reason the TU didn't result in any value (for example, when it was supposed to
         // find a specific file based on its name, but none was found)

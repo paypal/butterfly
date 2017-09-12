@@ -51,10 +51,9 @@ class TransformationContextImpl implements TransformationContext {
     @Override
     public Object get(String name) {
         if(StringUtils.isBlank(name)) {
-            // TODO replace this by a better exception type.
-            // TransformationContextException could be a good one, however, according to the link below,
-            // it is a checked exception, but we definitely need a runtime exception here.
-            // https://engineering.paypalcorp.com/confluence/display/RaptorServices/Butterfly#Butterfly-Butterflyexceptions
+            // TODO
+            // Replace this by a better exception type.
+            // TransformationContextException could be a good one, however, it is a checked exception, we definitely need a runtime exception here.
             throw new IllegalArgumentException("Transformation context attribute key cannot be null");
         }
         return attributes.get(name);
@@ -77,12 +76,11 @@ class TransformationContextImpl implements TransformationContext {
      * @param attributeObject the attribute object
      */
     void put(String name, Object attributeObject) {
-        // TODO
+// TODO
 //        if(StringUtils.isBlank(name) || attributeObject == null || (attributeObject instanceof String && StringUtils.isBlank((String) attributeObject))) {
-//            // TODO replace this by a better exception type.
-//            // TransformationContextException could be a good one, however, according to the link below,
-//            // it is a checked exception, but we definitely need a runtime exception here.
-//            // https://engineering.paypalcorp.com/confluence/display/RaptorServices/Butterfly#Butterfly-Butterflyexceptions
+//            // TODO
+//            // Replace this by a better exception type.
+//             // TransformationContextException could be a good one, however, it is a checked exception, we definitely need a runtime exception here.
 //            throw new IllegalArgumentException("Transformation context attribute name and object cannot be null nor blank");
 //        }
         attributes.put(name, attributeObject);

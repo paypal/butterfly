@@ -7,8 +7,7 @@ import org.slf4j.event.Level;
 import java.util.*;
 
 /**
- * A transformation template is a set of transformation
- * utilities to be applied against an application to be transformed
+ * A template made of a set of transformation utilities to be applied against an application to be transformed.
  *
  * @author facarvalho
  */

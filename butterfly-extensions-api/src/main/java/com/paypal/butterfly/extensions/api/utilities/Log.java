@@ -10,13 +10,13 @@ import org.slf4j.event.Level;
 import java.io.File;
 
 /**
- * Utility to provide logging statements during transformation time.
- * Since all it does is logging, it always returns null as result of
+ * Provides logging statements during transformation time.
+ * Since all it does is logging, it always returns {@link com.paypal.butterfly.extensions.api.TUExecutionResult.Type#NULL} as result of
  * execution.
  * <br>
  * If no log level is defined, then it will be set to INFO, except
  * when there is only one attribute and it is null. In this case
- * it will be set to WARNING
+ * it will be set to WARNING.
  *
  * @author facarvalho
  */

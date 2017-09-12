@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * Utility to perform multiple transformation operations. Multiple transformation operations
+ * Transformation utility to perform multiple transformation operations. Multiple transformation operations
  * are defined based on an operation template and two other factors, that could be applied
  * exclusively or together. They are:
  * <ol>

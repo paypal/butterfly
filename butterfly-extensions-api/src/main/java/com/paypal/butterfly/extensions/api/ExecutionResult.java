@@ -1,8 +1,12 @@
 package com.paypal.butterfly.extensions.api;
 
 /**
- * Abstract type for transformation executions.
- * This is supposed to be specialized for TUs and TOs
+ * The meta-data object resulted after the {@link TransformationUtility} instance has been executed.
+ * This is an abstract type, the concrete classes {@link TUExecutionResult} and {@link TOExecutionResult} should
+ * be used directly instead.
+ *
+ * @see TUExecutionResult
+ * @see TOExecutionResult
  *
  * @author facarvalho
  */

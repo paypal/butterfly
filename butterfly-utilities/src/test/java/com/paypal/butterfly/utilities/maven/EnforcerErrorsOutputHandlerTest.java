@@ -75,7 +75,7 @@ public class EnforcerErrorsOutputHandlerTest {
 
             Set<String> results = handler.getResult();
             String[] expectedResults = {
-                    "Rule 2: org.apache.maven.plugins.enforcer.FailOnLowerVersionOverride failed with message: 'Application dependencies' version are lower than the version used by raptor:'.",
+                    "Rule 2: org.apache.maven.plugins.enforcer.FailOnLowerVersionOverride failed with message: 'Application dependencies' version are lower than the version used by the framework:'.",
                     "Rule 1: org.apache.maven.plugins.enforcer.RequireMavenVersion failed with message: 'Detected Maven Version: 3.1.1 is not in the allowed range 3.3.1.'.",
                     "Rule 0: org.apache.maven.plugins.enforcer.AlwaysFail failed with message: 'Always fails!'."
             };

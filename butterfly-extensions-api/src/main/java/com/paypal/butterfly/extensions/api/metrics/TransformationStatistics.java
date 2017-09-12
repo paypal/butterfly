@@ -1,7 +1,7 @@
 package com.paypal.butterfly.extensions.api.metrics;
 
 /**
- * Transformation statistics
+ * Transformation statistics.
  *
  * @author facarvalho
  */

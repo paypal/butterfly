@@ -1,26 +1,38 @@
 package com.paypal.butterfly.extensions.api;
 
 /**
- * The execution result of a {@link TransformationOperation}
+ * The meta-data object resulted after the {@link TransformationOperation} instance has been executed.
+ *
+ * @see TOExecutionResult
  *
  * @author facarvalho
  */
 public class TOExecutionResult extends ExecutionResult<TransformationOperation, TOExecutionResult, TOExecutionResult.Type> {
 
+    /**
+     * The type of result after the {@link TransformationOperation} instance has been executed.
+     */
     public enum Type {
-        // No error happened, but for some reason the TO didn't apply any change (for example, when it was supposed to
-        // delete lines in a text file based on a regular expression, but no lines were found to match the regular
-        // expression)
+
+        /**
+         * No error happened, but for some reason the TO didn't apply any change. For example, when it was supposed to
+         * delete lines in a text file based on a regular expression, but no lines were found to match the regular expression.
+         */
         NO_OP,
 
-        // The TO executed normally and a change was performed
+        /**
+         * The TO executed normally and a change was performed.
+         */
         SUCCESS,
 
-        // The TO executed, a complete and valid change was performed, but a "non-fatal" unexpected situation happened
+        /**
+         * The TO executed, a complete and valid change was performed, but a "non-fatal" unexpected situation happened.
+         */
         WARNING,
 
-        // The TO failed to execute, no change or an incomplete change was made, and the transformed application might
-        // be now in a corrupted state
+        /**
+         * The TO failed to execute, no change or an incomplete change was made, and the transformed application might be now in a corrupted state.
+         */
         ERROR,
     }
 

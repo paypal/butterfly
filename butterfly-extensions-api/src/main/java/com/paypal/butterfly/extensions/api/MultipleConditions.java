@@ -11,7 +11,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Perform transformation utility conditions, based on a template, against multiple files,
+ * Transformation utility condition to determine if a transformation utility should be executed or not,
+ * based on a multiple files criteria.
+ * It performs condition instances based on a template against multiple files,
  * returning true if at least one file meets the condition (default mode).
  * There is an alternative mode where all files need to meet the
  * evaluation condition to result in true. For conditions
@@ -35,8 +37,21 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
 
     private static final String DESCRIPTION = "Evaluate condition '%s' against multiple files";
 
+    /**
+     * Execution mode for {@link MultipleConditions}.
+     */
     public enum Mode {
-        AT_LEAST_ONE, ALL
+
+        /**
+         * The {@link MultipleConditions} execution will returning true if AT LEAST ONE file meets the specified condition.
+         * This is the default execution mode.
+         */
+        AT_LEAST_ONE,
+
+        /**
+         * The {@link MultipleConditions} execution will returning true only if ALL files meet the specified condition.
+         */
+        ALL
     }
 
     private Mode mode = Mode.AT_LEAST_ONE;
