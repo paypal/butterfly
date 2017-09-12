@@ -1,10 +1,7 @@
 package com.paypal.butterfly.extensions.api.exception;
 
 /**
- * Butterfly application validation exception.
- * This exception should be used whenever the application to be
- * transformed is not in a good initial state, which invalidates
- * a transformation attempt
+ * Thrown whenever the application to be transformed is not in a valid state.
  *
  * @author facarvalho
  */

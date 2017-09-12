@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This utility allows the execution of a TU instance, created from a TU template, multiple time in a loop.
+ * Allows the execution of a transformation utility instance, created from a template, multiple times in a loop.
  * The number of iterations is defined by one of these options, and in this order of precedence:
  * <ol>
  *     <li>Specifying the number of iterations</li>

@@ -201,10 +201,10 @@ public class TransformationEngine {
     /*
      * Perform a condition against multiple files
      */
-    private PerformResult perform(MultipleCondition utility, Set<File> files, File transformedAppFolder, TransformationContextImpl transformationContext) throws TransformationException {
+    private PerformResult perform(MultipleConditions utility, Set<File> files, File transformedAppFolder, TransformationContextImpl transformationContext) throws TransformationException {
 
         UtilityCondition condition;
-        boolean allMode = utility.getMode().equals(MultipleCondition.Mode.ALL);
+        boolean allMode = utility.getMode().equals(MultipleConditions.Mode.ALL);
         boolean result = false;
 
         for (File file : files) {
@@ -334,11 +334,11 @@ public class TransformationEngine {
                         TUExecutionResult executionResult = (TUExecutionResult) result.getExecutionResult();
                         Object executionValue = executionResult.getValue();
 
-                        if(utility instanceof MultipleCondition) {
+                        if(utility instanceof MultipleConditions) {
 
                             /* Executing a condition against multiple files */
                             Set<File> files = (Set<File>) executionValue;
-                            result = perform((MultipleCondition) utility, files, transformedAppFolder, transformationContext);
+                            result = perform((MultipleConditions) utility, files, transformedAppFolder, transformationContext);
                         } else if(utility instanceof FilterFiles) {
 
                             /* Execute a filter in a list of files based on a condition */

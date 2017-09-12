@@ -9,8 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Condition to check the result of an utility. If a result for the specified
- * utility name is not found, this condition returns as false with a warning
+ * Checks the perform result, and optionally execution result as well, of a {@link TransformationUtility} instance.
+ * If a result for the specified utility name is not found, this condition returns {@code false}, but with a warning.
  *
  * @author facarvalho
  */
@@ -20,7 +20,7 @@ public class ResultCondition extends UtilityCondition<ResultCondition> {
 
     private String utilityName;
 
-    private PerformResult.Type[] resultTypes;
+    private PerformResult.Type[] performResultTypes;
 
     private TUExecutionResult.Type[] tuExecutionResultTypes;
 
@@ -39,12 +39,12 @@ public class ResultCondition extends UtilityCondition<ResultCondition> {
         return this;
     }
 
-    public ResultCondition setResultTypes(PerformResult.Type... resultTypes) {
-        checkForNull("resultTypes", resultTypes);
-        if (resultTypes.length == 0) {
+    public ResultCondition setPerformResultTypes(PerformResult.Type... performResultTypes) {
+        checkForNull("performResultTypes", performResultTypes);
+        if (performResultTypes.length == 0) {
             throw new TransformationDefinitionException("No result types have been specified");
         }
-        this.resultTypes = resultTypes;
+        this.performResultTypes = performResultTypes;
         return this;
     }
 
@@ -70,8 +70,8 @@ public class ResultCondition extends UtilityCondition<ResultCondition> {
         return utilityName;
     }
 
-    public PerformResult.Type[] getResultTypes() {
-        return resultTypes.clone();
+    public PerformResult.Type[] getPerformResultTypes() {
+        return performResultTypes.clone();
     }
 
     public TUExecutionResult.Type[] getTuExecutionResultTypes() {
@@ -84,7 +84,7 @@ public class ResultCondition extends UtilityCondition<ResultCondition> {
 
     @Override
     public String getDescription() {
-        String s1 = ( resultTypes == null || resultTypes.length == 0 ? "" : " perform" + Arrays.toString(resultTypes));
+        String s1 = ( performResultTypes == null || performResultTypes.length == 0 ? "" : " perform" + Arrays.toString(performResultTypes));
         String s2 = ( tuExecutionResultTypes == null || tuExecutionResultTypes.length == 0 ? "" : " execution_tu" + Arrays.toString(tuExecutionResultTypes));
         String s3 = ( toExecutionResultTypes == null || toExecutionResultTypes.length == 0 ? "" : " execution_to" + Arrays.toString(toExecutionResultTypes));
         String possibleResultTypes = String.format("{%s%s%s }", s1, s2, s3);
@@ -94,18 +94,18 @@ public class ResultCondition extends UtilityCondition<ResultCondition> {
 
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-        PerformResult result = transformationContext.getResult(utilityName);
+        PerformResult performResult = transformationContext.getResult(utilityName);
 
-        if (result == null) {
-            String warningMessage = "There is no utility result associated with name " + utilityName;
+        if (performResult == null) {
+            String warningMessage = "There is no utility performResult associated with name " + utilityName;
             return TUExecutionResult.warning(this, warningMessage, false);
         }
 
-        PerformResult.Type resultType = result.getType();
-        boolean conditionResult = Arrays.asList(resultTypes).contains(resultType);
+        PerformResult.Type performResultType = performResult.getType();
+        boolean conditionResult = Arrays.asList(performResultTypes).contains(performResultType);
 
-        if (conditionResult && resultType.equals(PerformResult.Type.EXECUTION_RESULT)) {
-            Object executionResultType = result.getExecutionResult().getType();
+        if (conditionResult && performResultType.equals(PerformResult.Type.EXECUTION_RESULT)) {
+            Object executionResultType = performResult.getExecutionResult().getType();
             List validExecutionTypes = Arrays.asList(ArrayUtils.addAll(tuExecutionResultTypes, toExecutionResultTypes));
             conditionResult = validExecutionTypes.contains(executionResultType);
         }

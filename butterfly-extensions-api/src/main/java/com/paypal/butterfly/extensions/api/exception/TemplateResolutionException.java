@@ -1,8 +1,10 @@
 package com.paypal.butterfly.extensions.api.exception;
 
+import java.io.File;
+
 /**
- * This exception is thrown by {@link com.paypal.butterfly.extensions.api.Extension#automaticResolution(File)}
- * whenever transformation template cannot be resolved
+ * Thrown by {@link com.paypal.butterfly.extensions.api.Extension#automaticResolution(File)}
+ * whenever a transformation template cannot be resolved.
  *
  * @author facarvalho
  */

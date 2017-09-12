@@ -9,8 +9,8 @@ import com.paypal.butterfly.extensions.api.exception.TransformationUtilityExcept
 import java.io.File;
 
 /**
- * This transformation utility abort the transformation.
- * An abortion message may be specified. The abortion
+ * Aborts the transformation immediately.
+ * An abort message may be specified. The abort
  * can also be conditional by using {@link #executeIf(String)}
  * or {@link #executeUnless(String)}
  *

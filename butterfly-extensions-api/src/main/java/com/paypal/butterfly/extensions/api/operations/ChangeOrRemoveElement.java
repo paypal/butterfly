@@ -3,24 +3,48 @@ package com.paypal.butterfly.extensions.api.operations;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
 /**
- * This interface should be implemented by operations that expect to change or modify elements,
- * standardizing in the TO what to do in the absence of the element to be manipulated.
+ * This interface should be implemented by {@link TransformationOperation}
+ * subclasses that intend to modify a project by changing or modify elements,
+ * standardizing the behavior and API in the absence of the element to be manipulated.
  * <br>
- * Examples of elements to be changed or removed: files, folders, properties in properties files,
- * POM dependencies, POM managed dependencies, POM plugins, POM managed plugins, POM properties, etc,
+ * <br>
+ * Examples:
+ * <ul>
+ *     <li>files</li>
+ *     <li>folders</li>
+ *     <li>properties, in properties files</li>
+ *     <li>POM dependencies</li>
+ *     <li>POM managed dependencies</li>
+ *     <li>POM plugins</li>
+ *     <li>POM managed plugins</li>
+ *     <li>POM properties</li>
+ * </ul>
  *
  * @author facarvalho
  */
 public interface ChangeOrRemoveElement<TO extends TransformationOperation> {
 
     /**
-     * The possibilities bellow refer to instances of {@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type},
-     * although they are intentionally not supposed to match one-to-one
+     * Possible behaviors in case the element to be changed or removed is not present.
+     * Each of these options is related to instances of {@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type},
+     * although they are intentionally not supposed to match necessarily one-to-one.
      */
     enum IfNotPresent {
-        Fail,   // Fail if the element to be changed or removed is not present
-        NoOp,   // Warn if the element to be changed or removed is not present
-        Warn    // Do nothing, not warn neither fail, if the element to be changed or removed is not present
+
+        /**
+         * Fail if the element to be changed or removed is not present
+         */
+        Fail,
+
+        /**
+         * Warn if the element to be changed or removed is not present
+         */
+        NoOp,
+
+        /**
+         * Do nothing, not warn neither fail, if the element to be changed or removed is not present
+         */
+        Warn
     }
 
     /**
