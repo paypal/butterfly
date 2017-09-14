@@ -1,10 +1,6 @@
 # Butterfly
 
-Butterfly is an application transformation tool. Read [this document](https://engineering.paypalcorp.com/confluence/x/1XBiE) for further information.
-
-## How to run it
-
-Read [CLI documentation](butterfly-cli/README.md) to find out how to run Butterfly.
+Butterfly is an application transformation tool. Read [its Wiki]() for further information.
 
 ## ECI and Deploy Jenkins instance
 
