@@ -334,6 +334,11 @@ public class TransformationEngine {
                         TUExecutionResult executionResult = (TUExecutionResult) result.getExecutionResult();
                         Object executionValue = executionResult.getValue();
 
+                        if(executionResult.getType().equals(TUExecutionResult.Type.ERROR)) {
+                            processUtilityExecutionResult(utility, result, transformationContext);
+                            break;
+                        }
+
                         if(utility instanceof MultipleConditions) {
 
                             /* Executing a condition against multiple files */
