@@ -27,7 +27,7 @@ package com.paypal.butterfly.extensions.api;
  *
  * @author facarvalho
  */
-public abstract class TransformationOperation<TO> extends TransformationUtility<TO> {
+public abstract class TransformationOperation<TO extends TransformationOperation> extends TransformationUtility<TO> {
 
     public TransformationOperation() {
         // Different than regular Transformation Utilities, the default value here is null, which means

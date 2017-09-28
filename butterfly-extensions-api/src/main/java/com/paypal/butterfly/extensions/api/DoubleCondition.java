@@ -26,7 +26,7 @@ import java.io.File;
  *
  * @author facarvalho
  */
-public abstract class DoubleCondition<DUC> extends UtilityCondition<DUC> {
+public abstract class DoubleCondition<DUC extends DoubleCondition> extends UtilityCondition<DUC> {
 
     // The name of the transformation context attribute
     // that refers to the file to be compared against the baseline file

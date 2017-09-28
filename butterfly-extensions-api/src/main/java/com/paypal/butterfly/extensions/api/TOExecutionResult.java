@@ -100,11 +100,11 @@ public class TOExecutionResult extends ExecutionResult<TransformationOperation, 
      * Creates and returns a new {@link Type#WARNING} result
      *
      * @param transformationOperation the {@link TransformationOperation} object that produced this result
-     * @param exception the exception to be registered to the result object
+     * @param exception the exception to be registered as warning to the result object
      * @return the created result object
      */
     public static TOExecutionResult warning(TransformationOperation transformationOperation, Exception exception) {
-        return new TOExecutionResult(transformationOperation, Type.WARNING, exception);
+        return new TOExecutionResult(transformationOperation, Type.WARNING).addWarning(exception);
     }
 
     /**

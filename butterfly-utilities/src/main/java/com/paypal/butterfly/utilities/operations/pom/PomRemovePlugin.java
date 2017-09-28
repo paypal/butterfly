@@ -6,6 +6,8 @@ import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 
+import java.util.Objects;
+
 /**
  * Removes a plugin entry from a POM file.
  *
@@ -88,6 +90,24 @@ public class PomRemovePlugin extends AbstractArtifactPomOperation<PomRemovePlugi
     public PomRemovePlugin clone() throws CloneNotSupportedException {
         PomRemovePlugin clone = (PomRemovePlugin) super.clone();
         return clone;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof PomRemovePlugin)) return false;
+
+        PomRemovePlugin tu = (PomRemovePlugin) obj;
+        if (!Objects.equals(tu.ifNotPresent, this.ifNotPresent)) return false;
+
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode(super.hashCode(),
+                ifNotPresent
+        );
     }
 
 }
