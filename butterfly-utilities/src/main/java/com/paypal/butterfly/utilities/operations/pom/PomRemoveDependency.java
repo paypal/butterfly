@@ -6,6 +6,8 @@ import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 
+import java.util.Objects;
+
 /**
  * Removes a dependency entry from a POM file.
  *
@@ -88,6 +90,24 @@ public class PomRemoveDependency extends AbstractArtifactPomOperation<PomRemoveD
     public PomRemoveDependency clone() throws CloneNotSupportedException {
         PomRemoveDependency clone = (PomRemoveDependency) super.clone();
         return clone;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof PomRemoveDependency)) return false;
+
+        PomRemoveDependency tu = (PomRemoveDependency) obj;
+        if (!Objects.equals(tu.ifNotPresent, this.ifNotPresent)) return false;
+
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode(super.hashCode(),
+                ifNotPresent
+        );
     }
 
 }

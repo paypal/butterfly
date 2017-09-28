@@ -187,7 +187,7 @@ public class PomAddDependencyTest extends TransformationUtilityTestHelper {
 
 	/**
 	 * Get dependency list from a maven model. Note: This is needed because
-	 * {@link AbstractArtifactPomOperation#getDependencyInList(Model, String, String)}
+	 * {@link AbstractArtifactPomOperation#getDependencyInList(List, String, String)}
 	 * does not accept a version as argument.
 	 */
 	private Dependency getDependencyInList(Model model, String groupId, String artifactId, String version) {

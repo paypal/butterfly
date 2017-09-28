@@ -1,105 +1,98 @@
 package com.paypal.butterfly.utilities.operations.pom;
 
-import java.io.IOException;
-
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Model;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.testng.annotations.Test;
+
+import java.io.IOException;
+
+import static org.testng.Assert.*;
 
 public class PomRemoveDependencyTest extends TransformationUtilityTestHelper {
 
 	private static final String DEPENDENCY_NOT_REMOVED_MSG = "Dependency com.test:not-present has NOT been removed from POM file /pom.xml because it is not present";
 
 	@Test
+	public void miscTest() throws CloneNotSupportedException {
+		PomRemoveDependency pomRemoveDependency = new PomRemoveDependency("org.springframework.boot", "spring-boot-dependencies").relative("pom.xml");
+
+		assertEquals(pomRemoveDependency.getDescription(), "Remove dependency org.springframework.boot:spring-boot-dependencies from POM file pom.xml");
+		assertEquals(pomRemoveDependency.clone(), pomRemoveDependency);
+	}
+
+	@Test
 	public void removeDependencyTest() throws IOException, XmlPullParserException {
+		PomRemoveDependency uut = new PomRemoveDependency("org.springframework.boot", "spring-boot-dependencies").relative("pom.xml");
 
-		PomRemoveDependency uut = new PomRemoveDependency("org.springframework.boot", "spring-boot-dependencies")
-				.relative("pom.xml");
-
-		Assert.assertNotNull(getDependencyBeforeChange(uut));
+		assertNotNull(getDependencyBeforeChange(uut));
 		executeAndAssertSuccess(uut);
 		Dependency dependencyAfterChange = getDependencyAfterChange(uut);
-		Assert.assertNull(dependencyAfterChange);
-
+		assertNull(dependencyAfterChange);
 	}
 
 	@Test
 	public void defaultNotPresentTest() throws IOException, XmlPullParserException {
-
 		PomRemoveDependency uut = new PomRemoveDependency("com.test", "not-present").relative("pom.xml");
 
-		Assert.assertNull(getDependencyBeforeChange(uut));
+		assertNull(getDependencyBeforeChange(uut));
 		TOExecutionResult executionResult = uut.execution(transformedAppFolder, transformationContext);
-		Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
+		assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
 		assertExceptionOccurred(executionResult);
-
 	}
 
 	@Test
 	public void failNotPresentTest() throws IOException, XmlPullParserException {
+		PomRemoveDependency uut = new PomRemoveDependency("com.test", "not-present").relative("pom.xml").failIfNotPresent();
 
-		PomRemoveDependency uut = new PomRemoveDependency("com.test", "not-present").relative("pom.xml")
-				.failIfNotPresent();
-
-		Assert.assertNull(getDependencyBeforeChange(uut));
+		assertNull(getDependencyBeforeChange(uut));
 		TOExecutionResult executionResult = uut.execution(transformedAppFolder, transformationContext);
-		Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
+		assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
 		assertExceptionOccurred(executionResult);
-
 	}
 
 	@Test
 	public void warnNotPresentTest() throws IOException, XmlPullParserException {
+		PomRemoveDependency uut = new PomRemoveDependency("com.test", "not-present").relative("pom.xml").warnIfNotPresent();
 
-		PomRemoveDependency uut = new PomRemoveDependency("com.test", "not-present").relative("pom.xml")
-				.warnIfNotPresent();
-
-		Assert.assertNull(getDependencyBeforeChange(uut));
+		assertNull(getDependencyBeforeChange(uut));
 		TOExecutionResult executionResult = uut.execution(transformedAppFolder, transformationContext);
-		Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.WARNING);
-		assertExceptionOccurred(executionResult);
+		assertEquals(executionResult.getType(), TOExecutionResult.Type.WARNING);
 
+		assertNull(executionResult.getException());
+		assertEquals(executionResult.getWarnings().get(0).getClass(), TransformationOperationException.class);
+		assertEquals(executionResult.getWarnings().get(0).getMessage(), DEPENDENCY_NOT_REMOVED_MSG);
 	}
 
 	@Test
 	public void noOpNotPresentTest() throws IOException, XmlPullParserException {
+		PomRemoveDependency uut = new PomRemoveDependency("com.test", "not-present").relative("pom.xml").noOpIfNotPresent();
 
-		PomRemoveDependency uut = new PomRemoveDependency("com.test", "not-present").relative("pom.xml")
-				.noOpIfNotPresent();
-
-		Assert.assertNull(getDependencyBeforeChange(uut));
+		assertNull(getDependencyBeforeChange(uut));
 		TOExecutionResult executionResult = uut.execution(transformedAppFolder, transformationContext);
-		Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
-		Assert.assertNull(executionResult.getException());
-		Assert.assertEquals(executionResult.getDetails(), DEPENDENCY_NOT_REMOVED_MSG);
-
+		assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
+		assertNull(executionResult.getException());
+		assertEquals(executionResult.getDetails(), DEPENDENCY_NOT_REMOVED_MSG);
 	}
 
 	@Test
 	public void getDescriptionTest() throws IOException, XmlPullParserException {
-
 		PomRemoveDependency uut = new PomRemoveDependency("org.testng", "testng").relative("pom.xml");
 
 		String description = uut.getDescription();
-		Assert.assertEquals(description, "Remove dependency org.testng:testng from POM file pom.xml");
-
+		assertEquals(description, "Remove dependency org.testng:testng from POM file pom.xml");
 	}
 
-	private Dependency getDependencyBeforeChange(PomRemoveDependency pomRemoveDependency)
-			throws IOException, XmlPullParserException {
+	private Dependency getDependencyBeforeChange(PomRemoveDependency pomRemoveDependency) throws IOException, XmlPullParserException {
 		Model pomModelBeforeChange = getOriginalPomModel("pom.xml");
 		Dependency dependencyBeforeChange = pomRemoveDependency.getDependency(pomModelBeforeChange);
 		return dependencyBeforeChange;
 	}
 
-	private Dependency getDependencyAfterChange(PomRemoveDependency pomRemoveDependency)
-			throws IOException, XmlPullParserException {
+	private Dependency getDependencyAfterChange(PomRemoveDependency pomRemoveDependency) throws IOException, XmlPullParserException {
 		Model pomModelAfterChange = getTransformedPomModel("pom.xml");
 		Dependency dependencyAfterChange = pomRemoveDependency.getDependency(pomModelAfterChange);
 		return dependencyAfterChange;
@@ -107,15 +100,15 @@ public class PomRemoveDependencyTest extends TransformationUtilityTestHelper {
 
 	private void executeAndAssertSuccess(AbstractPomOperation<?> pomOperation) {
 		TOExecutionResult executionResult = pomOperation.execution(transformedAppFolder, transformationContext);
-		Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
-		Assert.assertEquals(executionResult.getDetails(),
+		assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+		assertEquals(executionResult.getDetails(),
 				"Dependency org.springframework.boot:spring-boot-dependencies has been removed from POM file /pom.xml");
 	}
 
 	private void assertExceptionOccurred(TOExecutionResult executionResult) {
-		Assert.assertNotNull(executionResult.getException());
-		Assert.assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
-		Assert.assertEquals(executionResult.getException().getMessage(), DEPENDENCY_NOT_REMOVED_MSG);
+		assertNotNull(executionResult.getException());
+		assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
+		assertEquals(executionResult.getException().getMessage(), DEPENDENCY_NOT_REMOVED_MSG);
 	}
 
 }
