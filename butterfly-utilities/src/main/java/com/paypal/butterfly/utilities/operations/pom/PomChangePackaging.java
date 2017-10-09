@@ -3,6 +3,8 @@ package com.paypal.butterfly.utilities.operations.pom;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import org.apache.maven.model.Model;
 
+import java.util.Objects;
+
 /**
  * Changes the packaging of a Maven artifact, by changing its POM file.
  *
@@ -53,6 +55,23 @@ public class PomChangePackaging extends AbstractPomOperation<PomChangePackaging>
     public PomChangePackaging clone() throws CloneNotSupportedException {
         PomChangePackaging clone = (PomChangePackaging) super.clone();
         return clone;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof PomChangePackaging)) return false;
+
+        PomChangePackaging tu = (PomChangePackaging) obj;
+        if (!Objects.equals(tu.packagingType, this.packagingType)) return false;
+
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode(super.hashCode(),
+                packagingType);
     }
 
 }
