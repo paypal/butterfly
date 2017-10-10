@@ -2,7 +2,17 @@ package com.paypal.butterfly.extensions.api;
 
 
 /**
- * A transformation operation.
+ * Special type of {@link TransformationUtility} that applies a modification to the project.
+ * <br>
+ * Transformation operations are also known by {@code TO}.
+ * <br>
+ * Differences between a regular transformation utility (TU) and transformation operations (TO):
+ * <ul>
+ *     <li>TU never modifies application. TO always does.</li>
+ *     <li>TU usually returns a value, but not necessarily. TO never does.</li>
+ *     <li>TU usually saves its result, but not necessarily. TO always does.</li>
+ *     <li>TO allows multiple operations.</li>
+ * </ul>
  *<br>
  * The default value for {@link #relative(String)} is {@code null}, which means
  * it must be set explicitly, unless an absolute path is set via {@link #absolute(String)}
@@ -14,18 +24,10 @@ package com.paypal.butterfly.extensions.api;
  * MUST NOT be copied from original object to cloned object, since that is all already taken
  * care of properly by the framework. Notice that name, parent and path (absolute and relative)
  * are NECESSARILY NOT assigned to the clone object
- * <br>
- * Differences between TU and TO:
- * <ul>
- *     <li>TU never modifies application. TO always does</li>
- *     <li>TU usually returns a value, but not necessarily. TO never does</li>
- *     <li>TU usually saves its result, but not necessarily. TO always does</li>
- *     <li>TO allows multiple operations</li>
- * </ul>
  *
  * @author facarvalho
  */
-public abstract class TransformationOperation<TO> extends TransformationUtility<TO> {
+public abstract class TransformationOperation<TO extends TransformationOperation> extends TransformationUtility<TO> {
 
     public TransformationOperation() {
         // Different than regular Transformation Utilities, the default value here is null, which means

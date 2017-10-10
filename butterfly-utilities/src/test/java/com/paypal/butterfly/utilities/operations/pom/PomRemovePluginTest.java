@@ -12,12 +12,22 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import static org.testng.Assert.assertEquals;
+
 /**
  * Unit test for PomRemovePlugin TO
  *
  * @author facarvalho
  */
 public class PomRemovePluginTest extends TransformationUtilityTestHelper {
+
+    @Test
+    public void miscTest() throws CloneNotSupportedException {
+        PomRemovePlugin pomRemovePlugin = new PomRemovePlugin("org.apache.maven.plugins", "maven-javadoc-plugin").relative("pom.xml");
+
+        assertEquals(pomRemovePlugin.getDescription(), "Remove plugin org.apache.maven.plugins:maven-javadoc-plugin from POM file pom.xml");
+        assertEquals(pomRemovePlugin.clone(), pomRemovePlugin);
+    }
 
     @Test
     public void pluginRemovedTest() throws IOException, XmlPullParserException {

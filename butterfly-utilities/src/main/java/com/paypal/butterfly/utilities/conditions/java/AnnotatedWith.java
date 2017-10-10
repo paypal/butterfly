@@ -6,9 +6,9 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import java.util.List;
 
 /**
- * This condition evaluates if the specified
+ * Evaluates if the specified
  * compilation unit is annotated with the
- * specified annotation class
+ * specified annotation class.
  *
  * @author facarvalho
  */

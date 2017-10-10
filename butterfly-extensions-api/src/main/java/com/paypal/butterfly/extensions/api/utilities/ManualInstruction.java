@@ -7,12 +7,10 @@ import java.io.File;
 import java.net.URL;
 
 /**
- * This utility allows the creation of a manual instruction, which can be seen as
- * a transformation operation that is too complex to be automated, but still,
- * Butterfly should be aware of it, so that it can state to the user in the
- * end of the transformation.
+ * Registers a manual instruction, also known as "post-upgrade instruction", which can be seen as
+ * a transformation operation that is too complex to be automated, but that should at least be recognized and reported by Butterfly.
  * <br>
- * Every manual instruction is reported to the user in order in the end of the transformation.
+ * In the end of the transformation, every manual instruction is reported in order of registration as Markdown ({@code .md}) files.
  *
  * @author facarvalho
  */

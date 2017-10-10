@@ -11,9 +11,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Utility to filter a list of files based on a given
+ * Transformation utility to filter a list of files based on a given
  * {@link com.paypal.butterfly.extensions.api.SingleCondition},
- * returning in a sub-list of files
+ * returning in a sub-list of files.
  *
  * @author facarvalho
  */

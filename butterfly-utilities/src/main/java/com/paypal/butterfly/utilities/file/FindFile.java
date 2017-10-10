@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Utility to find a file based on its name. The search is
+ * Finds a file based on its name. The search is
  * always recursive (includes sub-folders). If no file is
  * found, null is returned, unless {@link #failIfNotFound(boolean)} is set to true.
  * If multiple files are found, an error is returned.

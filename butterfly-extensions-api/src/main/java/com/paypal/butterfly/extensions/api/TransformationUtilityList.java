@@ -10,7 +10,7 @@ import java.util.List;
  * 
  * @author facarvalho 
  */
-public interface TransformationUtilityList extends TransformationUtilityParent {
+interface TransformationUtilityList extends TransformationUtilityParent {
 
     /**
      * Adds a new transformation utility to the end of the list.

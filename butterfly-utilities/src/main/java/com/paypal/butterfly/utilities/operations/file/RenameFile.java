@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Operation for single file renaming
+ * Renames a single file.
  *
  * @author facarvalho
  */
@@ -23,7 +23,7 @@ public class RenameFile extends TransformationOperation<RenameFile> {
     }
 
     /**
-     * Operation for single file renaming
+     * Renames a single file.
      *
      * @param newName new name for the file
      */

@@ -6,9 +6,10 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
- * Abstract Artifact POM operation
+ * Abstract Artifact POM operation.
  *
  * @author facarvalho
  */
@@ -137,6 +138,25 @@ public abstract class AbstractArtifactPomOperation<TO extends AbstractArtifactPo
         }
 
         return plugin;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof AbstractArtifactPomOperation)) return false;
+
+        AbstractArtifactPomOperation tu = (AbstractArtifactPomOperation) obj;
+        if (!Objects.equals(tu.groupId, this.groupId)) return false;
+        if (!Objects.equals(tu.artifactId, this.artifactId)) return false;
+
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode(super.hashCode(),
+                groupId,
+                artifactId);
     }
 
 }

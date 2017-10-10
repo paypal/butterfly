@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Utility to run one or more Maven goals against a specific Maven POM file
+ * Runs one or more Maven goals against a specific Maven POM file.
  *
  * @author facarvalho
  */

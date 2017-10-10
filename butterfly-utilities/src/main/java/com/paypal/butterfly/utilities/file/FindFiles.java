@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Utility to find files based on a regular expression
+ * Finds files based on a regular expression
  * against the file name and/or the file path. The search might be
  * recursive (including sub-folders) or not. If a file path regular
  * expression is set, then the search will be automatically recursive.

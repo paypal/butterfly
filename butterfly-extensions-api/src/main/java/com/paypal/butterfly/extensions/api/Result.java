@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author facarvalho
  */
-public abstract class Result<S, RT, T> {
+abstract class Result<S, RT, T> {
 
     // The source of this result, which could be for example
     // a transformation utility instance or a transformation

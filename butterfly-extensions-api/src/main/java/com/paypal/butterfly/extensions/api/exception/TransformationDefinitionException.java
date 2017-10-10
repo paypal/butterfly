@@ -1,8 +1,9 @@
 package com.paypal.butterfly.extensions.api.exception;
 
 /**
- * Exception to be used when a transformation template definition
- * is not well formed
+ * Thrown whenever a transformation template definition is not well formed.
+ *
+ * @author facarvalho
  */
 public class TransformationDefinitionException extends ButterflyRuntimeException {
 

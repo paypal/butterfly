@@ -1,26 +1,38 @@
 package com.paypal.butterfly.extensions.api;
 
 /**
- * The execution result of a {@link TransformationOperation}
+ * The meta-data object resulted after the {@link TransformationOperation} instance has been executed.
+ *
+ * @see TOExecutionResult
  *
  * @author facarvalho
  */
 public class TOExecutionResult extends ExecutionResult<TransformationOperation, TOExecutionResult, TOExecutionResult.Type> {
 
+    /**
+     * The type of result after the {@link TransformationOperation} instance has been executed.
+     */
     public enum Type {
-        // No error happened, but for some reason the TO didn't apply any change (for example, when it was supposed to
-        // delete lines in a text file based on a regular expression, but no lines were found to match the regular
-        // expression)
+
+        /**
+         * No error happened, but for some reason the TO didn't apply any change. For example, when it was supposed to
+         * delete lines in a text file based on a regular expression, but no lines were found to match the regular expression.
+         */
         NO_OP,
 
-        // The TO executed normally and a change was performed
+        /**
+         * The TO executed normally and a change was performed.
+         */
         SUCCESS,
 
-        // The TO executed, a complete and valid change was performed, but a "non-fatal" unexpected situation happened
+        /**
+         * The TO executed, a complete and valid change was performed, but a "non-fatal" unexpected situation happened.
+         */
         WARNING,
 
-        // The TO failed to execute, no change or an incomplete change was made, and the transformed application might
-        // be now in a corrupted state
+        /**
+         * The TO failed to execute, no change or an incomplete change was made, and the transformed application might be now in a corrupted state.
+         */
         ERROR,
     }
 
@@ -88,11 +100,11 @@ public class TOExecutionResult extends ExecutionResult<TransformationOperation, 
      * Creates and returns a new {@link Type#WARNING} result
      *
      * @param transformationOperation the {@link TransformationOperation} object that produced this result
-     * @param exception the exception to be registered to the result object
+     * @param exception the exception to be registered as warning to the result object
      * @return the created result object
      */
     public static TOExecutionResult warning(TransformationOperation transformationOperation, Exception exception) {
-        return new TOExecutionResult(transformationOperation, Type.WARNING, exception);
+        return new TOExecutionResult(transformationOperation, Type.WARNING).addWarning(exception);
     }
 
     /**

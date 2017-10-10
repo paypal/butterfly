@@ -3,26 +3,58 @@ package com.paypal.butterfly.extensions.api.operations;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
 /**
- * This interface should be implemented by operations that expect to add elements,
- * standardizing in the TO what to do if the element to be added already exists.
+ * This interface should be implemented by {@link TransformationOperation}
+ * subclasses that intend to modify a project by adding elements to it,
+ * standardizing the behavior and API if the element to be added already exists.
  * <br>
- * Examples of elements to be added by TOs: files, folders, properties in properties files,
- * POM dependencies, POM managed dependencies, POM plugins, POM managed plugins, POM properties, etc,
+ * <br>
+ * Examples:
+ * <ul>
+ *     <li>files</li>
+ *     <li>folders</li>
+ *     <li>properties, in properties files</li>
+ *     <li>POM dependencies</li>
+ *     <li>POM managed dependencies</li>
+ *     <li>POM plugins</li>
+ *     <li>POM managed plugins</li>
+ *     <li>POM properties</li>
+ * </ul>
  *
  * @author facarvalho
  */
 public interface AddElement<TO extends TransformationOperation> {
 
     /**
-     * The possibilities bellow refer to instances of {@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type},
-     * although they are intentionally not supposed to match one-to-one
+     * Possible behaviors in case the element to be added already exists.
+     * Each of these options is related to instances of {@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type},
+     * although they are intentionally not supposed to match necessarily one-to-one.
      */
     enum IfPresent {
-        Fail,           // Fail if the element to be added is already present
-        WarnNotAdd,     // Warn and do not add if the element to be added is already present
-        WarnButAdd,     // Warn, but add, if the element to be added is already present
-        NoOp,           // Do nothing, not add, not warn neither fail, if the element to be added is already present
-        Overwrite       // Overwrite and not warn if the element to be added is already present
+
+        /**
+         * Fail if the element to be added is already present
+         */
+        Fail,
+
+        /**
+         * Warn and do not add if the element to be added is already present
+         */
+        WarnNotAdd,
+
+        /**
+         * Warn, but add, if the element to be added is already present
+         */
+        WarnButAdd,
+
+        /**
+         * Do nothing, not add, not warn neither fail, if the element to be added is already present
+         */
+        NoOp,
+
+        /**
+         * Overwrite and not warn if the element to be added is already present
+         */
+        Overwrite
     }
 
     /**

@@ -6,12 +6,11 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * EnforcerErrorOutputHandler read lines from the maven enforcer plugin output,
- * and creates a set of strings indicating the validation failures.
+ * Reads lines from the Maven enforcer plugin output and produces as result a set of Strings stating the validation failures, if any.
  *
  * @author mcrockett
  */
-public class EnforcerGenericOutputHandler implements MavenInvocationOutputHandler<EnforcerGenericOutputHandler, Set<String>> {
+public class EnforcerErrorsOutputHandler implements MavenInvocationOutputHandler<EnforcerErrorsOutputHandler, Set<String>> {
 
     private static final Pattern RULE_WARNING_LINE_MATCH_REGEX = Pattern.compile(".* Rule [\\d]+:.*");
     private static final String RULE_BEGINNING_PHRASE = "Rule ";
@@ -28,7 +27,7 @@ public class EnforcerGenericOutputHandler implements MavenInvocationOutputHandle
      * @param details more details on the error
      * @return a String representation of the summary and details
      */
-    public static String createMessage(String summary, String details) {
+    private static String createMessage(String summary, String details) {
         return String.format(MESSAGE_FORMAT, summary, details);
     }
 
@@ -55,8 +54,8 @@ public class EnforcerGenericOutputHandler implements MavenInvocationOutputHandle
     }
 
     @Override
-    public EnforcerGenericOutputHandler copy() {
-        return new EnforcerGenericOutputHandler();
+    public EnforcerErrorsOutputHandler copy() {
+        return new EnforcerErrorsOutputHandler();
     }
 
 }

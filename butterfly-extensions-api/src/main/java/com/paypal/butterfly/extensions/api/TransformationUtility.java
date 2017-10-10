@@ -14,12 +14,15 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * Gathers information about the project to be transformed without applying any modification on it.
+ * It is the key element of Butterfly transformation engine. The result information is saved in the
+ * {@link TransformationContext} object, to be used later by other transformation utilities.
+ * <br>
  * Transformation utilities are executed against the to be transformed project,
  * based on the absolute project root folder defined in runtime, and a relative
  * path to a target file or folder, defined in compilation time.
  * <br>
- * Transformation utilities MUST NOT apply any modification to the project though.
- * They are meant instead to only gather information about the project.
+ * Transformation utilities are also known by {@code TU}.
  * <br>
  * An example of a transformation operation utility would be to find recursively
  * a particular file based on its name and from a particular location (which would
@@ -45,7 +48,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 // TODO create another type to be parent of TO and TU, this way the result type will be better organized
 // How to name it? transformation node?
 // This type should be the one to be added to a template
-public abstract class TransformationUtility<TU> implements Cloneable {
+public abstract class TransformationUtility<TU extends TransformationUtility> implements Cloneable {
 
     private static final Logger logger = LoggerFactory.getLogger(TransformationUtility.class);
 
@@ -1070,6 +1073,86 @@ public abstract class TransformationUtility<TU> implements Cloneable {
         if (value == null) {
             throw new TransformationDefinitionException(name + " cannot be null");
         }
+    }
+
+    /**
+     * Compare this instance against the specified object, and return
+     * true only if they are equal. Notice though that the fact that
+     * the utility has been performed or not will NOT be used for this
+     * comparison.
+     *
+     * @param obj the object to be compared against this instance
+     * @return true only if they are equal
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof TransformationUtility)) return false;
+
+        TransformationUtility tu = (TransformationUtility) obj;
+
+        if (!Objects.equals(this.abortionMessage, tu.abortionMessage)) return false;
+        if (this.abortOnFailure != tu.abortOnFailure) return false;
+        if (!Objects.equals(this.absoluteFile, tu.absoluteFile)) return false;
+        if (!Objects.equals(this.absoluteFileFromContextAttribute, tu.absoluteFileFromContextAttribute)) return false;
+        if (!Objects.equals(this.additionalRelativePath, tu.additionalRelativePath)) return false;
+        if (!Objects.equals(this.contextAttributeName, tu.contextAttributeName)) return false;
+        if (!Arrays.equals(this.dependencies, tu.dependencies)) return false;
+        if (!Objects.equals(this.ifConditionAttributeName, tu.ifConditionAttributeName)) return false;
+        if (!Objects.equals(this.latePropertiesAttributes, tu.latePropertiesAttributes)) return false;
+        if (!Objects.equals(this.name, tu.name)) return false;
+        if (this.order != tu.order) return false;
+        if (!Objects.equals(this.parent, tu.parent)) return false;
+        if (!Objects.equals(this.relativePath, tu.relativePath)) return false;
+        if (this.saveResult != tu.saveResult) return false;
+        if (!Objects.equals(this.unlessConditionAttributeName, tu.unlessConditionAttributeName)) return false;
+        if (!Objects.equals(this.utilityCondition, tu.utilityCondition)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode(1,
+                abortionMessage,
+                abortOnFailure,
+                absoluteFile,
+                absoluteFileFromContextAttribute,
+                additionalRelativePath,
+                contextAttributeName,
+                dependencies,
+                ifConditionAttributeName,
+                latePropertiesAttributes,
+                name,
+                order,
+                parent,
+                relativePath,
+                saveResult,
+                unlessConditionAttributeName,
+                utilityCondition
+        );
+    }
+
+    /**
+     * Calculates and return a hash code starting from the
+     * hash code generated from superclass
+     *
+     * @param superHashCode hash code generated from superclass
+     * @param elements array of Objects to be used to generate hashcode.
+     *               These elements should be the attributes used in
+     *               the equals method
+     * @return
+     */
+    protected final int hashCode(int superHashCode, Object... elements) {
+        if (elements == null) {
+            return superHashCode;
+        }
+        int result = superHashCode;
+        for (Object element : elements) {
+            result = 31 * result + (element == null ? 0 : element.hashCode());
+        }
+
+        return result;
     }
 
 }

@@ -6,8 +6,10 @@ import com.paypal.butterfly.extensions.api.operations.AddElement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 
+import java.util.Objects;
+
 /**
- * Operation to add a new plugin to a POM file
+ * Adds a new plugin to a POM file.
  *
  * @author facarvalho
  */
@@ -108,7 +110,7 @@ public class PomAddPlugin extends AbstractArtifactPomOperation<PomAddPlugin> imp
 
             switch (ifPresent) {
                 case WarnNotAdd:
-                    return TOExecutionResult.warning(this, message);
+                    return TOExecutionResult.warning(this, new TransformationOperationException(message));
                 case WarnButAdd:
                     warning = new TransformationOperationException(message);
                     break;
@@ -147,6 +149,24 @@ public class PomAddPlugin extends AbstractArtifactPomOperation<PomAddPlugin> imp
         return clone;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof PomAddPlugin)) return false;
+
+        PomAddPlugin tu = (PomAddPlugin) obj;
+        if (!Objects.equals(tu.ifPresent, this.ifPresent)) return false;
+        if (!Objects.equals(tu.version, this.version)) return false;
+
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode(super.hashCode(),
+                ifPresent,
+                version);
+    }
 
 }
 

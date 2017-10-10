@@ -6,7 +6,7 @@ import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
 import org.apache.maven.model.Model;
 
 /**
- * Operation to remove a property entry from a properties file
+ * Removes a property entry from a POM file.
  *
  * @author facarvalho
  */

@@ -3,9 +3,9 @@ package com.paypal.butterfly.extensions.api.operations;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
 /**
- * Abstract class with {@link AddElement} implementation ready for TOs that want to be so.
- * After extending this class, all the TO class needs to do is check {@code ifPresent}
- * when deciding its result type in case the element to be added is already present
+ * Convenience class with {@link AddElement} implementation ready for {@link TransformationOperation} subclasses.
+ * Protected instance variable {@code ifPresent} can be used when deciding the result type,
+ * in case the element to be added is already present.
  *
  * @author facarvalho
  */

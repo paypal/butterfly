@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * This utility loads a resource from the classpath, writes it to a temporary file,
+ * Loads a resource from the classpath, writes it to a temporary file,
  * and then returns a {@link File} reference to it, which is saved in the transformation
  * context. The file is written to a temporary folder to be defined by the OS.
  *

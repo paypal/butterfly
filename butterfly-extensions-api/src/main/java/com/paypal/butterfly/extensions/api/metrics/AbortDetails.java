@@ -3,7 +3,7 @@ package com.paypal.butterfly.extensions.api.metrics;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
- * Simple POJO describing a transformation abort
+ * POJO describing a transformation abort.
  *
  * @author facarvalho
  */

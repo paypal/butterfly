@@ -1,26 +1,37 @@
 package com.paypal.butterfly.extensions.api;
 
 /**
- * The "perform" result of a {@link TransformationUtility}
+ * The meta-data object resulted after the {@link TransformationUtility} instance has been performed.
  *
  * @author facarvalho
  */
 public class PerformResult extends Result<TransformationUtility, PerformResult, PerformResult.Type> {
 
+    /**
+     * The type of result after the {@link TransformationUtility} instance has been performed.
+     */
     public enum Type {
-        
-        // The result type is defined based on the utility execution result type
+
+        /**
+         * The result type is defined based on the utility execution result type.
+         */
         EXECUTION_RESULT,
 
-        // The TU has a condition associated with it (executeIf) but that condition resulted in false
+        /**
+         * The TU has a condition associated with it ({@link TransformationUtility#executeIf(String)}) but that condition resulted in {@code false}.
+         */
         SKIPPED_CONDITION,
 
-        // The TU depends on one or more TUs, and at least one of them didn't result in SUCCESS
+        /**
+         * The TU depends on one or more TUs, and at least one of them didn't result in SUCCESS.
+         */
         SKIPPED_DEPENDENCY,
 
-        // The TU failed, but not because of its utility execution itself, but because of an internal reason
-        // For example, when a TransformationUtilityException is thrown because the absolute file
-        // the TU should execute against could not be resolved during transformation time
+        /**
+         * The TU failed, but not because of its utility execution itself, but because of an internal reason.
+         * For example, when a {@code TransformationUtilityException} is thrown because the absolute file
+         * the TU should execute against could not be resolved during transformation time.
+         */
         ERROR
     
     }

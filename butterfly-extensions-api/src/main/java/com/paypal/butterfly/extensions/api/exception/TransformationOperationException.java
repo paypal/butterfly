@@ -1,10 +1,12 @@
 package com.paypal.butterfly.extensions.api.exception;
 
+import com.paypal.butterfly.extensions.api.TransformationOperation;
+
 /**
- * This type represents an unexpected behavior or result
- * during execution of a transformation operation.
+ * Thrown whenever an unexpected behavior or result
+ * during execution of a {@link com.paypal.butterfly.extensions.api.TransformationOperation}.
  * This might cause a transformation abortion or not,
- * depending on operation configuration
+ * depending on {@link TransformationOperation#abortOnFailure()}.
  *
  * @author facarvalho
  */

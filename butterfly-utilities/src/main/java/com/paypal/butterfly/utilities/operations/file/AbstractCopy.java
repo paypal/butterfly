@@ -11,7 +11,7 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
  *
  * @author facarvalho
  */
-abstract class AbstractCopy<TO> extends TransformationOperation<TO> {
+abstract class AbstractCopy<TO extends AbstractCopy> extends TransformationOperation<TO> {
 
     protected String description;
 

@@ -1,8 +1,8 @@
 package com.paypal.butterfly.extensions.api.metrics;
 
 /**
- * POJO containing statistics and meta-data about
- * the result of a transformation execution
+ * POJO containing meta-data and statistics about
+ * the result of a transformation execution.
  *
  * @author facarvalho
  */

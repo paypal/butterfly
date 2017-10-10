@@ -3,9 +3,9 @@ package com.paypal.butterfly.utilities.conditions.java;
 import com.github.javaparser.ast.CompilationUnit;
 
 /**
- * This type specifies a condition to be
+ * Abstract class to specify a condition to be
  * evaluated against a Java class, which is
- * represented as a {@link CompilationUnit}
+ * represented as a {@link CompilationUnit}.
  *
  * @author facarvalho
  */

@@ -7,7 +7,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 
 /**
- * Operation to add a new dependency to a POM file
+ * Adds a new dependency to a POM file.
  *
  * @author facarvalho
  */

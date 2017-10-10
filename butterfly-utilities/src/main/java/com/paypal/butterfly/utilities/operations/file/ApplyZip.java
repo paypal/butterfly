@@ -18,7 +18,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 /**
- * Operation to apply the contents of a zip file
+ * Applies the contents of a zip file.
  *
  * @author facarvalho
  */

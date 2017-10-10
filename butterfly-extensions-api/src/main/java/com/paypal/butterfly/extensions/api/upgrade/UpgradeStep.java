@@ -2,7 +2,7 @@ package com.paypal.butterfly.extensions.api.upgrade;
 
 /**
  * A special type of upgrade template that takes an application
- * from one minor version to the next subsequent available version
+ * from one minor version to the next subsequent available version.
  *
  * @author facarvalho
  */

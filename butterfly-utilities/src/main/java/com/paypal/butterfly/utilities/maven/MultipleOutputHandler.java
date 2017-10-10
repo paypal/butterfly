@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * MultipleInvocationOutputHandler contains a list of
+ * Contains a list of
  * MavenInvocationOutputHandlers.<br>
  * It then handles each line of maven console output and calls each handler
  * in the list and returns a Map that contains the class name as the key and
