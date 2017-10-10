@@ -68,3 +68,9 @@ The colors in the pipeline represent the possible states, meaning:
 
 When developing a Butterfly extension, it is very helpful to be be able to run it from the IDE. To do so, add class-path entries for your extension jar and run class `com.paypal.butterfly.cli.ButterflyCliApp`, from `butterfly-cli` jar, passing the required command line arguments.
 
+## Butterfly javadocs
+
+Refer to the following javadocs to develop your own Butterfly extension:
+
+1. [butterfly-extensions-api](): API component to be used by Butterfly extensions when providing their transformation and upgrade templates.
+1. [butterfly-utilities](): multiple types of ready-to-use transformation utilities.
