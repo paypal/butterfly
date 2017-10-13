@@ -1,5 +1,0 @@
-resteasy:
-  jaxrs:
-    app:
-      registration: property
-      classes: com.sample.app.JaxrsApplication
