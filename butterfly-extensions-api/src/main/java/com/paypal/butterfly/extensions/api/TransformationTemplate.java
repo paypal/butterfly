@@ -224,7 +224,9 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
      *
      * @return the type of the transformed application
      */
-    public abstract String getApplicationType();
+    public String getApplicationType() {
+        return null;
+    }
 
     /**
      * Returns the name of the transformed application,
@@ -234,6 +236,8 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
      *
      * @return the name of the transformed application
      */
-    public abstract String getApplicationName();
+    public String getApplicationName() {
+        return null;
+    }
 
 }
