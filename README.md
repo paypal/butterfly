@@ -3,7 +3,7 @@
 
 Butterfly is an application code transformation tool, and commonly it is used to perform **automated application migrations**, **upgrades** and **source code and configuration changes**.
 
-Visit [Butterfly website](https://paypal.github.io/butterfly/) for further information.
+Visit <a href="https://paypal.github.io/butterfly/" target="_blank">Butterfly website</a> for further information.
 
 ## Features
 
@@ -51,4 +51,4 @@ You are very welcome to contribute to Butterfly! Read our [Contribution guidelin
 To contact us, please send an email to <a href="mailto:fabiocarvalho777@gmail.com">fabiocarvalho777@gmail.com</a>.
 
 ## License
-This project is licensed under the [MIT License](License.txt).
+This project is licensed under the [MIT License](LICENSE.txt).
