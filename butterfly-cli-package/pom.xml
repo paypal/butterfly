@@ -89,6 +89,7 @@
                     <includeEmptyDirs>true</includeEmptyDirs>
                 </configuration>
             </plugin>
+
             <!-- This Plugins is to generate zip file with the necessary contents in it-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -16,6 +16,32 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <name>Fabio Carvalho</name>
+            <email>facarvalho@paypal.com</email>
+            <organization>PayPal</organization>
+            <organizationUrl>http://www.paypal.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:paypal/butterfly.git</connection>
+        <developerConnection>scm:git:git@github.com:paypal/butterfly.git</developerConnection>
+        <url>git@github.com:paypal/butterfly.git</url>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
@@ -115,17 +141,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <distributionManagement>
-        <repository>
-            <id>raptor.releases</id>
-            <url>https://paypalcentral.es.paypalcorp.com/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>raptor.snapshots</id>
-            <url>https://paypalcentral.es.paypalcorp.com/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <modules>
         <module>butterfly-facade</module>
