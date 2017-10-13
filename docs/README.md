@@ -32,15 +32,15 @@ In addition to that, for a given organization, the number for applications in th
   * Multiple execution
   * Group execution
   * In-loop execution
-* Logging in silent or verbose mode, in info or debug level, and on console or file
 * Post-transformation features
   * Manual steps Reporting
   * Metrics
-* Usage
-  * Command-Line-Interface tool
+* APIs
   * Extensions API
   * API for custom transformation utilities and operations
   * Facade for Java application integration
+* Command-Line-Interface tool
+* Logging in silent or verbose mode, in info or debug level, and on console or file
 
 ## Quick start
 Read [Butterfly Quick Start](https://paypal.github.io/butterfly/QUICK_START) to learn how to use Butterfly by transforming a sample application.
