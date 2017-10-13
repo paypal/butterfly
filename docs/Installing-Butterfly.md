@@ -1,4 +1,6 @@
 
+# Installing Butterfly
+
 ## Before installing Butterfly
 
 Before installing Butterfly, make sure you have Java 7, or newer, installed (run `java -version` to check). Oracle HotSpot 7 or newer and Open JDK 8 or newer are supported. Open JDK 7 is not supported because of [this issue](https://answers.launchpad.net/ubuntu/+source/openjdk-7/+question/192941).

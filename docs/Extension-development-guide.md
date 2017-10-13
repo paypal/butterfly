@@ -1,4 +1,6 @@
 
+# Extension development guide
+
 Butterfly extensions are third-party Butterfly packages containing transformation templates and/or upgrade templates.
 
 This page documents Butterfly extensions API, allowing development of transformation templates, and also custom transformation utilities and operations.

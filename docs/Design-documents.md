@@ -1,3 +1,6 @@
+
+# Design documents
+
 This page documents a few Butterfly design diagrams and notes.
 
 This information is not intended for Butterfly users, but developers maintaining Butterfly source code. Extension developers might also benefit from it, although it's not necessary to develop extensions.
