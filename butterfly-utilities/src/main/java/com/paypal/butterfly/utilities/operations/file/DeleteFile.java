@@ -45,8 +45,9 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
 
         TOExecutionResult result = null;
         try {
+            boolean isDirectory = fileToBeRemoved.isDirectory();
             FileUtils.forceDelete(fileToBeRemoved);
-            String details = String.format("File '%s' has been removed", getRelativePath());
+            String details = String.format("%s '%s' has been removed", (isDirectory ? "Folder" : "File"), getRelativePath());
             result = TOExecutionResult.success(this, details);
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);
