@@ -5,16 +5,18 @@ import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.utilities.Abort;
 import com.paypal.butterfly.utilities.conditions.FileExists;
-import com.paypal.butterfly.utilities.file.LoadFile;
 import com.paypal.butterfly.utilities.operations.file.ApplyFile;
 import com.paypal.butterfly.utilities.operations.file.DeleteFile;
-import com.paypal.butterfly.utilities.operations.file.MoveFile;
 import com.paypal.butterfly.utilities.operations.pom.*;
+import com.paypal.butterfly.utilities.operations.text.InsertText;
+import com.paypal.butterfly.utilities.operations.text.ReplaceText;
 
 import java.net.URL;
 
 /**
- * Sample transformation template
+ * Sample transformation template to migrate the sample-app
+ * from a WAR deployment application model to a Spring Boot
+ * application model
  *
  * @author facarvalho
  */
@@ -50,6 +52,12 @@ public class SampleTransformationTemplate extends TransformationTemplate {
         // Adding Spring Boot entry point class
         URL javaFileUrl = this.getClass().getResource("/Application.java");
         final String applicationFile = add(new ApplyFile(javaFileUrl).relative("/src/main/java/com/sample/app"));
+
+        // Changing README.md
+        add(new ReplaceText("(Spring framework)", "Spring Boot framework").relative("README.md"));
+        add(new ReplaceText("(Just deploy its war file to a Servlet container and start it.)", "There are two ways to start the application:").relative("README.md"));
+        URL textToBeInserted = getClass().getResource("/README_piece_of_text.txt");
+        add(new InsertText(textToBeInserted, "(There are two ways to start the application:)").relative("README.md"));
     }
 
     @Override
