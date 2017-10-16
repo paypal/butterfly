@@ -7,13 +7,13 @@ Follow the steps below.
 
 ### 1- Installing Butterfly
 
-1. Install Butterfly following [this document](https://paypal.github.io/butterfly/Installing-Butterfly).
-2. Following the same document, install sample-extension.jar Butterfly extension, which will be used to transform the sample app.
+* Install Butterfly following [this document](https://paypal.github.io/butterfly/Installing-Butterfly).
+* Following the same document, install sample-extension.jar Butterfly extension, which will be used to transform the sample app.
 
 ### 2- The sample application
 
-1. Download the sample application from sample-app.zip and unzip it in a working directory.
-3. Take a look at the application files. Notice that, as a typical WAR project, it has, for example, a `web.xml` file under a `webapp/WEB-INF` folder.
+* Download the sample application from sample-app.zip and unzip it in a working directory.
+* Take a look at the application files. Notice that, as a typical WAR project, it has, for example, a `web.xml` file under a `webapp/WEB-INF` folder.
 
  ```
  sample-app
@@ -34,20 +34,21 @@ Follow the steps below.
                  ├── applicationContext.xml
                  └── web.xml
  ```
-4. Optionally, build, deploy and test it. You can do so by running the command below, deploying the generated `war` file to a Servlet container (like Tomcat for example), and then following the `README.md` file in the app root folder to test it.
+* Optionally, build, deploy and test it. You can do so by running the command below, deploying the generated `war` file to a Servlet container (like Tomcat for example), and then following the `README.md` file in the app root folder to test it.
 
  ```
  mvn package
  ```
 
 ### 3- Running Butterfly
-1. Now, finally Butterfly will be used to transform the app. Run this command:
+
+* Now, finally Butterfly will be used to transform the app. Run this command:
  
  ```
  butterfly sample-app
  ```
  
-2. Check if you got an output similar to this:
+* Check if you got an output similar to this:
 
  ``` 
  No active profile set, falling back to default profiles: default
@@ -66,13 +67,13 @@ Follow the steps below.
  Check log file for details: /Users/fabio/dev/butterfly/butterfly/logs/sample-app_20171016175311736.log
  ```
 
-3. Notice that Butterfly placed the transformed application in a new folder, with a timestamp as suffix on its name. 
+* Notice that Butterfly placed the transformed application in a new folder, with a timestamp as suffix on its name. 
 
  ```
  Transformed application folder: /Users/fabio/dev/butterfly/butterfly/transformed-apps/sample-app-transformed-20171016175315818
  ```
 
-4. Notice also that it differs from the original app, as expected. For example, the whole `webapp` folder has been removed.
+* Notice also that it differs from the original app, as expected. For example, the whole `webapp` folder has been removed.
 
  ```
  sample-app-transformed-20171016175315818
@@ -91,12 +92,12 @@ Follow the steps below.
                          └── JaxrsApplication.java
 
  ```
-5. Open the log file, its location was printed on the console.
+* Open the log file, its location was printed on the console.
 
  ```
  Check log file for details: /Users/fabio/dev/butterfly/butterfly/logs/sample-app_20171016175311736.log
  ```
-6. See a description of all changes that were performed to transform the app.
+* See a description of all changes that were performed to transform the app.
 
  ```
  [18:11:36.951] [INFO] Beginning transformation
@@ -111,7 +112,7 @@ Follow the steps below.
  [18:11:36.991] [INFO] 	9	 - Dependency org.jboss.resteasy:resteasy-spring has been removed from POM file /pom.xml
  [18:11:36.992] [INFO] 	10	 - Dependency org.springframework.boot:spring-boot-starter-web has been added to POM file /pom.xml
  [18:11:36.993] [INFO] 	11	 - Dependency com.paypal.springboot:resteasy-spring-boot-starter:2.3.3-RELEASE has been added to POM file /pom.xml
- [18:11:37.001] [INFO] 	12	 - File '/src/main/webapp' has been removed
+ [18:11:37.001] [INFO] 	12	 - Folder '/src/main/webapp' has been removed
  [18:11:37.002] [INFO] 	13	 - File 'file:/Users/fabio/dev/butterfly/butterfly/tests/sample-extension/target/classes/Application.java' has been downloaded at /src/main/java/com/sample/app
  [18:11:37.004] [INFO] 	14	 - File README.md has had 1 line(s) where text replacement was applied based on regular expression '(Spring framework)'
  [18:11:37.005] [INFO] 	15	 - File README.md has had 1 line(s) where text replacement was applied based on regular expression '(Just deploy its war file to a Servlet container and start it.)'
@@ -121,12 +122,12 @@ Follow the steps below.
 
 ### 4- The transformed application
 
-1. Optionally, build, run and test the transformed application. You can build and start it very easily by running: 
+* Optionally, build, run and test the transformed application. You can build and start it very easily by running: 
 
  ```
  mvn clean package spring-boot:run
  ```
-2. To test it, do as you did before (follow its README file), since the app functionality remains the same.
+* To test it, do as you did before (follow its README file), since the app functionality remains the same.
 
 ### 5- What is next?
 
