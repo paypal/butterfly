@@ -1,25 +1,31 @@
 package com.paypal.butterfly.utilities.operations.file;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 
+import java.io.File;
+
 /**
- * Abstract copy operation to be specialized for more specific purposes, such as single
- * file copy, or directory copy.
+ * Abstract "to" operation whenever a destination file path needs to be set.
+ * To be specialized for more specific purposes, such as single
+ * file copy, file move, directory copy or directory move.
  *
  * @see CopyFile
  * @see CopyDirectory
+ * @see MoveFile
+ * @see MoveDirectory
  *
  * @author facarvalho
  */
-abstract class AbstractCopy<TO extends AbstractCopy> extends TransformationOperation<TO> {
+abstract class AbstractToOperation<TO extends AbstractToOperation> extends TransformationOperation<TO> {
 
     protected String description;
 
-    // Relative location where to copy the file to
+    // Relative destination location
     protected String toRelative = null;
 
     // Name of the transformation context attribute that holds
-    // the absolute location where to copy the file to
+    // the absolute destination location.
     // Only one should be set between this and {@code toRelative}
     protected String toAbsoluteAttribute = null;
 
@@ -28,13 +34,16 @@ abstract class AbstractCopy<TO extends AbstractCopy> extends TransformationOpera
     protected String additionalRelativePath = null;
 
     /**
-     * Abstract copy operation to be specialized for more specific purposes, such as single
-     * file copy, or directory copy.
+     * Abstract "to" operation whenever a destination file path needs to be set.
+     * To be specialized for more specific purposes, such as single
+     * file copy, file move, directory copy or directory move.
      *
      * @see CopyFile
      * @see CopyDirectory
+     * @see MoveFile
+     * @see MoveDirectory
      */
-    protected AbstractCopy(String description) {
+    protected AbstractToOperation(String description) {
         setDescription(description);
     }
 
@@ -44,9 +53,9 @@ abstract class AbstractCopy<TO extends AbstractCopy> extends TransformationOpera
     }
 
     /**
-     * Set relative location where to copy the file to.
+     * Set relative destination location.
      * <br>
-     * If the relative location is NOT known during transformation definition time,
+     * If the relative destination location is NOT known during transformation definition time,
      * then don't set it (leaving as {@code null}) and use {@link #setToAbsolute(String)}
      * based on a transformation context attribute set by a
      * {@link com.paypal.butterfly.utilities.file.LocateFile}
@@ -54,7 +63,7 @@ abstract class AbstractCopy<TO extends AbstractCopy> extends TransformationOpera
      * <br>
      * By setting this relative location, the absolute location attribute name is automatically set to {@code null}
      *
-     * @param toRelative relative location where to copy the file to
+     * @param toRelative relative destination location
      * @return this transformation operation instance
      */
     public TO setToRelative(String toRelative) {
@@ -66,15 +75,15 @@ abstract class AbstractCopy<TO extends AbstractCopy> extends TransformationOpera
 
     /**
      * The name of the transformation context attribute that holds
-     * the absolute location where to copy the file to.
+     * the absolute destination location.
      * <br>
-     * If the relative location is known during transformation definition time,
+     * If the relative destination location is known during transformation definition time,
      * then don't use this setter, use {@link #setToRelative(String)} instead.
      * <br>
-     * By setting this attribute name, the relative location is automatically set to {@code null}
+     * By setting this attribute name, the relative destination location is automatically set to {@code null}
      *
      * @param attributeName name of the transformation context attribute that holds
-     *                      the absolute location where to copy the file to
+     *                      the absolute destination location
      * @return this transformation operation instance
      */
     public TO setToAbsolute(String attributeName) {
@@ -86,15 +95,15 @@ abstract class AbstractCopy<TO extends AbstractCopy> extends TransformationOpera
 
     /**
      * The name of the transformation context attribute that holds
-     * the absolute location where to copy the file to.
+     * the absolute destination location.
      * <br>
-     * If the relative location is known during transformation definition time,
+     * If the relative destination location is known during transformation definition time,
      * then don't use this setter, use {@link #setToRelative(String)} instead.
      * <br>
-     * By setting this attribute name, the relative location is automatically set to {@code null}
+     * By setting this attribute name, the relative destination location is automatically set to {@code null}
      *
      * @param attributeName name of the transformation context attribute that holds
-     *                      the absolute location where to copy the file to
+     *                      the absolute destination location
      * @param additionalRelativePath an additional relative path to be added to the absolute
      *                               file coming from the transformation context. The path
      *                               separator will be normalized, similar to what happens
@@ -118,14 +127,29 @@ abstract class AbstractCopy<TO extends AbstractCopy> extends TransformationOpera
         return toAbsoluteAttribute;
     }
 
+    protected File getFileTo(File transformedAppFolder, TransformationContext transformationContext) {
+        File fileTo;
+        if(toRelative != null) {
+            fileTo = new File(transformedAppFolder, toRelative);
+        } else {
+            if (additionalRelativePath == null) {
+                fileTo = (File) transformationContext.get(toAbsoluteAttribute);
+            } else {
+                fileTo = new File((File) transformationContext.get(toAbsoluteAttribute), additionalRelativePath);
+            }
+        }
+
+        return fileTo;
+    }
+
     @Override
     public String getDescription() {
         return String.format(description, getRelativePath(), (toRelative != null ? toRelative : "the location defined by transformation context attribute " + toAbsoluteAttribute));
     }
 
     @Override
-    public AbstractCopy<TO> clone() throws CloneNotSupportedException {
-        AbstractCopy<TO> clone = (AbstractCopy<TO>) super.clone();
+    public AbstractToOperation<TO> clone() throws CloneNotSupportedException {
+        AbstractToOperation<TO> clone = (AbstractToOperation<TO>) super.clone();
         return clone;
     }
 

@@ -9,7 +9,7 @@ import java.io.IOException;
 
 /**
  * Copies a directory and its content from one location to another.
- * The files to be copied include sub-folders and their files, coming rom relative
+ * The files to be copied include sub-folders and their files, coming from relative
  * or absolute location. The path to the files to be copied are preserved, and those
  * folders are also copied to the destination location. If the destination directory
  * does not exist, it is created. But, if it does, then the content to be copied is
@@ -20,10 +20,12 @@ import java.io.IOException;
  * (see {@code TransformationTemplate.addMultiple()}) with {@link CopyFile}
  *
  * @see CopyFile
+ * @see MoveFile
+ * @see MoveDirectory
  *
  * @author facarvalho
  */
-public class CopyDirectory extends AbstractCopy<CopyDirectory> {
+public class CopyDirectory extends AbstractToOperation<CopyDirectory> {
 
     private static final String DESCRIPTION = "Copy a directory and its content from %s to %s";
 
@@ -50,28 +52,13 @@ public class CopyDirectory extends AbstractCopy<CopyDirectory> {
 
         try {
             FileUtils.copyDirectory(filesFrom, fileTo);
-            String details = String.format("Files from '%s' copied to '%s'", getRelativePath(transformedAppFolder, filesFrom), getRelativePath(transformedAppFolder, fileTo));
+            String details = String.format("Files from '%s' have been copied to '%s'", getRelativePath(transformedAppFolder, filesFrom), getRelativePath(transformedAppFolder, fileTo));
             result = TOExecutionResult.success(this, details);
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);
         }
 
         return result;
-    }
-
-    private File getFileTo(File transformedAppFolder, TransformationContext transformationContext) {
-        File fileTo;
-        if(toRelative != null) {
-            fileTo = new File(transformedAppFolder, toRelative);
-        } else {
-            if (additionalRelativePath == null) {
-                fileTo = (File) transformationContext.get(toAbsoluteAttribute);
-            } else {
-                fileTo = new File((File) transformationContext.get(toAbsoluteAttribute), additionalRelativePath);
-            }
-        }
-
-        return fileTo;
     }
 
     @Override
