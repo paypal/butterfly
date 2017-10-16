@@ -18,7 +18,9 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 /**
- * Applies the contents of a zip file.
+ * Applies the contents of a zip file, whose location is set as a URL,
+ * into the transformed application, preserving the relative folders
+ * structure inside the zip file.
  *
  * @author facarvalho
  */
@@ -32,7 +34,9 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
     }
 
     /**
-     * Operation to apply the contents of a zip file
+     * Applies the contents of a zip file, whose location is set as a URL,
+     * into the transformed application, preserving the relative folders
+     * structure inside the zip file.
      *
      * @param zipFileUrl URL string to locate the zip file to be applied
      */
@@ -46,7 +50,9 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
     }
 
     /**
-     * Operation to apply the contents of a zip file
+     * Applies the contents of a zip file, whose location is set as a URL,
+     * into the transformed application, preserving the relative folders
+     * structure inside the zip file.
      *
      * @param zipFileUrl URL to locate the zip file to be applied
      */
