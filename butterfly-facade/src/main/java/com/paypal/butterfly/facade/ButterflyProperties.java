@@ -39,7 +39,11 @@ public class ButterflyProperties {
         try {
             fileInputStream = ButterflyProperties.class.getClassLoader().getResourceAsStream("butterfly.properties");
             properties = new Properties();
-            properties.load(fileInputStream);
+            if (fileInputStream != null) {
+                properties.load(fileInputStream);
+            } else {
+                logger.warn("File butterfly.properties could not be found in butterfly-cli, assuming Butterfly is being run in development environment");
+            }
         } catch (Exception e) {
             logger.error("Exception thrown when obtaining Butterfly version", e);
         } finally {
