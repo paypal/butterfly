@@ -3,6 +3,7 @@ package com.paypal.butterfly.utilities.operations.pom;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.operations.AddElement;
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 
@@ -131,6 +132,9 @@ public class PomAddPlugin extends AbstractArtifactPomOperation<PomAddPlugin> imp
         plugin.setArtifactId(artifactId);
         if (version != null) {
             plugin.setVersion(version);
+        }
+        if (model.getBuild() == null) {
+            model.setBuild(new Build());
         }
         model.getBuild().addPlugin(plugin);
         String details = String.format("Plugin %s:%s%s has been added to POM file %s", groupId, artifactId, (version == null ? "" : ":" + version), relativePomFile);
