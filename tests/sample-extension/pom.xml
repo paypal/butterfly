@@ -12,13 +12,19 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
+        <butterfly.version>2.0.0-SNAPSHOT</butterfly.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.paypal.butterfly</groupId>
             <artifactId>butterfly-extensions-api</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>${butterfly.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.paypal.butterfly</groupId>
+            <artifactId>butterfly-utilities</artifactId>
+            <version>${butterfly.version}</version>
         </dependency>
     </dependencies>
 
