@@ -7,7 +7,9 @@ import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException
 import java.io.File;
 
 /**
- * Sample extension
+ * Sample extension to migrate the sample-app
+ * from a WAR deployment application model to a Spring Boot
+ * application model
  *
  * @author facarvalho
  */
