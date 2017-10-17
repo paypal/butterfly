@@ -503,6 +503,10 @@ public class TransformationEngine {
         logger.info("Original application folder:\t\t" + application.getFolder());
 
         File originalAppParent = application.getFolder().getParentFile();
+        if (originalAppParent == null) {
+            originalAppParent = new File(System.getProperty("user.dir"));
+        }
+
         String transformedAppFolderName = application.getFolder().getName() + "-transformed-" + simpleDateFormat.format(new Date());
 
         File transformedAppFolder;
