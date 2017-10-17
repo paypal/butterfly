@@ -125,7 +125,7 @@ Follow the steps below.
 * Optionally, build, run and test the transformed application. You can build and start it very easily by running: 
 
  ```
- mvn clean package spring-boot:run
+ mvn package spring-boot:run
  ```
 * To test it, do as you did before (follow its README file), since the app functionality remains the same.
 
