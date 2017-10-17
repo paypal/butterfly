@@ -7,7 +7,7 @@ Before installing Butterfly, make sure you have Java 7, or newer, installed (run
 
 ## Installing Butterfly
 
-1. Download and extract [butterfly-cli-package.zip]() file
+1. Download and extract [butterfly-cli-package.zip](https://oss.sonatype.org/content/repositories/snapshots/com/paypal/butterfly/butterfly-cli-package/2.0.0-SNAPSHOT/butterfly-cli-package-2.0.0-20171017.162446-1.zip) file
 1. Cd to the `butterfly` folder and run `butterfly`. If you see its help, Butterfly has been installed properly
 1. Run `butterfly –l` and notice that you have no Butterfly extensions at this point
 
