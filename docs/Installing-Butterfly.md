@@ -18,5 +18,6 @@ Before installing Butterfly, make sure you have Java 7, or newer, installed (run
 
 ### If your extension needs Maven
 
-If the extension you are going to use performs Maven operations (POM file changes for example), also make sure you have Maven installed and an environment variable `M2_HOME` set to its installation folder.
+If the extension you are going to use performs Maven executions, also make sure you have Maven installed and an environment variable `M2_HOME` set to its installation folder. Notice that POM file operations are not considered Maven executions, running `mvn verify` in the background would be an example of Maven execution.
+
 Also, if you are using Java 8, make sure you don't have `MaxPermSize` set to your Maven `MAVEN_OPTS` environment variable, otherwise you will see annoying, but harmless, warnings when running Butterfly ([more details here](http://stackoverflow.com/questions/22634644/java-hotspottm-64-bit-server-vm-warning-ignoring-option-maxpermsize))
