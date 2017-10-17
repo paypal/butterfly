@@ -8,11 +8,11 @@ Follow the steps below.
 ### 1- Installing Butterfly
 
 * Install Butterfly following [this document](https://paypal.github.io/butterfly/Installing-Butterfly).
-* Following the same document, install sample-extension.jar Butterfly extension, which will be used to transform the sample app.
+* Following the same document, install [sample-extension-1.0.0.jar](https://paypal.github.io/butterfly/jar/sample-extension-1.0.0.jar) Butterfly extension, which will be used to transform the sample app.
 
 ### 2- The sample application
 
-* Download the sample application from sample-app.zip and unzip it in a working directory.
+* Download the sample application from [sample-app.zip](https://paypal.github.io/butterfly/zip/sample-app.zip) and unzip it in a working directory.
 * Take a look at the application files. Notice that, as a typical WAR project, it has, for example, a `web.xml` file under a `webapp/WEB-INF` folder.
 
  ```
