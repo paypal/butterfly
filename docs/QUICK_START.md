@@ -42,10 +42,10 @@ Follow the steps below.
 
 ### 3- Running Butterfly
 
-* Now, finally Butterfly will be used to transform the app. Run the command below. The `i` option points to the application folder, while the `s` option is a shortcut to the transformation template to be applied.
+* Now, finally Butterfly will be used to transform the app. Run the command below. The `s` option is a shortcut to the transformation template to be applied.
  
  ```
- butterfly -i sample-app -s 1
+ butterfly sample-app -s 1
  ```
  
 * Check if you got an output similar to this:

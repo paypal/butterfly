@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Butterfly CLI runner
@@ -46,7 +47,9 @@ public class ButterflyCliRunner extends ButterflyCliOption {
         logger.info(ButterflyCliApp.getBanner());
 
         if (optionSet == null || optionSet.has(CLI_OPTION_HELP) || !optionSet.hasOptions()){
-            logger.info("See CLI usage below\n");
+            logger.info("");
+            logger.info("Usage:\t butterfly [options] [application folder]\n");
+            logger.info("The following options are available:\n");
             optionParser.printHelpOn(System.out);
             run.setExitStatus(0);
             return run;
@@ -80,7 +83,13 @@ public class ButterflyCliRunner extends ButterflyCliOption {
 
         logger.info("");
 
-        File applicationFolder = (File) optionSet.valueOf(CLI_OPTION_ORIGINAL_APP_FOLDER);
+        // Setting application folder
+        List<?> nonOptionArguments = optionSet.nonOptionArguments();
+        if (nonOptionArguments == null || nonOptionArguments.size() == 0 || StringUtils.isEmpty(nonOptionArguments.get(0))) {
+            registerError(run, "Application folder has not been specified");
+            return run;
+        }
+        File applicationFolder = new File((String) nonOptionArguments.get(0));
         if (!applicationFolder.exists()) {
             String errorMessage = String.format("This application folder does not exist: %s", applicationFolder.getAbsolutePath());
             registerError(run, errorMessage);

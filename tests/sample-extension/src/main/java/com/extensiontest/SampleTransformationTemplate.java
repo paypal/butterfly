@@ -1,4 +1,4 @@
-package com.test;
+package com.extensiontest;
 
 
 import com.paypal.butterfly.extensions.api.Extension;

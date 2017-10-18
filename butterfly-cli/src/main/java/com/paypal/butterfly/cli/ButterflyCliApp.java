@@ -11,10 +11,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.List;
 
 /**
  * Butterfly CLI Spring Boot entry point
@@ -31,7 +33,7 @@ public class ButterflyCliApp extends ButterflyCliOption {
 
     public static void main(String... arguments) throws IOException {
         setButterflyHome();
-        setLogFileName(arguments);
+        setEnvironment(arguments);
 
         logger = LoggerFactory.getLogger(ButterflyCliApp.class);
 
@@ -57,11 +59,11 @@ public class ButterflyCliApp extends ButterflyCliOption {
         butterflyHome = new File(butterflyHomePath);
     }
 
-    private static void setLogFileName(String[] arguments) {
+    private static void setEnvironment(String[] arguments) {
         if(arguments.length != 0){
             try {
                 setOptionSet(arguments);
-                File applicationFolder = (File) optionSet.valueOf(CLI_OPTION_ORIGINAL_APP_FOLDER);
+                File applicationFolder = getApplicationFolder();
                 boolean debug = optionSet.has(CLI_OPTION_DEBUG);
                 LogFileDefiner.setLogFileName(applicationFolder, debug);
             } catch (OptionException e) {
@@ -72,6 +74,24 @@ public class ButterflyCliApp extends ButterflyCliOption {
                 System.exit(1);
             }
         }
+    }
+
+    /*
+     * Returns the application folder only if it has been passed
+     * as an input argument that is really an existent folder.
+     * Otherwise, returns null.
+     */
+    private static File getApplicationFolder() {
+        List<?> nonOptionArguments = optionSet.nonOptionArguments();
+        if (nonOptionArguments == null || nonOptionArguments.size() == 0 || StringUtils.isEmpty(nonOptionArguments.get(0))) {
+            return null;
+        }
+        File applicationFolder = new File((String) nonOptionArguments.get(0));
+        if (!applicationFolder.exists()) {
+            return null;
+        }
+
+        return applicationFolder;
     }
 
     private static void setBanner() {

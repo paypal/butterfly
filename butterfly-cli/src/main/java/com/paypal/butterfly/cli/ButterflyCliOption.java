@@ -21,7 +21,6 @@ abstract class ButterflyCliOption {
     protected static final String CLI_OPTION_VERBOSE = "v";
     protected static final String CLI_OPTION_DEBUG = "d";
     protected static final String CLI_OPTION_LIST_EXTENSIONS = "l";
-    protected static final String CLI_OPTION_ORIGINAL_APP_FOLDER = "i";
     protected static final String CLI_OPTION_TRANSFORMED_APP_FOLDER = "o";
     protected static final String CLI_OPTION_TEMPLATE = "t";
     protected static final String CLI_OPTION_CREATE_ZIP = "z";
@@ -40,13 +39,6 @@ abstract class ButterflyCliOption {
 
         // List extensions option
         optionParser.accepts(CLI_OPTION_LIST_EXTENSIONS, "List all registered extensions");
-
-        // Application folder option
-        optionParser.accepts(CLI_OPTION_ORIGINAL_APP_FOLDER, "The folder location in the file system where the application to be transformed is")
-                .requiredUnless(CLI_OPTION_LIST_EXTENSIONS)
-                .withRequiredArg()
-                .ofType(File.class)
-                .describedAs("input");
 
         // Transformation template shortcut option
         optionParser.accepts(CLI_OPTION_TEMPLATE_SHORTCUT, "The shortcut number to the transformation template to be executed. If both shortcut (-s) and template class (-t) name are supplied, the shortcut will be ignored. If the chosen transformation template is an upgrade template, then the application will be upgraded all the way to the latest version possible, unless upgrade version (-u) is specified")
