@@ -46,7 +46,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
 
         logger.info(ButterflyCliApp.getBanner());
 
-        if (optionSet == null || optionSet.has(CLI_OPTION_HELP) || !optionSet.hasOptions()){
+        if (optionSet == null || optionSet.has(CLI_OPTION_HELP) || (!optionSet.hasOptions() && optionSet.nonOptionArguments() == null)){
             logger.info("");
             logger.info("Usage:\t butterfly [options] [application folder]");
             logger.info("");
@@ -114,23 +114,18 @@ public class ButterflyCliRunner extends ButterflyCliOption {
                 return run;
             }
             logger.info("Transformation template associated with shortcut {}: {}", shortcut, templateClass.getName());
-        } else if (optionSet.has(CLI_OPTION_AUTOMATIC_TEMPLATE_RESOLUTION)) {
+        } else {
             try {
                 templateClass = butterflyFacade.automaticResolution(applicationFolder);
                 if (templateClass == null) {
-                    registerError(run, "No transformation template could be resolved for this application");
+                    registerError(run, "No transformation template could be resolved for this application. Specify it explicitly using option -t or -s.");
                     return run;
                 }
-                if (logger.isDebugEnabled()) {
-                    logger.info("Transformation template automatically resolved");
-                }
+                logger.info("Transformation template automatically resolved");
             } catch (TemplateResolutionException e) {
                 registerError(run, e.getMessage());
                 return run;
             }
-        } else {
-            registerError(run, "Transformation template class has not been specified");
-            return run;
         }
 
         if(createZip) {

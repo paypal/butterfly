@@ -31,7 +31,7 @@ public class SampleExtension extends Extension {
 
     @Override
     public Class<? extends TransformationTemplate> automaticResolution(File file) throws TemplateResolutionException {
-        throw new TemplateResolutionException("No transformation template could be resolved");
+        return SampleTransformationTemplate.class;
     }
 
 }

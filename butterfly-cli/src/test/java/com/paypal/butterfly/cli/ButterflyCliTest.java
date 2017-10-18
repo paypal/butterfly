@@ -174,7 +174,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
     @Test
     public void testAutomaticResolution() throws IOException, ButterflyException {
         Mockito.doReturn(SampleTransformationTemplate.class).when(facade).automaticResolution(Mockito.any(File.class));
-        String arguments[] = {sampleAppFolder.getAbsolutePath(), "-a"};
+        String arguments[] = {sampleAppFolder.getAbsolutePath()};
         butterflyCli.setOptionSet(arguments);
         int status = butterflyCli.run().getExitStatus();
 
@@ -185,7 +185,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
 
     @Test
     public void testAutomaticResolutionFailed() throws IOException, ButterflyException {
-        String arguments[] = {sampleAppFolder.getAbsolutePath(), "-a"};
+        String arguments[] = {sampleAppFolder.getAbsolutePath()};
         butterflyCli.setOptionSet(arguments);
         int status = butterflyCli.run().getExitStatus();
 
@@ -196,7 +196,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
 
     @Test
     public void testUnexistentApplicationFolder() throws IOException, ButterflyException {
-        String arguments[] = {"unexistent_folder", "-a"};
+        String arguments[] = {"unexistent_folder"};
         butterflyCli.setOptionSet(arguments);
         int status = butterflyCli.run().getExitStatus();
 

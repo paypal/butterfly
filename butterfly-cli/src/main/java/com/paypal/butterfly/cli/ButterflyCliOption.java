@@ -25,7 +25,6 @@ abstract class ButterflyCliOption {
     protected static final String CLI_OPTION_TEMPLATE = "t";
     protected static final String CLI_OPTION_CREATE_ZIP = "z";
     protected static final String CLI_OPTION_TEMPLATE_SHORTCUT = "s";
-    protected static final String CLI_OPTION_AUTOMATIC_TEMPLATE_RESOLUTION = "a";
     protected static final String CLI_OPTION_UPGRADE_VERSION = "u";
     protected static final String CLI_OPTION_RESULT_FILE = "r";
 
@@ -38,7 +37,7 @@ abstract class ButterflyCliOption {
                 .forHelp();
 
         // List extensions option
-        optionParser.accepts(CLI_OPTION_LIST_EXTENSIONS, "List all registered extensions");
+        optionParser.accepts(CLI_OPTION_LIST_EXTENSIONS, "List all registered extensions and their transformation templates");
 
         // Transformation template shortcut option
         optionParser.accepts(CLI_OPTION_TEMPLATE_SHORTCUT, "The shortcut number to the transformation template to be executed. If both shortcut (-s) and template class (-t) name are supplied, the shortcut will be ignored. If the chosen transformation template is an upgrade template, then the application will be upgraded all the way to the latest version possible, unless upgrade version (-u) is specified")
@@ -46,12 +45,8 @@ abstract class ButterflyCliOption {
                 .ofType(Integer.class)
                 .describedAs("template shortcut");
 
-        // Automatic transformation template resolution option
-        optionParser.accepts(CLI_OPTION_AUTOMATIC_TEMPLATE_RESOLUTION, "If provided, Butterfly will try to automatically chose the transformation template to be used based on the application code. If shortcut (-s) or template class name (-t) are also supplied, this option (-a) will be ignored. If the chosen transformation template is an upgrade template, then the application will be upgraded all the way to the latest version possible, unless upgrade version (-u) is specified");
-
         // Transformation template option
-        optionParser.accepts(CLI_OPTION_TEMPLATE, "The Java class name of the transformation template to be executed. This option has precedence over -s and -a. If the chosen transformation template is an upgrade template, then the application will be upgraded all the way to the latest version possible, unless upgrade version (-u) is specified")
-                .requiredUnless(CLI_OPTION_LIST_EXTENSIONS, CLI_OPTION_TEMPLATE_SHORTCUT, CLI_OPTION_AUTOMATIC_TEMPLATE_RESOLUTION)
+        optionParser.accepts(CLI_OPTION_TEMPLATE, "The Java class name of the transformation template to be executed. This option has precedence over -s. If the chosen transformation template is an upgrade template, then the application will be upgraded all the way to the latest version possible, unless upgrade version (-u) is specified")
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("template");
