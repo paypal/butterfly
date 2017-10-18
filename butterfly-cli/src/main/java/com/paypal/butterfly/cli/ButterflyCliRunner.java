@@ -48,7 +48,8 @@ public class ButterflyCliRunner extends ButterflyCliOption {
 
         if (optionSet == null || optionSet.has(CLI_OPTION_HELP) || !optionSet.hasOptions()){
             logger.info("");
-            logger.info("Usage:\t butterfly [options] [application folder]\n");
+            logger.info("Usage:\t butterfly [options] [application folder]");
+            logger.info("");
             logger.info("The following options are available:\n");
             optionParser.printHelpOn(System.out);
             run.setExitStatus(0);
@@ -242,10 +243,11 @@ public class ButterflyCliRunner extends ButterflyCliOption {
 
         String version = (StringUtils.isEmpty(extension.getVersion()) ? "" : String.format("(version %s)", extension.getVersion()));
 
-        System.out.printf("%n- %s: %s %s%n", extension, extension.getDescription(), version);
+        logger.info("");
+        logger.info("- {}: {} {}", extension, extension.getDescription(), version);
         for(Object templateObj : extension.getTemplateClasses().toArray()) {
             template = (Class<? extends TransformationTemplate>) templateObj;
-            System.out.printf("\t (%d) - [%s] \t %s \t %s%n", shortcut++, ExtensionTypeInitial.getFromClass(template), template.getName(), template.newInstance().getDescription());
+            logger.info("\t ({}) - [{}] \t {} \t {}", shortcut++, ExtensionTypeInitial.getFromClass(template), template.getName(), template.newInstance().getDescription());
 
         }
     }
