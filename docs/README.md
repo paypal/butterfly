@@ -11,7 +11,7 @@ Therefore, they are also extremely expensive in the short term, and might even c
 ## The benefits of transformation automation
 
 By automating application source code transformations, upgrades and migrations, overall development experience and software maintenance are improved.
-In addition to that, for a given organization, the number for applications in the latest version of a particular framework is increased and the upgrade and migration processes are simplified.
+In addition to that, for a given organization, the number of applications in the latest version of a particular framework is increased, and the upgrade and migration processes are simplified.
 
 ## Common use cases
 
