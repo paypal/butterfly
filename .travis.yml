@@ -1,0 +1,11 @@
+language: java
+sudo: required
+
+jdk:
+  - oraclejdk8
+
+install: mvn install
+
+after_success:
+  # Deploying SNAPSHOT artifacts to Maven Central
+  - mvn -B -s settings.xml -DskipTests=true -Dcobertura.skip deploy
