@@ -599,19 +599,21 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
         // Applying properties during transformation time
         applyPropertiesFromContext(transformationContext);
 
+        TransformationUtilityException ex = null;
+
         try {
             ExecutionResult executionResult = execution(transformedAppFolder, transformationContext);
             result = PerformResult.executionResult(this, executionResult);
         } catch(Exception e) {
             String exceptionMessage = String.format("Utility %s has failed", getName());
-            TransformationUtilityException ex = new TransformationUtilityException(exceptionMessage, e);
+            ex = new TransformationUtilityException(exceptionMessage, e);
             return PerformResult.error(this, ex);
         } finally {
             // This if and the following below, even though similar, address different execution paths,
             // so they must both be here, do not remove none of them thinking that this is redundant code
-            if (result == null) {
+            if (result == null && ex == null) {
                 String exceptionMessage = String.format("Utility %s has failed and has not produced any exception detailing the failure. This utility code might be defective, or you might be using a non supported JRE (such as Open JDK 1.7).", getName());
-                TransformationUtilityException ex = new TransformationUtilityException(exceptionMessage);
+                ex = new TransformationUtilityException(exceptionMessage);
                 logger.error("", ex);
             }
             hasBeenPerformed.set(true);
@@ -619,7 +621,7 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
 
         if (result == null) {
             String exceptionMessage = String.format("Utility %s has failed and has not produced any exception detailing the failure. This utility code might be defective, since they must never return null.", getName());
-            TransformationUtilityException ex = new TransformationUtilityException(exceptionMessage);
+            ex = new TransformationUtilityException(exceptionMessage);
             result = PerformResult.error(this, ex);
         }
 

@@ -79,9 +79,9 @@ class ModelTree {
             if (model.getGroupId() == null) model.setGroupId(model.getParent().getGroupId());
             if (model.getVersion() == null) model.setVersion(model.getParent().getVersion());
             model.setPomFile(pomFile);
-        } catch (IOException | XmlPullParserException e) {
+        } catch (Exception e) {
             ex = e;
-            String exceptionMessage = String.format("Error when trying to create Maven pom file model based on file %s", pomFile.getAbsolutePath());
+            String exceptionMessage = String.format("Error when trying to create Maven pom file model, double check if this file has a valid Maven structure: %s", pomFile.getAbsolutePath());
             throw new TransformationUtilityException(exceptionMessage, ex);
         } finally {
             if (fileInputStream != null) try {
