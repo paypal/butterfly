@@ -1141,7 +1141,7 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      * @param elements array of Objects to be used to generate hashcode.
      *               These elements should be the attributes used in
      *               the equals method
-     * @return
+     * @return the generated hashcode
      */
     protected final int hashCode(int superHashCode, Object... elements) {
         if (elements == null) {
