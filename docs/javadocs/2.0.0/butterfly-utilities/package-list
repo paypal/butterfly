@@ -1,0 +1,13 @@
+com.paypal.butterfly.utilities.conditions
+com.paypal.butterfly.utilities.conditions.java
+com.paypal.butterfly.utilities.conditions.pom
+com.paypal.butterfly.utilities.file
+com.paypal.butterfly.utilities.java
+com.paypal.butterfly.utilities.maven
+com.paypal.butterfly.utilities.misc
+com.paypal.butterfly.utilities.operations.file
+com.paypal.butterfly.utilities.operations.pom
+com.paypal.butterfly.utilities.operations.properties
+com.paypal.butterfly.utilities.operations.text
+com.paypal.butterfly.utilities.text
+com.paypal.butterfly.utilities.xml

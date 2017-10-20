@@ -74,5 +74,5 @@ When developing a Butterfly extension, it is very helpful to be be able to run i
 
 Refer to the following javadocs to develop your own Butterfly extension:
 
-1. [butterfly-extensions-api](): API component to be used by Butterfly extensions when providing their transformation and upgrade templates.
-1. [butterfly-utilities](): multiple types of ready-to-use transformation utilities.
+1. [butterfly-extensions-api](https://paypal.github.io/butterfly/javadocs/2.0.0/butterfly-extensions-api/index.html): API component to be used by Butterfly extensions when providing their transformation and upgrade templates.
+1. [butterfly-utilities](https://paypal.github.io/butterfly/javadocs/2.0.0/butterfly-utilities/index.html): multiple types of ready-to-use transformation utilities.
