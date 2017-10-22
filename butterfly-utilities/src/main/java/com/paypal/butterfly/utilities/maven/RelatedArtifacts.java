@@ -1,6 +1,5 @@
 package com.paypal.butterfly.utilities.maven;
 
-import com.paypal.butterfly.extensions.api.ExecutionResult;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
@@ -91,7 +90,7 @@ public class RelatedArtifacts extends TransformationUtility<RelatedArtifacts> {
     }
 
     @Override
-    protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         List<File> pomFiles = (List<File>) transformationContext.get(pomFilesAttribute);
         ModelTree modelTree = new ModelTree(parentGroupId, parentArtifactId, parentVersion, pomFiles);
         List<File> pomFilesInTree = modelTree.getPomFilesInTree();

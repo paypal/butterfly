@@ -1,9 +1,8 @@
 package com.paypal.butterfly.utilities.conditions.pom;
 
-import com.paypal.butterfly.extensions.api.ExecutionResult;
+import com.paypal.butterfly.extensions.api.SingleCondition;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.SingleCondition;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -21,7 +20,7 @@ import java.io.IOException;
  */
 public class PomDependencyExists extends SingleCondition<PomDependencyExists> {
 
-    private static final String DESCRIPTION = "Check if dependency '%s:%s:%s' exists in a POM file";
+    private static final String DESCRIPTION = "Check if dependency '%s:%s%s' exists in a POM file";
 
     private String groupId;
     private String artifactId;
@@ -85,11 +84,11 @@ public class PomDependencyExists extends SingleCondition<PomDependencyExists> {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, groupId, artifactId, (version == null ? "" : version));
+        return String.format(DESCRIPTION, groupId, artifactId, (version == null ? "" : ":" + version));
     }
 
     @Override
-    protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         MavenXpp3Reader reader = new MavenXpp3Reader();
         FileInputStream fileInputStream = null;
         boolean exists = false;
