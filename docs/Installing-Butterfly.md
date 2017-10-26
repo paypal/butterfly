@@ -13,7 +13,7 @@ Before installing Butterfly, make sure you have Java 7, or newer, installed (run
 
 ## Installing an extension
 
-1. Copy its jar file to the `lib` folder under Butterfly installation folder
+1. Copy its jar file to the `extensions` folder under Butterfly installation folder
 1. Run `butterfly –l` and check if your extension has been installed
 
 ### If your extension needs Maven
