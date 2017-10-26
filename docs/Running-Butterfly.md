@@ -9,19 +9,19 @@ Run `butterfly` in an Unix based system, or `butterfly.cmd` in Windows, to show 
 butterfly
 ```
 
-## Transformation execution options
-
-| Option | Argument | Description |
-|--------|----------|-------------|
-|`-t`|transformation template class name|Sets the Java class name of the transformation template to be executed. This option has precedence over `-s`. If the chosen transformation template is an upgrade template, then the application will be upgraded all the way to the latest version possible, unless upgrade version (`-u`) is specified|
-|`-s`|transformation template shortcut number|Sets the shortcut number to the transformation template to be executed. If both shortcut (`-s`) and template class (`-t`) name are supplied, the shortcut will be ignored. If the chosen transformation template is an upgrade template, then the application will be upgraded all the way to the latest version possible, unless upgrade version (`-u`) is specified|
-|`-u`|upgrade version|Sets the version the application should be upgraded to. This option only makes sense if the transformation template to be used is also an upgrade template. If not, it is ignored. If it is, but this option is not specified, then the application will be upgraded all the way to the latest version possible.|
-
 ## Application transformation execution examples
+
+### Automatic transformation template resolution
+
+By running the command below, Butterfly will try to resolve automatically which transformation template should be used to transform the application, based on its content. If for any reason an applicable transformation template is not resolved, then options `-t` or `-s`, explained later, need to be used.
+
+```
+butterfly myapp
+```
 
 ### Specifying the transformation template by its class name
 
-Use option `-t` to set the transformation template class to be used, as seen in the example below. Notice that you can list all possible transformation template classes by running `butterfly -l`.
+If a transformation template could not be resolved automatically for your application, then use option `-t` to set explicitly the transformation template class to be used, as seen in the example below. Notice that you can list all possible transformation template classes by running `butterfly -l`.
 
 ```
 butterfly myapp -t com.extensiontest.SampleTransformationTemplate
@@ -29,18 +29,10 @@ butterfly myapp -t com.extensiontest.SampleTransformationTemplate
 
 ### Specifying the transformation template by a shortcut
 
-Use option `-s` to set the transformation template to be used by its shortcut number, as seen in the example below. Notice that you can list all possible transformation template shortcuts by running `butterfly -l`.
+If a transformation template could not be resolved automatically for your application, then you can use, as an alternative to `-t`, option `-s` to set explicitly the transformation template to be used by its shortcut number, as seen in the example below. Notice that you can list all possible transformation template shortcuts by running `butterfly -l`.
 
 ```
 butterfly myapp -s 1
-```
-
-### Automatic transformation template resolution
-
-Whenever options `-t` and `-s` are not set, then Butterfly will try to resolve automatically which transformation template should be used to transform the application based on its content. See the example below.
-
-```
-butterfly myapp
 ```
 
 ### Upgrading an application to a specific framework version
@@ -58,6 +50,14 @@ If the chosen transformation template is an upgrade template and option `-u` is 
 ```
 butterfly myapp -t com.extensiontest.SampleUpgradeTemplate_1_0_0_to_2_0_0
 ```
+
+## Transformation execution options
+
+| Option | Argument | Description |
+|--------|----------|-------------|
+|`-t`|transformation template class name|Sets the Java class name of the transformation template to be executed. This option has precedence over `-s`. If the chosen transformation template is an upgrade template, then the application will be upgraded all the way to the latest version possible, unless upgrade version (`-u`) is specified|
+|`-s`|transformation template shortcut number|Sets the shortcut number to the transformation template to be executed. If both shortcut (`-s`) and template class (`-t`) name are supplied, the shortcut will be ignored. If the chosen transformation template is an upgrade template, then the application will be upgraded all the way to the latest version possible, unless upgrade version (`-u`) is specified|
+|`-u`|upgrade version|Sets the version the application should be upgraded to. This option only makes sense if the transformation template to be used is also an upgrade template. If not, it is ignored. If it is, but this option is not specified, then the application will be upgraded all the way to the latest version possible.|
 
 ## Additional execution options
 
