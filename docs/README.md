@@ -27,6 +27,8 @@ An organization has multiple applications developed using a particular framework
 
 This organization could use Butterfly, combined with its own Butterfly extension, to automate application upgrades.
 
+![](img/transformation_templates_simple.png)
+
 #### Automated application changes
 
 An organization has multiple applications developed using a particular framework as foundation. One day, a security issue is found affecting all applications, and the solution demands a code or configuration change in each application. In this situation it would be difficult and expensive to ensure all applications **apply those changes** correctly.
