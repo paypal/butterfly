@@ -1,6 +1,9 @@
 package com.paypal.butterfly.core;
 
+import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.facade.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
@@ -11,6 +14,8 @@ import java.io.File;
  * @author facarvalho
  */
 public abstract class Transformation {
+
+    private static final Logger logger = LoggerFactory.getLogger(Transformation.class);
 
     // Application to be transformed
     private Application application;
@@ -62,6 +67,26 @@ public abstract class Transformation {
 
     File getManualInstructionsDir() {
         return manualInstructionsDir;
+    }
+
+    abstract String getExtensionName();
+
+    abstract String getExtensionVersion();
+
+    abstract String getTemplatetName();
+
+    protected String getExtensionName(Class<? extends Extension> extension) {
+        return extension.getName();
+    }
+
+    protected String getExtensionVersion(Class<? extends Extension> extension) {
+        String version = "UNKNOWN";
+        try {
+            version = extension.newInstance().getVersion();
+        } catch (Exception e) {
+            logger.warn("Error happened when retrieving extension version", e);
+        }
+        return version;
     }
 
 }

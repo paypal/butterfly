@@ -150,8 +150,6 @@ public class ButterflyCliRunner extends ButterflyCliOption {
 
             run.setTransformationTemplate(templateClass.getName());
 
-            logger.info("Application to be transformed: {}", applicationFolder);
-            logger.info("Transformation template class: {}", templateClass.getName());
             TransformationResult transformationResult = null;
             if (UpgradeStep.class.isAssignableFrom(templateClass)) {
                 Class<? extends UpgradeStep> firstStepClass = (Class<? extends UpgradeStep>) templateClass;

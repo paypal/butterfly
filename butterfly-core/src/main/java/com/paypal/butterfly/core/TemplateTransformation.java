@@ -29,6 +29,21 @@ public class TemplateTransformation extends Transformation {
     }
 
     @Override
+    String getExtensionName() {
+        return getExtensionName(template.getExtensionClass());
+    }
+
+    @Override
+    String getExtensionVersion() {
+        return getExtensionVersion(template.getExtensionClass());
+    }
+
+    @Override
+    String getTemplatetName() {
+        return template.getName();
+    }
+
+    @Override
     public String toString() {
         return String.format(TO_STRING_SYNTAX, getApplication(), template, template.getClass().getName());
     }

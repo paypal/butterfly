@@ -61,6 +61,9 @@ public class TransformationEngine {
         if(logger.isDebugEnabled()) {
             logger.debug("Requested transformation: {}", transformation);
         }
+        logger.info("Extension name:\t\t\t\t\t{}", transformation.getExtensionName());
+        logger.info("Extension version:\t\t\t\t{}", transformation.getExtensionVersion());
+        logger.info("Transformation template:\t\t\t{}", transformation.getTemplatetName());
 
         File transformedAppFolder = prepareOutputFolder(transformation);
         List<TransformationContextImpl> transformationContexts = new ArrayList<>();
