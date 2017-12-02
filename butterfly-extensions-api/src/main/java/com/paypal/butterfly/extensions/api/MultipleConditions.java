@@ -13,12 +13,12 @@ import java.util.Set;
 /**
  * Transformation utility condition to determine if a transformation utility should be executed or not,
  * based on a multiple files criteria.
- * It performs condition instances based on a template against multiple files,
+ * It performs condition instances based on a {@link SingleCondition} template against multiple files,
  * returning true if at least one file meets the condition (default mode).
  * There is an alternative mode where all files need to meet the
  * evaluation condition to result in true. For conditions
  * based on comparing two files see {@link DoubleCondition}.
- * For conditions based on evaluating a single file see {@link MultipleConditions}
+ * For conditions based on evaluating a single file see {@link SingleCondition}
  * <br>
  * Note 1: if an evaluation against a specific file fails for any reason, then the
  * overall evaluation will be interrupted and result also in a failure.
@@ -64,7 +64,7 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
 
     // The utility condition template used to create conditions
     // to  by evaluated against the list of files
-    private UtilityCondition conditionTemplate;
+    private SingleCondition conditionTemplate;
 
     // This is used to set condition instances names
     private int conditionInstanceCounter = 0;
@@ -80,7 +80,7 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
      * @param conditionTemplate the utility condition template used to create conditions,
      *                          used to be evaluated against the list of files
      */
-    public MultipleConditions(UtilityCondition conditionTemplate) {
+    public MultipleConditions(SingleCondition conditionTemplate) {
         setConditionTemplate(conditionTemplate);
     }
 
@@ -123,7 +123,7 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
      *                          to be evaluated against the list of files
      * @return this utility condition instance
      */
-    public MultipleConditions setConditionTemplate(UtilityCondition conditionTemplate) {
+    public MultipleConditions setConditionTemplate(SingleCondition conditionTemplate) {
         checkForNull("conditionTemplate", conditionTemplate);
         this.conditionTemplate = conditionTemplate;
         return this;
@@ -160,7 +160,7 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
      *
      * @return the condition template
      */
-    public UtilityCondition getConditionTemplate() {
+    public SingleCondition getConditionTemplate() {
         return conditionTemplate;
     }
 

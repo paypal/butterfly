@@ -1,9 +1,8 @@
 package com.paypal.butterfly.utilities.conditions;
 
-import com.paypal.butterfly.extensions.api.ExecutionResult;
+import com.paypal.butterfly.extensions.api.SingleCondition;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.SingleCondition;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.File;
@@ -27,6 +26,10 @@ public class PropertyExists extends SingleCondition<PropertyExists> {
     private String propertyNameRegex;
 
     public PropertyExists() {
+    }
+
+    public PropertyExists(String propertyName) {
+        setPropertyName(propertyName);
     }
 
     public PropertyExists setPropertyName(String propertyName) {
@@ -55,7 +58,7 @@ public class PropertyExists extends SingleCondition<PropertyExists> {
     }
 
     @Override
-    protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
 
         // TODO
         // Move this to pre-validation method

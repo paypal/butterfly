@@ -15,12 +15,6 @@ import java.io.File;
  * based on evaluating a single file see {@link SingleCondition}.
  * For conditions based on multiple files see {@link MultipleConditions}
  *
- * IMPORTANT:
- * Every DoubleUtilityCondition subclass MUST be a Java bean, which means they must have
- * a public no arguments default constructor, and also public setters and getters for all
- * their properties. In addition to that, every setter must return the
- * DoubleUtilityCondition instance.
- *
  * @see SingleCondition
  * @see MultipleConditions
  *

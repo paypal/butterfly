@@ -7,8 +7,6 @@ metrics/
 
 # Package Files #
 *.jar
-*.war
-*.ear
 
 # IDE Files #
 .classpath

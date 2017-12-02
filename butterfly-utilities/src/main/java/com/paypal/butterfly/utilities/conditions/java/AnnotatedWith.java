@@ -7,8 +7,8 @@ import java.util.List;
 
 /**
  * Evaluates if the specified
- * compilation unit is annotated with the
- * specified annotation class.
+ * Java class or interface is annotated with the
+ * specified annotation.
  *
  * @author facarvalho
  */

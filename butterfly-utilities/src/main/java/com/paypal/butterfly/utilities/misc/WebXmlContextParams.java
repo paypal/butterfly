@@ -1,6 +1,5 @@
 package com.paypal.butterfly.utilities.misc;
 
-import com.paypal.butterfly.extensions.api.ExecutionResult;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
@@ -43,7 +42,7 @@ public class WebXmlContextParams extends TransformationUtility<WebXmlContextPara
     }
 
     @Override
-    protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File xmlFile = getAbsoluteFile(transformedAppFolder, transformationContext);
         Map<String, String> map = new HashMap<>();
         boolean warn = false;

@@ -1,11 +1,14 @@
 package com.paypal.butterfly.utilities.file;
 
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -75,6 +78,12 @@ public class FindFile extends TransformationUtility<FindFile> {
 
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+        if (StringUtils.isBlank(fileName)) {
+            // TODO This should be done as pre-validation and throw a specific pre-validation exception
+            TransformationUtilityException ex = new TransformationUtilityException("File name has not been set");
+            return TUExecutionResult.error(this, ex);
+        }
+
         File searchRootFolder = getAbsoluteFile(transformedAppFolder, transformationContext);
 
         if (!searchRootFolder.exists()) {
@@ -94,7 +103,7 @@ public class FindFile extends TransformationUtility<FindFile> {
         List<File> files = (List<File>) findFiles.execution(searchRootFolder, transformationContext).getValue();
 
         if(files == null || files.size() == 0) {
-            String details = String.format("No file named '%s' has been found by %s", fileName, getName());
+            String details = String.format("No file named '%s' has been found", fileName);
             if (failIfNotFound) {
                 TransformationUtilityException e = new TransformationUtilityException(details);
                 result = TUExecutionResult.error(this, e);

@@ -30,6 +30,21 @@ public class UpgradePathTransformation extends Transformation {
     }
 
     @Override
+    String getExtensionName() {
+        return getExtensionName(upgradePath.getExtension());
+    }
+
+    @Override
+    String getExtensionVersion() {
+        return getExtensionVersion(upgradePath.getExtension());
+    }
+
+    @Override
+    String getTemplatetName() {
+        return upgradePath.getFirstStepTemplateName();
+    }
+
+    @Override
     public String toString() {
         return String.format(TO_STRING_SYNTAX, getApplication(), upgradePath.getOriginalVersion(), upgradePath.getUpgradeVersion());
     }

@@ -4,6 +4,10 @@ sudo: required
 jdk:
   - oraclejdk8
 
+branches:
+  only:
+  - develop
+
 install: mvn install
 
 after_success:
@@ -18,5 +22,5 @@ after_success:
   - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-metrics-couchdb/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
   - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-metrics-file/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
   - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-utilities/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
-  # Deploying SNAPSHOT artifacts to Maven Central
-  - mvn -B -s settings.xml -DskipTests=true -Dcobertura.skip deploy
+  # Deploying artifacts to Maven Central
+  - mvn -B -s settings.xml -DskipTests=true -Dcobertura.skip deploy -Possrh
