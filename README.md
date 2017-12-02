@@ -4,7 +4,9 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.paypal.butterfly/butterfly-parent/badge.svg?style=flat)](http://search.maven.org/#search|ga|1|g:com.paypal.butterfly)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-# Butterfly
+<br><br>
+<div style="text-align:center"><img src ="docs/img/logo/butterfly.png" /></div>
+<br>
 
 Butterfly is an application code transformation tool, and commonly it is used to perform **automated application migrations**, **upgrades** and **source code and configuration changes**.
 

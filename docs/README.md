@@ -1,19 +1,21 @@
 
-# Butterfly
+<br><br>
+<div style="text-align:center"><img src ="img/logo/butterfly.png" /></div>
+<br>
 
 Butterfly is an application code transformation tool, and commonly it is used to perform **automated application migrations**, **upgrades** and **source code and configuration changes**.
 
-## The transformation problem
+# The transformation problem
 
 Application changes, upgrades and migrations are usually complex, time-consuming and error prone.
 Therefore, they are also extremely expensive in the short term, and might even cause worse problems (and much more expensive) in long term.
 
-## The benefits of transformation automation
+# The benefits of transformation automation
 
 By automating application source code transformations, upgrades and migrations, overall development experience and software maintenance are improved.
 In addition to that, for a given organization, the number of applications in the latest version of a particular framework is increased, and the upgrade and migration processes are simplified.
 
-## Common use cases
+# Common use cases
 
 #### Automated application framework migrations
 
@@ -35,7 +37,7 @@ An organization has multiple applications developed using a particular framework
 
 This organization could use Butterfly, combined with its own Butterfly extension, to automate application changes.
 
-## Butterfly Features
+# Butterfly Features
 
 * Automated application source code transformations
   * Application upgrades
@@ -64,10 +66,10 @@ This organization could use Butterfly, combined with its own Butterfly extension
 * Command-Line-Interface tool
 * Logging in silent or verbose mode, in info or debug level, and on console or file
 
-## Quick start
+# Quick start
 Read [Butterfly Quick Start](https://paypal.github.io/butterfly/QUICK_START) to learn how to use Butterfly by transforming a sample application.
 
-## Butterfly User Guide
+# Butterfly User Guide
 
 1. [Installing Butterfly](https://paypal.github.io/butterfly/Installing-Butterfly)
 1. [Running Butterfly](https://paypal.github.io/butterfly/Running-Butterfly)
