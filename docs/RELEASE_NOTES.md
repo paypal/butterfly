@@ -1,6 +1,18 @@
 
 # Release notes
 
+## 2.1.0-RELEASE
+
+#### Release date
+December 2nd, 2017.
+
+#### New features and enhancements
+1. [49 - Add condition that checks if a regex matches any line in a file](https://github.com/paypal/butterfly/issues/49)
+1. [27 - Print extension name and version during Butterfly execution](https://github.com/paypal/butterfly/issues/27)
+
+#### Bug fixes
+1. [2 - RelatedArtifacts TU fails to report accurately an error when a pom file is not well formed](https://github.com/paypal/butterfly/issues/2)
+
 ## 2.0.0-RELEASE
 
 #### Release date
