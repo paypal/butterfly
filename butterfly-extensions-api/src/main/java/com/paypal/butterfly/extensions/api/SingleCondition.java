@@ -10,11 +10,6 @@ package com.paypal.butterfly.extensions.api;
  * based on comparing two files see {@link DoubleCondition}.
  * For conditions based on multiple files see {@link MultipleConditions}
  *
- * IMPORTANT:
- * Every SingleUtilityCondition subclass MUST be a Java bean, which means they must have
- * a public no arguments default constructor, and also public setters and getters for all
- * their properties. In addition to that, every setter must return the
- * SingleUtilityCondition instance.
  *
  * @see DoubleCondition
  * @see MultipleConditions
