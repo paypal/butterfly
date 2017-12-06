@@ -8,7 +8,14 @@ branches:
   only:
   - develop
 
-install: mvn install
+before_install:
+  # Importing key used to sign jars, necessary for release artifacts deployment in Maven Central
+  - openssl aes-256-cbc -K $encrypted_dd05710e44e2_key -iv $encrypted_dd05710e44e2_iv -in secring.gpg.enc -out secring.gpg -d
+  - gpg --import secring.gpg
+
+install:
+  # Building and deploying artifacts to Maven Central
+  - mvn -B -s settings.xml deploy -Possrh
 
 after_success:
   # Installing Codacy code coverage reporter upload tool
@@ -22,5 +29,3 @@ after_success:
   - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-metrics-couchdb/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
   - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-metrics-file/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
   - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-utilities/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
-  # Deploying artifacts to Maven Central
-  - mvn -B -s settings.xml -DskipTests=true -Dcobertura.skip deploy -Possrh
