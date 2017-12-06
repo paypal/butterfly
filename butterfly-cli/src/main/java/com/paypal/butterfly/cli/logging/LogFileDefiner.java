@@ -49,24 +49,42 @@ public class LogFileDefiner implements PropertyDefiner {
     }
 
     @Override
-    public void setContext(Context context) {}
+    public void setContext(Context context) {
+        // Nothing to be done here
+    }
     @Override
     public Context getContext() {
+        // Nothing to be done here
         return null;
     }
     @Override
-    public void addStatus(Status status) {}
+    public void addStatus(Status status) {
+        // Nothing to be done here
+    }
     @Override
-    public void addInfo(String s) {}
+    public void addInfo(String s) {
+        // Nothing to be done here
+    }
     @Override
-    public void addInfo(String s, Throwable throwable) {}
+    public void addInfo(String s, Throwable throwable) {
+        // Nothing to be done here
+    }
     @Override
-    public void addWarn(String s) {}
+    public void addWarn(String s) {
+        // Nothing to be done here
+    }
     @Override
-    public void addWarn(String s, Throwable throwable) {}
+    public void addWarn(String s, Throwable throwable) {
+        // Nothing to be done here
+    }
+
     @Override
-    public void addError(String s) {}
+    public void addError(String s) {
+        // Nothing to be done here
+    }
     @Override
-    public void addError(String s, Throwable throwable) {}
+    public void addError(String s, Throwable throwable) {
+        // Nothing to be done here
+    }
 
 }

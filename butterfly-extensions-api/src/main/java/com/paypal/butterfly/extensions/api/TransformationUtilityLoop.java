@@ -22,6 +22,8 @@ import java.util.List;
 public class TransformationUtilityLoop extends TransformationUtility<TransformationUtilityLoop> implements TransformationUtilityParent {
 
     private static final String DESCRIPTION = "Transformation template loop, executing %s";
+    private static final String TEMPLATE_NAME_FORMAT = "%s_%s_template";
+    private static final String CONDITION_NAME_FORMAT = "%s_%s_condition";
 
     // Possible ways to define the condition
     private int iterations = -1;
@@ -85,9 +87,6 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
         this.condition = condition;
         return this;
     }
-
-    private static final String TEMPLATE_NAME_FORMAT = "%s_%s_template";
-    private static final String CONDITION_NAME_FORMAT = "%s_%s_condition";
 
     @Override
     protected TransformationUtilityLoop setName(String name) {

@@ -32,23 +32,23 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
     @Test
     public void pluginRemovedTest() throws IOException, XmlPullParserException {
         Model pomModelBeforeChange = getOriginalPomModel("pom.xml");
-        Assert.assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 1);
-        Assert.assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getGroupId(), "org.codehaus.mojo");
-        Assert.assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getArtifactId(), "cobertura-maven-plugin");
+        assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 1);
+        assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getGroupId(), "org.codehaus.mojo");
+        assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getArtifactId(), "cobertura-maven-plugin");
 
         PomRemovePlugin pomRemovePlugin = new PomRemovePlugin("org.codehaus.mojo", "cobertura-maven-plugin").relative("pom.xml");
         TOExecutionResult executionResult = pomRemovePlugin.execution(transformedAppFolder, transformationContext);
-        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+        assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
         Model pomModelAfterChange = getTransformedPomModel("pom.xml");
-        Assert.assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 0);
+        assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 0);
     }
 
     @Test
     public void pluginNotPresentErrorTest() throws IOException {
         PomRemovePlugin pomRemovePlugin = new PomRemovePlugin("com.zoo", "zoo").relative("pom.xml");
         TOExecutionResult executionResult = pomRemovePlugin.execution(transformedAppFolder, transformationContext);
-        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
+        assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
 
         assertNotChangedFile("pom.xml");
     }
@@ -57,7 +57,7 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
     public void pluginNotPresentNoOpTest() throws IOException {
         PomRemovePlugin pomRemovePlugin = new PomRemovePlugin("com.zoo", "zoo").relative("pom.xml").noOpIfNotPresent();
         TOExecutionResult executionResult = pomRemovePlugin.execution(transformedAppFolder, transformationContext);
-        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
+        assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
 
         assertNotChangedFile("pom.xml");
     }
@@ -66,7 +66,7 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
     public void pluginNotPresentWarnTest() throws IOException, XmlPullParserException, ParserConfigurationException, SAXException {
         PomRemovePlugin pomRemovePlugin = new PomRemovePlugin("com.zoo", "zoo").relative("pom.xml").warnIfNotPresent();
         TOExecutionResult executionResult = pomRemovePlugin.execution(transformedAppFolder, transformationContext);
-        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.WARNING);
+        assertEquals(executionResult.getType(), TOExecutionResult.Type.WARNING);
 
         assertEqualsXml("pom.xml");
     }
@@ -75,8 +75,8 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
     public void fileDoesNotExistTest() {
         PomRemovePlugin pomRemovePlugin = new PomRemovePlugin("com.foo", "boo").relative("application_zeta.properties");
         TOExecutionResult executionResult = pomRemovePlugin.execution(transformedAppFolder, transformationContext);
-        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
-        Assert.assertEquals(executionResult.getException().getClass(), FileNotFoundException.class);
+        assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
+        assertEquals(executionResult.getException().getClass(), FileNotFoundException.class);
     }
 
 }

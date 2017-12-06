@@ -22,7 +22,7 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
  *
  * @author facarvalho
  */
-public interface ChangeOrRemoveElement<TO extends TransformationOperation> {
+public interface ChangeOrRemoveElement<T extends TransformationOperation> {
 
     /**
      * Possible behaviors in case the element to be changed or removed is not present.
@@ -53,7 +53,7 @@ public interface ChangeOrRemoveElement<TO extends TransformationOperation> {
      *
      * @return the transformation operation instance
      */
-    TO failIfNotPresent();
+    T failIfNotPresent();
 
     /**
      * Warn ({@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type#WARNING})
@@ -61,7 +61,7 @@ public interface ChangeOrRemoveElement<TO extends TransformationOperation> {
      *
      * @return the transformation operation instance
      */
-    TO warnIfNotPresent();
+    T warnIfNotPresent();
 
     /**
      * Do nothing, not warn neither fail,  ({@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type#NO_OP})
@@ -69,6 +69,6 @@ public interface ChangeOrRemoveElement<TO extends TransformationOperation> {
      *
      * @return the transformation operation instance
      */
-    TO noOpIfNotPresent();
+    T noOpIfNotPresent();
 
 }

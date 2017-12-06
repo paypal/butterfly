@@ -27,7 +27,7 @@ package com.paypal.butterfly.extensions.api;
  *
  * @author facarvalho
  */
-public abstract class TransformationOperation<TO extends TransformationOperation> extends TransformationUtility<TO> {
+public abstract class TransformationOperation<T extends TransformationOperation> extends TransformationUtility<T> {
 
     public TransformationOperation() {
         // Different than regular Transformation Utilities, the default value here is null, which means
@@ -36,7 +36,7 @@ public abstract class TransformationOperation<TO extends TransformationOperation
     }
 
     @Override
-    protected final TO setSaveResult(boolean saveResult) {
+    protected final T setSaveResult(boolean saveResult) {
         throw new UnsupportedOperationException("Transformation operations must always save results");
     }
 

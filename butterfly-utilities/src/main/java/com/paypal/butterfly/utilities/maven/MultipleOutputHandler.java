@@ -38,11 +38,11 @@ class MultipleOutputHandler implements MavenInvocationOutputHandler<MultipleOutp
     public void consumeLine(String line) {
         executionStarted = true;
         for (MavenInvocationOutputHandler handler : handlers) {
-            if (false == failedHandlers.containsKey(handler)) {
+            if (!failedHandlers.containsKey(handler)) {
                 try {
                     handler.consumeLine(line);
                 } catch (Exception e) {
-                    if(true == logger.isDebugEnabled()) {
+                    if(logger.isDebugEnabled()) {
                         logger.error(handler.getClass().getName() + " has failed due to an exception ", e);
                     }
                     failedHandlers.put(handler, e);
@@ -63,14 +63,14 @@ class MultipleOutputHandler implements MavenInvocationOutputHandler<MultipleOutp
      */
     @Override
     public Map<Class<? extends MavenInvocationOutputHandler>, Object> getResult() {
-        if (false == executionStarted) {
+        if (!executionStarted) {
             throw new IllegalStateException("Execution has not started. No results to return.");
         }
 
         Map<Class<? extends MavenInvocationOutputHandler>, Object> results = new HashMap<Class<? extends MavenInvocationOutputHandler>, Object>();
 
         for (MavenInvocationOutputHandler handler : handlers) {
-            if (false == failedHandlers.containsKey(handler)) {
+            if (!failedHandlers.containsKey(handler)) {
                 results.put(handler.getClass(), handler.getResult());
             } else {
                 results.put(handler.getClass(), failedHandlers.get(handler));
@@ -88,7 +88,7 @@ class MultipleOutputHandler implements MavenInvocationOutputHandler<MultipleOutp
      * handler cannot be added.
      */
     void register(MavenInvocationOutputHandler handler) throws IllegalStateException {
-        if (true == executionStarted) {
+        if (executionStarted) {
             throw new IllegalStateException("Execution has started. Not allowed to register new handlers.");
         } else if (null != handler) {
             handlers.add(handler);

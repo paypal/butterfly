@@ -1,16 +1,15 @@
 package com.paypal.butterfly.cli;
 
-import com.test.SampleExtension;
-import com.test.SampleTransformationTemplate;
 import com.paypal.butterfly.cli.logging.LogConfigurator;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
+import com.test.SampleExtension;
+import com.test.SampleTransformationTemplate;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -41,18 +40,18 @@ public class ButterflyCliTest extends PowerMockTestCase {
 
     @BeforeMethod
     public void beforeTest() throws ButterflyException {
-        TransformationResult mockResult = Mockito.mock(TransformationResult.class);
+        TransformationResult mockResult = mock(TransformationResult.class);
 
-        Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(String.class))).thenReturn(mockResult);
-        Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(String.class), Mockito.any(Configuration.class))).thenReturn(mockResult);
-        Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(Class.class))).thenReturn(mockResult);
-        Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(Class.class), Mockito.any(Configuration.class))).thenReturn(mockResult);
-        Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(UpgradePath.class))).thenReturn(mockResult);
-        Mockito.when(facade.transform(Mockito.any(File.class), Mockito.any(UpgradePath.class), Mockito.any(Configuration.class))).thenReturn(mockResult);
+        when(facade.transform(any(File.class), any(String.class))).thenReturn(mockResult);
+        when(facade.transform(any(File.class), any(String.class), any(Configuration.class))).thenReturn(mockResult);
+        when(facade.transform(any(File.class), any(Class.class))).thenReturn(mockResult);
+        when(facade.transform(any(File.class), any(Class.class), any(Configuration.class))).thenReturn(mockResult);
+        when(facade.transform(any(File.class), any(UpgradePath.class))).thenReturn(mockResult);
+        when(facade.transform(any(File.class), any(UpgradePath.class), any(Configuration.class))).thenReturn(mockResult);
 
         File file = new File("");
-        Mockito.when(mockResult.getTransformedApplicationLocation()).thenReturn(file);
-        Mockito.when(mockResult.getManualInstructionsFile()).thenReturn(file);
+        when(mockResult.getTransformedApplicationLocation()).thenReturn(file);
+        when(mockResult.getManualInstructionsFile()).thenReturn(file);
 
         sampleAppFolder = new File(this.getClass().getResource("/sample_app").getFile());
     }
@@ -69,7 +68,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
 
         String[] arguments = {"-l", "-v"};
         butterflyCli.setOptionSet(arguments);
-        
+
         int status = butterflyCli.run().getExitStatus();
 
         Assert.assertEquals(status, 0);
@@ -100,7 +99,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
      */
     @Test
     public void testTransformationWithShortcut() throws IOException, ButterflyException {
-        Mockito.when(facade.getRegisteredExtension()).thenReturn(new SampleExtension());
+        when(facade.getRegisteredExtension()).thenReturn(new SampleExtension());
 
         String arguments[] = {sampleAppFolder.getAbsolutePath(), "-s", "2"};
         butterflyCli.setOptionSet(arguments);
@@ -119,7 +118,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
      */
     @Test
     public void testTransformationWithShortcutButIgnoringIt() throws IOException, ButterflyException {
-        Mockito.when(facade.getRegisteredExtension()).thenReturn(new SampleExtension());
+        when(facade.getRegisteredExtension()).thenReturn(new SampleExtension());
 
         String arguments[] = {sampleAppFolder.getAbsolutePath(), "-t", "com.test.SampleTransformationTemplate", "-z", "-s", "2"};
         butterflyCli.setOptionSet(arguments);
@@ -173,7 +172,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
 
     @Test
     public void testAutomaticResolution() throws IOException, ButterflyException {
-        Mockito.doReturn(SampleTransformationTemplate.class).when(facade).automaticResolution(Mockito.any(File.class));
+        doReturn(SampleTransformationTemplate.class).when(facade).automaticResolution(any(File.class));
         String arguments[] = {sampleAppFolder.getAbsolutePath()};
         butterflyCli.setOptionSet(arguments);
         int status = butterflyCli.run().getExitStatus();

@@ -59,10 +59,6 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
     // 1 means first
     private int order = -1;
 
-    public int getOrder() {
-        return order;
-    }
-
     // The parent this utility instance has been registered to
     private TransformationUtilityParent parent;
 
@@ -98,12 +94,12 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
     // Map of properties to be set later, during transformation time.
     // The keys must be utility Java property names, and the values
     // must be transformation context attribute names
-    private Map<String, String> latePropertiesAttributes = new HashMap<String, String>();
+    private Map<String, String> latePropertiesAttributes = new HashMap<>();
 
     // Map of properties to be set later, during transformation time.
     // The keys must be utility Java property names, and the values
     // must be the setter methods
-    private Map<String, Method> latePropertiesSetters = new HashMap<String, Method>();
+    private Map<String, Method> latePropertiesSetters = new HashMap<>();
 
     // Abort the whole transformation if this operation fails
     private boolean abortOnFailure = false;
@@ -251,6 +247,17 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      * utility
      */
     public abstract String getDescription();
+
+    /**
+     * Returns the execution order for this utility on its parent.
+     * Value -1 means it has not been registered to any parent yet,
+     * while 1 means first.
+     *
+     * @return the execution order for this utility on its parent
+     */
+    public int getOrder() {
+        return order;
+    }
 
     /**
      * Sets the relative path from the application root folder

@@ -33,6 +33,7 @@ import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionExc
  * @author mcrockett
  */
 public class MavenGoalTest {
+
     @Mock
     InvocationRequest request = new DefaultInvocationRequest();
 
@@ -52,7 +53,7 @@ public class MavenGoalTest {
     MavenGoal mavenGoal = new MavenGoal();
     
     @BeforeMethod
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         String[] goals = {"a", "b", "c"};
         mavenGoal.setGoals(goals);

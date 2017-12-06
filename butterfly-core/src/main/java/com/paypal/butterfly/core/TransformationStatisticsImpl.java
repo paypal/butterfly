@@ -2,6 +2,8 @@ package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.api.*;
 import com.paypal.butterfly.extensions.api.metrics.TransformationStatistics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * POJO to hold transformation statistics
@@ -9,6 +11,8 @@ import com.paypal.butterfly.extensions.api.metrics.TransformationStatistics;
  * @author facarvalho
  */
 class TransformationStatisticsImpl implements TransformationStatistics {
+
+    private static Logger logger = LoggerFactory.getLogger(TransformationStatisticsImpl.class);
 
     // Number of utilities performed
     private int utilitiesCount = 0;
@@ -43,6 +47,8 @@ class TransformationStatisticsImpl implements TransformationStatistics {
             case SKIPPED_DEPENDENCY:
                 performResults.skippedDependencyCount++;
                 break;
+            default:
+                logger.error("Unknown result type {}", result.getType());
         }
 
         TransformationUtility source = result.getSource();
@@ -64,6 +70,8 @@ class TransformationStatisticsImpl implements TransformationStatistics {
                     case ERROR:
                         executionResults.operations.errorCount++;
                         break;
+                    default:
+                        logger.error("Unknown result type {}", result.getType());
                 }
             }
         } else {
@@ -83,6 +91,8 @@ class TransformationStatisticsImpl implements TransformationStatistics {
                     case ERROR:
                         executionResults.utilities.errorCount++;
                         break;
+                    default:
+                        logger.error("Unknown result type {}", result.getType());
                 }
             }
         }

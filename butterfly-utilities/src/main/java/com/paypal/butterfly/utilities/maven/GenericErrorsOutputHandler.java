@@ -43,21 +43,21 @@ public class GenericErrorsOutputHandler implements MavenInvocationOutputHandler<
     @Override
     public void consumeLine(String line) {
         executionStarted = true;
-        if (true == GOAL_ERROR_LINE_MATCH_REGEX.matcher(line).matches()) {
+        if (GOAL_ERROR_LINE_MATCH_REGEX.matcher(line).matches()) {
             message = removeLogLevel(line);
-        } else if (true == PROJECT_ERROR_LINE_MATCH_REGEX.matcher(line).matches()) {
+        } else if (PROJECT_ERROR_LINE_MATCH_REGEX.matcher(line).matches()) {
             message = removeLogLevel(line);
             isProjectError = true;
-        } else if (true == isProjectError) {
+        } else if (isProjectError) {
             message = createMessage(message, removeLogLevel(line));
-        } else if (true == GENERIC_ERROR_LINE_MATCH_REGEX.matcher(line).matches()) {
+        } else if (GENERIC_ERROR_LINE_MATCH_REGEX.matcher(line).matches()) {
             message = message.concat(line);
         }
     }
 
     @Override
     public String getResult() {
-        if (false == executionStarted) {
+        if (!executionStarted) {
             throw new IllegalStateException("Execution has not started. No results to return.");
         } else {
             return message;

@@ -17,7 +17,7 @@ import java.io.File;
  *
  * @author facarvalho
  */
-abstract class AbstractToOperation<TO extends AbstractToOperation> extends TransformationOperation<TO> {
+abstract class AbstractToOperation<A extends AbstractToOperation> extends TransformationOperation<A> {
 
     protected String description;
 
@@ -47,9 +47,10 @@ abstract class AbstractToOperation<TO extends AbstractToOperation> extends Trans
         setDescription(description);
     }
 
-    public void setDescription(String description) {
+    public A setDescription(String description) {
         checkForBlankString("Description", description);
         this.description = description;
+        return (A) this;
     }
 
     /**
@@ -66,11 +67,11 @@ abstract class AbstractToOperation<TO extends AbstractToOperation> extends Trans
      * @param toRelative relative destination location
      * @return this transformation operation instance
      */
-    public TO setToRelative(String toRelative) {
+    public A setToRelative(String toRelative) {
         checkForBlankString("Relative Location", toRelative);
         this.toRelative = toRelative;
         this.toAbsoluteAttribute = null;
-        return (TO) this;
+        return (A) this;
     }
 
     /**
@@ -86,11 +87,11 @@ abstract class AbstractToOperation<TO extends AbstractToOperation> extends Trans
      *                      the absolute destination location
      * @return this transformation operation instance
      */
-    public TO setToAbsolute(String attributeName) {
+    public A setToAbsolute(String attributeName) {
         checkForBlankString("Absolute Location", attributeName);
         this.toAbsoluteAttribute = attributeName;
         this.toRelative = null;
-        return (TO) this;
+        return (A) this;
     }
 
     /**
@@ -110,13 +111,13 @@ abstract class AbstractToOperation<TO extends AbstractToOperation> extends Trans
      *                               in {@link #relative(String)}
      * @return this transformation operation instance
      */
-    public TO setToAbsolute(String attributeName,  String additionalRelativePath) {
+    public A setToAbsolute(String attributeName,  String additionalRelativePath) {
         checkForBlankString("attributeName", attributeName);
         checkForBlankString("additionalRelativePath", additionalRelativePath);
         this.toAbsoluteAttribute = attributeName;
         this.additionalRelativePath = normalizeRelativePathSeparator(additionalRelativePath);
         this.toRelative = null;
-        return (TO) this;
+        return (A) this;
     }
 
     public String getToRelative() {
@@ -148,8 +149,8 @@ abstract class AbstractToOperation<TO extends AbstractToOperation> extends Trans
     }
 
     @Override
-    public AbstractToOperation<TO> clone() throws CloneNotSupportedException {
-        AbstractToOperation<TO> clone = (AbstractToOperation<TO>) super.clone();
+    public AbstractToOperation<A> clone() throws CloneNotSupportedException {
+        AbstractToOperation<A> clone = (AbstractToOperation<A>) super.clone();
         return clone;
     }
 
