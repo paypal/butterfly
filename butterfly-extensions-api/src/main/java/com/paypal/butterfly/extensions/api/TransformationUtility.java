@@ -328,8 +328,7 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
             if(absoluteFile == null) {
                 String exceptionMessage = String.format("Context attribute %s, which is supposed to define absolute file for %s, is null", absoluteFileFromContextAttribute, name);
                 // FIXME a better exception is necessary here for cases when the absolute path transformation context attribute value is null
-                TransformationUtilityException exception = new  TransformationUtilityException(exceptionMessage);
-                throw exception;
+                throw  new  TransformationUtilityException(exceptionMessage);
             }
             if(additionalRelativePath != null) {
                 absoluteFile = new File(absoluteFile, additionalRelativePath);
@@ -344,8 +343,7 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
         } else {
             if (relativePath == null) {
                 String exceptionMessage = String.format("Neither absolute nor relative path has been set for transformation utility %s", name);
-                TransformationUtilityException exception = new  TransformationUtilityException(exceptionMessage);
-                throw exception;
+                throw  new  TransformationUtilityException(exceptionMessage);
             }
             absoluteFile = new File(transformedAppFolder, relativePath);
         }
@@ -438,7 +436,7 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
         Method method;
         Object value = null;
         for (final Iterator itr = latePropertiesAttributes.entrySet().iterator(); itr.hasNext();) {
-            Map.Entry<String,String> entry = (Map.Entry)itr.next();
+            Map.Entry<String, String> entry = (Map.Entry) itr.next();
             String propertyName = entry.getKey();
             attributeName = latePropertiesAttributes.get(propertyName);
             try {
