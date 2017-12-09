@@ -70,7 +70,6 @@ public class InsertText extends TransformationOperation<InsertText> {
      * See {@link #setInsertionMode(InsertionMode)}
      *
      * @see InsertionMode
-     * @author facarvalho
      */
     public InsertText() {
     }

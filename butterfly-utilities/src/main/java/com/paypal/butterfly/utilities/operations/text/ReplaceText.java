@@ -38,8 +38,6 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
     /**
      * Operation to replace text in a text file
      * based on a regular expression.
-     *
-     * @author facarvalho
      */
     public ReplaceText() {
     }
@@ -49,8 +47,6 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
      * based on a regular expression.
      *
      * @param regex the regular expression to find replacement points
-     *
-     * @author facarvalho
      */
     public ReplaceText(String regex) {
         setRegex(regex);
@@ -62,8 +58,6 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
      *
      * @param regex the regular expression to find replacement points
      * @param replacement the replacement text
-     *
-     * @author facarvalho
      */
     public ReplaceText(String regex, String replacement) {
         setRegex(regex);

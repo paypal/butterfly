@@ -25,12 +25,11 @@ public class Configuration {
     }
 
     /**
-     * @see {@link Configuration}
-     * @see {@link #setOutputFolder(File)}
-     * @see {@link #setZipOutput(boolean)}
+     * Butterfly default configuration
      *
-     * @param outputFolder
-     * @param zipOutput
+     * @param outputFolder the output folder where the transformed application is
+     *                     supposed to be placed
+     * @param zipOutput if true, the transformed application folder will be compressed into a zip file
      */
     public Configuration(File outputFolder, boolean zipOutput) {
         setOutputFolder(outputFolder);
@@ -40,7 +39,7 @@ public class Configuration {
     /**
      * The folder location in the file system where the transformed application
      * should be placed.
-     * </br>
+     * <br>
      * If null, it defaults to same location where original application is.
      * n this case the transformed application is placed under a new folder
      * whose named is same as original folder, plus a "-transformed-yyyyMMddHHmmssSSS"
@@ -58,29 +57,29 @@ public class Configuration {
 
     /**
      * If set to true, the transformed application folder will be compressed
-     * to a zip file, and the transformed folder will be removed. The zip
+     * into a zip file, and the transformed folder will be removed. The zip
      * file will be named as the transformed application folder,
      * plus the zip extension
      *
-     * @param zipOutput
+     * @param zipOutput if true, the transformed application folder will be compressed into a zip file
      */
     public void setZipOutput(boolean zipOutput) {
         this.zipOutput = zipOutput;
     }
 
     /**
-     * @see {@link #setOutputFolder(File)}
+     * Return the folder where the transformed application is supposed to be placed
      *
-     * @return
+     * @return the folder where the transformed application is supposed to be placed
      */
     public File getOutputFolder() {
         return outputFolder;
     }
 
     /**
-     * @see {@link #setZipOutput(boolean)}
+     * Returns whether the transformed application folder will be compressed into a zip file or not
      *
-     * @return
+     * @return whether the transformed application folder will be compressed into a zip file or not
      */
     public boolean isZipOutput() {
         return zipOutput;

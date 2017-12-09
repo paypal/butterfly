@@ -56,6 +56,7 @@ public class TransformationEngine {
      *
      * @param transformation the transformation object
      * @throws TransformationException if the transformation is aborted for any reason
+     * @return the result after performing this transformation
      */
     public TransformationResult perform(Transformation transformation) throws TransformationException {
         if(logger.isDebugEnabled()) {

@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * This class processes all {@link com.paypal.butterfly.extensions.api.utilities.ManualInstruction}
- * objects present in a {@link TransformationContextImpl] object and persist them in a set of MD files,
+ * objects present in a {@link TransformationContextImpl} object and persist them in a set of MD files,
  * to be placed in the transformed application folder
  *
  * @author facarvalho

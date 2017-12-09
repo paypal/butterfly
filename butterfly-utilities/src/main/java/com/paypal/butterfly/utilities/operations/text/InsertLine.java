@@ -63,7 +63,6 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * See {@link #setInsertionMode(InsertionMode)}.
      *
      * @see InsertionMode
-     * @author facarvalho
      */
     public InsertLine() {
     }

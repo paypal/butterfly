@@ -9,7 +9,7 @@ import org.slf4j.event.Level;
  * SLF4J implementation, but the API doesn't allow
  * changing the log level in runtime, so here we
  * are doing it behind the scenes.
- * </br>
+ * <br>
  * At least we are providing this interface
  * to isolate these concerns, which will make it
  * easier to maintain this code if we ever replace
