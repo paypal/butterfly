@@ -284,14 +284,16 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
     }
 
     /*
-     * Returns a relative path that is in compliance with the current OS in terms of file separator
+     * Returns a relative path that is in compliance with the current OS in terms of file separator,
+     * or null, if the passed relative path is null
      */
-    protected static String normalizeRelativePathSeparator(String _relativePath) {
-        if(_relativePath != null) {
-            _relativePath = _relativePath.replace('/', File.separatorChar).replace('\\', File.separatorChar);
+    protected static String normalizeRelativePathSeparator(String relativePath) {
+        String normalizedRelativePath = null;
+        if(relativePath != null) {
+            normalizedRelativePath = relativePath.replace('/', File.separatorChar).replace('\\', File.separatorChar);
         }
 
-        return _relativePath;
+        return normalizedRelativePath;
     }
 
     /**

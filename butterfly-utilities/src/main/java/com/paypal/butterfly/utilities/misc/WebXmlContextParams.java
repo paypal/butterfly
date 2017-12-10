@@ -55,7 +55,13 @@ public class WebXmlContextParams extends TransformationUtility<WebXmlContextPara
             NodeList contextParams = webAppNode.getElementsByTagName("context-param");
 
             Node contextParam;
-            String element1Tag, element1Content, element2Tag, element2Content, paramName, paramValue;
+            String element1Tag;
+            String element1Content;
+            String element2Tag;
+            String element2Content;
+            String paramName;
+            String paramValue;
+
             for (int i = 0; i < contextParams.getLength(); i++) {
                 contextParam = contextParams.item(i);
 

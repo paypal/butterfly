@@ -105,7 +105,7 @@ public class Configuration {
             return false;
         }
         final Configuration configuration = (Configuration)obj;
-        if(!(this.zipOutput == configuration.isZipOutput())) {
+        if(this.zipOutput != configuration.isZipOutput()) {
             return false;
         }
         if (this.outputFolder == null && configuration.getOutputFolder() != null) {

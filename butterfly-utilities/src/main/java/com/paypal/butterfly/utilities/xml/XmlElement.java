@@ -136,12 +136,12 @@ public class XmlElement extends TransformationUtility<XmlElement> {
             throw new TransformationUtilityException("Element " + xmlElement + " could not be found in XML file");
         }
 
-        i++;
-        if(i == xmlElementPath.length) {
+        int next = i + 1;
+        if(xmlElementPath.length == next) {
             return node;
         }
 
-        return findNode(node.getChildNodes(), xmlElementPath, i);
+        return findNode(node.getChildNodes(), xmlElementPath, next);
     }
 
 }

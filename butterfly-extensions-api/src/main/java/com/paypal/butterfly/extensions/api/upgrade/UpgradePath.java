@@ -40,6 +40,7 @@ public final class UpgradePath {
         this(firstStepClass, null);
     }
 
+    @SuppressWarnings("PMD.AvoidReassigningParameters")
     public UpgradePath(Class<? extends UpgradeStep> firstStepClass, String upgradeVersion) {
         if (firstStepClass == null) {
             throw new IllegalArgumentException("First step class cannot be null");
