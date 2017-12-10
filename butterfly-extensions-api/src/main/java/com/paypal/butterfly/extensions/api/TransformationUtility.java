@@ -48,7 +48,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 // TODO create another type to be parent of TO and TU, this way the result type will be better organized
 // How to name it? transformation node?
 // This type should be the one to be added to a template
-public abstract class TransformationUtility<TU extends TransformationUtility> implements Cloneable {
+public abstract class TransformationUtility<T extends TransformationUtility> implements Cloneable {
 
     private static final Logger logger = LoggerFactory.getLogger(TransformationUtility.class);
 
@@ -127,7 +127,7 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
     // Optional condition to let this operation be executed (if true)
     // This is the actual UtilityCondition object to be executed
     // right before this TU is executed. Its result is then evaluated
-    // and, based on that, this TU is executed or not
+    // and, based on that, this T is executed or not
     private UtilityCondition utilityCondition = null;
 
     // Indicates whether or not this utility has already been
@@ -155,12 +155,12 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      * @param name transformation utility instance name
      * @return this transformation utility instance
      */
-    protected TU setName(String name) {
+    protected T setName(String name) {
         if(StringUtils.isBlank(name)) {
             throw new TransformationDefinitionException(name + " cannot be blank");
         }
         this.name = name;
-        return (TU) this;
+        return (T) this;
     }
 
     public final String getName() {
@@ -176,9 +176,9 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      * when saved into the transformation context.
      * @return this transformation utility instance
      */
-    public TU setContextAttributeName(String contextAttributeName) {
+    public T setContextAttributeName(String contextAttributeName) {
         this.contextAttributeName = contextAttributeName;
-        return (TU) this;
+        return (T) this;
     }
 
     /**
@@ -203,15 +203,15 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      * @param order the order of execution of this utility
      * @return this transformation utility instance
      */
-    public final TU setParent(TransformationUtilityParent parent, int order) {
+    public final T setParent(TransformationUtilityParent parent, int order) {
         this.parent = parent;
         this.order = order;
 
         if(name == null) {
-            setName(String.format(UTILITY_NAME_SYNTAX, parent.getName(), order, ((TU) this).getClass().getSimpleName()));
+            setName(String.format(UTILITY_NAME_SYNTAX, parent.getName(), order, ((T) this).getClass().getSimpleName()));
         }
 
-        return (TU) this;
+        return (T) this;
     }
 
     /**
@@ -277,21 +277,23 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      *  to the file or folder the transformation utility should be performed against
      * @return this transformation utility instance
      */
-    public final TU relative(String relativePath) {
+    public final T relative(String relativePath) {
         this.relativePath = normalizeRelativePathSeparator(relativePath);
 
-        return (TU) this;
+        return (T) this;
     }
 
     /*
-     * Returns a relative path that is in compliance with the current OS in terms of file separator
+     * Returns a relative path that is in compliance with the current OS in terms of file separator,
+     * or null, if the passed relative path is null
      */
-    protected static String normalizeRelativePathSeparator(String _relativePath) {
-        if(_relativePath != null) {
-            _relativePath = _relativePath.replace('/', File.separatorChar).replace('\\', File.separatorChar);
+    protected static String normalizeRelativePathSeparator(String relativePath) {
+        String normalizedRelativePath = null;
+        if(relativePath != null) {
+            normalizedRelativePath = relativePath.replace('/', File.separatorChar).replace('\\', File.separatorChar);
         }
 
-        return _relativePath;
+        return normalizedRelativePath;
     }
 
     /**
@@ -399,17 +401,17 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      *                             execution
      * @return this transformation utility instance
      */
-    public final TU set(String propertyName, String contextAttributeName) {
+    public final T set(String propertyName, String contextAttributeName) {
         Method method = getMethod(propertyName);
         latePropertiesAttributes.put(propertyName, contextAttributeName);
         latePropertiesSetters.put(propertyName, method);
 
-        return (TU) this;
+        return (T) this;
     }
 
     private Method getMethod(String propertyName) {
         String methodName = getMethodName(propertyName);
-        Class clazz = ((TU) this).getClass();
+        Class clazz = ((T) this).getClass();
 
         for(Method method : clazz.getMethods()) {
             if(method.getName().equals(methodName)) {
@@ -493,9 +495,9 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      *                             execution
      * @return this transformation utility instance
      */
-    public TU absolute(String contextAttributeName) {
+    public T absolute(String contextAttributeName) {
         absoluteFileFromContextAttribute = contextAttributeName;
-        return (TU) this;
+        return (T) this;
     }
 
     /**
@@ -518,11 +520,11 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      *                               in {@link #relative(String)}
      * @return this transformation utility instance
      */
-    public TU absolute(String contextAttributeName, String additionalRelativePath) {
+    public T absolute(String contextAttributeName, String additionalRelativePath) {
         absoluteFileFromContextAttribute = contextAttributeName;
         this.additionalRelativePath = normalizeRelativePathSeparator(additionalRelativePath);
 
-        return (TU) this;
+        return (T) this;
     }
 
     final String getAbsoluteFileFromContextAttribute() {
@@ -644,9 +646,9 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      *              If not, just state a warning, aborts the operation execution only
      * @return this transformation utility instance
      */
-    public final TU abortOnFailure(boolean abort) {
+    public final T abortOnFailure(boolean abort) {
         abortOnFailure = abort;
-        return (TU) this;
+        return (T) this;
     }
 
     /**
@@ -662,10 +664,10 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      *                        has to be aborted
      * @return this transformation utility instance
      */
-    public final TU abortOnFailure(boolean abort, String abortionMessage) {
+    public final T abortOnFailure(boolean abort, String abortionMessage) {
         abortOnFailure = abort;
         this.abortionMessage = abortionMessage;
-        return (TU) this;
+        return (T) this;
     }
 
     /**
@@ -721,9 +723,9 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      * context object
      * @return this transformation utility instance
      */
-    protected TU setSaveResult(boolean saveResult) {
+    protected T setSaveResult(boolean saveResult) {
         this.saveResult = saveResult;
-        return (TU) this;
+        return (T) this;
     }
 
     /**
@@ -773,14 +775,14 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      * @param dependencies the names of all transformation utilities this utility depends on
      * @return this transformation utility instance
      */
-    public final TU dependsOn(String... dependencies) {
+    public final T dependsOn(String... dependencies) {
         if (dependencies != null) {
             for (String dependency : dependencies) {
                 if (StringUtils.isBlank(dependency)) throw new IllegalArgumentException("Dependencies cannot be null nor blank");
             }
         }
         this.dependencies = dependencies;
-        return (TU) this;
+        return (T) this;
     }
 
     /**
@@ -852,9 +854,9 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      *                               utility should be executed or not
      * @return this transformation utility instance
      */
-    public final TU executeIf(String conditionAttributeName) {
+    public final T executeIf(String conditionAttributeName) {
         this.ifConditionAttributeName = conditionAttributeName;
-        return (TU) this;
+        return (T) this;
     }
 
     /**
@@ -874,9 +876,9 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      * @param utilityCondition the condition to be executed and evaluated right before this TU
      * @return this transformation utility instance
      */
-    public final TU executeIf(UtilityCondition utilityCondition) {
+    public final T executeIf(UtilityCondition utilityCondition) {
         this.utilityCondition = utilityCondition;
-        return (TU) this;
+        return (T) this;
     }
 
     /**
@@ -889,9 +891,9 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      *                               utility should be executed or not
      * @return this transformation utility instance
      */
-    public final TU executeUnless(String conditionAttributeName) {
+    public final T executeUnless(String conditionAttributeName) {
         this.unlessConditionAttributeName = conditionAttributeName;
-        return (TU) this;
+        return (T) this;
     }
 
     /**
@@ -959,8 +961,8 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
     }
 
     @Override
-    public TransformationUtility<TU> clone() throws CloneNotSupportedException {
-        TransformationUtility<TU> clone = (TransformationUtility<TU>) super.clone();
+    public TransformationUtility<T> clone() throws CloneNotSupportedException {
+        TransformationUtility<T> clone = (TransformationUtility<T>) super.clone();
 
         // Properties we do NOT want to be in the clone (they are being initialized)
         clone.hasBeenPerformed = new AtomicBoolean(false);
@@ -1003,8 +1005,8 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      * @throws CloneNotSupportedException in case the concrete transformation utility
      *         does not support being cloned
      */
-    public TransformationUtility<TU> copy() throws CloneNotSupportedException {
-        TransformationUtility<TU> copy = (TransformationUtility<TU>) super.clone();
+    public TransformationUtility<T> copy() throws CloneNotSupportedException {
+        TransformationUtility<T> copy = (TransformationUtility<T>) super.clone();
 
         // Properties we do NOT want to be in the copy (they are being initialized)
         copy.order = -1;
@@ -1092,6 +1094,7 @@ public abstract class TransformationUtility<TU extends TransformationUtility> im
      * @return true only if they are equal
      */
     @Override
+    @SuppressWarnings("PMD.SimplifyBooleanReturns")
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof TransformationUtility)) return false;

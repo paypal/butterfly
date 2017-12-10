@@ -2,12 +2,10 @@ package com.paypal.butterfly.utilities.operations.text;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
-import com.paypal.butterfly.utilities.operations.properties.RemoveProperty;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Properties;
 
 /**

@@ -85,14 +85,13 @@ public class Configuration {
         return zipOutput;
     }
 
-    private static final String TO_STRING_FORMAT = "{ outputFolder: %s , zipOutput: %s }";
-
     @Override
     public String toString() {
-        return String.format(TO_STRING_FORMAT, outputFolder, zipOutput);
+        return String.format("{ outputFolder: %s , zipOutput: %s }", outputFolder, zipOutput);
     }
 
     @Override
+    @SuppressWarnings("PMD.SimplifyBooleanReturns")
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
@@ -107,7 +106,7 @@ public class Configuration {
             return false;
         }
         final Configuration configuration = (Configuration)obj;
-        if(!(this.zipOutput == configuration.isZipOutput())) {
+        if(this.zipOutput != configuration.isZipOutput()) {
             return false;
         }
         if (this.outputFolder == null && configuration.getOutputFolder() != null) {

@@ -49,6 +49,7 @@ class TransformationStatisticsImpl implements TransformationStatistics {
                 break;
             default:
                 logger.error("Unknown result type {}", result.getType());
+                break;
         }
 
         TransformationUtility source = result.getSource();
@@ -72,6 +73,7 @@ class TransformationStatisticsImpl implements TransformationStatistics {
                         break;
                     default:
                         logger.error("Unknown result type {}", result.getType());
+                        break;
                 }
             }
         } else {
@@ -93,6 +95,7 @@ class TransformationStatisticsImpl implements TransformationStatistics {
                         break;
                     default:
                         logger.error("Unknown result type {}", result.getType());
+                        break;
                 }
             }
         }

@@ -28,10 +28,12 @@ import java.util.regex.Pattern;
  */
 public class XmlElement extends TransformationUtility<XmlElement> {
 
-    private static final String DESCRIPTION = "Retrieve the value of element %s in XML file %s";
-
     private String xmlElement;
     private String attribute;
+
+    private static final String DESCRIPTION = "Retrieve the value of element %s in XML file %s";
+
+    private static final Pattern XML_ELEMENT_SPLIT_REGEX_PATTERN = Pattern.compile("\\.");
 
     public XmlElement() {
     }
@@ -94,8 +96,6 @@ public class XmlElement extends TransformationUtility<XmlElement> {
         return String.format(DESCRIPTION, xmlElement, getRelativePath());
     }
 
-    private static final Pattern XML_ELEMENT_SPLIT_REGEX_PATTERN = Pattern.compile("\\.");
-
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File xmlFile = getAbsoluteFile(transformedAppFolder, transformationContext);
@@ -136,12 +136,12 @@ public class XmlElement extends TransformationUtility<XmlElement> {
             throw new TransformationUtilityException("Element " + xmlElement + " could not be found in XML file");
         }
 
-        i++;
-        if(i == xmlElementPath.length) {
+        int next = i + 1;
+        if(xmlElementPath.length == next) {
             return node;
         }
 
-        return findNode(node.getChildNodes(), xmlElementPath, i);
+        return findNode(node.getChildNodes(), xmlElementPath, next);
     }
 
 }

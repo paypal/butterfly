@@ -33,6 +33,10 @@ public class ButterflyCliTest extends PowerMockTestCase {
     @Mock
     private ButterflyFacade facade;
 
+    // Even though this variable is not used explicitly in this class,
+    // it is necessary to its proper execution, since the mock initialization
+    // is happening regardless of it
+    @SuppressWarnings("PMD.UnusedPrivateField")
     @Mock
     private LogConfigurator logConfigurator;
 
