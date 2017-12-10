@@ -33,9 +33,6 @@ public class ButterflyCliTest extends PowerMockTestCase {
     @Mock
     private ButterflyFacade facade;
 
-    @Mock
-    private LogConfigurator logConfigurator;
-
     private File sampleAppFolder;
 
     @BeforeMethod

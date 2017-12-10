@@ -51,7 +51,7 @@ public class SampleTransformationTemplate extends TransformationTemplate {
 
         // Adding Spring Boot entry point class
         URL javaFileUrl = this.getClass().getResource("/Application.java");
-        final String applicationFile = add(new ApplyFile(javaFileUrl).relative("/src/main/java/com/sample/app"));
+        add(new ApplyFile(javaFileUrl).relative("/src/main/java/com/sample/app"));
 
         // Changing README.md
         add(new ReplaceText("(Spring framework)", "Spring Boot framework").relative("README.md"));
