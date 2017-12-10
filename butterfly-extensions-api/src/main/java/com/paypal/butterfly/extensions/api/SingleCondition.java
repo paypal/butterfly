@@ -16,5 +16,5 @@ package com.paypal.butterfly.extensions.api;
  *
  * @author facarvalho
  */
-public abstract class SingleCondition<SUC extends SingleCondition> extends UtilityCondition<SUC> {
+public abstract class SingleCondition<T extends SingleCondition> extends UtilityCondition<T> {
 }

@@ -4,7 +4,6 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xml.sax.SAXException;
 

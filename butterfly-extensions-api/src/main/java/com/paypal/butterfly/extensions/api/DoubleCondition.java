@@ -20,7 +20,7 @@ import java.io.File;
  *
  * @author facarvalho
  */
-public abstract class DoubleCondition<DUC extends DoubleCondition> extends UtilityCondition<DUC> {
+public abstract class DoubleCondition<T extends DoubleCondition> extends UtilityCondition<T> {
 
     // The name of the transformation context attribute
     // that refers to the file to be compared against the baseline file
@@ -47,10 +47,10 @@ public abstract class DoubleCondition<DUC extends DoubleCondition> extends Utili
      *                  that refers to the file to be compared against the baseline file
      * @return this utility condition instance
      */
-    public DUC setAttribute(String attribute) {
+    public T setAttribute(String attribute) {
         checkForBlankString("attribute", attribute);
         this.attribute = attribute;
-        return (DUC) this;
+        return (T) this;
     }
 
     /**
