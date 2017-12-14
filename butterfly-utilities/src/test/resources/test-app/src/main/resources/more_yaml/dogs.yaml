@@ -1,0 +1,6 @@
+Toby: !sample.code.Dog
+   name: Toby
+   breed: poodle
+Mustache: !sample.code.Dog
+   name: Mustache
+   breed: pit bull

@@ -34,7 +34,7 @@ public abstract class TransformationUtilityTestHelper {
 
     protected File appFolder;
     protected File transformedAppFolder;
-    protected TransformationContext transformationContext = Mockito.mock(TransformationContext.class);
+    protected TransformationContext transformationContext;
 
     @BeforeClass
     public void beforeClass() throws URISyntaxException, IOException {
@@ -46,6 +46,7 @@ public abstract class TransformationUtilityTestHelper {
         transformedAppFolder = new File(appFolder.getParentFile(), String.format("test-app_%s_%s_%s", method.getDeclaringClass().getSimpleName(), method.getName(), System.currentTimeMillis()));
         FileUtils.copyDirectory(appFolder, transformedAppFolder);
         System.out.printf("Transformed app folder: %s\n", transformedAppFolder.getAbsolutePath());
+        transformationContext = Mockito.mock(TransformationContext.class);
     }
 
     /**

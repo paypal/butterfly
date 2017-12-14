@@ -1,6 +1,8 @@
 package com.paypal.butterfly.utilities.conditions;
 
 import com.paypal.butterfly.extensions.api.DoubleCondition;
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.w3c.dom.Document;
@@ -13,9 +15,10 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Compares two XML files and returns true only
-if their contents are equal. Attribute orders, comments and white
- * spaces are ignored during the comparison.
+ * Compares two XML files and returns true if their contents are equal,
+ * or if both files don't exist. Returns false otherwise.
+ * Attribute orders, comments and white spaces are ignored during the comparison.
+ * It results in error if any of the two files is not a well formed XML file.
  * <br>
  * See {@link DoubleCondition}
  * to find out how to set the baseline and the comparison files
@@ -25,6 +28,34 @@ if their contents are equal. Attribute orders, comments and white
 public class CompareXMLFiles extends DoubleCondition<CompareXMLFiles> {
 
     private static final String DESCRIPTION = "Compare XML file %s to another one, return true only if their contents are equal";
+
+    /**
+     * Compares two XML files and returns true if their contents are equal,
+     * or if both files don't exist. Returns false otherwise.
+     * Attribute orders, comments and white spaces are ignored during the comparison.
+     * It results in error if any of the two files is not a well formed XML file.
+     * <br>
+     * See {@link DoubleCondition}
+     * to find out how to set the baseline and the comparison files
+     */
+    public CompareXMLFiles() {
+    }
+
+    /**
+     * Compares two XML files and returns true if their contents are equal,
+     * or if both files don't exist. Returns false otherwise.
+     * Attribute orders, comments and white spaces are ignored during the comparison.
+     * It results in error if any of the two files is not a well formed XML file.
+     * <br>
+     * See {@link DoubleCondition}
+     * to find out how to set the baseline and the comparison files
+     *
+     * @param attribute the name of the transformation context attribute
+     *                  that refers to the file to be compared against the baseline file
+     */
+    public CompareXMLFiles(String attribute) {
+        setAttribute(attribute);
+    }
 
     @Override
     protected boolean compare(File baselineFile, File comparisonFile) {
@@ -49,8 +80,13 @@ public class CompareXMLFiles extends DoubleCondition<CompareXMLFiles> {
 
             return XMLUnit.compareXML(baselineXml, comparisonXml).similar();
         } catch (SAXException | IOException | ParserConfigurationException e) {
-            throw new TransformationUtilityException("An exception has happened when comparing the two XML files", e);
+            throw new TransformationUtilityException("An exception happened when comparing the two XML files", e);
         }
+    }
+
+    @Override
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+        return super.execution(transformedAppFolder, transformationContext);
     }
 
     @Override

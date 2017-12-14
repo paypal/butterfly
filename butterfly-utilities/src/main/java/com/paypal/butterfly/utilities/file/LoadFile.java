@@ -1,6 +1,5 @@
 package com.paypal.butterfly.utilities.file;
 
-import com.paypal.butterfly.extensions.api.ExecutionResult;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
@@ -16,6 +15,7 @@ import java.io.InputStream;
  * Loads a resource from the classpath, writes it to a temporary file,
  * and then returns a {@link File} reference to it, which is saved in the transformation
  * context. The file is written to a temporary folder to be defined by the OS.
+ * If no resource file is found, an error is returned.
  *
  * @author facarvalho
  */
@@ -25,7 +25,25 @@ public class LoadFile extends TransformationUtility<LoadFile> {
 
     private String resource;
 
+    /**
+     * Loads a resource from the classpath, writes it to a temporary file,
+     * and then returns a {@link File} reference to it, which is saved in the transformation
+     * context. The file is written to a temporary folder to be defined by the OS.
+     * If no resource file is found, an error is returned.
+     */
     public LoadFile() {
+    }
+
+    /**
+     * Loads a resource from the classpath, writes it to a temporary file,
+     * and then returns a {@link File} reference to it, which is saved in the transformation
+     * context. The file is written to a temporary folder to be defined by the OS.
+     * If no resource file is found, an error is returned.
+     *
+     * @param resource the name of the resource in the classpath
+     */
+    public LoadFile(String resource) {
+        setResource(resource);
     }
 
     /**
@@ -57,7 +75,7 @@ public class LoadFile extends TransformationUtility<LoadFile> {
 
     @SuppressFBWarnings("NP_ALWAYS_NULL_EXCEPTION")
     @Override
-    protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         TUExecutionResult result = null;
         InputStream inputStream = null;
         IOException ioException = null;

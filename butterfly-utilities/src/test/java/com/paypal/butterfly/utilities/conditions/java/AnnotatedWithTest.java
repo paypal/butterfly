@@ -84,12 +84,14 @@ public class AnnotatedWithTest {
     @Test
     public void negativeStringTest() throws ParseException {
         AnnotatedWith annotatedWith = new AnnotatedWith("org.springframework.stereotype.Component");
+        Assert.assertFalse(annotatedWith.isNegate());
         Assert.assertFalse(annotatedWith.evaluate(compilationUnit));
     }
 
     @Test
     public void negateTest() throws ParseException {
         AnnotatedWith annotatedWith = new AnnotatedWith(SuppressWarnings.class).setNegate(true);
+        Assert.assertTrue(annotatedWith.isNegate());
         Assert.assertFalse(annotatedWith.evaluate(compilationUnit));
     }
 

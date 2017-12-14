@@ -85,7 +85,7 @@ public class FindFile extends TransformationUtility<FindFile> {
         File searchRootFolder = getAbsoluteFile(transformedAppFolder, transformationContext);
 
         if (!searchRootFolder.exists()) {
-            String details = String.format("No file named '%s' has been found by %s", fileName, getName());
+            String details = String.format("The specified search root folder does not exist");
             if (failIfNotFound) {
                 TransformationUtilityException e = new TransformationUtilityException(details);
                 return TUExecutionResult.error(this, e);

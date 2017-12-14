@@ -1,10 +1,10 @@
 package com.paypal.butterfly.utilities.file;
 
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
-import com.paypal.butterfly.extensions.api.TUExecutionResult;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 
@@ -15,17 +15,48 @@ import java.io.File;
  * This utility also allows to locate a file going up in parent
  * levels from the specified file. If the specified file does
  * not exist, or if the coordinates don't make sense, an error
- * is returned
+ * is returned.
+ * <br>
+ * Note: the term "file" here might refer to a folder as well
  *
  * @author facarvalho
  */
 public class LocateFile extends TransformationUtility<LocateFile> {
 
-    private static final String DESCRIPTION = "Locate file under %s";
+    private static final String DESCRIPTION_PARENT_ZERO = "Locate file %s";
+    private static final String DESCRIPTION_PARENT = "Locate file %d levels above %s";
 
     private int parentLevel = 0;
 
+    /**
+     * Locates a file based on the relative or absolute
+     * location specified. It does not find files, it just results
+     * to a {@link File} object based on the input information.
+     * This utility also allows to locate a file going up in parent
+     * levels from the specified file. If the specified file does
+     * not exist, or if the coordinates don't make sense, an error
+     * is returned
+     * <br>
+     * Note: the term "file" here might refer to a folder as well
+     */
     public LocateFile() {
+    }
+
+    /**
+     * Locates a file based on the relative or absolute
+     * location specified. It does not find files, it just results
+     * to a {@link File} object based on the input information.
+     * This utility also allows to locate a file going up in parent
+     * levels from the specified file. If the specified file does
+     * not exist, or if the coordinates don't make sense, an error
+     * is returned
+     * <br>
+     * Note: the term "file" here might refer to a folder as well
+     *
+     * @param parentLevel how many parent levels to be located
+     */
+    public LocateFile(int parentLevel) {
+        setParentLevel(parentLevel);
     }
 
     /**
@@ -52,7 +83,15 @@ public class LocateFile extends TransformationUtility<LocateFile> {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, getRelativePath());
+        String location = getRelativePath();
+        if (StringUtils.isBlank(location)) {
+            location = "root folder";
+        }
+        if (parentLevel == 0) {
+            return String.format(DESCRIPTION_PARENT_ZERO, location);
+        } else {
+            return String.format(DESCRIPTION_PARENT, parentLevel, location);
+        }
     }
 
     @Override
@@ -70,11 +109,11 @@ public class LocateFile extends TransformationUtility<LocateFile> {
             }
             if (locatedFile == null) {
                 String message = String.format("File to be located reached limit of files hierarchy, parent level %d is too deep", parentLevel);
-                TransformationOperationException e = new TransformationOperationException(message);
+                TransformationUtilityException e = new TransformationUtilityException(message);
                 result = TUExecutionResult.error(this, e);
             } else if (!locatedFile.exists()) {
                 String message = String.format("File to be located does not exist");
-                TransformationOperationException e = new TransformationOperationException(message);
+                TransformationUtilityException e = new TransformationUtilityException(message);
                 result = TUExecutionResult.error(this, e);
             } else {
                 result = TUExecutionResult.value(this, locatedFile);
@@ -82,7 +121,7 @@ public class LocateFile extends TransformationUtility<LocateFile> {
             // FIXME a better exception is necessary here for cases when the absolute path transformation context attribute value is null
         } catch(TransformationUtilityException exception) {
             String details = String.format("No file has been located by %s because its baseline relative or absolute location could not be resolved", getName());
-            result = TUExecutionResult.error(this, exception, details);
+            result = TUExecutionResult.error(this, null, exception, details);
         }
 
         return result;

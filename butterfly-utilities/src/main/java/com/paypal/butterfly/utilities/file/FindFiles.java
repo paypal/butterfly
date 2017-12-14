@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ import java.util.Collection;
  */
 public class FindFiles extends TransformationUtility<FindFiles> {
 
-    private static final String DESCRIPTION = "Find files whose name and/or path match regular expression and are under folder %s%s";
+    private static final String DESCRIPTION = "Find files whose name and/or path match regular expression and are under %s%s";
 
     private String nameRegex;
     private String pathRegex;
@@ -45,12 +46,8 @@ public class FindFiles extends TransformationUtility<FindFiles> {
 
     /**
      * Utility to find files based on a regular expression
-     * against the file name and/or the file path. The search might be
-     * recursive (including sub-folders) or not. If a file path regular
-     * expression is set, then the search will be automatically and
-     * necessarily recursive.
-     * If no file path regular expression is set, then the search
-     * is not recursive by default, but it may be set to as well.
+     * against the file name. The search might be
+     * recursive (including sub-folders) or not.
      * <br>
      * The root directory from where the search should take place
      * can be defined by {@link #relative(String)},
@@ -69,12 +66,22 @@ public class FindFiles extends TransformationUtility<FindFiles> {
 
     /**
      * Utility to find files based on a regular expression
-     * against the file name and/or the file path. The search might be
-     * recursive (including sub-folders) or not. If a file path regular
+     * against the file name and the file path. Because a file path regular
      * expression is set, then the search will be automatically and
      * necessarily recursive.
-     * If no file path regular expression is set, then the search
-     * is not recursive by default, but it may be set to as well.
+     * <br>
+     * <strong>Important notes:</strong>
+     * <ul>
+     *      <li>Use forward slash as file separator. If the OS
+     *      used during transformation execution uses another character
+     *      as file separator, that will be automatically converted
+     *      by this utility</li>
+     *      <li>Setting this to a non null value automatically sets
+     *      recursive property to true</li>
+     *      <li>This regular expression will be evaluated against
+     *      the file path <strong>starting from the search root
+     *      directory</strong></li>
+     * </ul>
      * <br>
      * The root directory from where the search should take place
      * can be defined by {@link #relative(String)},
@@ -182,7 +189,11 @@ public class FindFiles extends TransformationUtility<FindFiles> {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, getRelativePath(), (recursive ? " and sub-folders" : " only (not including sub-folders)"));
+        String folder = getRelativePath();
+        if (StringUtils.isBlank(folder) || ".".equals(folder)) {
+            folder = "the root folder";
+        }
+        return String.format(DESCRIPTION, folder, (recursive ? " and sub-folders" : " only (not including sub-folders)"));
     }
 
     @Override
