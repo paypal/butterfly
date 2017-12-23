@@ -7,6 +7,8 @@
       1. generate javadocs for utilities and extensions-api projects: `mvn javadoc:javadoc`
       1. place javadocs files under `docs/javadocs/<version>`
       1. update links in `Extension-development-guide`, pointing to latest javadoc
+   1. doc
+      1. update zip link in `Installing-Butterfly.md`
    1. Update release notes
    1. Push changes (deployment will be done automatically by CI job)
 1. Manual sonatype release
