@@ -49,12 +49,30 @@ interface TransformationUtilityList extends TransformationUtilityParent {
     String addMultiple(TransformationOperation templateOperation, String... attributes);
 
     /**
+     * This method has been deprecated. Use {@link #info(String)} instead.
+     *
      * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list
      *
      * @param logMessage the message to be logged
      */
+    @Deprecated
     void log(String logMessage);
 
+    /**
+     * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list,
+     * setting its log level to INFO
+     *
+     * @param infoMessage the info message to be logged
+     */
+    void info(String infoMessage);
+
+    /**
+     * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list,
+     * setting its log level to DEBUG
+     *
+     * @param debugMessage the debug message to be logged
+     */
+    void debug(String debugMessage);
 
     /**
      * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list
@@ -65,6 +83,8 @@ interface TransformationUtilityList extends TransformationUtilityParent {
     void log(Level logLevel, String logMessage);
 
     /**
+     * This method has been deprecated. Use {@link #info(String, String...)} instead.
+     *
      * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list.
      * The log messages may contain placeholders to be replaced by transformation context
      * attribute values. Use {@code {}} as placeholder marker.
@@ -74,7 +94,34 @@ interface TransformationUtilityList extends TransformationUtilityParent {
      * @param attributeNames an array of names of transformation context attributes, whose values
      *                       are going to be used in the log message
      */
+    @Deprecated
     void log(String logMessage, String... attributeNames);
+
+    /**
+     * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list,
+     * setting its log level to INFO.
+     * The log messages may contain placeholders to be replaced by transformation context
+     * attribute values. Use {@code {}} as placeholder marker.
+     *
+     * @param infoMessage the info message to be logged, containing {@code {}} placeholders to be replaced by
+     *                   transformation context attribute values
+     * @param attributeNames an array of names of transformation context attributes, whose values
+     *                       are going to be used in the log message
+     */
+    void info(String infoMessage, String... attributeNames);
+
+    /**
+     * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list,
+     * setting its log level to DEBUG.
+     * The log messages may contain placeholders to be replaced by transformation context
+     * attribute values. Use {@code {}} as placeholder marker.
+     *
+     * @param debugMessage the debug message to be logged, containing {@code {}} placeholders to be replaced by
+     *                   transformation context attribute values
+     * @param attributeNames an array of names of transformation context attributes, whose values
+     *                       are going to be used in the log message
+     */
+    void debug(String debugMessage, String... attributeNames);
 
     /**
      * Adds a new {@link com.paypal.butterfly.extensions.api.utilities.Log} TU to the list.

@@ -11,7 +11,6 @@ import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
 import com.paypal.butterfly.facade.exception.TransformationException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -464,7 +463,7 @@ public class TransformationEngine {
                 }
                 break;
             case VALUE:
-                logger.debug("\t-\t - [{}][Result: {}][Utility: {}]", StringUtils.abbreviate(utility.toString(), 240),  StringUtils.abbreviate(executionResult.getValue().toString(), 120), utility.getName());
+                logger.debug("\t-\t - [{}][Result: {}][Utility: {}]", utility.toString(),  executionResult.getValue().toString(), utility.getName());
                 break;
             case WARNING:
                 processExecutionResultWarningType(utility, executionResult, "-");
