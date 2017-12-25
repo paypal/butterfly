@@ -33,6 +33,13 @@ public class WebXmlContextParams extends TransformationUtility<WebXmlContextPara
 
     private static final String DESCRIPTION = "Parses Java web deployment descriptor file (%s), identifies all context parameters, and save them into a map";
 
+    // Even though it is redundant to have this default constructor here, since it is
+    // the only one (the compiler would have added it implicitly), this is being explicitly
+    // set here to emphasize that the public default constructor should always be
+    // available by any transformation utility even when additional constructors are present.
+    // The reason for that is the fact that one or more of its properties might be set
+    // during transformation time, using the TransformationUtility set method
+    @SuppressWarnings("PMD.UnnecessaryConstructor")
     public WebXmlContextParams() {
     }
 

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author facarvalho
  */
+@SuppressWarnings("PMD.DefaultPackage")
 class TransformationStatisticsImpl implements TransformationStatistics {
 
     private static Logger logger = LoggerFactory.getLogger(TransformationStatisticsImpl.class);

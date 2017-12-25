@@ -18,6 +18,7 @@ import java.util.*;
  *
  * @author facarvalho
  */
+@SuppressWarnings("PMD.DefaultPackage")
 @SuppressFBWarnings("URF_UNREAD_FIELD")
 class TransformationContextImpl implements TransformationContext {
 

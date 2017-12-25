@@ -139,11 +139,13 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
     // in the TCA
     private AtomicBoolean hasBeenPerformed = new AtomicBoolean(false);
 
-    /**
-     * The public default constructor should always be available by any transformation
-     * utility because in many cases all of its properties will be set during
-     * transformation time, using the transformation context
-     */
+    // Even though it is redundant to have this default constructor here, since it is
+    // the only one (the compiler would have added it implicitly), this is being explicitly
+    // set here to emphasize that the public default constructor should always be
+    // available by any transformation utility even when additional constructors are present.
+    // The reason for that is the fact that one or more of its properties might be set
+    // during transformation time, using the TransformationUtility set method
+    @SuppressWarnings("PMD.UnnecessaryConstructor")
     public TransformationUtility() {
     }
 
@@ -527,7 +529,7 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
         return (T) this;
     }
 
-    final String getAbsoluteFileFromContextAttribute() {
+    private final String getAbsoluteFileFromContextAttribute() {
         return absoluteFileFromContextAttribute;
     }
 

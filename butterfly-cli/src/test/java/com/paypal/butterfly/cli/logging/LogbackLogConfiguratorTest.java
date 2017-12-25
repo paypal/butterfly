@@ -26,7 +26,7 @@ public class LogbackLogConfiguratorTest extends PowerMockTestCase {
     public void testVerboseOn() {
         Assert.assertNotNull(logbackVerboseConfigurator);
         Assert.assertNotNull(loggerContext);
-        logbackVerboseConfigurator.debugMode(true);
+        logbackVerboseConfigurator.setDebugMode(true);
         Assert.assertTrue(loggerContext.getLogger("com.paypal.butterfly").getLevel() == ch.qos.logback.classic.Level.DEBUG);
     }
 
@@ -35,7 +35,7 @@ public class LogbackLogConfiguratorTest extends PowerMockTestCase {
     public void testVerboseOff() {
         Assert.assertNotNull(logbackVerboseConfigurator);
         Assert.assertNotNull(loggerContext);
-        logbackVerboseConfigurator.debugMode(false);
+        logbackVerboseConfigurator.setDebugMode(false);
         Assert.assertTrue(loggerContext.getLogger("com.paypal.butterfly").getLevel() == ch.qos.logback.classic.Level.INFO);
     }
 

@@ -110,6 +110,8 @@ public class ButterflyCliApp extends ButterflyCliOption {
         return butterflyHome;
     }
 
+    // This method's visibility is intentionally being set to package
+    @SuppressWarnings("PMD.DefaultPackage")
     static String getBanner() {
         return banner;
     }

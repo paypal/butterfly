@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author mcrockett, facarvalho
  */
+@SuppressWarnings("PMD.DefaultPackage")
 class MultipleOutputHandler implements MavenInvocationOutputHandler<MultipleOutputHandler, Map<Class<? extends MavenInvocationOutputHandler>, Object>> {
 
     private static final Logger logger = LoggerFactory.getLogger(MultipleOutputHandler.class);

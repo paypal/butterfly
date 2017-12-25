@@ -134,7 +134,8 @@ class ModelTree {
                 return false;
             }
         }
-// TODO we can comment this out in the future if we need this feature
+// TODO
+// We can comment this out in the future if we need this feature
 //        modelsInTree.add(model);
         if (model.getPomFile() != null) {
             pomFilesInTree.add(model.getPomFile());
@@ -184,17 +185,19 @@ class ModelTree {
             return true;
         }
 
-        @SuppressWarnings("PMD.SimplifyBooleanReturns")
-        private boolean isChildOf(Model model) {
-            if (this.model.getParent() == null) {
-                return false;
-            }
-
-            if (!model.getGroupId().equals(this.model.getParent().getGroupId())) return false;
-            if (!model.getArtifactId().equals(this.model.getParent().getArtifactId())) return false;
-            if (!model.getVersion().equals(this.model.getParent().getVersion())) return false;
-            return true;
-        }
+// TODO
+// We can comment this out in the future if we want to allow
+//        @SuppressWarnings("PMD.SimplifyBooleanReturns")
+//        private boolean isChildOf(Model model) {
+//            if (this.model.getParent() == null) {
+//                return false;
+//            }
+//
+//            if (!model.getGroupId().equals(this.model.getParent().getGroupId())) return false;
+//            if (!model.getArtifactId().equals(this.model.getParent().getArtifactId())) return false;
+//            if (!model.getVersion().equals(this.model.getParent().getVersion())) return false;
+//            return true;
+//        }
 
     }
 

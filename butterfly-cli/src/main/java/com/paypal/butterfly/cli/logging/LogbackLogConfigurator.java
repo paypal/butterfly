@@ -29,7 +29,7 @@ public class LogbackLogConfigurator extends LogConfigurator {
     }
 
     @Override
-    void setLoggerLevel(Class logger, org.slf4j.event.Level level) {
+    public void setLoggerLevel(Class logger, org.slf4j.event.Level level) {
         if(level == null) {
             throw new IllegalArgumentException("level argument cannot be null");
         }
@@ -46,7 +46,7 @@ public class LogbackLogConfigurator extends LogConfigurator {
     }
 
     @Override
-    public void verboseMode(boolean on) {
+    public void setVerboseMode(boolean on) {
         PatternLayoutEncoder patternLayoutEncoder = new PatternLayoutEncoder();
         patternLayoutEncoder.setPattern("[%d{HH:mm:ss.SSS}] [%highlight(%level)] %msg%n");
         patternLayoutEncoder.setContext(loggerContext);
@@ -62,7 +62,7 @@ public class LogbackLogConfigurator extends LogConfigurator {
     }
 
     @Override
-    public void logToFile(boolean on) {
+    public void setLogToFile(boolean on) {
         loggerContext.getLogger("ROOT").detachAppender("FILE");
     }
 

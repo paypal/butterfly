@@ -19,15 +19,15 @@ import org.slf4j.event.Level;
  */
 public abstract class LogConfigurator {
 
-    LogConfigurator() {
+    public LogConfigurator() {
         setLoggerLevel("com.paypal.butterfly", Level.INFO);
     }
 
     public abstract void setLoggerLevel(String logger, Level level);
 
-    abstract void setLoggerLevel(Class logger, Level level);
+    public abstract void setLoggerLevel(Class logger, Level level);
 
-    public void debugMode(boolean on) {
+    public void setDebugMode(boolean on) {
         if(on) {
             setLoggerLevel("com.paypal.butterfly", Level.DEBUG);
         } else {
@@ -35,8 +35,8 @@ public abstract class LogConfigurator {
         }
     }
 
-    public abstract void verboseMode(boolean on);
+    public abstract void setVerboseMode(boolean on);
 
-    public abstract void logToFile(boolean on);
+    public abstract void setLogToFile(boolean on);
 
 }

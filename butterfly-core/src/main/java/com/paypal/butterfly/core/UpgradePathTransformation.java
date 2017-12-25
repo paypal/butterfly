@@ -10,6 +10,7 @@ import com.paypal.butterfly.facade.Configuration;
  *
  * @author facarvalho
  */
+@SuppressWarnings("PMD.DefaultPackage")
 public class UpgradePathTransformation extends Transformation {
 
     private static final String TO_STRING_SYNTAX = "{ \"application\" : %s, \"upgrade from version\" : %s, \"to version\" : %s }";
@@ -40,7 +41,7 @@ public class UpgradePathTransformation extends Transformation {
     }
 
     @Override
-    String getTemplatetName() {
+    String getTemplateName() {
         return upgradePath.getFirstStepTemplateName();
     }
 
