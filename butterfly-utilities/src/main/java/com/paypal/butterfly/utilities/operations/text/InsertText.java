@@ -4,7 +4,6 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 import com.paypal.butterfly.utilities.operations.EolHelper;
@@ -191,8 +190,7 @@ public class InsertText extends TransformationOperation<InsertText> {
             return TOExecutionResult.error(this, ex);
         }
 
-        File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
-        BufferedReader readerOriginalFile = null;
+        BufferedReader reader = null;
         BufferedReader readerText = null;
         BufferedWriter writer = null;
         TOExecutionResult result = null;
@@ -200,23 +198,24 @@ public class InsertText extends TransformationOperation<InsertText> {
         try {
             final String eol = EolHelper.findEolDefaultToOs(fileToBeChanged);
 
-            readerOriginalFile = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
+            File readFile = getOrCreateReadFile(transformedAppFolder, transformationContext);
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(readFile), StandardCharsets.UTF_8));
             readerText = new BufferedReader(new InputStreamReader(textFileUrl.openStream(), StandardCharsets.UTF_8));
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileToBeChanged), StandardCharsets.UTF_8));
 
             switch (insertionMode) {
                 case LINE_NUMBER:
-                    result = insertAtSpecificLine(readerText, readerOriginalFile, writer, eol);
+                    result = insertAtSpecificLine(readerText, reader, writer, eol);
                     break;
                 case REGEX_FIRST:
-                    result = insertAfterRegex(readerText, readerOriginalFile, writer, true, eol);
+                    result = insertAfterRegex(readerText, reader, writer, true, eol);
                     break;
                 case REGEX_ALL:
-                    result = insertAfterRegex(readerText, readerOriginalFile, writer, false, eol);
+                    result = insertAfterRegex(readerText, reader, writer, false, eol);
                     break;
                 default:
                 case CONCAT:
-                    result = concat(readerText, readerOriginalFile, writer, eol);
+                    result = concat(readerText, reader, writer, eol);
                     break;
             }
         } catch (IOException e) {
@@ -229,8 +228,8 @@ public class InsertText extends TransformationOperation<InsertText> {
                     result.addWarning(e);
                 }
             } finally {
-                if(readerOriginalFile != null) try {
-                    readerOriginalFile.close();
+                if(reader != null) try {
+                    reader.close();
                 } catch (IOException e) {
                     result.addWarning(e);
                 } finally {
@@ -241,19 +240,6 @@ public class InsertText extends TransformationOperation<InsertText> {
                     }
                 }
             }
-        }
-        // TODO Refactor the delete code after introducing working directory
-        boolean deleted = fileToBeChanged.delete();
-        if(deleted) {
-            if (!tempFile.renameTo(fileToBeChanged)) {
-                String details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
-                TransformationOperationException e = new TransformationOperationException(details);
-                result = TOExecutionResult.error(this, e);
-            }
-        } else {
-            String details = String.format("Error when deleting %s", getRelativePath(transformedAppFolder, fileToBeChanged));
-            TransformationOperationException e = new TransformationOperationException(details);
-            result = TOExecutionResult.error(this, e);
         }
 
         return result;

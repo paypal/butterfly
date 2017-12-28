@@ -3,7 +3,6 @@ package com.paypal.butterfly.utilities.operations.properties;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 
 import java.io.*;
@@ -59,18 +58,18 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
         BufferedWriter writer = null;
         TOExecutionResult result = null;
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
-        File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         try {
             if (!fileToBeChanged.exists()) {
                 // TODO Should this be done as pre-validation?
                 details = String.format("Operation '%s' hasn't transformed the application because file '%s', where the property removal should happen, does not exist", getName(), getRelativePath(transformedAppFolder, fileToBeChanged));
                 return TOExecutionResult.noOp(this, details);
             }
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
+            File readFile = getOrCreateReadFile(transformedAppFolder, transformationContext);
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(readFile), StandardCharsets.UTF_8));
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileToBeChanged), StandardCharsets.UTF_8));
             String currentLine;
             boolean foundFirstMatch = false;
-            String regex = "("+propertyName+".*)";
+            String regex = "(" + propertyName + ".*)";
             final Pattern pattern = Pattern.compile(regex);
             EolBufferedReader eolReader = new EolBufferedReader(reader);
             while((currentLine = eolReader.readLineKeepStartEol()) != null) {
@@ -80,7 +79,7 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
                 }
                 writer.write(currentLine);
             }
-            //If it founds first match means, then it would be removed
+
             if (foundFirstMatch) {
                 details = String.format("Property '%s' has been removed from '%s'", propertyName, getRelativePath());
                 result = TOExecutionResult.success(this, details);
@@ -106,27 +105,13 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
             }
         }
 
-        boolean deleted = fileToBeChanged.delete();
-        if(deleted) {
-            if (!tempFile.renameTo(fileToBeChanged)) {
-                details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
-                TransformationOperationException e = new TransformationOperationException(details);
-                result = TOExecutionResult.error(this, e);
-            }
-        } else {
-            details = String.format("Error when deleting %s", getRelativePath(transformedAppFolder, fileToBeChanged));
-            TransformationOperationException e = new TransformationOperationException(details);
-            result = TOExecutionResult.error(this, e);
-        }
         return result;
     }
 
     @Override
     public RemoveProperty clone() throws CloneNotSupportedException {
-        RemoveProperty clonedRemoveProperty = (RemoveProperty) super.clone();
-        return clonedRemoveProperty;
+        RemoveProperty clone = (RemoveProperty) super.clone();
+        return clone;
     }
-
-
 
 }

@@ -4,7 +4,6 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 
 import java.io.*;
@@ -185,22 +184,20 @@ public abstract class AbstractLineOperation<T extends AbstractLineOperation> ext
     protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
 
-        String details;
-
         if (!fileToBeChanged.exists()) {
             // TODO Should this be done as pre-validation?
-            details = String.format("Operation '%s' hasn't transformed the application because file '%s', where the change should happen, does not exist", getName(), getRelativePath(transformedAppFolder, fileToBeChanged));
+            String details = String.format("Operation '%s' hasn't transformed the application because file '%s', where the change should happen, does not exist", getName(), getRelativePath(transformedAppFolder, fileToBeChanged));
             return TOExecutionResult.noOp(this, details);
         }
 
-        File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader reader = null;
         BufferedWriter writer = null;
         TOExecutionResult result = null;
 
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
+            File readFile = getOrCreateReadFile(transformedAppFolder, transformationContext);
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(readFile), StandardCharsets.UTF_8));
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileToBeChanged), StandardCharsets.UTF_8));
 
             if (lineNumber != null) {
                 result = manipulateBasedOnLineNumber(reader, writer);
@@ -223,19 +220,6 @@ public abstract class AbstractLineOperation<T extends AbstractLineOperation> ext
                     result.addWarning(e);
                 }
             }
-        }
-        // TODO Refactor the delete code after introducing working directory
-        boolean deleted = fileToBeChanged.delete();
-        if(deleted) {
-            if (!tempFile.renameTo(fileToBeChanged)) {
-                details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
-                TransformationOperationException e = new TransformationOperationException(details);
-                result = TOExecutionResult.error(this, e);
-            }
-        } else {
-            details = String.format("Error when deleting %s", getRelativePath(transformedAppFolder, fileToBeChanged));
-            TransformationOperationException e = new TransformationOperationException(details);
-            result = TOExecutionResult.error(this, e);
         }
 
         return result;

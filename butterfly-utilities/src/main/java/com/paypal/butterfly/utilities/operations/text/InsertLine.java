@@ -4,7 +4,6 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 import com.paypal.butterfly.utilities.operations.EolHelper;
 
@@ -194,29 +193,29 @@ public class InsertLine extends TransformationOperation<InsertLine> {
             return TOExecutionResult.error(this, ex);
         }
 
-        File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
-        BufferedReader readerOriginalFile = null;
+        BufferedReader reader = null;
         BufferedWriter writer = null;
         TOExecutionResult result = null;
 
         try {
             final String eol = EolHelper.findEolDefaultToOs(fileToBeChanged);
-            readerOriginalFile = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
+            File readFile = getOrCreateReadFile(transformedAppFolder, transformationContext);
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(readFile), StandardCharsets.UTF_8));
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileToBeChanged), StandardCharsets.UTF_8));
 
             switch (insertionMode) {
                 case LINE_NUMBER:
-                    result = insertAtSpecificLine(readerOriginalFile, writer, eol);
+                    result = insertAtSpecificLine(reader, writer, eol);
                     break;
                 case REGEX_FIRST:
-                    result = insertAfterRegex(readerOriginalFile, writer, true, eol);
+                    result = insertAfterRegex(reader, writer, true, eol);
                     break;
                 case REGEX_ALL:
-                    result = insertAfterRegex(readerOriginalFile, writer, false, eol);
+                    result = insertAfterRegex(reader, writer, false, eol);
                     break;
                 default:
                 case CONCAT:
-                    result = concat(readerOriginalFile, writer, eol);
+                    result = concat(reader, writer, eol);
                     break;
             }
         } catch (IOException e) {
@@ -229,26 +228,12 @@ public class InsertLine extends TransformationOperation<InsertLine> {
                     result.addWarning(e);
                 }
             } finally {
-                if(readerOriginalFile != null) try {
-                    readerOriginalFile.close();
+                if(reader != null) try {
+                    reader.close();
                 } catch (IOException e) {
                     result.addWarning(e);
                 }
             }
-        }
-
-        String details;
-        boolean bDeleted = fileToBeChanged.delete();
-        if(bDeleted) {
-            if (!tempFile.renameTo(fileToBeChanged)) {
-                details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
-                TransformationOperationException e = new TransformationOperationException(details);
-                result = TOExecutionResult.error(this, e);
-            }
-        }else {
-            details = String.format("Error when deleting %s", getRelativePath(transformedAppFolder, fileToBeChanged));
-            TransformationOperationException e = new TransformationOperationException(details);
-            result = TOExecutionResult.error(this, e);
         }
 
         return result;
