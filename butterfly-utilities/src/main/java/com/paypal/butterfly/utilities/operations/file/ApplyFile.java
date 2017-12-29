@@ -77,8 +77,9 @@ public class ApplyFile extends TransformationOperation<ApplyFile> {
         FileOutputStream fileOutputStream = null;
         TOExecutionResult result = null;
         File fileDescriptor = null;
+        ReadableByteChannel readableByteChannel = null;
         try {
-            ReadableByteChannel readableByteChannel = Channels.newChannel(fileUrl.openStream());
+            readableByteChannel = Channels.newChannel(fileUrl.openStream());
 
             int p = fileUrl.getPath().lastIndexOf("/") + 1;
             String fileName = fileUrl.getPath().substring(p);
@@ -95,6 +96,13 @@ public class ApplyFile extends TransformationOperation<ApplyFile> {
             if(fileOutputStream != null) {
                 try {
                     fileOutputStream.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
+                }
+            }
+            if (readableByteChannel != null) {
+                try {
+                    readableByteChannel.close();
                 } catch (IOException e) {
                     result.addWarning(e);
                 }

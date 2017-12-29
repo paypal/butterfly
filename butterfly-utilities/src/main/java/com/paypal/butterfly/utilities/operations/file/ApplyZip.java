@@ -83,8 +83,9 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
         FileOutputStream fileOutputStream = null;
         TOExecutionResult result = null;
         File zipFileDescriptor = null;
+        ReadableByteChannel readableByteChannel = null;
         try {
-            ReadableByteChannel readableByteChannel = Channels.newChannel(zipFileUrl.openStream());
+            readableByteChannel = Channels.newChannel(zipFileUrl.openStream());
 
             int p = zipFileUrl.getPath().lastIndexOf("/") + 1;
             String fileName = zipFileUrl.getPath().substring(p);
@@ -104,6 +105,13 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
             if(fileOutputStream != null) {
                 try {
                     fileOutputStream.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
+                }
+            }
+            if (readableByteChannel != null) {
+                try {
+                    readableByteChannel.close();
                 } catch (IOException e) {
                     result.addWarning(e);
                 }
