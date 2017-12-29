@@ -125,7 +125,7 @@ public class PomChangeParent extends AbstractArtifactPomOperation<PomChangeParen
             details = String.format("Parent's version for POM file (%s) has been changed from %s to %s", relativePomFile, oldVersion, version);
         } else {
             // FIXME this should be in a pre-validation
-            throw new IllegalStateException("Invalid POM parent transformation operation");
+            return TOExecutionResult.error(this, new TransformationOperationException("Invalid POM parent transformation operation"));
         }
 
         return TOExecutionResult.success(this, details);
