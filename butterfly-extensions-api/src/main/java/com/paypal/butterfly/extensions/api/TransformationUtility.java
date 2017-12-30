@@ -575,7 +575,13 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
         // Checking for UtilityCondition condition
         if(utilityCondition != null) {
             TransformationUtility utilityCondition = this.utilityCondition.copy();
-            utilityCondition.relative(this.getRelativePath());
+
+            // Setting the condition to execute against the exact same file this TU is set to execute against
+            utilityCondition.relativePath = this.relativePath;
+            utilityCondition.absoluteFile = this.absoluteFile;
+            utilityCondition.absoluteFileFromContextAttribute = this.absoluteFileFromContextAttribute;
+            utilityCondition.additionalRelativePath = this.additionalRelativePath;
+
             TUExecutionResult conditionExecutionResult = (TUExecutionResult) utilityCondition.execution(transformedAppFolder, transformationContext);
             Object conditionResult = conditionExecutionResult.getValue();
             if (conditionResult == null || conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue()) {
@@ -854,12 +860,11 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
      * Differences between this approach and {@link #executeIf(String)}:
      * <ol>
      *     <li>Instead of relying on a TCA ({@link TransformationContext attribute}) with the condition result, this method is based on the direct execution of the {@link UtilityCondition} object</li>
-     *     <li>The {@link UtilityCondition} object is always executed necessarily against the same file. Because of that, any value set on it via {@link #relative(String)} or {@link #absolute(String)} is ignored.</li>
+     *     <li>The {@link UtilityCondition} object is always executed necessarily against the same file set in the transformation utility it is being used. Because of that, any value set in the condition itself via {@link #relative(String)} or {@link #absolute(String)} is ignored.</li>
      *     <li>The {@link UtilityCondition} object does not produce any TCA, neither its result value or result object. Instead, it hands its result directly to the TU, so that the condition can be evaluated just before the TU executes (or not, if it fails).</li>
      *     <li>The {@link UtilityCondition} object does not exist from a transformation template point of view. That means this method is totally different than adding a new {@link UtilityCondition} object by calling {@link TransformationTemplate#add(TransformationUtility)}.</li>
-     *     <li>No TU can {@link #dependsOn(String...)} this {@link UtilityCondition} object.</li>
      * </ol>
-     * <strong>The actual {@link UtilityCondition} object is not the one used, but a clone of it</strong>
+     * <strong>The actual {@link UtilityCondition} object is not the one used, but a copy of it</strong>
      *
      * @param utilityCondition the condition to be executed and evaluated right before this TU
      * @return this transformation utility instance
