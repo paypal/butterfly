@@ -184,10 +184,5 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
         return result;
     }
 
-    @Override
-    public ReplaceText clone() throws CloneNotSupportedException{
-        ReplaceText clone = (ReplaceText) super.clone();
-        return clone;
-    }
 
 }

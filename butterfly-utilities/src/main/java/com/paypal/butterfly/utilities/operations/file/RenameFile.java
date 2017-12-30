@@ -64,10 +64,4 @@ public class RenameFile extends TransformationOperation<RenameFile> {
         return result;
     }
 
-    @Override
-    public RenameFile clone() throws CloneNotSupportedException {
-        RenameFile clonedRenameFile = (RenameFile) super.clone();
-        return clonedRenameFile;
-    }
-
 }

@@ -61,10 +61,4 @@ public class MoveFile extends AbstractToOperation<MoveFile> {
         return result;
     }
 
-    @Override
-    public MoveFile clone() throws CloneNotSupportedException {
-        MoveFile clone  = (MoveFile) super.clone();
-        return clone;
-    }
-
 }

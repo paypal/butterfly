@@ -51,10 +51,4 @@ public class MoveDirectory extends AbstractToOperation<MoveDirectory> {
         return result;
     }
 
-    @Override
-    public MoveDirectory clone() throws CloneNotSupportedException {
-        MoveDirectory clone = (MoveDirectory) super.clone();
-        return clone;
-    }
-
 }

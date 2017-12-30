@@ -168,10 +168,4 @@ public class PomAddDependency extends AbstractArtifactPomOperation<PomAddDepende
         return result;
     }
 
-    @Override
-    public PomAddDependency clone() throws CloneNotSupportedException {
-        PomAddDependency clone = (PomAddDependency) super.clone();
-        return clone;
-    }
-
 }

@@ -98,11 +98,6 @@ public class AddProperty extends TransformationOperation<AddProperty> {
         return result;
     }
 
-    @Override
-    public AddProperty clone() throws CloneNotSupportedException {
-        return (AddProperty) super.clone();
-    }
-
     /*
      * Replace the text based on regex.
      */

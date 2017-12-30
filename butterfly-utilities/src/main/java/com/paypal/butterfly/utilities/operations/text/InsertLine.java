@@ -310,10 +310,4 @@ public class InsertLine extends TransformationOperation<InsertLine> {
         return TOExecutionResult.success(this, details);
     }
 
-    @Override
-    public InsertLine clone() throws CloneNotSupportedException {
-        InsertLine clonedInsertLine = (InsertLine) super.clone();
-        return clonedInsertLine;
-    }
-
 }

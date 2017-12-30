@@ -123,16 +123,4 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
         return result;
     }
 
-    @Override
-    public ApplyZip clone() throws CloneNotSupportedException {
-        try {
-            ApplyZip clone = (ApplyZip) super.clone();
-            clone.zipFileUrl = new URL(this.zipFileUrl.toString());
-            return clone;
-        } catch (MalformedURLException e) {
-            String exceptionMessage = String.format("Error when cloning %s", getName());
-            throw new TransformationUtilityException(exceptionMessage, e);
-        }
-    }
-
 }

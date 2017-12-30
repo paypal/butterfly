@@ -35,13 +35,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Every TransformationUtility subclass MUST have a public no arguments default constructor,
  * and also public setters and getters for all properties they want to expose via {@link #set(String, String)}.
  * In addition to that, every setter must return the TransformationUtility instance.
- * <br>
- * Also, every TransformationUtility subclass must override {@link #clone()} and every utility
- * specific property defined in the subclass must be copied from the original
- * object to the clone object. Properties inherited from this class and its super classes
- * MUST NOT be copied from original object to cloned object, since that is all already taken
- * care of properly by the framework. Notice that name, parent and path (absolute and relative)
- * are NECESSARILY NOT assigned to the clone object
  *
  * @author facarvalho
  */
@@ -581,22 +574,15 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
 
         // Checking for UtilityCondition condition
         if(utilityCondition != null) {
-            try {
-                TransformationUtility utilityCondition = this.utilityCondition.clone();
-                utilityCondition.relative(this.getRelativePath());
-                TUExecutionResult conditionExecutionResult = (TUExecutionResult) utilityCondition.execution(transformedAppFolder, transformationContext);
-                Object conditionResult = conditionExecutionResult.getValue();
-                if (conditionResult == null || conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue()) {
-                    String utilityConditionName = (utilityCondition.getName() == null ? utilityCondition.toString() : utilityCondition.getName());
-                    String details = String.format("%s was skipped due to failing UtilityCondition '%s'", getName(), utilityConditionName);
-                    return PerformResult.skippedCondition(this, details);
-                }
-            } catch (CloneNotSupportedException e) {
-                String exceptionMessage = String.format("%s can't be executed because the UtilityCondition object associated with it can't be cloned", getName());
-                TransformationUtilityException ex = new TransformationUtilityException(exceptionMessage, e);
-                return PerformResult.error(this, ex);
+            TransformationUtility utilityCondition = this.utilityCondition.copy();
+            utilityCondition.relative(this.getRelativePath());
+            TUExecutionResult conditionExecutionResult = (TUExecutionResult) utilityCondition.execution(transformedAppFolder, transformationContext);
+            Object conditionResult = conditionExecutionResult.getValue();
+            if (conditionResult == null || conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue()) {
+                String utilityConditionName = (utilityCondition.getName() == null ? utilityCondition.toString() : utilityCondition.getName());
+                String details = String.format("%s was skipped due to failing UtilityCondition '%s'", getName(), utilityConditionName);
+                return PerformResult.skippedCondition(this, details);
             }
-
         }
 
         // Checking for dependencies
@@ -767,11 +753,11 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
      * <br>
      * See also:
      * <ul>
-         * <li>{@link #checkDependencies(TransformationContext)}</li>
-         * <li>{@link Result#dependencyFailureCheck()}</li>
-         * <li>{@link TUExecutionResult#dependencyFailureCheck()}</li>
-         * <li>{@link TOExecutionResult#dependencyFailureCheck()}</li>
-         * <li>{@link PerformResult#dependencyFailureCheck()}</li>
+     *     <li>{@link #checkDependencies(TransformationContext)}</li>
+     *     <li>{@link Result#dependencyFailureCheck()}</li>
+     *     <li>{@link TUExecutionResult#dependencyFailureCheck()}</li>
+     *     <li>{@link TOExecutionResult#dependencyFailureCheck()}</li>
+     *     <li>{@link PerformResult#dependencyFailureCheck()}</li>
      * </ul>
      *
      * @param dependencies the names of all transformation utilities this utility depends on
@@ -962,77 +948,65 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
         return getDescription();
     }
 
-    @Override
-    public TransformationUtility<T> clone() throws CloneNotSupportedException {
-        TransformationUtility<T> clone = (TransformationUtility<T>) super.clone();
 
-        // Properties we do NOT want to be in the clone (they are being initialized)
+    /**
+     * Creates and returns a clone object identical to the original object,
+     * except for the "has been performed" flag, which is set to {@code false}
+     * in the clone object to be returned. See {@link #hasBeenPerformed()}.
+     *
+     * @return the new object created as result of the clone operation
+     */
+    @Override
+    public T clone() {
+        TransformationUtility<T> clone = null;
+        try {
+            clone = (TransformationUtility<T>) super.clone();
+        } catch (CloneNotSupportedException e) {
+            // This should never happen though, since this class DOES support clone operations
+            throw new TransformationUtilityException("Unexpected exception happened when cloning the transformation utility instance", e);
+        }
+
+        // Properties we do NOT want to be cloned (they are being initialized)
         clone.hasBeenPerformed = new AtomicBoolean(false);
 
-        // Properties we want to be in the clone (they are being copied from original object)
-        clone.order = this.order;
-        clone.parent = this.parent;
-        clone.name = this.name;
-        clone.relativePath = this.relativePath;
-        clone.absoluteFile = this.absoluteFile;
-        clone.absoluteFileFromContextAttribute = this.absoluteFileFromContextAttribute;
-        clone.additionalRelativePath = this.additionalRelativePath;
-        clone.contextAttributeName = this.contextAttributeName;
+        // Non-primitive and mutable object properties that need to be manually cloned from original object
+        if (absoluteFile != null) clone.absoluteFile = new File(this.absoluteFile.getAbsolutePath());
         clone.latePropertiesAttributes = new HashMap<String, String>();
         clone.latePropertiesSetters = new HashMap<String, Method>();
         clone.latePropertiesAttributes.putAll(this.latePropertiesAttributes);
         clone.latePropertiesSetters.putAll(this.latePropertiesSetters);
-        clone.abortOnFailure = this.abortOnFailure;
-        clone.saveResult = this.saveResult;
-        clone.ifConditionAttributeName = this.ifConditionAttributeName;
-        clone.unlessConditionAttributeName = this.unlessConditionAttributeName;
-        clone.utilityCondition = this.utilityCondition;
 
-        return clone;
+        return (T) clone;
     }
 
     /**
-     * Creates and returns a brand new utility object using the original as a template,
-     * and setting to the copy most of the attributes of the original one.
-     * It will not copy though all attributes that define the identity of the original one, which are:
+     * Creates and returns a copy object similar to the original object.
+     * All attributes are the same, except for the following ones, which are reset:
      * <ol>
      *  <li>parent</li>
      *  <li>name</li>
      *  <li>order</li>
-     *  <li>file relative and absolute path</li>
      *  <li>context attribute name</li>
+     *  <li>file relative and absolute path</li>
+     *  <li>has been performed flag</li>
      * </ol>
      *
-     * @return this transformation utility instance
-     * @throws CloneNotSupportedException in case the concrete transformation utility
-     *         does not support being cloned
+     * @return the new object created as result of the copy operation
      */
-    public TransformationUtility<T> copy() throws CloneNotSupportedException {
-        TransformationUtility<T> copy = (TransformationUtility<T>) super.clone();
+    public T copy() {
+        TransformationUtility<T> copy = clone();
 
-        // Properties we do NOT want to be in the copy (they are being initialized)
-        copy.order = -1;
+        // Properties we do NOT want to be copied (they are being initialized)
         copy.parent = null;
         copy.name = null;
+        copy.order = -1;
+        copy.contextAttributeName = null;
         copy.relativePath = "";
         copy.absoluteFile = null;
         copy.absoluteFileFromContextAttribute = null;
         copy.additionalRelativePath = null;
-        copy.contextAttributeName = null;
-        copy.hasBeenPerformed = new AtomicBoolean(false);
 
-        // Properties we want to be in the copy (they are being copied from original object)
-        copy.latePropertiesAttributes = new HashMap<String, String>();
-        copy.latePropertiesSetters = new HashMap<String, Method>();
-        copy.latePropertiesAttributes.putAll(this.latePropertiesAttributes);
-        copy.latePropertiesSetters.putAll(this.latePropertiesSetters);
-        copy.abortOnFailure = this.abortOnFailure;
-        copy.saveResult = this.saveResult;
-        copy.ifConditionAttributeName = this.ifConditionAttributeName;
-        copy.unlessConditionAttributeName = this.unlessConditionAttributeName;
-        copy.utilityCondition = this.utilityCondition;
-
-        return copy;
+        return (T) copy;
     }
 
     /**

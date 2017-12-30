@@ -18,12 +18,12 @@ import java.util.Map;
  */
 public class InsertTextTest extends TransformationUtilityTestHelper {
 
-    private URL billy = getClass().getResource("/billy.yaml");
+    private URL billyURL = getClass().getResource("/billy.yaml");
 
     @Test
     public void noOpRegexTest() throws IOException {
-        InsertText insertText = new InsertText(billy).relative("src/main/resources/dogs.yaml")
-                .setRegex("   breed: vira-lata").setInsertionMode(InsertText.InsertionMode.REGEX_FIRST);
+        InsertText insertText = new InsertText(billyURL).relative("src/main/resources/dogs.yaml").setRegex("   breed: vira-lata").setInsertionMode(InsertText.InsertionMode.REGEX_FIRST);
+        Assert.assertEquals(insertText.getDescription(), "Insert text from " + billyURL.getFile() + " to src/main/resources/dogs.yaml");
         TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
 
@@ -32,8 +32,7 @@ public class InsertTextTest extends TransformationUtilityTestHelper {
 
     @Test
     public void noOpLineNumberTest() throws IOException {
-        InsertText insertText = new InsertText(billy).relative("src/main/resources/dogs.yaml")
-                .setLineNumber(123).setInsertionMode(InsertText.InsertionMode.LINE_NUMBER);
+        InsertText insertText = new InsertText().setTextFileUrl(billyURL).relative("src/main/resources/dogs.yaml").setLineNumber(123).setInsertionMode(InsertText.InsertionMode.LINE_NUMBER);
         TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
 
@@ -42,8 +41,7 @@ public class InsertTextTest extends TransformationUtilityTestHelper {
 
     @Test
     public void insertLineNumberTest() throws IOException {
-        InsertText insertText = new InsertText(billy).relative("src/main/resources/dogs.yaml")
-                .setInsertionMode(InsertText.InsertionMode.LINE_NUMBER).setLineNumber(1);
+        InsertText insertText = new InsertText(billyURL, 1).relative("src/main/resources/dogs.yaml").setInsertionMode(InsertText.InsertionMode.LINE_NUMBER);
         TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
@@ -61,8 +59,7 @@ public class InsertTextTest extends TransformationUtilityTestHelper {
 
     @Test
     public void insertFirstRegexTest() throws IOException {
-        InsertText insertText = new InsertText(billy).relative("src/main/resources/dogs.yaml")
-                .setRegex("   breed: poodle").setInsertionMode(InsertText.InsertionMode.REGEX_FIRST);
+        InsertText insertText = new InsertText(billyURL, "   breed: poodle").relative("src/main/resources/dogs.yaml").setInsertionMode(InsertText.InsertionMode.REGEX_FIRST);
         TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
@@ -82,8 +79,7 @@ public class InsertTextTest extends TransformationUtilityTestHelper {
     public void insertAllRegexTest() throws IOException {
         URL changeDogs = getClass().getResource("/changeDogs.yaml");
 
-        InsertText insertText = new InsertText(changeDogs).relative("src/main/resources/dogs.yaml")
-                .setRegex("   breed: .*").setInsertionMode(InsertText.InsertionMode.REGEX_ALL);
+        InsertText insertText = new InsertText(changeDogs).relative("src/main/resources/dogs.yaml").setRegex("   breed: .*").setInsertionMode(InsertText.InsertionMode.REGEX_ALL);
         TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
@@ -111,7 +107,7 @@ public class InsertTextTest extends TransformationUtilityTestHelper {
 
     @Test
     public void insertConcatTest() throws IOException {
-        InsertText insertText = new InsertText(billy).relative("src/main/resources/dogs.yaml");
+        InsertText insertText = new InsertText(billyURL).relative("src/main/resources/dogs.yaml");
         TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
@@ -129,10 +125,34 @@ public class InsertTextTest extends TransformationUtilityTestHelper {
 
     @Test
     public void fileDoesNotExistTest() {
-        InsertText insertText = new InsertText(billy).relative("caes.yaml");
+        InsertText insertText = new InsertText(billyURL).relative("caes.yaml");
         TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         Assert.assertEquals(executionResult.getException().getClass(), FileNotFoundException.class);
+    }
+
+    @Test
+    public void cloneTest() throws IOException {
+        InsertText insertText = new InsertText(billyURL, "   breed: poodle").relative("src/main/resources/dogs.yaml").setInsertionMode(InsertText.InsertionMode.REGEX_FIRST);
+        TOExecutionResult executionResult = insertText.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+        assertChangedFile("src/main/resources/dogs.yaml");
+        assertLineCount("src/main/resources/dogs.yaml", 3);
+        Map<String, Dog> dogs = (Map) getObjectFromYaml("src/main/resources/dogs.yaml");
+        Assert.assertEquals(dogs.size(), 3);
+        Dog dog = dogs.get("Billy");
+        Assert.assertEquals(dog.getName(), "Billy");
+        Assert.assertEquals(dog.getBreed(), "lab");
+
+        executionResult = insertText.clone().execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+        assertChangedFile("src/main/resources/dogs.yaml");
+        assertLineCount("src/main/resources/dogs.yaml", 3);
+        dogs = (Map) getObjectFromYaml("src/main/resources/dogs.yaml");
+        Assert.assertEquals(dogs.size(), 3);
+        dog = dogs.get("Billy");
+        Assert.assertEquals(dog.getName(), "Billy");
+        Assert.assertEquals(dog.getBreed(), "lab");
     }
 
 }

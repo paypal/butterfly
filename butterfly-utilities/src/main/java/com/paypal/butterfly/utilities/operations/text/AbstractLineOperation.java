@@ -298,10 +298,4 @@ public abstract class AbstractLineOperation<T extends AbstractLineOperation> ext
      */
     protected abstract boolean manipulateLine(String lineToBeManipulated, Writer writer) throws IOException;
 
-    @Override
-    public AbstractLineOperation clone() throws CloneNotSupportedException {
-        AbstractLineOperation clone = (AbstractLineOperation) super.clone();
-        return clone;
-    }
-
 }

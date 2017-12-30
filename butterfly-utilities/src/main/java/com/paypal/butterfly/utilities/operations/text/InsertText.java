@@ -342,16 +342,4 @@ public class InsertText extends TransformationOperation<InsertText> {
         return TOExecutionResult.success(this, details);
     }
 
-    @Override
-    public InsertText clone() throws CloneNotSupportedException {
-        try {
-            InsertText clone = (InsertText) super.clone();
-            clone.textFileUrl = new URL(this.textFileUrl.toString());
-            return clone;
-        } catch (MalformedURLException e) {
-            String exceptionMessage = String.format("Error when cloning %s", getName());
-            throw new TransformationUtilityException(exceptionMessage, e);
-        }
-    }
-
 }
