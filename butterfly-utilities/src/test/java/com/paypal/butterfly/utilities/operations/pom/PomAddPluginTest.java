@@ -81,6 +81,8 @@ public class PomAddPluginTest extends TransformationUtilityTestHelper {
         assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 1);
         assertEquals(pomModelAfterChange.getBuild().getPlugins().get(0).getGroupId(), "org.codehaus.mojo");
         assertEquals(pomModelAfterChange.getBuild().getPlugins().get(0).getArtifactId(), "cobertura-maven-plugin");
+
+        assertNotChangedFile("pom.xml");
     }
 
     @Test
@@ -100,11 +102,13 @@ public class PomAddPluginTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertNull(executionResult.getDetails());
         assertEquals(executionResult.getException().getMessage(), "Plugin org.codehaus.mojo:cobertura-maven-plugin is already present in pom.xml");
+        assertNotChangedFile("pom.xml");
 
         pomAddPlugin.noOpIfPresent();
         executionResult = pomAddPlugin.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
         assertNull(executionResult.getException());
+        assertNotChangedFile("pom.xml");
 
         pomAddPlugin.overwriteIfPresent();
         executionResult = pomAddPlugin.execution(transformedAppFolder, transformationContext);
@@ -117,6 +121,7 @@ public class PomAddPluginTest extends TransformationUtilityTestHelper {
         assertNull(executionResult.getDetails());
         assertNull(executionResult.getException());
         assertEquals(executionResult.getWarnings().get(0).getMessage(), "Plugin org.codehaus.mojo:cobertura-maven-plugin is already present in pom.xml");
+        assertNotChangedFile("pom.xml");
 
         pomAddPlugin.warnButAddIfPresent();
         executionResult = pomAddPlugin.execution(transformedAppFolder, transformationContext);
@@ -124,6 +129,7 @@ public class PomAddPluginTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getDetails(), "Plugin org.codehaus.mojo:cobertura-maven-plugin has been added to POM file /pom.xml");
         assertNull(executionResult.getException());
         assertEquals(executionResult.getWarnings().get(0).getMessage(), "Plugin org.codehaus.mojo:cobertura-maven-plugin is already present in pom.xml");
+        assertNotChangedFile("pom.xml");
     }
 
 }

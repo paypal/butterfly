@@ -13,7 +13,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 /**
- * Unit test class for {@link PomChangeParentTest}
+ * Unit test class for {@link PomChangeParent}
  *
  * @author facarvalho
  */
@@ -87,6 +87,8 @@ public class PomChangeParentTest extends TransformationUtilityTestHelper {
 
         executionResult = pomChangeParent.clone().failIfNotPresent().execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
+
+        assertNotChangedFile("/src/main/resources/no_parent_pom.xml");
     }
 
     @Test
@@ -107,6 +109,8 @@ public class PomChangeParentTest extends TransformationUtilityTestHelper {
 
         Model pomModelAfterChange = getTransformedPomModel("/src/main/resources/no_parent_pom.xml");
         assertNull(pomModelAfterChange.getParent());
+
+        assertNotChangedFile("/src/main/resources/no_parent_pom.xml");
     }
 
     @Test
@@ -130,6 +134,8 @@ public class PomChangeParentTest extends TransformationUtilityTestHelper {
 
         Model pomModelAfterChange = getTransformedPomModel("/src/main/resources/no_parent_pom.xml");
         assertNull(pomModelAfterChange.getParent());
+
+        assertNotChangedFile("/src/main/resources/no_parent_pom.xml");
     }
 
     @Test
@@ -152,6 +158,8 @@ public class PomChangeParentTest extends TransformationUtilityTestHelper {
         assertEquals(pomModelAfterChange.getParent().getGroupId(), "com.test");
         assertEquals(pomModelAfterChange.getParent().getArtifactId(), "foo-parent");
         assertEquals(pomModelAfterChange.getParent().getVersion(), "1.0");
+
+        assertNotChangedFile("pom.xml");
     }
 
 }

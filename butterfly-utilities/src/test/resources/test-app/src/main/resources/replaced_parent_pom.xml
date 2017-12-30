@@ -5,9 +5,9 @@
     <!-- Sample comment -->
 
     <parent>
-        <groupId>com.test</groupId>
-        <artifactId>foo-parent</artifactId>
-        <version>1.0</version>
+        <groupId>com.newgroupid</groupId>
+        <artifactId>newartifactid</artifactId>
+        <version>2.0</version>
     </parent>
 
     <artifactId>foo</artifactId>

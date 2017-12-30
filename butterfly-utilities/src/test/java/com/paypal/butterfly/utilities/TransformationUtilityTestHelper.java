@@ -66,7 +66,8 @@ public abstract class TransformationUtilityTestHelper {
      * @throws IOException
      */
     protected void assertNotChangedFile(String relativeFilePath) throws IOException {
-        Assert.assertFalse(fileHasChanged(relativeFilePath));
+        String message = String.format("File %s was not expected to change, but it did.", relativeFilePath);
+        Assert.assertFalse(fileHasChanged(relativeFilePath), message);
     }
 
     /**

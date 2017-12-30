@@ -23,7 +23,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertNotNull(executionResult.getValue());
 
         List<File> files = (List<File>) executionResult.getValue();
-        Assert.assertEquals(files.size(), 4);
+        Assert.assertEquals(files.size(), 6);
 
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "/pom.xml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/webapp/WEB-INF/web.xml")));

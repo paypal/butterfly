@@ -42,6 +42,8 @@ public class PomRemoveDependencyTest extends TransformationUtilityTestHelper {
 		TOExecutionResult executionResult = uut.execution(transformedAppFolder, transformationContext);
 		assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
 		assertExceptionOccurred(executionResult);
+
+		assertNotChangedFile("pom.xml");
 	}
 
 	@Test
@@ -52,6 +54,8 @@ public class PomRemoveDependencyTest extends TransformationUtilityTestHelper {
 		TOExecutionResult executionResult = uut.execution(transformedAppFolder, transformationContext);
 		assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
 		assertExceptionOccurred(executionResult);
+
+		assertNotChangedFile("pom.xml");
 	}
 
 	@Test
@@ -65,6 +69,8 @@ public class PomRemoveDependencyTest extends TransformationUtilityTestHelper {
 		assertNull(executionResult.getException());
 		assertEquals(executionResult.getWarnings().get(0).getClass(), TransformationOperationException.class);
 		assertEquals(executionResult.getWarnings().get(0).getMessage(), DEPENDENCY_NOT_REMOVED_MSG);
+
+		assertNotChangedFile("pom.xml");
 	}
 
 	@Test
@@ -76,6 +82,8 @@ public class PomRemoveDependencyTest extends TransformationUtilityTestHelper {
 		assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
 		assertNull(executionResult.getException());
 		assertEquals(executionResult.getDetails(), DEPENDENCY_NOT_REMOVED_MSG);
+
+		assertNotChangedFile("pom.xml");
 	}
 
 	@Test
