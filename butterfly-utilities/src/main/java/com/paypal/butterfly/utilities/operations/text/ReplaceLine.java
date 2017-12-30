@@ -167,10 +167,4 @@ public class ReplaceLine extends AbstractLineOperation<ReplaceLine> {
         return written;
     }
 
-    @Override
-    public ReplaceLine clone() throws CloneNotSupportedException {
-        ReplaceLine clone = (ReplaceLine) super.clone();
-        return clone;
-    }
-
 }

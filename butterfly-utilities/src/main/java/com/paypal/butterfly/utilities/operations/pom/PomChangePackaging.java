@@ -52,12 +52,6 @@ public class PomChangePackaging extends AbstractPomOperation<PomChangePackaging>
     }
 
     @Override
-    public PomChangePackaging clone() throws CloneNotSupportedException {
-        PomChangePackaging clone = (PomChangePackaging) super.clone();
-        return clone;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof PomChangePackaging)) return false;

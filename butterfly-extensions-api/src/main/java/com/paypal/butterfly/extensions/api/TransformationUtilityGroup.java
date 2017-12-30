@@ -40,25 +40,25 @@ public class TransformationUtilityGroup extends TransformationUtility<Transforma
     public String add(TransformationUtility utility) {
         if (getParent() == null) {
             String exceptionMessage = String.format("Invalid attempt to add transformation utility to utilities group. This group has to be added to a transformation utilities parent first. Add it to another group, or to a transformation template.");
-            throw new  TransformationDefinitionException(exceptionMessage);
+            throw new TransformationDefinitionException(exceptionMessage);
         }
         if (utility.getParent() != null) {
             String exceptionMessage = String.format("Invalid attempt to add already registered transformation utility %s to transformation utility group %s", utility.getName(), getName());
-            throw new  TransformationDefinitionException(exceptionMessage);
+            throw new TransformationDefinitionException(exceptionMessage);
         }
         // TODO
         // Here I am checking for name collisions only in this group, but that is isolated from TUs added to the parent, and vice-versa
         if (utility.getName() != null && utilityNames.contains(utility.getName())) {
             String exceptionMessage = String.format("Invalid attempt to add transformation utility %s to utilities group %s. Its name is already registered", utility.getName(), getName());
-            throw new  TransformationDefinitionException(exceptionMessage);
+            throw new TransformationDefinitionException(exceptionMessage);
         }
         if (!utility.isFileSet()) {
             String exceptionMessage = String.format("Neither absolute, nor relative path, have been set for transformation utility %s", utility.getName());
-            throw new  TransformationDefinitionException(exceptionMessage);
+            throw new TransformationDefinitionException(exceptionMessage);
         }
 
         int order;
-        synchronized (this) {
+        synchronized(this) {
             utilityList.add(utility);
 
             // This is the order of execution of this utility
@@ -143,8 +143,8 @@ public class TransformationUtilityGroup extends TransformationUtility<Transforma
     }
 
     @Override
-    public TransformationUtility<TransformationUtilityGroup> clone() throws CloneNotSupportedException {
-        TransformationUtilityGroup groupClone = (TransformationUtilityGroup) super.clone();
+    public TransformationUtilityGroup clone() {
+        TransformationUtilityGroup groupClone = super.clone();
         groupClone.utilityList = new ArrayList<>();
         groupClone.utilityNames = new HashSet<>();
         for (TransformationUtility utility : utilityList) {

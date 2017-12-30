@@ -148,10 +148,4 @@ abstract class AbstractToOperation<A extends AbstractToOperation> extends Transf
         return String.format(description, getRelativePath(), (toRelative != null ? toRelative : "the location defined by transformation context attribute " + toAbsoluteAttribute));
     }
 
-    @Override
-    public AbstractToOperation<A> clone() throws CloneNotSupportedException {
-        AbstractToOperation<A> clone = (AbstractToOperation<A>) super.clone();
-        return clone;
-    }
-
 }

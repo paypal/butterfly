@@ -108,10 +108,4 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
         return result;
     }
 
-    @Override
-    public RemoveProperty clone() throws CloneNotSupportedException {
-        RemoveProperty clone = (RemoveProperty) super.clone();
-        return clone;
-    }
-
 }

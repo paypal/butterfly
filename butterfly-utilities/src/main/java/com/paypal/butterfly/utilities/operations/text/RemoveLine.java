@@ -108,10 +108,4 @@ public class RemoveLine extends AbstractLineOperation<RemoveLine> {
         return String.format(DESCRIPTION, getRelativePath());
     }
 
-    @Override
-    public RemoveLine clone() throws CloneNotSupportedException {
-        RemoveLine clonedRemoveLine = (RemoveLine) super.clone();
-        return clonedRemoveLine;
-    }
-
 }

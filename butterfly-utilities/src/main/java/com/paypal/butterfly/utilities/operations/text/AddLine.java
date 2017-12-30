@@ -78,10 +78,4 @@ public class AddLine extends TransformationOperation<AddLine> {
         return result;
     }
 
-    @Override
-    public AddLine clone() throws CloneNotSupportedException {
-        AddLine clonedAddLine = (AddLine) super.clone();
-        return clonedAddLine;
-    }
-
 }

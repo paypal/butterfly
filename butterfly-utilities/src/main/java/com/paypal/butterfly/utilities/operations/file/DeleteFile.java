@@ -63,10 +63,4 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
         return result;
     }
 
-    @Override
-    public DeleteFile clone() throws CloneNotSupportedException {
-        DeleteFile clonedDeleteFile = (DeleteFile) super.clone();
-        return clonedDeleteFile;
-    }
-
 }

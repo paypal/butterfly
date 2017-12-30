@@ -131,10 +131,4 @@ public class PomChangeParent extends AbstractArtifactPomOperation<PomChangeParen
         return TOExecutionResult.success(this, details);
     }
 
-    @Override
-    public PomChangeParent clone() throws CloneNotSupportedException {
-        PomChangeParent clone = (PomChangeParent) super.clone();
-        return clone;
-    }
-
 }

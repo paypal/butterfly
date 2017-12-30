@@ -4,7 +4,6 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -109,18 +108,6 @@ public class ApplyFile extends TransformationOperation<ApplyFile> {
             }
         }
         return result;
-    }
-
-    @Override
-    public ApplyFile clone() throws CloneNotSupportedException {
-        try {
-            ApplyFile clone = (ApplyFile) super.clone();
-            clone.fileUrl = new URL(this.fileUrl.toString());
-            return clone;
-        } catch (MalformedURLException e) {
-            String exceptionMessage = String.format("Error when cloning %s", getName());
-            throw new TransformationUtilityException(exceptionMessage, e);
-        }
     }
 
 }

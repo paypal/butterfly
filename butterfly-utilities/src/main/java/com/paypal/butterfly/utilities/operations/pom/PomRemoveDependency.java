@@ -87,12 +87,6 @@ public class PomRemoveDependency extends AbstractArtifactPomOperation<PomRemoveD
     }
 
     @Override
-    public PomRemoveDependency clone() throws CloneNotSupportedException {
-        PomRemoveDependency clone = (PomRemoveDependency) super.clone();
-        return clone;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof PomRemoveDependency)) return false;

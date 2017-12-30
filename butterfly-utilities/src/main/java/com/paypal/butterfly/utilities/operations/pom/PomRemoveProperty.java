@@ -90,11 +90,5 @@ public class PomRemoveProperty extends AbstractPomOperation<PomRemoveProperty> i
         return result;
     }
 
-    @Override
-    public PomRemoveProperty clone() throws CloneNotSupportedException {
-        PomRemoveProperty clone = (PomRemoveProperty) super.clone();
-        return clone;
-    }
-
 }
 
