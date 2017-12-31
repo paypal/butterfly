@@ -87,6 +87,13 @@ public class LocateFile extends TransformationUtility<LocateFile> {
         if (StringUtils.isBlank(location)) {
             location = "root folder";
         }
+
+        // FIXME
+        // An usage like the one below results in a wrong description.
+        // Instead of resulting in something like "Locate file '/foo/bar/init'" it results in "Locate file root folder"
+        //
+        // add(new LocateFile().absolute(APP_PACKAGE_LOCATION, "init");
+
         if (parentLevel == 0) {
             return String.format(DESCRIPTION_PARENT_ZERO, location);
         } else {
