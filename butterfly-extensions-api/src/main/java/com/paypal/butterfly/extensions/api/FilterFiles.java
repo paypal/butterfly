@@ -150,19 +150,14 @@ public class FilterFiles extends TransformationUtility<FilterFiles> {
      * @return this transformation utility instance
      */
     public SingleCondition newConditionInstance(File transformedAppFolder, File file) {
-        try {
-            SingleCondition condition = (SingleCondition) conditionTemplate.copy();
-            condition.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
-            condition.setSaveResult(false);
+        SingleCondition condition = (SingleCondition) conditionTemplate.copy();
+        condition.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
+        condition.setSaveResult(false);
 
-            conditionInstanceCounter++;
-            condition.setName(String.format("%s-%d", conditionTemplate.getName(), conditionInstanceCounter));
+        conditionInstanceCounter++;
+        condition.setName(String.format("%s-%d", conditionTemplate.getName(), conditionInstanceCounter));
 
-            return condition;
-        } catch (CloneNotSupportedException e) {
-            String exceptionMessage = String.format("Error when preparing single condition instance for %s", getName());
-            throw new TransformationUtilityException(exceptionMessage, e);
-        }
+        return condition;
     }
 
 }

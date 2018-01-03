@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author facarvalho
  */
-abstract class Result<S, RT, T> {
+abstract class Result<S, R, T> {
 
     // The source of this result, which could be for example
     // a transformation utility instance or a transformation
@@ -38,25 +38,25 @@ abstract class Result<S, RT, T> {
         setType(type);
     }
 
-    private RT setSource(S source) {
+    private R setSource(S source) {
         if(source == null) {
             throw new IllegalArgumentException("Result source cannot be null");
         }
         this.source = source;
-        return (RT) this;
+        return (R) this;
     }
 
-    protected RT setType(T type) {
+    protected R setType(T type) {
         if(type == null) {
             throw new IllegalArgumentException("Result type cannot be null");
         }
         this.type = type;
-        return (RT) this;
+        return (R) this;
     }
 
-    public RT setDetails(String details) {
+    public R setDetails(String details) {
         this.details = details;
-        return (RT) this;
+        return (R) this;
     }
 
     /**
@@ -68,7 +68,7 @@ abstract class Result<S, RT, T> {
      * @param exception associated with the execution result
      * @return this object
      */
-    protected RT setException(Exception exception) {
+    protected R setException(Exception exception) {
         if(exception == null) {
             throw new IllegalArgumentException("Exception object cannot be null");
         }
@@ -76,7 +76,7 @@ abstract class Result<S, RT, T> {
             throw new IllegalArgumentException("Exception cannot be assigned to " + type);
         }
         this.exception = exception;
-        return (RT) this;
+        return (R) this;
     }
 
     /**
@@ -87,10 +87,10 @@ abstract class Result<S, RT, T> {
      * @param warning the warning to be added
      * @return this object
      */
-    public RT addWarning(Exception warning) {
+    public R addWarning(Exception warning) {
         warnings.add(warning);
         changeTypeOnWarning();
-        return (RT) this;
+        return (R) this;
     }
 
     /**

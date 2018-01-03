@@ -4,10 +4,6 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -80,8 +76,9 @@ public class ApplyFile extends TransformationOperation<ApplyFile> {
         FileOutputStream fileOutputStream = null;
         TOExecutionResult result = null;
         File fileDescriptor = null;
+        ReadableByteChannel readableByteChannel = null;
         try {
-            ReadableByteChannel readableByteChannel = Channels.newChannel(fileUrl.openStream());
+            readableByteChannel = Channels.newChannel(fileUrl.openStream());
 
             int p = fileUrl.getPath().lastIndexOf("/") + 1;
             String fileName = fileUrl.getPath().substring(p);
@@ -102,20 +99,15 @@ public class ApplyFile extends TransformationOperation<ApplyFile> {
                     result.addWarning(e);
                 }
             }
+            if (readableByteChannel != null) {
+                try {
+                    readableByteChannel.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
+                }
+            }
         }
         return result;
-    }
-
-    @Override
-    public ApplyFile clone() throws CloneNotSupportedException {
-        try {
-            ApplyFile clone = (ApplyFile) super.clone();
-            clone.fileUrl = new URL(this.fileUrl.toString());
-            return clone;
-        } catch (MalformedURLException e) {
-            String exceptionMessage = String.format("Error when cloning %s", getName());
-            throw new TransformationUtilityException(exceptionMessage, e);
-        }
     }
 
 }

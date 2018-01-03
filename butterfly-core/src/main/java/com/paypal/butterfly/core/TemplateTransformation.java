@@ -9,6 +9,7 @@ import com.paypal.butterfly.facade.Configuration;
  *
  * @author facarvalho
  */
+@SuppressWarnings("PMD.DefaultPackage")
 public class TemplateTransformation extends Transformation {
 
     private static final String TO_STRING_SYNTAX = "{ \"application\" : %s, \"template\" : %s, \"templateClass\" : %s }";
@@ -39,7 +40,7 @@ public class TemplateTransformation extends Transformation {
     }
 
     @Override
-    String getTemplatetName() {
+    String getTemplateName() {
         return template.getName();
     }
 

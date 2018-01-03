@@ -32,8 +32,6 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     
     private InvocationRequest request = new DefaultInvocationRequest();
 
-    private InvocationResult invocationResult = null;
-
     private Invoker invoker = new DefaultInvoker();
 
     private boolean warnOnError = false;
@@ -161,6 +159,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
         TUExecutionResult result = null;
+        InvocationResult invocationResult = null;
 
         try {
             for (MavenInvocationOutputHandler outputHandler : outputHandlers) {
@@ -175,7 +174,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
                 request.setFailureBehavior(mavenFailureBehavior);
             }
 
-            if (null != properties && false == properties.isEmpty()) {
+            if (null != properties && !properties.isEmpty()) {
                 request.setProperties(properties);
             }
 
@@ -214,8 +213,8 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     }
 
     @Override
-    public TransformationUtility<MavenGoal> clone() throws CloneNotSupportedException {
-        MavenGoal clone = (MavenGoal) super.clone();
+    public MavenGoal clone() {
+        MavenGoal clone = super.clone();
         clone.multipleOutputHandler = new MultipleOutputHandler();
         clone.request = new DefaultInvocationRequest();
         clone.outputHandlers = new MavenInvocationOutputHandler[outputHandlers.length];

@@ -87,12 +87,6 @@ public class PomRemovePlugin extends AbstractArtifactPomOperation<PomRemovePlugi
     }
 
     @Override
-    public PomRemovePlugin clone() throws CloneNotSupportedException {
-        PomRemovePlugin clone = (PomRemovePlugin) super.clone();
-        return clone;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof PomRemovePlugin)) return false;

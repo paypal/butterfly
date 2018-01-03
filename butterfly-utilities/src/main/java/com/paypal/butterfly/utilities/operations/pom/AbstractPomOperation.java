@@ -18,7 +18,7 @@ import java.io.IOException;
  *
  * @author facarvalho
  */
-abstract class AbstractPomOperation<TO extends AbstractPomOperation> extends TransformationOperation<TO> {
+abstract class AbstractPomOperation<T extends AbstractPomOperation> extends TransformationOperation<T> {
 
     @Override
     protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {

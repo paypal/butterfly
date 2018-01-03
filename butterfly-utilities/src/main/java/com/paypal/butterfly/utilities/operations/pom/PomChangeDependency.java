@@ -196,10 +196,4 @@ public class PomChangeDependency extends AbstractArtifactPomOperation<PomChangeD
         return result;
     }
 
-    @Override
-    public PomChangeDependency clone() throws CloneNotSupportedException {
-        PomChangeDependency clone = (PomChangeDependency) super.clone();
-        return clone;
-    }
-
 }

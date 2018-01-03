@@ -33,6 +33,13 @@ public class WebXmlContextParams extends TransformationUtility<WebXmlContextPara
 
     private static final String DESCRIPTION = "Parses Java web deployment descriptor file (%s), identifies all context parameters, and save them into a map";
 
+    // Even though it is redundant to have this default constructor here, since it is
+    // the only one (the compiler would have added it implicitly), this is being explicitly
+    // set here to emphasize that the public default constructor should always be
+    // available by any transformation utility even when additional constructors are present.
+    // The reason for that is the fact that one or more of its properties might be set
+    // during transformation time, using the TransformationUtility set method
+    @SuppressWarnings("PMD.UnnecessaryConstructor")
     public WebXmlContextParams() {
     }
 
@@ -55,7 +62,13 @@ public class WebXmlContextParams extends TransformationUtility<WebXmlContextPara
             NodeList contextParams = webAppNode.getElementsByTagName("context-param");
 
             Node contextParam;
-            String element1Tag, element1Content, element2Tag, element2Content, paramName, paramValue;
+            String element1Tag;
+            String element1Content;
+            String element2Tag;
+            String element2Content;
+            String paramName;
+            String paramValue;
+
             for (int i = 0; i < contextParams.getLength(); i++) {
                 contextParam = contextParams.item(i);
 
@@ -65,9 +78,9 @@ public class WebXmlContextParams extends TransformationUtility<WebXmlContextPara
                 element2Content = contextParam.getFirstChild().getNextSibling().getNextSibling().getNextSibling().getTextContent();
 
                 // Setting param-name
-                if (element1Tag.equals("param-name")) {
+                if ("param-name".equals(element1Tag)) {
                     paramName = element1Content;
-                } else if (element2Tag.equals("param-name")) {
+                } else if ("param-name".equals(element2Tag)) {
                     paramName = element2Content;
                 } else {
                     warn = true;
@@ -75,9 +88,9 @@ public class WebXmlContextParams extends TransformationUtility<WebXmlContextPara
                 }
 
                 // Setting param-value
-                if (element1Tag.equals("param-value")) {
+                if ("param-value".equals(element1Tag)) {
                     paramValue = element1Content;
-                } else if (element2Tag.equals("param-value")) {
+                } else if ("param-value".equals(element2Tag)) {
                     paramValue = element2Content;
                 } else {
                     warn = true;

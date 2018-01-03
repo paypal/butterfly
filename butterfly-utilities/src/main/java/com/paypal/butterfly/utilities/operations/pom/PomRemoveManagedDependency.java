@@ -84,10 +84,4 @@ public class PomRemoveManagedDependency extends AbstractArtifactPomOperation<Pom
         return result;
     }
 
-    @Override
-    public PomRemoveManagedDependency clone() throws CloneNotSupportedException {
-        PomRemoveManagedDependency clone = (PomRemoveManagedDependency) super.clone();
-        return clone;
-    }
-
 }

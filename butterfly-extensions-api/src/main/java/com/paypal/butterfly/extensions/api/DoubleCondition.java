@@ -14,17 +14,27 @@ import java.io.File;
  * for example). For conditions
  * based on evaluating a single file see {@link SingleCondition}.
  * For conditions based on multiple files see {@link MultipleConditions}
- *
- * @see SingleCondition
- * @see MultipleConditions
+ * <br>
+ * <strong>Important:</strong> it returns true if both files don't exist,
+ * and it returns false if only one of them exists.
  *
  * @author facarvalho
+ * @see SingleCondition
+ * @see MultipleConditions
  */
-public abstract class DoubleCondition<DUC extends DoubleCondition> extends UtilityCondition<DUC> {
+public abstract class DoubleCondition<T extends DoubleCondition> extends UtilityCondition<T> {
 
     // The name of the transformation context attribute
     // that refers to the file to be compared against the baseline file
     private String attribute;
+
+    // TODO
+    // Rename attribute to compareAttribute
+
+    // TODO
+    // Add a new instance variable called compareRelative, to be used as an alternative to compareAttribute,
+    // pointing directly to the comparison file, relative to the transformed application folder,
+    // and without the need for a transformation context attribute.
 
     /**
      * Condition to determine if a transformation utility
@@ -34,23 +44,22 @@ public abstract class DoubleCondition<DUC extends DoubleCondition> extends Utili
      * is based on two files (when comparing if two XML files are equal
      * for example)
      */
-     public DoubleCondition() {
+    public DoubleCondition() {
     }
 
     /**
-     * Set the name of the transformation context attribute
-     * that refers to the file to be compared against the
-     * baseline file, which is set by regular {@link com.paypal.butterfly.extensions.api.TransformationUtility}
-     * methods, like {@link #relative(String)} or {@link #absolute(String)}
+     * Condition to determine if a transformation utility
+     * should be executed or not. Every
+     * DoubleUtilityCondition subclass result type must always
+     * be boolean. The criteria to this type of condition
+     * is based on two files (when comparing if two XML files are equal
+     * for example)
      *
      * @param attribute the name of the transformation context attribute
      *                  that refers to the file to be compared against the baseline file
-     * @return this utility condition instance
      */
-    public DUC setAttribute(String attribute) {
-        checkForBlankString("attribute", attribute);
-        this.attribute = attribute;
-        return (DUC) this;
+    public DoubleCondition(String attribute) {
+        setAttribute(attribute);
     }
 
     /**
@@ -66,13 +75,34 @@ public abstract class DoubleCondition<DUC extends DoubleCondition> extends Utili
         return attribute;
     }
 
+    /**
+     * Set the name of the transformation context attribute
+     * that refers to the file to be compared against the
+     * baseline file, which is set by regular {@link com.paypal.butterfly.extensions.api.TransformationUtility}
+     * methods, like {@link #relative(String)} or {@link #absolute(String)}
+     *
+     * @param attribute the name of the transformation context attribute
+     *                  that refers to the file to be compared against the baseline file
+     * @return this utility condition instance
+     */
+    public T setAttribute(String attribute) {
+        checkForBlankString("attribute", attribute);
+        this.attribute = attribute;
+        return (T) this;
+    }
+
     @Override
-    protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         try {
             File baselineFile = getAbsoluteFile(transformedAppFolder, transformationContext);
             File comparisonFile = getComparisonFile(transformationContext);
 
-            boolean result = compare(baselineFile, comparisonFile);
+            boolean result = false;
+            if (baselineFile.exists() && comparisonFile.exists()) {
+                result = compare(baselineFile, comparisonFile);
+            } else if (!baselineFile.exists() && !comparisonFile.exists()) {
+                result = true;
+            }
 
             return TUExecutionResult.value(this, result);
         } catch (TransformationUtilityException e) {
@@ -84,7 +114,7 @@ public abstract class DoubleCondition<DUC extends DoubleCondition> extends Utili
      * Returns true only if the compared files meet the comparison
      * criteria established and implemented by the subclass
      *
-     * @param baselineFile the baseline file used for comparison
+     * @param baselineFile   the baseline file used for comparison
      * @param comparisonFile the file to be compared against the baseline file
      * @return this utility condition instance
      */

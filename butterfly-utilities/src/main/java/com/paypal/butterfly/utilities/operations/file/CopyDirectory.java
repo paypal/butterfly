@@ -36,8 +36,6 @@ public class CopyDirectory extends AbstractToOperation<CopyDirectory> {
      * folders are also copied to the destination location. If the destination directory
      * does not exist, it is created. But, if it does, then the content to be copied is
      * merged with the destination content, with the source taking precedence.
-     *
-     * @author facarvalho
      */
     public CopyDirectory() {
         super(DESCRIPTION);
@@ -59,12 +57,6 @@ public class CopyDirectory extends AbstractToOperation<CopyDirectory> {
         }
 
         return result;
-    }
-
-    @Override
-    public CopyDirectory clone() throws CloneNotSupportedException {
-        CopyDirectory clonedCopyDirectory = (CopyDirectory)super.clone();
-        return clonedCopyDirectory;
     }
 
 }

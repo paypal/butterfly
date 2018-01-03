@@ -320,6 +320,9 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
 
     @Override
     public List<TransformationUtility> getChildren() {
+        if (operations == null) {
+            return Collections.emptyList();
+        }
         return Collections.unmodifiableList(operations);
     }
 

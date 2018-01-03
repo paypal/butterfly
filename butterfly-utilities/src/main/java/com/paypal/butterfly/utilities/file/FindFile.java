@@ -1,6 +1,5 @@
 package com.paypal.butterfly.utilities.file;
 
-import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
@@ -8,7 +7,6 @@ import com.paypal.butterfly.extensions.api.exception.TransformationUtilityExcept
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -87,7 +85,7 @@ public class FindFile extends TransformationUtility<FindFile> {
         File searchRootFolder = getAbsoluteFile(transformedAppFolder, transformationContext);
 
         if (!searchRootFolder.exists()) {
-            String details = String.format("No file named '%s' has been found by %s", fileName, getName());
+            String details = String.format("The specified search root folder does not exist");
             if (failIfNotFound) {
                 TransformationUtilityException e = new TransformationUtilityException(details);
                 return TUExecutionResult.error(this, e);

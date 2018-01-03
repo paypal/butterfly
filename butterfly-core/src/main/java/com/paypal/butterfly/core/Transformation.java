@@ -13,6 +13,7 @@ import java.io.File;
  *
  * @author facarvalho
  */
+@SuppressWarnings("PMD.DefaultPackage")
 public abstract class Transformation {
 
     private static final Logger logger = LoggerFactory.getLogger(Transformation.class);
@@ -73,7 +74,7 @@ public abstract class Transformation {
 
     abstract String getExtensionVersion();
 
-    abstract String getTemplatetName();
+    abstract String getTemplateName();
 
     protected String getExtensionName(Class<? extends Extension> extension) {
         return extension.getName();

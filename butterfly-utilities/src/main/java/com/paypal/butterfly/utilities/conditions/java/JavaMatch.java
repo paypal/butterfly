@@ -2,7 +2,6 @@ package com.paypal.butterfly.utilities.conditions.java;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
-import com.paypal.butterfly.extensions.api.ExecutionResult;
 import com.paypal.butterfly.extensions.api.SingleCondition;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
@@ -19,7 +18,8 @@ import java.util.Set;
  * based on a set of {@link JavaCondition}. It returns true only
  * if they all are true. If the specified Java class file contains
  * more than one type, only the outer one will be considered
- * during evaluation. If it has none, an error will be returned.
+ * during evaluation. If it has none, the evaluation will result
+ * in false and a warning be returned.
  *
  * @author facarvalho
  */
@@ -34,7 +34,8 @@ public class JavaMatch extends SingleCondition<JavaMatch> {
      * based on a set of {@link JavaCondition}. It returns true only
      * if they all are true. If the specified Java class file contains
      * more than one type, only the outer one will be considered
-     * during evaluation. If it has none, an error will be returned.
+     * during evaluation. If it has none, the evaluation will result
+     * in false and a warning be returned.
      */
     public JavaMatch() {}
 
@@ -43,7 +44,8 @@ public class JavaMatch extends SingleCondition<JavaMatch> {
      * based on a set of {@link JavaCondition}. It returns true only
      * if they all are true. If the specified Java class file contains
      * more than one type, only the outer one will be considered
-     * during evaluation. If it has none, an error will be returned.
+     * during evaluation. If it has none, the evaluation will result
+     * in false and a warning be returned.
      *
      * @param condition one condition to be evaluated. More can be added with
      *                  {@link #addCondition(JavaCondition)}
@@ -95,7 +97,7 @@ public class JavaMatch extends SingleCondition<JavaMatch> {
     }
 
     @Override
-    protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File javaClassFile = getAbsoluteFile(transformedAppFolder, transformationContext);
         FileInputStream fileInputStream = null;
         TUExecutionResult result = null;

@@ -34,7 +34,7 @@ public class EnforcerErrorsOutputHandler implements MavenInvocationOutputHandler
     @Override
     public void consumeLine(String line) {
         executionStarted = true;
-        if (true == RULE_WARNING_LINE_MATCH_REGEX.matcher(line).matches()) {
+        if (RULE_WARNING_LINE_MATCH_REGEX.matcher(line).matches()) {
             int ruleLocation = line.indexOf(RULE_BEGINNING_PHRASE);
 
             message = line.substring(ruleLocation);
@@ -46,7 +46,7 @@ public class EnforcerErrorsOutputHandler implements MavenInvocationOutputHandler
 
     @Override
     public Set<String> getResult() {
-        if (false == executionStarted) {
+        if (!executionStarted) {
             throw new IllegalStateException("Execution has not started. No results to return.");
         } else {
             return Collections.unmodifiableSet(errorMessages);

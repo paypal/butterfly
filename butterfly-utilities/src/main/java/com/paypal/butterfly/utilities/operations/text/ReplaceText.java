@@ -3,7 +3,6 @@ package com.paypal.butterfly.utilities.operations.text;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 
 import java.io.*;
@@ -38,8 +37,6 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
     /**
      * Operation to replace text in a text file
      * based on a regular expression.
-     *
-     * @author facarvalho
      */
     public ReplaceText() {
     }
@@ -49,8 +46,6 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
      * based on a regular expression.
      *
      * @param regex the regular expression to find replacement points
-     *
-     * @author facarvalho
      */
     public ReplaceText(String regex) {
         setRegex(regex);
@@ -62,8 +57,6 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
      *
      * @param regex the regular expression to find replacement points
      * @param replacement the replacement text
-     *
-     * @author facarvalho
      */
     public ReplaceText(String regex, String replacement) {
         setRegex(regex);
@@ -135,14 +128,14 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
             return TOExecutionResult.error(this, ex);
         }
 
-        File tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
         BufferedReader reader = null;
         BufferedWriter writer = null;
         TOExecutionResult result = null;
 
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
+            File readFile = getOrCreateReadFile(transformedAppFolder, transformationContext);
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(readFile), StandardCharsets.UTF_8));
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileToBeChanged), StandardCharsets.UTF_8));
             result = replace(reader, writer);
         } catch (IOException e) {
             result = TOExecutionResult.error(this,  e);
@@ -160,20 +153,6 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
                     result.addWarning(e);
                 }
             }
-        }
-
-        boolean bDeleted = fileToBeChanged.delete();
-        String details;
-        if(bDeleted) {
-            if (!tempFile.renameTo(fileToBeChanged)) {
-                details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
-                TransformationOperationException e = new TransformationOperationException(details);
-                result = TOExecutionResult.error(this, e);
-            }
-        } else {
-            details = String.format("Error when deleting %s", getRelativePath(transformedAppFolder, fileToBeChanged));
-            TransformationOperationException e = new TransformationOperationException(details);
-            result = TOExecutionResult.error(this, e);
         }
 
         return result;
@@ -195,7 +174,7 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
         }
 
         String details = String.format("File %s has had %d line(s) where text replacement was applied based on regular expression '%s'", getRelativePath(), n, regex);
-        TOExecutionResult result = null;
+        TOExecutionResult result;
         if (n > 0) {
             result = TOExecutionResult.success(this, details);
         } else {
@@ -205,10 +184,5 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
         return result;
     }
 
-    @Override
-    public ReplaceText clone() throws CloneNotSupportedException{
-        ReplaceText clonedReplaceText = (ReplaceText) super.clone();
-        return clonedReplaceText;
-    }
 
 }

@@ -148,12 +148,6 @@ public class PomAddPlugin extends AbstractArtifactPomOperation<PomAddPlugin> imp
     }
 
     @Override
-    public PomAddPlugin clone() throws CloneNotSupportedException{
-        PomAddPlugin clone = (PomAddPlugin) super.clone();
-        return clone;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof PomAddPlugin)) return false;

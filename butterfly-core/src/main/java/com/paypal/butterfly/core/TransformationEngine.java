@@ -11,7 +11,6 @@ import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
 import com.paypal.butterfly.facade.exception.TransformationException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +55,7 @@ public class TransformationEngine {
      *
      * @param transformation the transformation object
      * @throws TransformationException if the transformation is aborted for any reason
+     * @return the result after performing this transformation
      */
     public TransformationResult perform(Transformation transformation) throws TransformationException {
         if(logger.isDebugEnabled()) {
@@ -63,7 +63,7 @@ public class TransformationEngine {
         }
         logger.info("Extension name:\t\t\t\t\t{}", transformation.getExtensionName());
         logger.info("Extension version:\t\t\t\t{}", transformation.getExtensionVersion());
-        logger.info("Transformation template:\t\t\t{}", transformation.getTemplatetName());
+        logger.info("Transformation template:\t\t\t{}", transformation.getTemplateName());
 
         File transformedAppFolder = prepareOutputFolder(transformation);
         List<TransformationContextImpl> transformationContexts = new ArrayList<>();
@@ -463,7 +463,7 @@ public class TransformationEngine {
                 }
                 break;
             case VALUE:
-                logger.debug("\t-\t - [{}][Result: {}][Utility: {}]", StringUtils.abbreviate(utility.toString(), 240),  StringUtils.abbreviate(executionResult.getValue().toString(), 120), utility.getName());
+                logger.debug("\t-\t - [{}][Result: {}][Utility: {}]", utility.toString(),  executionResult.getValue().toString(), utility.getName());
                 break;
             case WARNING:
                 processExecutionResultWarningType(utility, executionResult, "-");

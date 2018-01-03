@@ -211,19 +211,14 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
      * @return the new utility condition created based on this instance
      */
     public UtilityCondition newConditionInstance(File transformedAppFolder, File file) {
-        try {
-            UtilityCondition condition = (UtilityCondition) conditionTemplate.copy();
-            condition.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
-            condition.setSaveResult(false);
+        UtilityCondition condition = (UtilityCondition) conditionTemplate.copy();
+        condition.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
+        condition.setSaveResult(false);
 
-            conditionInstanceCounter++;
-            condition.setName(String.format("%s-%d", conditionTemplate.getName(), conditionInstanceCounter));
+        conditionInstanceCounter++;
+        condition.setName(String.format("%s-%d", conditionTemplate.getName(), conditionInstanceCounter));
 
-            return condition;
-        } catch (CloneNotSupportedException e) {
-            String exceptionMessage = String.format("Error when preparing condition instance for %s", getName());
-            throw new TransformationUtilityException(exceptionMessage, e);
-        }
+        return condition;
     }
 
 }

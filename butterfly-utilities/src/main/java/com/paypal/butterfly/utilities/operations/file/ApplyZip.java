@@ -4,7 +4,6 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
@@ -83,8 +82,9 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
         FileOutputStream fileOutputStream = null;
         TOExecutionResult result = null;
         File zipFileDescriptor = null;
+        ReadableByteChannel readableByteChannel = null;
         try {
-            ReadableByteChannel readableByteChannel = Channels.newChannel(zipFileUrl.openStream());
+            readableByteChannel = Channels.newChannel(zipFileUrl.openStream());
 
             int p = zipFileUrl.getPath().lastIndexOf("/") + 1;
             String fileName = zipFileUrl.getPath().substring(p);
@@ -108,23 +108,18 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
                     result.addWarning(e);
                 }
             }
+            if (readableByteChannel != null) {
+                try {
+                    readableByteChannel.close();
+                } catch (IOException e) {
+                    result.addWarning(e);
+                }
+            }
             if(zipFileDescriptor!=null) {
                 FileUtils.deleteQuietly(zipFileDescriptor);
             }
         }
         return result;
-    }
-
-    @Override
-    public ApplyZip clone() throws CloneNotSupportedException {
-        try {
-            ApplyZip clone = (ApplyZip) super.clone();
-            clone.zipFileUrl = new URL(this.zipFileUrl.toString());
-            return clone;
-        } catch (MalformedURLException e) {
-            String exceptionMessage = String.format("Error when cloning %s", getName());
-            throw new TransformationUtilityException(exceptionMessage, e);
-        }
     }
 
 }

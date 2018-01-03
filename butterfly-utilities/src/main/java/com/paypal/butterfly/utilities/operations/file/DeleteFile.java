@@ -18,6 +18,13 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
 
     private static final String DESCRIPTION = "Delete file %s";
 
+    // Even though it is redundant to have this default constructor here, since it is
+    // the only one (the compiler would have added it implicitly), this is being explicitly
+    // set here to emphasize that the public default constructor should always be
+    // available by any transformation utility even when additional constructors are present.
+    // The reason for that is the fact that one or more of its properties might be set
+    // during transformation time, using the TransformationUtility set method
+    @SuppressWarnings("PMD.UnnecessaryConstructor")
     /**
      * Deletes a single file or folder (empty or not).
      */
@@ -54,12 +61,6 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
         }
 
         return result;
-    }
-
-    @Override
-    public DeleteFile clone() throws CloneNotSupportedException {
-        DeleteFile clonedDeleteFile = (DeleteFile) super.clone();
-        return clonedDeleteFile;
     }
 
 }

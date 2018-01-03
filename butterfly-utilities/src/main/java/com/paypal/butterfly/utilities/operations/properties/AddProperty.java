@@ -3,7 +3,6 @@ package com.paypal.butterfly.utilities.operations.properties;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 import com.paypal.butterfly.utilities.operations.EolHelper;
 import org.codehaus.plexus.util.FileUtils;
@@ -78,9 +77,8 @@ public class AddProperty extends TransformationOperation<AddProperty> {
             Properties properties = new Properties();
             fileInputStream = new FileInputStream(fileToBeChanged);
             properties.load(fileInputStream);
-            if(fileInputStream != null) {
-                fileInputStream.close();
-            }
+            fileInputStream.close();
+
             //Add Property
             if(!properties.containsKey(propertyName)) {
                 result = addProperty(transformedAppFolder, transformationContext);
@@ -100,20 +98,8 @@ public class AddProperty extends TransformationOperation<AddProperty> {
         return result;
     }
 
-    @Override
-    public AddProperty clone() throws CloneNotSupportedException {
-        AddProperty clonedAddProperty = (AddProperty) super.clone();
-        return clonedAddProperty;
-    }
-
-    /**
+    /*
      * Replace the text based on regex.
-     * @param reader
-     * @param writer
-     * @param regex
-     * @param replacement
-     * @return String
-     * @throws IOException
      */
     private String replace(BufferedReader reader, BufferedWriter writer, String regex, String replacement) throws IOException {
         String currentLine;
@@ -132,23 +118,19 @@ public class AddProperty extends TransformationOperation<AddProperty> {
         return String.format("Property '%s' value replaced with %s' at '%s'", propertyName, propertyValue, getRelativePath());
     }
 
-    /**
+    /*
      * To add a new property to the property file.
-     * @param transformedAppFolder
-     * @param transformationContext
-     * @return TOExecutionResult
      */
     private TOExecutionResult addProperty(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
-        String details = null;
-        TOExecutionResult result = null;
+        TOExecutionResult result;
         try {
             String[] propArray = {propertyName, propertyValue};
             String propertyKeyValue = "%s = %s";
             String propertyToBeAdded = String.format(propertyKeyValue, propArray);
             FileUtils.fileAppend(fileToBeChanged.getAbsolutePath(), EolHelper.findEolDefaultToOs(fileToBeChanged));
             FileUtils.fileAppend(fileToBeChanged.getAbsolutePath(), propertyToBeAdded);
-            details = String.format("Property '%s' has been added and set to '%s' at '%s'", propertyName, propertyValue, getRelativePath());
+            String details = String.format("Property '%s' has been added and set to '%s' at '%s'", propertyName, propertyValue, getRelativePath());
             result = TOExecutionResult.success(this, details);
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);
@@ -158,26 +140,21 @@ public class AddProperty extends TransformationOperation<AddProperty> {
 
     /**
      * To Set (Replace) the property value.
-     * @param transformedAppFolder
-     * @param transformationContext
-     * @return TOExecutionResult
      */
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="NP_ALWAYS_NULL_EXCEPTION")
     private TOExecutionResult setProperty(File transformedAppFolder, TransformationContext transformationContext) {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
         TOExecutionResult result = null;
-        String details = null;
         BufferedReader reader = null;
         BufferedWriter writer = null;
-        File tempFile = null;
         try {
-            tempFile = new File(fileToBeChanged.getAbsolutePath() + "_temp_" + System.currentTimeMillis());
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToBeChanged), StandardCharsets.UTF_8));
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
+            File readFile = getOrCreateReadFile(transformedAppFolder, transformationContext);
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(readFile), StandardCharsets.UTF_8));
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileToBeChanged), StandardCharsets.UTF_8));
             String[] propArray = {propertyName, propertyValue};
             String propertyKeyValue = "%s = %s";
             String propertyToBeAdded = String.format(propertyKeyValue, propArray);
-            details = replace(reader, writer, "("+propertyName+")", propertyToBeAdded);
+            String details = replace(reader, writer, "(" + propertyName + ")", propertyToBeAdded);
             result = TOExecutionResult.success(this, details);
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);
@@ -195,18 +172,6 @@ public class AddProperty extends TransformationOperation<AddProperty> {
                     result.addWarning(e);
                 }
             }
-        }
-        boolean bDeleted = fileToBeChanged.delete();
-        if(bDeleted) {
-            if (!tempFile.renameTo(fileToBeChanged)) {
-                details = String.format("Error when renaming temporary file %s to %s", getRelativePath(transformedAppFolder, tempFile), getRelativePath(transformedAppFolder, fileToBeChanged));
-                TransformationOperationException e = new TransformationOperationException(details);
-                result = TOExecutionResult.error(this, e);
-            }
-        }else {
-            details = String.format("Error when deleting %s", getRelativePath(transformedAppFolder, fileToBeChanged));
-            TransformationOperationException e = new TransformationOperationException(details);
-            result = TOExecutionResult.error(this, e);
         }
 
         return result;

@@ -1,7 +1,6 @@
 package com.paypal.butterfly.extensions.api;
 
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,12 +8,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Allows the execution of a transformation utility instance, created from a template, multiple times in a loop.
- * The number of iterations is defined by one of these options, and in this order of precedence:
+ * Allows the execution of any transformation utility instance,
+ * including a {@link TransformationUtilityGroup}, multiple times in a loop.
+ * The number of iterations is defined by one of these options:
  * <ol>
- *     <li>Specifying the number of iterations</li>
- *     <li>Specifying a {@link TransformationContext} attribute (by its name) whose value is true or false. If not a boolean, or if non-existent, it will be treated as false</li>
- *     <li>Specifying a {@link TransformationUtility} object whose result is true or false. In this case, the TU condition object won't be saved to the TC, it will be executed exclusively to the scope of this loop execution. Any result other than a boolean true value, including failures, will be treated as false</li>
+ *     <li>Specifying the number of iterations.</li>
+ *     <li>Specifying a {@link TransformationContext} attribute (by its name) whose value is true or false. If that is not a boolean, or if non-existent, it will be treated as false. If that is false, the loop is interrupted.</li>
+ *     <li>Specifying a {@link UtilityCondition} object whose result is true or false. The result of this TU condition object won't be saved to the TC, it will be executed exclusively to the scope of this loop execution. Any result other than a boolean true value, including failures, will be treated as false. If that is false, the loop is interrupted.</li>
  * </ol>
  *
  * @author facarvalho
@@ -22,6 +22,8 @@ import java.util.List;
 public class TransformationUtilityLoop extends TransformationUtility<TransformationUtilityLoop> implements TransformationUtilityParent {
 
     private static final String DESCRIPTION = "Transformation template loop, executing %s";
+    private static final String TEMPLATE_NAME_FORMAT = "%s_%s_template";
+    private static final String CONDITION_NAME_FORMAT = "%s_%s_condition";
 
     // Possible ways to define the condition
     private int iterations = -1;
@@ -35,16 +37,51 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
     private TransformationUtility template;
 
     // Because this TU is a parent, it is necessary to be able to return a list of children
-    // In this case there will always be only one child, the template
+    // In this case, the children are the clones created out of the template, which means
+    // that the number of children will be the same as the number of executed loop iterations
     private List<TransformationUtility> childrenList = new ArrayList<>();
 
+    /**
+     * Allows the execution of any transformation utility instance,
+     * including a {@link TransformationUtilityGroup}, multiple times in a loop.
+     * The number of iterations is defined by one of these options:
+     * <ol>
+     *     <li>Specifying the number of iterations.</li>
+     *     <li>Specifying a {@link TransformationContext} attribute (by its name) whose value is true or false. If that is not a boolean, or if non-existent, it will be treated as false. If that is false, the loop is interrupted.</li>
+     *     <li>Specifying a {@link UtilityCondition} object whose result is true or false. The result of this TU condition object won't be saved to the TC, it will be executed exclusively to the scope of this loop execution. Any result other than a boolean true value, including failures, will be treated as false. If that is false, the loop is interrupted.</li>
+     * </ol>
+     */
     public TransformationUtilityLoop() {
     }
 
+    /**
+     * Allows the execution of any transformation utility instance,
+     * including a {@link TransformationUtilityGroup}, multiple times in a loop.
+     * The number of iterations is defined by one of these options:
+     * <ol>
+     *     <li>Specifying the number of iterations.</li>
+     *     <li>Specifying a {@link TransformationContext} attribute (by its name) whose value is true or false. If that is not a boolean, or if non-existent, it will be treated as false. If that is false, the loop is interrupted.</li>
+     *     <li>Specifying a {@link UtilityCondition} object whose result is true or false. The result of this TU condition object won't be saved to the TC, it will be executed exclusively to the scope of this loop execution. Any result other than a boolean true value, including failures, will be treated as false. If that is false, the loop is interrupted.</li>
+     * </ol>
+     *
+     * @param template the transformation utility instance to be used a template.
+     *                 A clone utility instance will be created out of the template
+     *                 for each iteration. See {@link #clone()} for further information
+     *                 about the clone object.
+     */
     public TransformationUtilityLoop(TransformationUtility template) {
         setTemplate(template);
     }
 
+    /**
+     * Sets the transformation utility instance to be used as a template.
+     * A clone utility instance will be created out of the template
+     * for each iteration. See {@link #clone()} for further information
+     * about the clone object.
+     *
+     * @param template the transformation utility instance to be used as template.
+     * @return this transformation utility instance
+     */
     public TransformationUtilityLoop setTemplate(TransformationUtility template) {
         checkForNull("template", template);
 
@@ -52,17 +89,29 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
             String exceptionMessage = String.format("Invalid attempt to add already registered transformation utility %s to transformation utility loop %s", template.getName(), getName());
             throw new  TransformationDefinitionException(exceptionMessage);
         }
+
+        // Why is this check necessary? What if the TU template is not based on a file?
         if (!template.isFileSet()) {
             String exceptionMessage = String.format("Neither absolute, nor relative path, have been set for transformation utility %s", template.getName());
             throw new  TransformationDefinitionException(exceptionMessage);
         }
-        template.setParent(this, 1);
+
+        // Even though the template have the loop TU set as its parent, the order is set to 0, and it is not added a child of the loop,
+        // since it is not in fact executed (only the instances cloned out of the template are)
+        template.setParent(this, 0);
         this.template = template;
-        childrenList.add(template);
 
         return this;
     }
 
+    /**
+     * In this case the condition to execute the next iteration is based on
+     * a pre-defined number of iterations to be executed. Each execution
+     * decrease the remaining number of iterations.
+     *
+     * @param iterations the total number of iterations to be executed
+     * @return this transformation utility instance
+     */
     public TransformationUtilityLoop setCondition(int iterations) {
         if (iterations < 2) {
             throw new TransformationDefinitionException("The number of iterations should be equal or greater than 2");
@@ -71,12 +120,37 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
         return this;
     }
 
+    /**
+     * In this case the condition to execute the next iteration is based on
+     * a {@link TransformationContext} attribute (specified by its name) whose
+     * value is true or false. If that is not a boolean, or if non-existent,
+     * it will be treated as false. If that is false, the loop is interrupted.
+     *
+     * @param attribute the name of the transformation context attribute
+     *                  holding the boolean to be used as the condition
+     *                  to execute the next iteration. If that is false,
+     *                  the loop is interrupted.
+     * @return this transformation utility instance
+     */
     public TransformationUtilityLoop setCondition(String attribute) {
         checkForBlankString("attribute", attribute);
         this.attribute = attribute;
         return this;
     }
 
+    /**
+     * In this case the condition to execute the next iteration is based on
+     * a {@link UtilityCondition} object whose result is true or false.
+     * The result of this TU condition object won't be saved to the TC,
+     * it will be executed exclusively to the scope of this loop execution.
+     * Any result other than a boolean true value, including failures, will be treated as false.
+     * If that is false, the loop is interrupted.
+     *
+     * @param condition the {@link UtilityCondition} object whose result
+     *                  will be used as the condition to execute the next iteration.
+     *                  If that is false, the loop is interrupted.
+     * @return this transformation utility instance
+     */
     public TransformationUtilityLoop setCondition(UtilityCondition condition) {
         checkForNull("condition", condition);
         if (condition.getName() == null && getName() != null) {
@@ -85,9 +159,6 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
         this.condition = condition;
         return this;
     }
-
-    private static final String TEMPLATE_NAME_FORMAT = "%s_%s_template";
-    private static final String CONDITION_NAME_FORMAT = "%s_%s_condition";
 
     @Override
     protected TransformationUtilityLoop setName(String name) {
@@ -152,12 +223,7 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
             iterateAgain = attributeValue instanceof Boolean && ((Boolean) attributeValue).booleanValue();
         } else if (condition != null) {
             TUExecutionResult executionResult = null;
-            try {
-                executionResult = (TUExecutionResult) condition.clone().execution(transformedAppFolder, transformationContext);
-            } catch (CloneNotSupportedException e) {
-                TransformationUtilityException tue = new TransformationUtilityException("The condition transformation utility is not cloneable", e);
-                return TUExecutionResult.error(this, tue);
-            }
+            executionResult = (TUExecutionResult) condition.clone().execution(transformedAppFolder, transformationContext);
             if (executionResult.getType().equals(TUExecutionResult.Type.VALUE)) {
                 Object executionValue = executionResult.getValue();
                 iterateAgain = executionValue instanceof Boolean && ((Boolean) executionValue).booleanValue();
@@ -183,11 +249,11 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
      * @return the TU instance to be run in this iteration
      */
     public TransformationUtility run() {
-        try {
-            return template.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new TransformationUtilityException("The template transformation template is not cloneable", e);
-        }
+        TransformationUtility iterationClone = template.clone();
+        iterationClone.setParent(this, nextIteration);
+        childrenList.add(iterationClone);
+
+        return iterationClone;
     }
 
     /**
@@ -197,11 +263,7 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
      */
     public TransformationUtility iterate() {
         nextIteration++;
-        try {
-            return clone();
-        } catch (CloneNotSupportedException e) {
-            throw new TransformationUtilityException("This transformation utility loop is not cloneable", e);
-        }
+        return clone();
     }
 
 }

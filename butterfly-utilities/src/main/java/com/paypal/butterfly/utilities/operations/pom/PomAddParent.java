@@ -128,10 +128,4 @@ public class PomAddParent extends AbstractArtifactPomOperation<PomAddParent> imp
         }
     }
 
-    @Override
-    public PomAddParent clone() throws CloneNotSupportedException {
-        PomAddParent clone = (PomAddParent) super.clone();
-        return clone;
-    }
-
 }

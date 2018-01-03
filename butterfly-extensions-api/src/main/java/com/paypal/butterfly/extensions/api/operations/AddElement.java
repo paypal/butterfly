@@ -22,7 +22,7 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
  *
  * @author facarvalho
  */
-public interface AddElement<TO extends TransformationOperation> {
+public interface AddElement<T extends TransformationOperation> {
 
     /**
      * Possible behaviors in case the element to be added already exists.
@@ -63,7 +63,7 @@ public interface AddElement<TO extends TransformationOperation> {
      *
      * @return the transformation operation instance
      */
-    TO failIfPresent();
+    T failIfPresent();
 
     /**
      * Warn and do not add ({@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type#WARNING})
@@ -71,7 +71,7 @@ public interface AddElement<TO extends TransformationOperation> {
      *
      * @return the transformation operation instance
      */
-    TO warnNotAddIfPresent();
+    T warnNotAddIfPresent();
 
     /**
      * Warn, but add, ({@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type#WARNING})
@@ -79,7 +79,7 @@ public interface AddElement<TO extends TransformationOperation> {
      *
      * @return the transformation operation instance
      */
-    TO warnButAddIfPresent();
+    T warnButAddIfPresent();
 
     /**
      * Do nothing, not add, not warn neither fail, ({@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type#NO_OP})
@@ -87,7 +87,7 @@ public interface AddElement<TO extends TransformationOperation> {
      *
      * @return the transformation operation instance
      */
-    TO noOpIfPresent();
+    T noOpIfPresent();
 
     /**
      * Overwrite and not warn ({@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type#SUCCESS})
@@ -95,6 +95,6 @@ public interface AddElement<TO extends TransformationOperation> {
      *
      * @return the transformation operation instance
      */
-    TO overwriteIfPresent();
+    T overwriteIfPresent();
 
 }

@@ -2,9 +2,7 @@ package com.paypal.butterfly.utilities;
 
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.google.common.io.Files;
-import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -36,7 +34,7 @@ public abstract class TransformationUtilityTestHelper {
 
     protected File appFolder;
     protected File transformedAppFolder;
-    protected TransformationContext transformationContext = Mockito.mock(TransformationContext.class);
+    protected TransformationContext transformationContext;
 
     @BeforeClass
     public void beforeClass() throws URISyntaxException, IOException {
@@ -48,6 +46,7 @@ public abstract class TransformationUtilityTestHelper {
         transformedAppFolder = new File(appFolder.getParentFile(), String.format("test-app_%s_%s_%s", method.getDeclaringClass().getSimpleName(), method.getName(), System.currentTimeMillis()));
         FileUtils.copyDirectory(appFolder, transformedAppFolder);
         System.out.printf("Transformed app folder: %s\n", transformedAppFolder.getAbsolutePath());
+        transformationContext = Mockito.mock(TransformationContext.class);
     }
 
     /**
@@ -134,7 +133,9 @@ public abstract class TransformationUtilityTestHelper {
      * @throws IOException
      */
     protected int getLineCountDifference(String relativeFilePath) throws IOException {
-        BufferedReader reader1 = null, reader2 = null;
+        BufferedReader reader1 = null;
+        BufferedReader reader2 = null;
+
         try {
             reader1 = new BufferedReader(new FileReader(new File(appFolder, relativeFilePath)));
             int originalNumberOfLines = 0;

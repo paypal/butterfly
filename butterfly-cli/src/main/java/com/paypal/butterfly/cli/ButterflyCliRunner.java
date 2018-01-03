@@ -57,12 +57,12 @@ public class ButterflyCliRunner extends ButterflyCliOption {
         }
 
         if (optionSet.has(CLI_OPTION_VERBOSE)) {
-            logConfigurator.verboseMode(true);
+            logConfigurator.setVerboseMode(true);
             logger.info("Verbose mode is ON");
         }
 
         if (optionSet.has(CLI_OPTION_DEBUG)) {
-            logConfigurator.debugMode(true);
+            logConfigurator.setDebugMode(true);
             logger.info("Debug mode is ON");
             logger.info("Butterfly home: {}", ButterflyCliApp.getButterflyHome());
             logger.info("JAVA_HOME: {}", System.getenv("JAVA_HOME"));

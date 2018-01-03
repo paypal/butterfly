@@ -3,7 +3,6 @@ package com.paypal.butterfly.utilities.maven;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -135,7 +134,8 @@ class ModelTree {
                 return false;
             }
         }
-// TODO we can comment this out in the future if we need this feature
+// TODO
+// We can comment this out in the future if we need this feature
 //        modelsInTree.add(model);
         if (model.getPomFile() != null) {
             pomFilesInTree.add(model.getPomFile());
@@ -173,6 +173,7 @@ class ModelTree {
             children.add(child);
         }
 
+        @SuppressWarnings("PMD.SimplifyBooleanReturns")
         private boolean isParentOf(Model model) {
             if (model.getParent() == null) {
                 return false;
@@ -184,16 +185,19 @@ class ModelTree {
             return true;
         }
 
-        private boolean isChildOf(Model model) {
-            if (this.model.getParent() == null) {
-                return false;
-            }
-
-            if (!model.getGroupId().equals(this.model.getParent().getGroupId())) return false;
-            if (!model.getArtifactId().equals(this.model.getParent().getArtifactId())) return false;
-            if (!model.getVersion().equals(this.model.getParent().getVersion())) return false;
-            return true;
-        }
+// TODO
+// We can comment this out in the future if we want to allow
+//        @SuppressWarnings("PMD.SimplifyBooleanReturns")
+//        private boolean isChildOf(Model model) {
+//            if (this.model.getParent() == null) {
+//                return false;
+//            }
+//
+//            if (!model.getGroupId().equals(this.model.getParent().getGroupId())) return false;
+//            if (!model.getArtifactId().equals(this.model.getParent().getArtifactId())) return false;
+//            if (!model.getVersion().equals(this.model.getParent().getVersion())) return false;
+//            return true;
+//        }
 
     }
 

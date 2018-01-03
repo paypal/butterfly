@@ -31,6 +31,7 @@ public class ButterflyCliApp extends ButterflyCliOption {
 
     private static Logger logger;
 
+    @SuppressWarnings("PMD.DoNotCallSystemExit")
     public static void main(String... arguments) throws IOException {
         setButterflyHome();
         setEnvironment(arguments);
@@ -59,6 +60,7 @@ public class ButterflyCliApp extends ButterflyCliOption {
         butterflyHome = new File(butterflyHomePath);
     }
 
+    @SuppressWarnings("PMD.DoNotCallSystemExit")
     private static void setEnvironment(String[] arguments) {
         if(arguments.length != 0){
             try {
@@ -108,6 +110,8 @@ public class ButterflyCliApp extends ButterflyCliOption {
         return butterflyHome;
     }
 
+    // This method's visibility is intentionally being set to package
+    @SuppressWarnings("PMD.DefaultPackage")
     static String getBanner() {
         return banner;
     }

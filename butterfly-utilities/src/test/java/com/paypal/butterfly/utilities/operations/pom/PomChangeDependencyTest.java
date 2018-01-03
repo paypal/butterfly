@@ -1,16 +1,14 @@
 package com.paypal.butterfly.utilities.operations.pom;
 
-import java.io.IOException;
-
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Model;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 import static org.testng.Assert.*;
 

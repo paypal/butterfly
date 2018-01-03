@@ -34,6 +34,8 @@ public abstract class JavaCondition<T extends JavaCondition> {
      *                        the Java class to be evaluated
      * @return the evaluation result including negation (if applicable)
      */
+    // This method's visibility is intentionally being set to package
+    @SuppressWarnings("PMD.DefaultPackage")
     final boolean evaluate(CompilationUnit compilationUnit) {
         boolean evalResult = eval(compilationUnit);
         return negate ? !evalResult : evalResult;

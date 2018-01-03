@@ -57,10 +57,4 @@ public class CopyFile extends AbstractToOperation<CopyFile> {
         return result;
     }
 
-    @Override
-    public CopyFile clone() throws CloneNotSupportedException {
-        CopyFile clonedCopyFile  = (CopyFile) super.clone();
-        return clonedCopyFile;
-    }
-
 }

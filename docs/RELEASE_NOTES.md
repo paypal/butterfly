@@ -1,19 +1,37 @@
 
 # Release notes
 
-## 2.1.0-RELEASE
+## 2.2.0
+
+#### Release date
+January 3rd, 2018.
+
+#### New features and enhancements
+* [73 - Include support to search folders as well in FindFiles](https://github.com/paypal/butterfly/issues/73)
+* [68 - Improve TU and TO clone operations](https://github.com/paypal/butterfly/issues/68)
+* [64 - Improve logging](https://github.com/paypal/butterfly/issues/64)
+* [53 - Implement continuous delivery through automated deployment via Travis CI](https://github.com/paypal/butterfly/issues/53)
+* [37 - Leverage File.createTempFile to create temporary files](https://github.com/paypal/butterfly/issues/37)
+* [24 - Address Codacy static code analysis issues](https://github.com/paypal/butterfly/issues/24)
+* [15 - Add unit tests to utilities project to make sure at least 70% code coverage](https://github.com/paypal/butterfly/issues/15)
+
+#### Bug fixes
+* [67 - ReadableByteChannel in ApplyFile and ApplyZip TOs needs to be closed](https://github.com/paypal/butterfly/issues/67)
+* [70 - TransformationUtility condition object doesn't refer to the correct execution file](https://github.com/paypal/butterfly/issues/70)
+
+## 2.1.0
 
 #### Release date
 December 2nd, 2017.
 
 #### New features and enhancements
-1. [49 - Add condition that checks if a regex matches any line in a file](https://github.com/paypal/butterfly/issues/49)
-1. [27 - Print extension name and version during Butterfly execution](https://github.com/paypal/butterfly/issues/27)
+* [49 - Add condition that checks if a regex matches any line in a file](https://github.com/paypal/butterfly/issues/49)
+* [27 - Print extension name and version during Butterfly execution](https://github.com/paypal/butterfly/issues/27)
 
 #### Bug fixes
-1. [2 - RelatedArtifacts TU fails to report accurately an error when a pom file is not well formed](https://github.com/paypal/butterfly/issues/2)
+* [2 - RelatedArtifacts TU fails to report accurately an error when a pom file is not well formed](https://github.com/paypal/butterfly/issues/2)
 
-## 2.0.0-RELEASE
+## 2.0.0
 
 #### Release date
 October 17th, 2017.

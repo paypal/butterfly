@@ -90,6 +90,7 @@ public abstract class AbstractTypeCheck<T extends AbstractTypeCheck> extends Jav
      *      2- {@code typeSimpleName} is implicitly imported for being part of java.lang
      *      3- {@code typeSimpleName} is at the same package where {@code compilationUnit} Java class is.
      */
+    @SuppressWarnings("PMD.SimplifyBooleanReturns")
     private boolean isImported(CompilationUnit compilationUnit, String typeSimpleName) {
         if (StringUtils.isBlank(typeSimpleName) || typeSimpleName.contains(".")) {
             throw new IllegalArgumentException("Invalid type simple name");

@@ -170,9 +170,20 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
         return add(new TransformationUtilityLoop(utility).setCondition(condition));
     }
 
+    @Deprecated
     @Override
     public final void log(String logMessage) {
-        add(new Log().setLogMessage(logMessage));
+        info(logMessage);
+    }
+
+    @Override
+    public final void info(String infoMessage) {
+        add(new Log().setLogMessage(infoMessage));
+    }
+
+    @Override
+    public final void debug(String debugMessage) {
+        add(new Log().setLogMessage(debugMessage).setLogLevel(Level.DEBUG));
     }
 
     @Override
@@ -180,9 +191,20 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
         add(new Log().setLogLevel(logLevel).setLogMessage(logMessage));
     }
 
+    @Deprecated
     @Override
     public final void log(String logMessage, String... attributeNames) {
-        add(new Log().setLogMessage(logMessage).setAttributeNames(attributeNames));
+        info(logMessage, attributeNames);
+    }
+
+    @Override
+    public final void info(String infoMessage, String... attributeNames) {
+        add(new Log().setLogMessage(infoMessage).setAttributeNames(attributeNames));
+    }
+
+    @Override
+    public final void debug(String debugMessage, String... attributeNames) {
+        add(new Log().setLogMessage(debugMessage).setAttributeNames(attributeNames).setLogLevel(Level.DEBUG));
     }
 
     @Override

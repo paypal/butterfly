@@ -9,39 +9,39 @@ import com.paypal.butterfly.extensions.api.TransformationOperation;
  *
  * @author facarvalho
  */
-public abstract class AddElementTO<TO extends AddElementTO> extends TransformationOperation<TO> implements AddElement<TO> {
+public abstract class AddElementTO<T extends AddElementTO> extends TransformationOperation<T> implements AddElement<T> {
 
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD", justification="This property will be used by sub-classes")
     protected IfPresent ifPresent = IfPresent.Fail;
 
     @Override
-    public TO failIfPresent() {
+    public T failIfPresent() {
         ifPresent = IfPresent.Fail;
-        return (TO) this;
+        return (T) this;
     }
 
     @Override
-    public TO warnNotAddIfPresent() {
+    public T warnNotAddIfPresent() {
         ifPresent = IfPresent.WarnNotAdd;
-        return (TO) this;
+        return (T) this;
     }
 
     @Override
-    public TO warnButAddIfPresent() {
+    public T warnButAddIfPresent() {
         ifPresent = IfPresent.WarnButAdd;
-        return (TO) this;
+        return (T) this;
     }
 
     @Override
-    public TO noOpIfPresent() {
+    public T noOpIfPresent() {
         ifPresent = IfPresent.NoOp;
-        return (TO) this;
+        return (T) this;
     }
 
     @Override
-    public TO overwriteIfPresent() {
+    public T overwriteIfPresent() {
         ifPresent = IfPresent.Overwrite;
-        return (TO) this;
+        return (T) this;
     }
 
 }

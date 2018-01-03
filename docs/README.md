@@ -10,20 +10,20 @@ Butterfly is an application code transformation tool, and commonly it is used to
 Application changes, upgrades and migrations are usually complex, time-consuming and error prone.
 Therefore, they are also extremely expensive in the short term, and might even cause worse problems (and much more expensive) in long term.
 
-# The benefits of transformation automation
+# Transformation automation
 
 By automating application source code transformations, upgrades and migrations, overall development experience and software maintenance are improved.
 In addition to that, for a given organization, the number of applications in the latest version of a particular framework is increased, and the upgrade and migration processes are simplified.
 
 # Common use cases
 
-#### Automated application framework migrations
+## Automated application framework migrations
 
 An organization has multiple applications developed using a particular framework as foundation. One day that framework becomes obsolete, and it is replaced by a brand new one, more modern. At this point, it is difficult and expensive to ensure all applications will **migrate** to the new framework.
 
 This organization could use Butterfly, combined with its own Butterfly extension, to automate application migrations.
 
-#### Automated application framework upgrades
+## Automated application framework upgrades
 
 An organization has multiple applications developed using a particular framework as foundation. As newer framework versions are available, it is difficult and expensive to ensure all applications will **upgrade** to the latest framework version.
 
@@ -31,7 +31,7 @@ This organization could use Butterfly, combined with its own Butterfly extension
 
 ![](img/transformation_templates_simple.png)
 
-#### Automated application changes
+## Automated application changes
 
 An organization has multiple applications developed using a particular framework as foundation. One day, a security issue is found affecting all applications, and the solution demands a code or configuration change in each application. In this situation it would be difficult and expensive to ensure all applications **apply those changes** correctly.
 

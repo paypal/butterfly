@@ -28,8 +28,6 @@ public class MoveDirectory extends AbstractToOperation<MoveDirectory> {
      * The directory to be moved is specified from relative
      * or absolute location. If the destination directory
      * does not exist, it is created.
-     *
-     * @author facarvalho
      */
     public MoveDirectory() {
         super(DESCRIPTION);
@@ -51,12 +49,6 @@ public class MoveDirectory extends AbstractToOperation<MoveDirectory> {
         }
 
         return result;
-    }
-
-    @Override
-    public MoveDirectory clone() throws CloneNotSupportedException {
-        MoveDirectory clone = (MoveDirectory) super.clone();
-        return clone;
     }
 
 }

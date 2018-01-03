@@ -13,21 +13,21 @@ import java.util.Objects;
  *
  * @author facarvalho
  */
-public abstract class AbstractArtifactPomOperation<TO extends AbstractArtifactPomOperation> extends AbstractPomOperation<TO> {
+public abstract class AbstractArtifactPomOperation<T extends AbstractArtifactPomOperation> extends AbstractPomOperation<T> {
 
     protected String groupId;
     protected String artifactId;
 
-    public TO setGroupId(String groupId) {
+    public T setGroupId(String groupId) {
         checkForBlankString("GroupId", groupId);
         this.groupId = groupId;
-        return (TO) this;
+        return (T) this;
     }
 
-    public TO setArtifactId(String artifactId) {
+    public T setArtifactId(String artifactId) {
         checkForBlankString("ArtifactId",artifactId);
         this.artifactId = artifactId;
-        return (TO) this;
+        return (T) this;
     }
 
     /**
@@ -39,7 +39,7 @@ public abstract class AbstractArtifactPomOperation<TO extends AbstractArtifactPo
      * @param artifact the artifact formatted String
      * @return this operation instance
      */
-    public TO setArtifact(String artifact) {
+    public T setArtifact(String artifact) {
         checkForBlankString("artifact", artifact);
         String[] split = artifact.split(":");
         if (split.length != 2) {
@@ -47,7 +47,7 @@ public abstract class AbstractArtifactPomOperation<TO extends AbstractArtifactPo
         }
         groupId = split[0];
         artifactId = split[1];
-        return (TO) this;
+        return (T) this;
     }
 
     public String getGroupId() {

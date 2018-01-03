@@ -45,12 +45,11 @@ public class EolBufferedReaderTest {
         try {
             reader = new EolBufferedReader(new BufferedReader(new StringReader(TEST_STRING)));
 
-            String line1, line2, line3, line4, line5;
-            line1 = reader.readLineKeepEol();
-            line2 = reader.readLineKeepEol();
-            line3 = reader.readLineKeepEol();
-            line4 = reader.readLineKeepEol();
-            line5 = reader.readLineKeepEol();
+            String line1 = reader.readLineKeepEol();
+            String line2 = reader.readLineKeepEol();
+            String line3 = reader.readLineKeepEol();
+            String line4 = reader.readLineKeepEol();
+            String line5 = reader.readLineKeepEol();
 
             Assert.assertFalse(startsWithEol(line1));
             Assert.assertTrue(endsWithEol(line1));
@@ -104,13 +103,12 @@ public class EolBufferedReaderTest {
         try {
             reader = new EolBufferedReader(new BufferedReader(new StringReader(TEST_STRING)));
 
-            String line1, line2, line3, line4, line5, line6;
-            line1 = reader.readLineKeepStartEol();
-            line2 = reader.readLineKeepStartEol();
-            line3 = reader.readLineKeepStartEol();
-            line4 = reader.readLineKeepStartEol();
-            line5 = reader.readLineKeepStartEol();
-            line6 = reader.readLineKeepStartEol();
+            String line1 = reader.readLineKeepStartEol();
+            String line2 = reader.readLineKeepStartEol();
+            String line3 = reader.readLineKeepStartEol();
+            String line4 = reader.readLineKeepStartEol();
+            String line5 = reader.readLineKeepStartEol();
+            String line6 = reader.readLineKeepStartEol();
 
             Assert.assertFalse(startsWithEol(line1));
             Assert.assertFalse(endsWithEol(line1));

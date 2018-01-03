@@ -3,6 +3,7 @@ package com.paypal.butterfly.utilities.maven;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.File;
 import java.util.List;
@@ -91,11 +92,18 @@ public class RelatedArtifacts extends TransformationUtility<RelatedArtifacts> {
 
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-        List<File> pomFiles = (List<File>) transformationContext.get(pomFilesAttribute);
-        ModelTree modelTree = new ModelTree(parentGroupId, parentArtifactId, parentVersion, pomFiles);
-        List<File> pomFilesInTree = modelTree.getPomFilesInTree();
+        try {
+            List<File> pomFiles = (List<File>) transformationContext.get(pomFilesAttribute);
+            ModelTree modelTree = new ModelTree(parentGroupId, parentArtifactId, parentVersion, pomFiles);
+            List<File> pomFilesInTree = modelTree.getPomFilesInTree();
 
-        return TUExecutionResult.value(this, pomFilesInTree);
+            return TUExecutionResult.value(this, pomFilesInTree);
+        } catch(TransformationUtilityException e) {
+            return TUExecutionResult.error(this, e);
+        } catch (Exception e) {
+            TransformationUtilityException tue = new TransformationUtilityException("Error happened when trying to parse and evaluate pom files", e);
+            return TUExecutionResult.error(this, tue);
+        }
     }
 
 }

@@ -11,7 +11,7 @@ import com.paypal.butterfly.facade.exception.TransformationException;
  */
 class InternalTransformationException extends TransformationException {
 
-    TransformationContextImpl transformationContext;
+    private TransformationContextImpl transformationContext;
 
     InternalTransformationException(String exceptionMessage, TransformationContextImpl transformationContext) {
         super(exceptionMessage);
@@ -27,6 +27,8 @@ class InternalTransformationException extends TransformationException {
         this(e.getMessage(), e, transformationContext);
     }
 
+    // This method's visibility is intentionally being set to package
+    @SuppressWarnings("PMD.DefaultPackage")
     TransformationContextImpl getTransformationContext() {
         return transformationContext;
     }

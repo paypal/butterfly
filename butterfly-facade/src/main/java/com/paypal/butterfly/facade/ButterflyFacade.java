@@ -53,6 +53,7 @@ public interface ButterflyFacade {
      * @param applicationFolder application folder
      * @param templateClassName transformation template class name
      * @return the transformation result object
+     * @throws ButterflyException in case the transformation did not succeed
      */
     TransformationResult transform(File applicationFolder, String templateClassName) throws ButterflyException;
 
@@ -64,6 +65,7 @@ public interface ButterflyFacade {
      * @param templateClassName transformation template class name
      * @param configuration Butterfly configuration object
      * @return the transformation result object
+     * @throws ButterflyException in case the transformation did not succeed
      */
     TransformationResult transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException;
 
@@ -73,6 +75,7 @@ public interface ButterflyFacade {
      * @param applicationFolder application folder
      * @param templateClass transformation template class
      * @return the transformation result object
+     * @throws ButterflyException in case the transformation did not succeed
      */
     TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) throws ButterflyException;
 
@@ -84,6 +87,7 @@ public interface ButterflyFacade {
      * @param templateClass transformation template class
      * @param configuration Butterfly configuration object
      * @return the transformation result object
+     * @throws ButterflyException in case the transformation did not succeed
      */
     TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException;
 
@@ -93,6 +97,7 @@ public interface ButterflyFacade {
      * @param applicationFolder application folder
      * @param upgradePath upgrade path object used to upgrade this application
      * @return the transformation result object
+     * @throws ButterflyException in case the transformation did not succeed
      */
     TransformationResult transform(File applicationFolder, UpgradePath upgradePath) throws ButterflyException;
 
@@ -104,6 +109,7 @@ public interface ButterflyFacade {
      * @param upgradePath upgrade path object used to upgrade this application
      * @param configuration Butterfly configuration object
      * @return the transformation result object
+     * @throws ButterflyException in case the transformation did not succeed
      */
     TransformationResult transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) throws ButterflyException;
 

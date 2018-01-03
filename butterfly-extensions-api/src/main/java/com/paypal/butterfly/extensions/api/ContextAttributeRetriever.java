@@ -18,12 +18,12 @@ import java.io.File;
  *
  * @author facarvalho
  */
-public class ContextAttributeRetriever<VT> extends TransformationUtility {
+public class ContextAttributeRetriever<T> extends TransformationUtility {
 
     private static final String DESCRIPTION = "Retrieves value of transformation context attribute '%s'";
 
     private String attributeName;
-    private VT attributeValue;
+    private T attributeValue;
     private boolean executed = false;
 
     public ContextAttributeRetriever() {
@@ -49,7 +49,7 @@ public class ContextAttributeRetriever<VT> extends TransformationUtility {
     protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         executed = true;
         try {
-            attributeValue = (VT) transformationContext.get(attributeName);
+            attributeValue = (T) transformationContext.get(attributeName);
             return TUExecutionResult.nullResult(this);
         } catch (IllegalArgumentException | ClassCastException ex) {
             return TUExecutionResult.error(this, ex);
@@ -64,7 +64,7 @@ public class ContextAttributeRetriever<VT> extends TransformationUtility {
      *
      * @return the value of the transformation context attribute specified earlier
      */
-    public VT getAttributeValue() {
+    public T getAttributeValue() {
         if (!executed) {
             throw new IllegalStateException(getName() + " has not had a chance to be executed yet");
         }

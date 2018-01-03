@@ -1,6 +1,5 @@
 package com.paypal.butterfly.utilities.misc;
 
-import com.paypal.butterfly.extensions.api.ExecutionResult;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
@@ -15,11 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Executes a script and saves the result after evaluating.
- * The scripting language can be chosen, and Java is the default one.
- * Additionally, one or more transformation context attributes can be set in the script
- * during transformation time. Transformation context attributes placeholders can be put
- * in the script using "{}".
+ * Executes a script and saves the result after evaluating it.
+ * The scripting language can be chosen, and "js" is the default one.
+ * Additionally, one or more objects, and/or transformation context attributes,
+ * can be used in the script during transformation time.
  *
  * @author facarvalho
  */
@@ -32,13 +30,33 @@ public class RunScript extends TransformationUtility<RunScript> {
     private Map<String, String> attributes = new HashMap<>();
     private Map<String, Object> objects = new HashMap<>();
 
+    /**
+     * Executes a script and saves the result after evaluating it.
+     * The scripting language can be chosen, and "js" is the default one.
+     * Additionally, one or more objects, and/or transformation context attributes,
+     * can be used in the script during transformation time.
+     */
     public RunScript() {
     }
 
+    /**
+     * Executes a script and saves the result after evaluating it.
+     * The scripting language can be chosen, and "js" is the default one.
+     * Additionally, one or more objects, and/or transformation context attributes,
+     * can be used in the script during transformation time.
+     *
+     * @param script the script to be executed and evaluated
+     */
     public RunScript(String script) {
         setScript(script);
     }
 
+    /**
+     * Sets the script to be executed and evaluated
+     *
+     * @param script the script to be executed and evaluated
+     * @return this utility instance
+     */
     public RunScript setScript(String script) {
         checkForBlankString("script", script);
         this.script = script;
@@ -87,7 +105,7 @@ public class RunScript extends TransformationUtility<RunScript> {
     }
 
     @Override
-    protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
+    protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         TUExecutionResult result = null;
 
         try {

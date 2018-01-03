@@ -19,5 +19,5 @@ package com.paypal.butterfly.extensions.api;
  *
  * @author facarvalho
  */
-public abstract class UtilityCondition<TOC extends UtilityCondition> extends TransformationUtility<TOC> {
+public abstract class UtilityCondition<U extends UtilityCondition> extends TransformationUtility<U> {
 }

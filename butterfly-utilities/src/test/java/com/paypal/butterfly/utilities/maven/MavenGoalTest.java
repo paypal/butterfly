@@ -1,22 +1,8 @@
 package com.paypal.butterfly.utilities.maven;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
-import org.apache.maven.shared.invoker.MavenInvocationException;
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
+import org.apache.maven.shared.invoker.*;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,18 +12,22 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.paypal.butterfly.extensions.api.TUExecutionResult;
-import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author mcrockett
  */
 public class MavenGoalTest {
-    @Mock
-    InvocationRequest request = new DefaultInvocationRequest();
 
     @Mock
-    InvocationResult invocationResult = null;
+    private InvocationRequest request = new DefaultInvocationRequest();
 
     @Mock
     private Invoker invoker = new DefaultInvoker();
@@ -46,13 +36,13 @@ public class MavenGoalTest {
     private MultipleOutputHandler multipleOutputHandler = new MultipleOutputHandler();
 
     @Mock
-    File absoluteFile = new File("absolute_path");
+    private File absoluteFile = new File("absolute_path");
 
     @InjectMocks
-    MavenGoal mavenGoal = new MavenGoal();
+    private MavenGoal mavenGoal = new MavenGoal();
     
     @BeforeMethod
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         String[] goals = {"a", "b", "c"};
         mavenGoal.setGoals(goals);
