@@ -9,11 +9,11 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  */
 public class AbortDetails {
 
-    String utilityName;
-    String abortMessage;
-    String exceptionClass;
-    String exceptionMessage;
-    String exceptionStackTrace;
+    private String utilityName;
+    private String abortMessage;
+    private String exceptionClass;
+    private String exceptionMessage;
+    private String exceptionStackTrace;
 
     public AbortDetails(Exception ex, String abortMessage, String utilityName) {
         if (ex == null) {
