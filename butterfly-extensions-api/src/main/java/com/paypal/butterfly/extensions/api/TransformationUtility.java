@@ -740,7 +740,7 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
      * <ol>
      *     <li>If TU B depends on TU A, and if TU A "fails"
      *     but doesn't abort transformation, then TU B would be skipped</li>
-     *     <li>If TU B depends on TU A, then that means TU A is necessary supposed to be executed first,
+     *     <li>If TU B depends on TU A, then that means TU A is necessarily supposed to be executed first,
      *     if not, TU B will be skipped</li>
      * </ol>
      * The term "fails" in this context means the perform result is of one of these types:
