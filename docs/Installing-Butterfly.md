@@ -7,7 +7,7 @@ Before installing Butterfly, make sure you have Java 7, or newer, installed (run
 
 ## Installing Butterfly
 
-1. Download and extract [butterfly-cli-package.zip](https://repo1.maven.org/maven2/com/paypal/butterfly/butterfly-cli-package/2.0.0/butterfly-cli-package-2.0.0.zip) file
+1. Download and extract [butterfly-cli-package.zip](https://repo1.maven.org/maven2/com/paypal/butterfly/butterfly-cli-package/2.2.0/butterfly-cli-package-2.2.0.zip) file
 1. Cd to the `butterfly` folder and run `butterfly`. If you see its help, Butterfly has been installed properly
 1. Run `butterfly –l` and notice that you have no Butterfly extensions at this point
 

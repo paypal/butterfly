@@ -80,6 +80,7 @@ public class TransformationUtilityLoop extends TransformationUtility<Transformat
      * about the clone object.
      *
      * @param template the transformation utility instance to be used as template.
+     * @return this transformation utility instance
      */
     public TransformationUtilityLoop setTemplate(TransformationUtility template) {
         checkForNull("template", template);
