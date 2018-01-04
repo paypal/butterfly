@@ -68,7 +68,7 @@ The colors in the pipeline represent the possible states, meaning:
 
 ## Running Butterfly CLI from an IDE
 
-When developing a Butterfly extension, it is very helpful to be be able to run it from the IDE. To do so, add class-path entries for your extension jar and run class `com.paypal.butterfly.cli.ButterflyCliApp`, from `butterfly-cli` jar, passing the required command line arguments.
+When developing a Butterfly extension, it is very helpful to run it from the IDE. To do so, add class-path entries for your extension jar and run class `com.paypal.butterfly.cli.ButterflyCliApp`, from `butterfly-cli` jar, passing the required command line arguments.
 
 ## Butterfly javadocs
 
