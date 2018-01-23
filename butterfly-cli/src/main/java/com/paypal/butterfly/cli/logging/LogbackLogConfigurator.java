@@ -20,6 +20,8 @@ public class LogbackLogConfigurator extends LogConfigurator {
 
     private static final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
+    private boolean verboseMode = false;
+
     @Override
     public void setLoggerLevel(String logger, org.slf4j.event.Level level) {
         if(level == null) {
@@ -46,24 +48,35 @@ public class LogbackLogConfigurator extends LogConfigurator {
     }
 
     @Override
-    public void setVerboseMode(boolean on) {
-        PatternLayoutEncoder patternLayoutEncoder = new PatternLayoutEncoder();
-        patternLayoutEncoder.setPattern("[%d{HH:mm:ss.SSS}] [%highlight(%level)] %msg%n");
-        patternLayoutEncoder.setContext(loggerContext);
-        patternLayoutEncoder.start();
+    public void setVerboseMode(boolean verboseMode) {
+        this.verboseMode = verboseMode;
 
-        Appender<ILoggingEvent> consoleAppender = new ConsoleAppender();
-        ((OutputStreamAppender) consoleAppender).setEncoder(patternLayoutEncoder);
-        consoleAppender.setContext(loggerContext);
-        consoleAppender.start();
+        if (verboseMode) {
+            PatternLayoutEncoder patternLayoutEncoder = new PatternLayoutEncoder();
+            patternLayoutEncoder.setPattern("[%d{HH:mm:ss.SSS}] [%highlight(%level)] %msg%n");
+            patternLayoutEncoder.setContext(loggerContext);
+            patternLayoutEncoder.start();
 
-        loggerContext.getLogger("com.paypal.butterfly.cli").detachAppender("CONSOLE");
-        loggerContext.getLogger("ROOT").addAppender(consoleAppender);
+            Appender<ILoggingEvent> consoleAppender = new ConsoleAppender();
+            ((OutputStreamAppender) consoleAppender).setEncoder(patternLayoutEncoder);
+            consoleAppender.setContext(loggerContext);
+            consoleAppender.start();
+
+            loggerContext.getLogger("com.paypal.butterfly.cli").detachAppender("CONSOLE");
+            loggerContext.getLogger("ROOT").addAppender(consoleAppender);
+        } else {
+            // TODO
+        }
     }
 
     @Override
     public void setLogToFile(boolean on) {
         loggerContext.getLogger("ROOT").detachAppender("FILE");
+    }
+
+    @Override
+    public boolean isVerboseMode() {
+        return verboseMode;
     }
 
 }
