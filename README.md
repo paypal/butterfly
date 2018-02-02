@@ -54,8 +54,5 @@ Please open an issue using our [GitHub issues](https://github.com/paypal/butterf
 ## Contributing
 You are very welcome to contribute to Butterfly! Read our [Contribution guidelines](docs/CONTRIBUTING.md).
 
-## Contacting us
-To contact us, please send an email to <a href="mailto:fabiocarvalho777@gmail.com">fabiocarvalho777@gmail.com</a>.
-
 ## License
 This project is licensed under the [MIT License](LICENSE.txt).
