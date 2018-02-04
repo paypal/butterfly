@@ -1,12 +1,10 @@
 package com.paypal.butterfly.utilities.file;
 
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
-import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.AbstractFileFilter;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.filefilter.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -16,10 +14,15 @@ import java.util.Collection;
 /**
  * Finds files based on a regular expression
  * against the file name and/or the file path. The search might be
- * recursive (including sub-folders) or not. If a file path regular
+ * recursive (searching also in sub-folders) or not. If a file path regular
  * expression is set, then the search will be automatically recursive.
  * If no file path regular expression is set, then the search
  * is not recursive by default, but it may be set to as well.
+ * <br>
+ * The term "file" here might refer to folders as well, and
+ * {@link #includeFiles} and {@link #includeFolders} can be used
+ * to specialize the search criteria in that regard. If none of them
+ * are explicitly set, only files will be searched.
  * <br>
  * The root directory from where the search should take place
  * can be defined by {@link #relative(String)},
@@ -40,6 +43,8 @@ public class FindFiles extends TransformationUtility<FindFiles> {
     private String nameRegex;
     private String pathRegex;
     private boolean recursive;
+    private boolean includeFiles = true;
+    private boolean includeFolders = false;
 
     public FindFiles() {
     }
@@ -47,7 +52,10 @@ public class FindFiles extends TransformationUtility<FindFiles> {
     /**
      * Utility to find files based on a regular expression
      * against the file name. The search might be
-     * recursive (including sub-folders) or not.
+     * recursive (searching also in sub-folders) or not.
+     * <br>
+     * This search does not include folders, only files, unless
+     * {@link #setIncludeFolders(boolean)} is set to {@code true}.
      * <br>
      * The root directory from where the search should take place
      * can be defined by {@link #relative(String)},
@@ -62,6 +70,34 @@ public class FindFiles extends TransformationUtility<FindFiles> {
     public FindFiles(String nameRegex, boolean recursive) {
         setNameRegex(nameRegex);
         setRecursive(recursive);
+    }
+
+    /**
+     * Utility to find files based on a regular expression
+     * against the file name. The search might be
+     * recursive (searching also in sub-folders) or not.
+     * <br>
+     * This search might include files only, folders only, or both,
+     * depending on how {@code includeFiles} and {@code includeFolders}
+     * are configured.
+     * <br>
+     * The root directory from where the search should take place
+     * can be defined by {@link #relative(String)},
+     * {@link #absolute(String)} or {@link #absolute(String, String)}.
+     * If not set explicitly, then the search will happen from the root
+     * of the transformed application, which is equivalent to setting
+     * {@link #relative(String)} to {@code "."}
+     *
+     * @param nameRegex regular expression to be applied against file name during search
+     * @param recursive if true, sub-folders will also be searched
+     * @param includeFiles whether files should be included in the search or not
+     * @param includeFolders whether folders should be included in the search or not
+     */
+    public FindFiles(String nameRegex, boolean recursive, boolean includeFiles, boolean includeFolders) {
+        setNameRegex(nameRegex);
+        setRecursive(recursive);
+        setIncludeFiles(includeFiles);
+        setIncludeFolders(includeFolders);
     }
 
     /**
@@ -161,6 +197,32 @@ public class FindFiles extends TransformationUtility<FindFiles> {
     }
 
     /**
+     * Set whether folders should be included in the search or not.
+     * If not set, the default is {@code false}.
+     *
+     * @param includeFolders whether folders should be included in the search or not
+     * @return this transformation utility instance
+     * @since 2.2.0
+     */
+    public FindFiles setIncludeFolders(boolean includeFolders) {
+        this.includeFolders = includeFolders;
+        return this;
+    }
+
+    /**
+     * Set whether files should be included in the search or not.
+     * If not set, the default is {@code true}.
+     *
+     * @param includeFiles whether files should be included in the search or not
+     * @return this transformation utility instance
+     * @since 2.2.0
+     */
+    public FindFiles setIncludeFiles(boolean includeFiles) {
+        this.includeFiles = includeFiles;
+        return this;
+    }
+
+    /**
      * Returns the file name regular expression
      *
      * @return the file name regular expression
@@ -187,6 +249,24 @@ public class FindFiles extends TransformationUtility<FindFiles> {
         return recursive;
     }
 
+    /**
+     * Returns whether folders should be included in the search or not
+     *
+     * @return whether folders should be included in the search or not
+     */
+    public boolean isIncludeFolders() {
+        return includeFolders;
+    }
+
+    /**
+     * Returns whether files should be included in the search or not
+     *
+     * @return whether files should be included in the search or not
+     */
+    public boolean isIncludeFiles() {
+        return includeFiles;
+    }
+
     @Override
     public String getDescription() {
         String folder = getRelativePath();
@@ -206,9 +286,9 @@ public class FindFiles extends TransformationUtility<FindFiles> {
         }
         final String normalizedPathRegex = _pathRegex;
 
-        IOFileFilter fileFilter = new AbstractFileFilter() {
+        IOFileFilter filter = new AbstractFileFilter() {
             public boolean accept(File file) {
-                if (!file.isFile()) {
+                if ((file.isFile() && !includeFiles) || (file.isDirectory() && !includeFolders)) {
                     return false;
                 }
                 if (nameRegex != null && !file.getName().matches(nameRegex)) {
@@ -223,7 +303,26 @@ public class FindFiles extends TransformationUtility<FindFiles> {
                 return true;
             }
         };
-        Collection<File> files = FileUtils.listFiles(searchRootFolder, fileFilter, (recursive ? TrueFileFilter.INSTANCE : null));
+
+        Collection<File> files = new ArrayList<>();
+        if (includeFiles) {
+            files = FileUtils.listFiles(searchRootFolder, filter, (recursive ? TrueFileFilter.INSTANCE : null));
+        }
+        if (includeFolders) {
+            Collection<File> folders = new ArrayList<>();
+            Collection<File> allFolders = FileUtils.listFilesAndDirs(searchRootFolder, new NotFileFilter(TrueFileFilter.INSTANCE), (recursive ? TrueFileFilter.INSTANCE : DirectoryFileFilter.DIRECTORY));
+            allFolders.remove(searchRootFolder);
+            for (File folder : allFolders) {
+                if (!recursive && !folder.getParentFile().equals(searchRootFolder)) {
+                    continue;
+                }
+                if (filter.accept(folder)) {
+                    folders.add(folder);
+                }
+            }
+            files.addAll(folders);
+        }
+
         TUExecutionResult result = null;
 
         if(files.size() == 0) {

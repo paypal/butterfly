@@ -1,0 +1,2 @@
+// This file was included to intentionally be named the same as an existent folder (src/main/java/com/testapp) to test
+// searching folders based on a specific name. This file should not be found in that test, but the folder of same name should.
