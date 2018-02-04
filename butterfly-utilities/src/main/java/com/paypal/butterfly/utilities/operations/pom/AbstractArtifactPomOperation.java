@@ -154,9 +154,7 @@ public abstract class AbstractArtifactPomOperation<T extends AbstractArtifactPom
 
     @Override
     public int hashCode() {
-        return hashCode(super.hashCode(),
-                groupId,
-                artifactId);
+        return hashCode(super.hashCode(), groupId, artifactId);
     }
 
 }

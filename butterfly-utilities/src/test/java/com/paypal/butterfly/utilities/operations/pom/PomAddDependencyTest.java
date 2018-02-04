@@ -70,6 +70,7 @@ public class PomAddDependencyTest extends TransformationUtilityTestHelper {
         Dependency dependencyAfterChange = getDependencyInList(getTransformedPomModel("pom.xml"), "xmlunit", "xmlunit", "1.7");
         Assert.assertNull(dependencyAfterChange);
 
+        assertNotChangedFile("pom.xml");
     }
 
     @Test
@@ -82,6 +83,9 @@ public class PomAddDependencyTest extends TransformationUtilityTestHelper {
         Dependency dependencyAfterChange = getDependencyInList(getTransformedPomModel("pom.xml"), "xmlunit", "xmlunit", "1.7");
         Assert.assertNull(dependencyAfterChange);
 
+// FIXME
+// Uncomment this when STAX based version of this TO is implemented
+//        assertNotChangedFile("pom.xml");
     }
 
     @Test
@@ -93,7 +97,6 @@ public class PomAddDependencyTest extends TransformationUtilityTestHelper {
         Assert.assertNull(executionResult.getException());
         Dependency dependencyAfterChange = getDependencyInList(getTransformedPomModel("pom.xml"), "xmlunit", "xmlunit", "1.7");
         Assert.assertNotNull(dependencyAfterChange);
-
     }
 
     @Test
@@ -106,6 +109,7 @@ public class PomAddDependencyTest extends TransformationUtilityTestHelper {
         Dependency dependencyAfterChange = getDependencyInList(getTransformedPomModel("pom.xml"), "xmlunit", "xmlunit", "1.7");
         Assert.assertNull(dependencyAfterChange);
 
+        assertNotChangedFile("pom.xml");
     }
 
     @Test
@@ -119,6 +123,7 @@ public class PomAddDependencyTest extends TransformationUtilityTestHelper {
         Dependency dependencyAfterChange = getDependencyInList(getTransformedPomModel("pom.xml"), "xmlunit", "xmlunit", "1.7");
         Assert.assertNull(dependencyAfterChange);
 
+        assertNotChangedFile("pom.xml");
     }
 
     @Test

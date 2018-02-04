@@ -50,6 +50,8 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
 
         assertNotChangedFile("pom.xml");
+
+        assertNotChangedFile("pom.xml");
     }
 
     @Test
@@ -57,6 +59,8 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
         PomRemovePlugin pomRemovePlugin = new PomRemovePlugin("com.zoo", "zoo").relative("pom.xml").noOpIfNotPresent();
         TOExecutionResult executionResult = pomRemovePlugin.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
+
+        assertNotChangedFile("pom.xml");
 
         assertNotChangedFile("pom.xml");
     }
@@ -68,14 +72,20 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.WARNING);
 
         assertEqualsXml("pom.xml");
+
+// FIXME
+// Uncomment this when STAX based version of this TO is implemented
+//        assertNotChangedFile("pom.xml");
     }
 
     @Test
-    public void fileDoesNotExistTest() {
+    public void fileDoesNotExistTest() throws IOException {
         PomRemovePlugin pomRemovePlugin = new PomRemovePlugin("com.foo", "boo").relative("application_zeta.properties");
         TOExecutionResult executionResult = pomRemovePlugin.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertEquals(executionResult.getException().getClass(), FileNotFoundException.class);
+
+        assertNotChangedFile("pom.xml");
     }
 
 }
