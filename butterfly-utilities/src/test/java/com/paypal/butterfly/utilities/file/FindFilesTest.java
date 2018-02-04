@@ -405,7 +405,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertNotNull(executionResult.getValue());
 
         List<File> files = (List<File>) executionResult.getValue();
-        Assert.assertEquals(files.size(), 31);
+        Assert.assertEquals(files.size(), 33);
 
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "src")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "blah")));
@@ -428,7 +428,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertNotNull(executionResult.getValue());
 
         List<File> files = (List<File>) executionResult.getValue();
-        Assert.assertEquals(files.size(), 8);
+        Assert.assertEquals(files.size(), 10);
 
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/resources/more_yaml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/resources/more_yaml/dogs.yaml")));
