@@ -1,7 +1,6 @@
-package com.extensiontest;
+package com.paypal.butterfly.sample;
 
 
-import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.utilities.Abort;
 import com.paypal.butterfly.utilities.conditions.FileExists;
@@ -15,14 +14,14 @@ import java.net.URL;
 
 /**
  * Sample transformation template to migrate the sample-app
- * from a WAR deployment application model to a Spring Boot
- * application model
+ * from a Java EE WAR deployment application model to a
+ * Java Spring Boot application model
  *
  * @author facarvalho
  */
-public class SampleTransformationTemplate extends TransformationTemplate {
+public class JavaEEToSpringBoot extends TransformationTemplate {
 
-    public SampleTransformationTemplate() {
+    public JavaEEToSpringBoot() {
 
         // Checking first it the app has a root pom.xml file,
         // and aborting if not
@@ -58,16 +57,6 @@ public class SampleTransformationTemplate extends TransformationTemplate {
         add(new ReplaceText("(Just deploy its war file to a Servlet container and start it.)", "There are two ways to start the application:").relative("README.md"));
         URL textToBeInserted = getClass().getResource("/README_piece_of_text.txt");
         add(new InsertText(textToBeInserted, "(There are two ways to start the application:)").relative("README.md"));
-    }
-
-    @Override
-    public Class<? extends Extension> getExtensionClass() {
-        return SampleExtension.class;
-    }
-
-    @Override
-    public String getDescription() {
-        return "Sample transformation template";
     }
 
 }

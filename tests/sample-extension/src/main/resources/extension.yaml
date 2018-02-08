@@ -1,0 +1,13 @@
+description: My Spring Boot sample extension
+resolution: com.paypal.butterfly.sample.Resolution
+transform:
+  - class: com.paypal.butterfly.sample.JavaEEToSpringBoot
+    description: Migrate from Java EE WAR to Spring Boot
+#upgrade:
+#  - description: Spring Boot framework upgrade
+#    resolution: com.paypal.butterfly.sample.UpgradeResolution
+#    step:
+#    - version: 1.5.2
+#      class: com.paypal.butterfly.sample.UpgradeStep_1_5_2_to_1_5_3
+#    - version: 1.5.3
+#      class: com.paypal.butterfly.sample.UpgradeStep_1_5_3_to_1_5_4
