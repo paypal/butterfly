@@ -1,15 +1,23 @@
 package com.paypal.butterfly.utilities.file;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.Set;
+
+import org.apache.commons.io.FileUtils;
+
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Loads a resource from the classpath, writes it to a temporary file,
@@ -88,12 +96,17 @@ public class LoadFile extends TransformationUtility<LoadFile> {
                 result = TUExecutionResult.error(this, e);
             } else {
                 String fileNameSuffix = "_" + resource.replace('/', '_').replace('\\', '_');
+                Path filePath = Paths.get(getClass().getClassLoader().getResource(resource).toURI());
+                Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(filePath);
                 File fileFromInputStream = File.createTempFile("butterfly_", fileNameSuffix);
                 FileUtils.copyInputStreamToFile(inputStream, fileFromInputStream);
+                Files.setPosixFilePermissions(Paths.get(fileFromInputStream.getAbsolutePath()), permissions);
                 result = TUExecutionResult.value(this, fileFromInputStream);
             }
         } catch (IOException e) {
             ioException = e;
+            result = TUExecutionResult.error(this, e);
+        } catch (URISyntaxException e) {
             result = TUExecutionResult.error(this, e);
         } finally {
             if (inputStream != null) try {
