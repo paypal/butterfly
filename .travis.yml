@@ -13,8 +13,8 @@ before_script:
   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then gpg --import secring.gpg; fi'
 
 script:
-  # Building and deploying artifacts to Maven Central
-  - mvn -B -s settings.xml deploy -Possrh
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn -B -s settings.xml deploy -Possrh; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then mvn -B clean install; fi'
 
 after_success:
   # Installing Codacy code coverage reporter upload tool
