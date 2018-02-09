@@ -8,14 +8,13 @@ branches:
   only:
   - develop
 
-before_install:
-  # Importing key used to sign jars, necessary for release artifacts deployment in Maven Central
-  - openssl aes-256-cbc -K $encrypted_dd05710e44e2_key -iv $encrypted_dd05710e44e2_iv -in secring.gpg.enc -out secring.gpg -d
-  - gpg --import secring.gpg
+before_script:
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then openssl aes-256-cbc -K $encrypted_dd05710e44e2_key -iv $encrypted_dd05710e44e2_iv -in secring.gpg.enc -out secring.gpg -d; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then gpg --import secring.gpg; fi'
 
-install:
-  # Building and deploying artifacts to Maven Central
-  - mvn -B -s settings.xml deploy -Possrh
+script:
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn -B -s settings.xml deploy -Possrh; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then mvn -B clean install; fi'
 
 after_success:
   # Installing Codacy code coverage reporter upload tool
