@@ -1,15 +1,21 @@
 package com.paypal.butterfly.utilities.file;
 
-import com.paypal.butterfly.extensions.api.TUExecutionResult;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
 
 /**
  * Unit tests for {@link LoadFile}
@@ -33,6 +39,33 @@ public class LoadFileTest extends TransformationUtilityTestHelper {
         Assert.assertNull(executionResult.getException());
         File originalFile = new File(getClass().getResource("/stylesheet.css").toURI());
         Assert.assertTrue(FileUtils.contentEquals(originalFile, loadedFile));
+    }
+
+    @Test
+    public void keepPermissionsTest() throws IOException, URISyntaxException {
+        File originalFile = new File(getClass().getResource("/stylesheet.exe.css").toURI());
+
+        Set<PosixFilePermission> permissions = new HashSet<PosixFilePermission>();
+
+        for (PosixFilePermission permission : PosixFilePermission.values()) {
+            permissions.add(permission);
+        }
+
+        Files.setPosixFilePermissions(Paths.get(originalFile.getAbsolutePath()), permissions);
+
+        LoadFile loadFile =  new LoadFile("stylesheet.exe.css");
+        TUExecutionResult executionResult = loadFile.execution(transformedAppFolder, transformationContext);
+        File loadedFile = (File) executionResult.getValue();
+
+        Set<PosixFilePermission> originalPermissions = Files.getPosixFilePermissions(Paths.get(originalFile.getAbsolutePath()));
+        Set<PosixFilePermission> loadedPermissions   = Files.getPosixFilePermissions(Paths.get(loadedFile.getAbsolutePath()));
+
+        Assert.assertTrue(loadedFile.isFile());
+        Assert.assertNull(executionResult.getException());
+        Assert.assertTrue(FileUtils.contentEquals(originalFile, loadedFile));
+
+        Assert.assertEquals(permissions, originalPermissions);
+        Assert.assertEquals(originalPermissions, loadedPermissions);
     }
 
     @Test
