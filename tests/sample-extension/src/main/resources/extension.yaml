@@ -1,3 +1,5 @@
+id: sb-sample-extension
+version: 1.0.0
 description: My Spring Boot sample extension
 resolution: com.paypal.butterfly.sample.Resolution
 transform:

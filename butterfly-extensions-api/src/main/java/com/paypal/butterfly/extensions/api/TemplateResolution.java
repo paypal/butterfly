@@ -4,7 +4,7 @@ import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException
 
 import java.io.File;
 
-public interface AutomaticResolution {
+public interface TemplateResolution {
 
     /**
      * Butterfly might be able to automatically identify, based on the application
