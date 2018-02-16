@@ -21,7 +21,7 @@ Make sure to follow the code style of the existing code. That means for example 
 ## Commit messages
 When committing, make sure the commit message is describing what is changed and why. See the example below.
 
-    [issue id] a short description
+    #issue_id short description
     A more detailed description
 
 ## Communication
