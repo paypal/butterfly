@@ -15,6 +15,15 @@ Before installing Butterfly, make sure you have Java 7, or newer, installed (run
 1. Cd to the `butterfly` folder and run `butterfly`. If you see its help, Butterfly has been installed properly
 1. Run `butterfly –l` and notice that you have no Butterfly extensions at this point
 
+You would get a similar output on running the above command without any Butterfly extensions.
+```
+Starting ButterflyCliApp on Amriteyas-Mac with PID 61757 (/Users/amriteya/dev-amriteya/butterfly/lib/butterfly-cli-2.2.0.jar started by amriteya in /Users/amriteya/dev-amriteya/butterfly)
+No active profile set, falling back to default profiles: default
+Started ButterflyCliApp in 0.965 seconds (JVM running for 1.427)
+Butterfly application transformation tool (version 2.2.0)
+There are no registered extensions
+```
+
 ## Installing a Butterfly extension
 
 If you are not familiar with "Butterfly extensions", then read [What is a Butterfly extension?](https://paypal.github.io/butterfly/Extension-development-guide).
@@ -23,6 +32,18 @@ Follow the steps bellow to install a Butterfly extension.
 
 1. Copy its jar file to the `extensions` folder under Butterfly installation folder
 1. Run `butterfly –l` and check if your extension has been installed
+
+You would get a similar output on installing the extension listed on [Quick-Start](https://paypal.github.io/butterfly/QUICK_START) page.
+```
+Starting ButterflyCliApp on Amriteyas-Mac with PID 62897 (/Users/amriteya/dev-amriteya/butterfly/lib/butterfly-cli-2.2.0.jar started by amriteya in /Users/amriteya/dev-amriteya/butterfly)
+No active profile set, falling back to default profiles: default
+Started ButterflyCliApp in 0.909 seconds (JVM running for 1.397)
+Butterfly application transformation tool (version 2.2.0)
+See registered extensions below (shortcut in parenthesis)
+
+- com.extensiontest.SampleExtension: Sample extension (version 1.0.0)
+	 (1) - [TT] 	 com.extensiontest.SampleTransformationTemplate 	 Sample transformation template
+```
 
 ### If your Butterfly extension needs Maven
 
