@@ -10,6 +10,10 @@
       1. commit only javadocs `Adding javadocs for version x`
    1. doc
       1. update zip link in `Installing-Butterfly.md`
+   1. homebrew formula [brew package](https://github.com/paypal/homebrew-butterfly/blob/master/Formula/butterfly.rb)
+      1. update zip link
+      1. update sha256
+      1. verify brew can update or install new version
    1. sample extension
       1. update `butterfly.version` in `tests/sample-extension/pom.xml`
       1. build and test it
