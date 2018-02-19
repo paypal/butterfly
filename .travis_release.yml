@@ -1,0 +1,32 @@
+language: java
+sudo: required
+
+jdk:
+  - oraclejdk8
+
+branches:
+  only:
+  - master
+
+before_install:
+  - openssl aes-256-cbc -K $encrypted_dd05710e44e2_key -iv $encrypted_dd05710e44e2_iv -in secring.gpg.enc -out secring.gpg -d
+  - gpg --import secring.gpg
+
+install:
+  - mvn -B install
+
+after_success:
+  # Installing Codacy code coverage reporter upload tool
+  - wget https://github.com/codacy/codacy-coverage-reporter/releases/download/1.0.13/codacy-coverage-reporter-1.0.13-assembly.jar -O ccr.jar
+  # Uploading Cobertura report to Codacy
+  - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-cli/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
+  - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-cli-package/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
+  - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-core/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
+  - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-extensions-api/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
+  - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-facade/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
+  - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-metrics-couchdb/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
+  - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-metrics-file/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
+  - java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./butterfly-utilities/target/site/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN
+
+deploy:
+  - mvn -B -s settings.xml deploy -Possrh
