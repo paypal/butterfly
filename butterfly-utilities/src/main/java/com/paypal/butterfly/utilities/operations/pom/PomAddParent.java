@@ -115,8 +115,9 @@ public class PomAddParent extends AbstractStaxArtifactPomOperation<PomAddParent>
                 case NoOp:
                     return TOExecutionResult.noOp(this, message);
                 case Fail:
-                    // Fail is the default
                     return TOExecutionResult.error(this, new TransformationOperationException(message));
+                default:
+                    break;
             }
         }
 
