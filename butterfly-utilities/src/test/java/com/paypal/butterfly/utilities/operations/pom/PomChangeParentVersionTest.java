@@ -3,10 +3,8 @@ package com.paypal.butterfly.utilities.operations.pom;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
-import com.paypal.butterfly.utilities.operations.pom.PomChangeParentVersion;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -32,8 +30,8 @@ public class PomChangeParentVersionTest extends TransformationUtilityTestHelper 
 
         TOExecutionResult executionResult = pomChangeParentVersion.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
-        Assert.assertEquals(pomChangeParentVersion.getDescription(), "Change artifact's parent version in POM file pom.xml");
-        Assert.assertNull(executionResult.getException());
+        assertEquals(pomChangeParentVersion.getDescription(), "Change artifact's parent version in POM file pom.xml");
+        assertNull(executionResult.getException());
 
         Model pomModelAfterChange = getTransformedPomModel("pom.xml");
         assertEquals(pomModelAfterChange.getParent().getVersion(), "2.0");
@@ -50,8 +48,8 @@ public class PomChangeParentVersionTest extends TransformationUtilityTestHelper 
 
         TOExecutionResult executionResult = pomChangeParentVersion.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
-        Assert.assertEquals(pomChangeParentVersion.getDescription(), "Change artifact's parent version in POM file /src/main/resources/no_parent_pom.xml");
-        Assert.assertNull(executionResult.getException());
+        assertEquals(pomChangeParentVersion.getDescription(), "Change artifact's parent version in POM file /src/main/resources/no_parent_pom.xml");
+        assertNull(executionResult.getException());
 
         Model pomModelAfterChange = getTransformedPomModel("/src/main/resources/no_parent_pom.xml");
         assertNull(pomModelAfterChange.getParent());
@@ -71,11 +69,11 @@ public class PomChangeParentVersionTest extends TransformationUtilityTestHelper 
 
         TOExecutionResult executionResult = pomChangeParentVersion.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.WARNING);
-        Assert.assertEquals(pomChangeParentVersion.getDescription(), "Change artifact's parent version in POM file /src/main/resources/no_parent_pom.xml");
-        Assert.assertNull(executionResult.getException());
-        Assert.assertEquals(executionResult.getWarnings().size(), 1);
-        Assert.assertEquals(executionResult.getWarnings().get(0).getClass(), TransformationOperationException.class);
-        Assert.assertEquals(executionResult.getWarnings().get(0).getMessage(), "Pom file /src/main/resources/no_parent_pom.xml does not have a parent");
+        assertEquals(pomChangeParentVersion.getDescription(), "Change artifact's parent version in POM file /src/main/resources/no_parent_pom.xml");
+        assertNull(executionResult.getException());
+        assertEquals(executionResult.getWarnings().size(), 1);
+        assertEquals(executionResult.getWarnings().get(0).getClass(), TransformationOperationException.class);
+        assertEquals(executionResult.getWarnings().get(0).getMessage(), "Pom file /src/main/resources/no_parent_pom.xml does not have a parent");
 
         Model pomModelAfterChange = getTransformedPomModel("/src/main/resources/no_parent_pom.xml");
         assertNull(pomModelAfterChange.getParent());
@@ -94,9 +92,9 @@ public class PomChangeParentVersionTest extends TransformationUtilityTestHelper 
 
         TOExecutionResult executionResult = pomChangeParentVersion.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
-        Assert.assertEquals(pomChangeParentVersion.getDescription(), "Change artifact's parent version in POM file /src/main/resources/no_parent_pom.xml");
-        Assert.assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
-        Assert.assertEquals(executionResult.getException().getMessage(), "Pom file /src/main/resources/no_parent_pom.xml does not have a parent");
+        assertEquals(pomChangeParentVersion.getDescription(), "Change artifact's parent version in POM file /src/main/resources/no_parent_pom.xml");
+        assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
+        assertEquals(executionResult.getException().getMessage(), "Pom file /src/main/resources/no_parent_pom.xml does not have a parent");
 
         Model pomModelAfterChange = getTransformedPomModel("/src/main/resources/no_parent_pom.xml");
         assertNull(pomModelAfterChange.getParent());
@@ -115,9 +113,9 @@ public class PomChangeParentVersionTest extends TransformationUtilityTestHelper 
 
         TOExecutionResult executionResult = pomChangeParentVersion.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
-        Assert.assertEquals(pomChangeParentVersion.getDescription(), "Change artifact's parent version in POM file /src/main/resources/dogs.yaml");
-        Assert.assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
-        Assert.assertEquals(executionResult.getException().getMessage(), "An error happened when reading XML file /src/main/resources/dogs.yaml");
+        assertEquals(pomChangeParentVersion.getDescription(), "Change artifact's parent version in POM file /src/main/resources/dogs.yaml");
+        assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
+        assertEquals(executionResult.getException().getMessage(), "An error happened when reading XML file /src/main/resources/dogs.yaml");
         assertNotChangedFile("/src/main/resources/dogs.yaml");
 
         executionResult = pomChangeParentVersion.clone().failIfNotPresent().execution(transformedAppFolder, transformationContext);
