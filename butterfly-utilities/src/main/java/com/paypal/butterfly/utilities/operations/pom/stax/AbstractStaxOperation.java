@@ -4,6 +4,7 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.xml.XmlIndentation;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import javax.xml.stream.*;
