@@ -3,6 +3,7 @@ package com.paypal.butterfly.utilities.operations.file;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.commons.io.FileUtils;
 
@@ -11,6 +12,7 @@ import java.io.IOException;
 
 /**
  * Deletes a single file or folder (empty or not).
+ * If the specified file does not exist, the result will be a {@link TOExecutionResult.Type#NO_OP}.
  *
  * @author facarvalho
  */
@@ -27,6 +29,7 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
     @SuppressWarnings("PMD.UnnecessaryConstructor")
     /**
      * Deletes a single file or folder (empty or not).
+     * If the specified file does not exist, the result will be a {@link TOExecutionResult.Type#NO_OP}.
      */
     public DeleteFile() {
     }
@@ -42,8 +45,10 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
         try {
             fileToBeRemoved = getAbsoluteFile(transformedAppFolder, transformationContext);
         } catch (TransformationUtilityException e) {
-            String result = String.format("No file has been removed because file path has not been resolved");
-            return TOExecutionResult.noOp(this, result);
+            // TODO
+            // This error should be done automatically for every TO in the TransformationOperation class
+            TransformationOperationException toe = new TransformationOperationException("No file has been removed because the file path has not been resolved");
+            return TOExecutionResult.error(this, toe);
         }
         if(!fileToBeRemoved.exists()) {
             String result = String.format("File '%s' was not removed because it does not exist", getRelativePath());

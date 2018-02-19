@@ -219,7 +219,7 @@ public abstract class TransformationUtilityTestHelper {
         return getPomModel( new File(transformedAppFolder, relativeFilePath));
     }
 
-    private Model getPomModel(File pomFile ) throws IOException, XmlPullParserException {
+    private Model getPomModel(File pomFile) throws IOException, XmlPullParserException {
         FileInputStream inputStream = null;
         try {
             MavenXpp3Reader reader = new MavenXpp3Reader();
