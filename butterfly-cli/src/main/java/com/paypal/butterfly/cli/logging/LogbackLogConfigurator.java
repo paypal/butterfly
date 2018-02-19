@@ -64,7 +64,7 @@ public class LogbackLogConfigurator extends LogConfigurator {
 
             loggerContext.getLogger("com.paypal.butterfly.cli").detachAppender("CONSOLE");
             loggerContext.getLogger("ROOT").addAppender(consoleAppender);
-        } else {
+//        } else {
             // TODO
         }
     }
