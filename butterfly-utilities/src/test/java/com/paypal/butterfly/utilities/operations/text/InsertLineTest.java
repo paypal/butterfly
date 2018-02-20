@@ -1,6 +1,7 @@
 package com.paypal.butterfly.utilities.operations.text;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -21,8 +22,9 @@ public class InsertLineTest extends TransformationUtilityTestHelper {
 
     @Test
     public void noOpRegexTest() throws IOException {
-        InsertLine insertLine = new InsertLine("   color: yellow", "   name: Billy").relative("/src/main/resources/dogs.yaml");
+        InsertLine insertLine = new InsertLine().setNewLine("   color: yellow").setRegex("   name: Billy").relative("/src/main/resources/dogs.yaml");
         TOExecutionResult executionResult = insertLine.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(insertLine.getDescription(), "Insert new line(s) into /src/main/resources/dogs.yaml");
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
 
         assertNotChangedFile("/src/main/resources/dogs.yaml");
@@ -80,8 +82,77 @@ public class InsertLineTest extends TransformationUtilityTestHelper {
     }
 
     @Test
-    public void insertConcatTest() throws IOException {
+    public void insertRegexAtEndTest() throws IOException {
         InsertLine insertLine = new InsertLine("   fixed: false", "(.*breed: pit bull.*)").relative("/src/main/resources/dogs.yaml");
+        TOExecutionResult executionResult = insertLine.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+
+        assertChangedFile("/src/main/resources/dogs.yaml");
+        assertLineCount("/src/main/resources/dogs.yaml", 1);
+
+        Map<String, Dog> dogs = (Map) getObjectFromYaml("/src/main/resources/dogs.yaml");
+
+        Assert.assertEquals(dogs.size(), 2);
+
+        Dog dog = dogs.get("Mustache");
+        Assert.assertEquals(dog.getName(), "Mustache");
+        Assert.assertEquals(dog.getBreed(), "pit bull");
+        Assert.assertEquals(dog.isFixed(), false);
+    }
+
+    @Test
+    public void insertFirstBeforeRegexTest() throws IOException, URISyntaxException {
+        InsertLine insertLine = new InsertLine("   color: black and white", "Mustache: !sample\\.code\\.Dog").relative("/src/main/resources/dogs.yaml");
+        insertLine.setInsertionMode(InsertLine.InsertionMode.REGEX_BEFORE_FIRST);
+        TOExecutionResult executionResult = insertLine.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+
+        assertChangedFile("/src/main/resources/dogs.yaml");
+        assertLineCount("/src/main/resources/dogs.yaml", 1);
+
+        Map<String, Dog> dogs = (Map) getObjectFromYaml("/src/main/resources/dogs.yaml");
+        Dog mustache = dogs.get("Toby");
+        Assert.assertEquals(mustache.getColor(), "black and white");
+    }
+
+    @Test
+    public void insertAllBeforeRegexTest() throws IOException {
+        InsertLine insertLine = new InsertLine("   color: gray", "(   breed:.*)").relative("/src/main/resources/dogs.yaml");
+        insertLine.setInsertionMode(InsertLine.InsertionMode.REGEX_BEFORE_ALL);
+        TOExecutionResult executionResult = insertLine.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+
+        assertChangedFile("/src/main/resources/dogs.yaml");
+        assertLineCount("/src/main/resources/dogs.yaml", 2);
+
+        Map<String, Dog> dogs = (Map) getObjectFromYaml("/src/main/resources/dogs.yaml");
+        Assert.assertEquals(dogs.get("Toby").getColor(), "gray");
+        Assert.assertEquals(dogs.get("Mustache").getColor(), "gray");
+    }
+
+    @Test
+    public void insertBeforeRegexAtEndTest() throws IOException {
+        InsertLine insertLine = new InsertLine("   fixed: false", "(.*breed: pit bull.*)").relative("/src/main/resources/dogs.yaml");
+        insertLine.setInsertionMode(InsertLine.InsertionMode.REGEX_BEFORE_FIRST);
+        TOExecutionResult executionResult = insertLine.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+
+        assertChangedFile("/src/main/resources/dogs.yaml");
+        assertLineCount("/src/main/resources/dogs.yaml", 1);
+
+        Map<String, Dog> dogs = (Map) getObjectFromYaml("/src/main/resources/dogs.yaml");
+
+        Assert.assertEquals(dogs.size(), 2);
+
+        Dog dog = dogs.get("Mustache");
+        Assert.assertEquals(dog.getName(), "Mustache");
+        Assert.assertEquals(dog.getBreed(), "pit bull");
+        Assert.assertEquals(dog.isFixed(), false);
+    }
+
+    @Test
+    public void insertConcatTest() throws IOException {
+        InsertLine insertLine = new InsertLine("   fixed: false").relative("/src/main/resources/dogs.yaml");
         TOExecutionResult executionResult = insertLine.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
@@ -132,6 +203,32 @@ public class InsertLineTest extends TransformationUtilityTestHelper {
         TOExecutionResult executionResult = insertLine.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         Assert.assertEquals(executionResult.getException().getClass(), FileNotFoundException.class);
+    }
+
+    @Test(expectedExceptions = TransformationDefinitionException.class, expectedExceptionsMessageRegExp = "Line number cannot be negative or zero")
+    public void invalidLineNumberTest1() {
+        InsertLine insertLine = new InsertLine("   color: yellow").relative("/src/main/resources/dogs.yaml");
+        insertLine.setLineNumber(-1);
+    }
+
+    @Test(expectedExceptions = TransformationDefinitionException.class, expectedExceptionsMessageRegExp = "Line number cannot be negative or zero")
+    public void invalidLineNumberTest2() {
+        InsertLine insertLine = new InsertLine("   color: yellow").relative("/src/main/resources/dogs.yaml");
+        insertLine.setLineNumber(0);
+    }
+
+    @Test
+    public void invalidLineNumberTest3() {
+        InsertLine insertLine = new InsertLine("   color: yellow").relative("/src/main/resources/dogs.yaml");
+        insertLine.setLineNumber(39);
+        TOExecutionResult executionResult = insertLine.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
+        Assert.assertNull(executionResult.getException());
+
+        insertLine.clone().setLineNumber(7);
+        executionResult = insertLine.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
+        Assert.assertNull(executionResult.getException());
     }
 
 }

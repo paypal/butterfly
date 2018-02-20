@@ -7,10 +7,12 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 
 /**
- * Changes the parent, or its version, in a Maven POM file.
+ * This transformation utility is deprecated.
+ * Please use {@link PomAddParent} or {@link PomChangeParentVersion} instead.
  *
  * @author facarvalho
  */
+@Deprecated
 public class PomChangeParent extends AbstractArtifactPomOperation<PomChangeParent> implements ChangeOrRemoveElement<PomChangeParent> {
 
     private static final String DESCRIPTION = "Change parent artifact in POM file %s";

@@ -198,6 +198,12 @@ public class ButterflyCliRunner extends ButterflyCliOption {
         } catch (ClassNotFoundException e) {
             registerError(run, "The specified transformation template class has not been found", e);
             return run;
+        } catch (IllegalArgumentException e) {
+            registerError(run, "This transformation request input arguments are invalid", e);
+            return run;
+        } catch (Exception e) {
+            registerError(run, "An unexpected exception happened when processing this transformation request", e);
+            return run;
         }
 
         return run;
@@ -250,10 +256,12 @@ public class ButterflyCliRunner extends ButterflyCliOption {
     }
 
     private void registerError(ButterflyCliRun run, String errorMessage, Exception exception) {
-        if (exception == null) {
+        if (exception == null || !logConfigurator.isVerboseMode()) {
             logger.error(errorMessage);
         } else {
             logger.error(errorMessage, exception);
+        }
+        if (exception != null) {
             run.setExceptionMessage(exception.getMessage());
         }
         run.setErrorMessage(errorMessage);

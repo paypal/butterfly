@@ -1,6 +1,21 @@
 
 # Release notes
 
+## 2.3.0
+
+#### Release date
+February 20th, 2018.
+
+#### New features and enhancements
+* [52 - Create Butterfly brew installer](https://github.com/paypal/butterfly/issues/52)
+* [87 - Add `butterfly -l` output samples to how-to install document](https://github.com/paypal/butterfly/issues/87)
+* [95 - Create a TU that, given a XML file, returns the indentation used on it](https://github.com/paypal/butterfly/issues/95)
+* [51 - InsertLine TU should allow insertions before the matched line](https://github.com/paypal/butterfly/issues/51)
+* [84 - Add TOs to add or change pom file parent preserving file formatting and comments](https://github.com/paypal/butterfly/issues/84)
+
+#### Bug fixes
+* [82 - If an inexistent version is requested with u argument, the error is not reported properly](https://github.com/paypal/butterfly/issues/82)
+
 ## 2.2.0
 
 #### Release date

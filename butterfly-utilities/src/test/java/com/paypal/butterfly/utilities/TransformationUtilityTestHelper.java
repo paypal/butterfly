@@ -66,7 +66,8 @@ public abstract class TransformationUtilityTestHelper {
      * @throws IOException
      */
     protected void assertNotChangedFile(String relativeFilePath) throws IOException {
-        Assert.assertFalse(fileHasChanged(relativeFilePath));
+        String message = String.format("File %s was not expected to change, but it did.", relativeFilePath);
+        Assert.assertFalse(fileHasChanged(relativeFilePath), message);
     }
 
     /**
@@ -218,7 +219,7 @@ public abstract class TransformationUtilityTestHelper {
         return getPomModel( new File(transformedAppFolder, relativeFilePath));
     }
 
-    private Model getPomModel(File pomFile ) throws IOException, XmlPullParserException {
+    private Model getPomModel(File pomFile) throws IOException, XmlPullParserException {
         FileInputStream inputStream = null;
         try {
             MavenXpp3Reader reader = new MavenXpp3Reader();

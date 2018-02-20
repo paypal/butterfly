@@ -77,15 +77,15 @@ public class EolBufferedReader {
     }
 
     /**
-     * Some times it might be preferable to read a text file line by line, but keeping the EOL character(s)
+     * Sometimes it might be preferable to read a text file line by line, but keeping the EOL character(s)
      * in the beginning of the next line, instead of the in the end of the previous one.
      * This method reads a line of text preserving end-of-line (EOL) characters in the beginning of the line.
      * A line is considered to be terminated by any one of a line feed ('\n'), a carriage return ('\r'),
      * or a carriage return followed immediately by a linefeed.
      *
      * @return A String containing the contents of the line, including
-     *         any EOL characters in the end of the line, or null if the end of the
-     *         stream has been reached
+     *         any EOL characters in the beginning of the line (unless the returned line is the first),
+     *         or null if the end of the stream has been reached
      * @throws IOException if an I/O error occurs
      */
     public String readLineKeepStartEol() throws IOException {

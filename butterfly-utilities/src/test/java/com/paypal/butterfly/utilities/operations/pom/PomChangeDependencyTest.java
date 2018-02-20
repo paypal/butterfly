@@ -21,7 +21,6 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertEquals(getDependencyBeforeChange(uut).getVersion(), null);
         executeAndAssertSuccess(uut);
         assertEquals(getDependencyAfterChange(uut).getVersion(), "6.11");
-
     }
 
     @Test
@@ -31,7 +30,6 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertEquals(getDependencyBeforeChange(uut).getVersion(), "3.4");
         executeAndAssertSuccess(uut);
         assertEquals(getDependencyAfterChange(uut).getVersion(), "3.5");
-
     }
 
     @Test
@@ -41,7 +39,6 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertEquals(getDependencyBeforeChange(uut).getVersion(), "3.4");
         executeAndAssertSuccess(uut);
         assertNull(getDependencyAfterChange(uut).getVersion());
-
     }
 
     @Test
@@ -51,7 +48,6 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertEquals(getDependencyBeforeChange(uut).getScope(), null);
         executeAndAssertSuccess(uut);
         assertEquals(getDependencyAfterChange(uut).getScope(), "test");
-
     }
 
     @Test
@@ -61,7 +57,6 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertEquals(getDependencyBeforeChange(uut).getScope(), "test");
         executeAndAssertSuccess(uut);
         assertEquals(getDependencyAfterChange(uut).getScope(), "compile");
-
     }
 
     @Test
@@ -71,7 +66,6 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertEquals(getDependencyBeforeChange(uut).getScope(), "test");
         executeAndAssertSuccess(uut);
         assertEquals(getDependencyAfterChange(uut).getScope(), null);
-
     }
 
     @Test
@@ -82,7 +76,6 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertEquals(getDependencyBeforeChange(uut).getType(), "jar");
         executeAndAssertSuccess(uut);
         assertEquals(getDependencyAfterChange(uut).getType(), "pom");
-
     }
 
     @Test
@@ -92,7 +85,6 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertEquals(getDependencyBeforeChange(uut).getType(), "pom");
         executeAndAssertSuccess(uut);
         assertEquals(getDependencyAfterChange(uut).getType(), "jar");
-
     }
 
     @Test
@@ -103,7 +95,6 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         executeAndAssertSuccess(uut);
         // Removing the type sets it to "jar"
         assertEquals(getDependencyAfterChange(uut).getType(), "jar");
-
     }
 
     @Test
@@ -113,7 +104,6 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertFalse(getDependencyBeforeChange(uut).isOptional());
         executeAndAssertSuccess(uut);
         assertTrue(getDependencyAfterChange(uut).isOptional());
-
     }
 
     @Test
@@ -123,7 +113,6 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertFalse(getDependencyBeforeChange(uut).isOptional());
         executeAndAssertSuccess(uut);
         assertTrue(getDependencyAfterChange(uut).isOptional());
-
     }
 
     @Test
@@ -133,7 +122,6 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertTrue(getDependencyBeforeChange(uut).isOptional());
         executeAndAssertSuccess(uut);
         assertFalse(getDependencyAfterChange(uut).isOptional());
-
     }
 
     @Test
@@ -145,6 +133,7 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertNotNull(executionResult.getException());
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
 
+        assertNotChangedFile("pom.xml");
     }
 
     @Test
@@ -156,6 +145,9 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertNull(executionResult.getException());
         assertEquals(executionResult.getWarnings().get(0).getClass(), TransformationOperationException.class);
 
+// FIXME
+// Uncomment this when STAX based version of this TO is implemented
+//        assertNotChangedFile("pom.xml");
     }
 
     @Test
@@ -167,6 +159,7 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertNotNull(executionResult.getException());
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
 
+        assertNotChangedFile("pom.xml");
     }
 
     @Test
@@ -177,6 +170,7 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
         assertNull(executionResult.getException());
 
+        assertNotChangedFile("pom.xml");
     }
 
     @Test
@@ -185,7 +179,6 @@ public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
 
         String description = uut.getDescription();
         assertEquals(description, "Change dependency org.testng:testng in POM file pom.xml");
-
     }
 
     private Dependency getDependencyBeforeChange(PomChangeDependency pomChangeDependency) throws IOException, XmlPullParserException {

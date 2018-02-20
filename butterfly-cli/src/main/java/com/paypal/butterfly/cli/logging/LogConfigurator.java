@@ -39,4 +39,6 @@ public abstract class LogConfigurator {
 
     public abstract void setLogToFile(boolean on);
 
+    public abstract boolean isVerboseMode();
+
 }

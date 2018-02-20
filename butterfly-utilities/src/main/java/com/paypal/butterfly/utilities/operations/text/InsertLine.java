@@ -19,9 +19,11 @@ import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
  * The new line can be inserted:
  * <ol>
  *     <li>InsertionMode.CONCAT: At the final of the file (default)</li>
- *     <li>InsertionMode.LINE_NUMBER: At one particular specified line number (first line is number 1)</li>
+ *     <li>InsertionMode.LINE_NUMBER: At one particular specified line number (first line is number 1). If the specified number is greater than the number of lines, then a {@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type#NO_OP} will be returned</li>
  *     <li>InsertionMode.REGEX_FIRST: Right after only the first line to match the specified regular expression</li>
  *     <li>InsertionMode.REGEX_ALL: Right after any line to match the specified regular expression</li>
+ *     <li>InsertionMode.REGEX_BEFORE_FIRST: Right before only the first line to match the specified regular expression</li>
+ *     <li>InsertionMode.REGEX_BEFORE_ALL: Right before any line to match the specified regular expression</li>
  * </ol>
  * See {@link #setInsertionMode(InsertionMode)}.
 
@@ -34,13 +36,20 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * The new line(s) can be inserted:
      * <ol>
      *     <li>InsertionMode.CONCAT: At the final of the file (default)</li>
-     *     <li>InsertionMode.LINE_NUMBER: At one particular specified line number (first line is number 1)</li>
+     *     <li>InsertionMode.LINE_NUMBER: At one particular specified line number (first line is number 1). If the specified number is greater than the number of lines, then a {@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type#NO_OP} will be returned</li>
      *     <li>InsertionMode.REGEX_FIRST: Right after only the first line to match the specified regular expression</li>
      *     <li>InsertionMode.REGEX_ALL: Right after any line to match the specified regular expression</li>
+     *     <li>InsertionMode.REGEX_BEFORE_FIRST: Right before only the first line to match the specified regular expression</li>
+     *     <li>InsertionMode.REGEX_BEFORE_ALL: Right before any line to match the specified regular expression</li>
      * </ol>
      */
     public enum InsertionMode {
-        CONCAT, LINE_NUMBER, REGEX_FIRST, REGEX_ALL
+        CONCAT,
+        LINE_NUMBER,
+        REGEX_FIRST,
+        REGEX_ALL,
+        REGEX_BEFORE_FIRST,
+        REGEX_BEFORE_ALL
     }
 
     private static final String DESCRIPTION = "Insert new line(s) into %s";
@@ -55,9 +64,11 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * The new line can be inserted:
      * <ol>
      *     <li>InsertionMode.CONCAT: At the final of the file (default)</li>
-     *     <li>InsertionMode.LINE_NUMBER: At one particular specified line number (first line is number 1)</li>
+     *     <li>InsertionMode.LINE_NUMBER: At one particular specified line number (first line is number 1). If the specified number is greater than the number of lines, then a {@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type#NO_OP} will be returned</li>
      *     <li>InsertionMode.REGEX_FIRST: Right after only the first line to match the specified regular expression</li>
      *     <li>InsertionMode.REGEX_ALL: Right after any line to match the specified regular expression</li>
+     *     <li>InsertionMode.REGEX_BEFORE_FIRST: Right before only the first line to match the specified regular expression</li>
+     *     <li>InsertionMode.REGEX_BEFORE_ALL: Right before any line to match the specified regular expression</li>
      * </ol>
      * See {@link #setInsertionMode(InsertionMode)}.
      *
@@ -140,6 +151,8 @@ public class InsertLine extends TransformationOperation<InsertLine> {
     /**
      * Sets the line number the new line should be added at.
      * Line number for first line is 1.
+     * If the specified number is greater than the number of lines,
+     * then a {@link com.paypal.butterfly.extensions.api.TOExecutionResult.Type#NO_OP} will be returned.
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#LINE_NUMBER}.
      *
@@ -160,7 +173,8 @@ public class InsertLine extends TransformationOperation<InsertLine> {
      * Sets the regular expression to find insertion points
      * Notice that the insertion mode is automatically set to
      * {@link InsertionMode#REGEX_FIRST}, unless already set
-     * to {@link InsertionMode#REGEX_ALL}.
+     * to {@link InsertionMode#REGEX_ALL}, {@link InsertionMode#REGEX_BEFORE_FIRST}
+     * or {@link InsertionMode#REGEX_BEFORE_ALL}.
      * <br>
      * See {@link #setInsertionMode(InsertionMode)}.
      *
@@ -171,7 +185,9 @@ public class InsertLine extends TransformationOperation<InsertLine> {
     public InsertLine setRegex(String regex) {
         checkForBlankString("Regex", regex);
         this.regex = regex;
-        if (!insertionMode.equals(InsertionMode.REGEX_ALL)) {
+        if (!insertionMode.equals(InsertionMode.REGEX_ALL)
+                && !insertionMode.equals(InsertionMode.REGEX_BEFORE_FIRST)
+                && !insertionMode.equals(InsertionMode.REGEX_BEFORE_ALL)) {
             setInsertionMode(InsertionMode.REGEX_FIRST);
         }
         return this;
@@ -208,10 +224,16 @@ public class InsertLine extends TransformationOperation<InsertLine> {
                     result = insertAtSpecificLine(reader, writer, eol);
                     break;
                 case REGEX_FIRST:
-                    result = insertAfterRegex(reader, writer, true, eol);
+                    result = insertRegex(reader, writer, true, true, eol);
                     break;
                 case REGEX_ALL:
-                    result = insertAfterRegex(reader, writer, false, eol);
+                    result = insertRegex(reader, writer, false, true, eol);
+                    break;
+                case REGEX_BEFORE_FIRST:
+                    result = insertRegex(reader, writer, true, false, eol);
+                    break;
+                case REGEX_BEFORE_ALL:
+                    result = insertRegex(reader, writer, false, false, eol);
                     break;
                 default:
                 case CONCAT:
@@ -264,7 +286,7 @@ public class InsertLine extends TransformationOperation<InsertLine> {
         }
     }
 
-    private TOExecutionResult insertAfterRegex(BufferedReader reader, BufferedWriter writer, boolean firstOnly, String eol) throws IOException {
+    private TOExecutionResult insertRegex(BufferedReader reader, BufferedWriter writer, boolean firstOnly, boolean insertAfter, String eol) throws IOException {
         String currentLine;
         int n = 0;
         boolean foundFirstMatch = false;
@@ -272,19 +294,26 @@ public class InsertLine extends TransformationOperation<InsertLine> {
         EolBufferedReader eolReader = new EolBufferedReader(reader);
 
         while((currentLine = eolReader.readLineKeepEol()) != null) {
-            writer.write(currentLine);
+            if (insertAfter) {
+                writer.write(currentLine);
+            }
             if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEol(currentLine)).matches()) {
                 foundFirstMatch = true;
                 n++;
-                if (getEndEol(currentLine) == null) writer.write(eol);
+                if (insertAfter && getEndEol(currentLine) == null) {
+                    writer.write(eol);
+                }
                 writer.write(newLine);
                 writer.write(eol);
+            }
+            if (!insertAfter) {
+                writer.write(currentLine);
             }
         }
 
         String details;
         if (foundFirstMatch) {
-            details = String.format("New line(s) has been inserted into %s after %d line(s) that matches regular expression '%s'", getRelativePath(), n, regex);
+            details = String.format("New line(s) has been inserted into %s %s %d line(s) that matches regular expression '%s'", getRelativePath(), (insertAfter? "after": "before"), n, regex);
             return TOExecutionResult.success(this, details);
         } else {
             details = String.format("No new line has been inserted into %s, since no line has been found to match regular expression '%s'", getRelativePath(), regex);

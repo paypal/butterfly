@@ -12,6 +12,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
+import static com.paypal.butterfly.utilities.operations.EolHelper.getEndEol;
 import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
@@ -293,6 +294,9 @@ public class InsertText extends TransformationOperation<InsertText> {
             if((!firstOnly || !foundFirstMatch) && pattern.matcher(removeEol(currentLine)).matches()) {
                 foundFirstMatch = true;
                 n++;
+                if (getEndEol(currentLine) == null) {
+                    writer.write(eol);
+                }
                 if (n == 1) {
                     while((currentLine = readerText.readLine()) != null) {
                         writer.write(currentLine);
