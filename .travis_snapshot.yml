@@ -1,15 +1,2 @@
-language: java
-sudo: required
-
-jdk:
-  - oraclejdk8
-
-branches:
-  only:
-  - develop
-
 install:
-  - mvn -B install
-
-deploy:
-  - mvn -B -s settings.xml deploy -Possrh
+  - mvn -s settings.xml deploy -Possrh

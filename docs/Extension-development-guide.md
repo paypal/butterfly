@@ -15,7 +15,7 @@ As an analogy, if **Butterfly is a cook**, then **the recipe is the transformati
 
 Butterfly offers a **Service Provider Interface (SPI)** allowing the **transfomration engine** to be completely detached from **transformation templates**. This flexible architecture allows anyone to write transformation templates and plug them easily into Butterfly.
 
-This SPI is represented by [butterfly-extensions-api](https://paypal.github.io/butterfly/javadocs/2.2.0/butterfly-extensions-api/index.html).
+This SPI is represented by [butterfly-extensions-api](https://paypal.github.io/butterfly/javadocs/2.3.0/butterfly-extensions-api/index.html).
 
 ### How to install an extension
 
