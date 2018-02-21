@@ -9,7 +9,7 @@ branches:
   - develop
 
 install:
-  - mvn -B install
+  - mvn install
 
 after_script:
   # Installing Codacy code coverage reporter upload tool

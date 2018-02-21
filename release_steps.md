@@ -6,7 +6,7 @@
    1. javadoc
       1. generate javadocs for utilities and extensions-api projects: `mvn javadoc:javadoc`
       1. place javadocs files under `docs/javadocs/<version>`
-      1. update links in `Extension-development-guide.md`, pointing to latest javadoc
+      1. update **THREE** links in `Extension-development-guide.md`, pointing to latest javadoc
       1. commit only javadocs `Adding javadocs for version x`
    1. doc
       1. update zip link (two places in the URL) in `Installing-Butterfly.md`
