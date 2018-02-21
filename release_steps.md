@@ -35,6 +35,8 @@
    1. Verify brew can update or install new version
 1. Working from a temp branch (out of develop) in your fork:
    1. Rev up all 9 pom files to the next SNAPSHOT version
+   1. Set new Butterfly SNAPSHOT version in `sample-extension` pom file
+   1. Build `butterlfy-parent` and `sample-extension` and make sure they build fine
    1. Add new version empty section in release notes
    1. Send PR `Preparing for x` from your temp branch to upstream develop branch
 1. Create new milestone
