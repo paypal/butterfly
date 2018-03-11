@@ -1,6 +1,6 @@
 package com.paypal.butterfly.facade;
 
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
