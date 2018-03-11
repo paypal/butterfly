@@ -27,13 +27,22 @@ public class CompareXMLFilesTest extends TransformationUtilityTestHelper {
     }
 
     @Test
-    public void compareXMLEqualDifferentFilesTest() {
+    public void compareXMLEqualDifferentFilesTest1() {
         Mockito.when(transformationContext.get("ATR")).thenReturn(new File(transformedAppFolder, "/src/main/resources/copy_of_web.xml"));
         CompareXMLFiles compareXML = new CompareXMLFiles().setAttribute("ATR").relative("/src/main/webapp/WEB-INF/web.xml");
         TUExecutionResult executionResult = compareXML.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.VALUE);
         Assert.assertTrue((Boolean) executionResult.getValue());
         Assert.assertEquals(compareXML.getDescription(), "Compare XML file /src/main/webapp/WEB-INF/web.xml to another one, return true only if their contents are equal");
+    }
+
+    @Test
+    public void compareXMLEqualDifferentFilesTest2() {
+        Mockito.when(transformationContext.get("ATR")).thenReturn(new File(transformedAppFolder, "/src/main/resources/file1.xml"));
+        CompareXMLFiles compareXML = new CompareXMLFiles().setAttribute("ATR").relative("/src/main/resources/file2.xml");
+        TUExecutionResult executionResult = compareXML.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.VALUE);
+        Assert.assertTrue((Boolean) executionResult.getValue());
     }
 
     @Test
