@@ -14,27 +14,29 @@
     <description>Butterfly Integration Tests</description>
 
     <dependencies>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <scope>test</scope>
-        </dependency>
+
+        <!-- The dependencies below must not be set as test scope,
+        otherwise their code coverage cannot be collected -->
         <dependency>
             <groupId>com.paypal.butterfly</groupId>
             <artifactId>butterfly-cli</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.paypal.butterfly</groupId>
             <artifactId>butterfly-metrics-file</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.test</groupId>
             <artifactId>sample-extension</artifactId>
             <version>1.0.0</version>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
