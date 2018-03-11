@@ -33,6 +33,11 @@ public class ButterflyCliApp extends ButterflyCliOption {
 
     @SuppressWarnings("PMD.DoNotCallSystemExit")
     public static void main(String... arguments) throws IOException {
+        int exitStatus = run(arguments).getExitStatus();
+        System.exit(exitStatus);
+    }
+
+    public static ButterflyCliRun run(String... arguments) throws IOException {
         setButterflyHome();
         setEnvironment(arguments);
 
@@ -43,13 +48,13 @@ public class ButterflyCliApp extends ButterflyCliOption {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ButterflyCliApp.class, arguments);
         ButterflyCliRunner butterflyCliRunner = applicationContext.getBean(ButterflyCliRunner.class);
         ButterflyCliRun run = butterflyCliRunner.run();
+        run.setInputArguments(arguments);
 
         if (optionSet != null && optionSet.has(CLI_OPTION_RESULT_FILE)) {
-            run.setInputArguments(arguments);
             writeResultFile(run);
         }
 
-        System.exit(run.getExitStatus());
+        return run;
     }
 
     private static void setButterflyHome() {

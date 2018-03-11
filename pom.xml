@@ -102,7 +102,7 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>6.9.6</version>
+                <version>6.14.2</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
@@ -155,6 +155,7 @@
         <module>butterfly-cli-package</module>
         <module>butterfly-metrics-couchdb</module>
         <module>butterfly-metrics-file</module>
+        <module>tests</module>
     </modules>
 
     <profiles>
