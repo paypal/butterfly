@@ -20,12 +20,17 @@ public class ConfigurationTest {
         Configuration configuration = new Configuration();
         configuration.setOutputFolder(new File(System.getProperty("user.dir")));
         configuration.setZipOutput(true);
+        configuration.setModifyOriginalFolder(false);
         Configuration configuration1 = new Configuration(new File(System.getProperty("user.dir")), true);
         Assert.assertTrue(configuration.equals(configuration1));
         Assert.assertEquals(configuration.hashCode(), configuration1.hashCode());
+        Assert.assertFalse(configuration.isModifyOriginalFolder());
+
+        configuration.setModifyOriginalFolder(true);
+
         //Not Equals use case
-        configuration.setZipOutput(false);
         Assert.assertFalse(configuration.equals(configuration1));
+        Assert.assertNotEquals(configuration.hashCode(), configuration1.hashCode());
     }
 
 
@@ -60,6 +65,16 @@ public class ConfigurationTest {
     }
 
     /**
+     * To Test ModifyInPlace Setter and Getter
+     */
+    @Test
+    public void testModifyInPlace(){
+        Configuration configuration = new Configuration();
+        configuration.setModifyOriginalFolder(true);
+        Assert.assertTrue(configuration.isModifyOriginalFolder());
+    }
+
+    /**
      * To Test toString method
      */
     @Test
@@ -67,6 +82,7 @@ public class ConfigurationTest {
         Configuration configuration = new Configuration();
         configuration.setOutputFolder(new File(System.getProperty("user.dir")));
         configuration.setZipOutput(true);
+        configuration.setModifyOriginalFolder(true);
         Assert.assertNotNull(configuration.toString());
     }
 

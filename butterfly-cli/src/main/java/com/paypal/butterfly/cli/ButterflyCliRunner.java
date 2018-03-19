@@ -42,6 +42,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
 
     public ButterflyCliRun run() throws IOException {
         ButterflyCliRun run = new ButterflyCliRun();
+        Configuration configuration = null;
         run.setButterflyVersion(ButterflyProperties.getString("butterfly.version"));
 
         logger.info(ButterflyCliApp.getBanner());
@@ -99,6 +100,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
         run.setApplication(applicationFolder);
 
         File transformedApplicationFolder = (File) optionSet.valueOf(CLI_OPTION_TRANSFORMED_APP_FOLDER);
+
         boolean createZip = optionSet.has(CLI_OPTION_CREATE_ZIP);
 
         String templateClassName = null;
@@ -132,7 +134,11 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             logger.info("-z option has been set, transformed application will be placed into a zip file");
         }
 
-        Configuration configuration = new Configuration(transformedApplicationFolder, createZip);
+        if (optionSet.has(CLI_OPTION_MODIFY_ORIGINAL_FOLDER)) {
+            configuration = new Configuration();
+        } else {
+            configuration = new Configuration(transformedApplicationFolder, createZip);
+        }
 
         // Setting extensions log level to DEBUG
         if(optionSet.has(CLI_OPTION_DEBUG)) {

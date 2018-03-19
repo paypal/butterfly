@@ -208,4 +208,14 @@ public class ButterflyCliTest extends PowerMockTestCase {
         Assert.assertEquals(status, 1);
     }
 
+    @Test
+    public void testTransformationWithInPlaceOutput() throws IOException, ButterflyException {
+        String currentDir = System.getProperty("user.dir");
+        String arguments[] = {sampleAppFolder.getAbsolutePath(), "-t", "com.test.SampleTransformationTemplate", "-v", "-f"};
+        butterflyCli.setOptionSet(arguments);
+        int status = butterflyCli.run().getExitStatus();
+
+        Assert.assertEquals(status, 0);
+        verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(new Configuration()));
+    }
 }

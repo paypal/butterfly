@@ -14,14 +14,13 @@ public class Configuration {
     // See the setters for information about each property
     private File outputFolder = null;
     private boolean zipOutput = false;
+    private boolean modifyOriginalFolder = false;
 
     /**
      * Butterfly default configuration
      */
     public Configuration() {
-        // No-op
-        // Just a default constructor allowing the default
-        // configuration to take place
+        setModifyOriginalFolder(true);
     }
 
     /**
@@ -68,6 +67,15 @@ public class Configuration {
     }
 
     /**
+     * If set to true, the transformation will occur in application folder
+     *
+     * @param modifyOriginalFolder if true, the transformation will occur in application folder
+     */
+    public void setModifyOriginalFolder(boolean modifyOriginalFolder) {
+        this.modifyOriginalFolder = modifyOriginalFolder;
+    }
+
+    /**
      * Return the folder where the transformed application is supposed to be placed
      *
      * @return the folder where the transformed application is supposed to be placed
@@ -85,9 +93,18 @@ public class Configuration {
         return zipOutput;
     }
 
+    /**
+     * Returns whether the transformation will occur in application folder
+     *
+     * @return whether the transformation will occur in application folder
+     */
+    public boolean isModifyOriginalFolder() {
+        return modifyOriginalFolder;
+    }
+
     @Override
     public String toString() {
-        return String.format("{ outputFolder: %s , zipOutput: %s }", outputFolder, zipOutput);
+        return String.format("{ outputFolder: %s , zipOutput: %s, modifyOriginalFolder: %s}", outputFolder, zipOutput, modifyOriginalFolder);
     }
 
     @Override
@@ -109,6 +126,9 @@ public class Configuration {
         if(this.zipOutput != configuration.isZipOutput()) {
             return false;
         }
+        if(this.modifyOriginalFolder != configuration.isModifyOriginalFolder()) {
+            return false;
+        }
         if (this.outputFolder == null && configuration.getOutputFolder() != null) {
             return false;
         }
@@ -123,7 +143,7 @@ public class Configuration {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this.outputFolder).append(this.zipOutput).toHashCode();
+        return new HashCodeBuilder().append(this.outputFolder).append(this.zipOutput).append(this.modifyOriginalFolder).toHashCode();
     }
 
 }
