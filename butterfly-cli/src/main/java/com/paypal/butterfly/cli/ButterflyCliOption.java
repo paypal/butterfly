@@ -27,6 +27,7 @@ abstract class ButterflyCliOption {
     protected static final String CLI_OPTION_TEMPLATE_SHORTCUT = "s";
     protected static final String CLI_OPTION_UPGRADE_VERSION = "u";
     protected static final String CLI_OPTION_RESULT_FILE = "r";
+    protected static final String CLI_OPTION_MODIFY_ORIGINAL_FOLDER = "f";
 
     protected static final OptionParser optionParser = new OptionParser();
     protected static OptionSet optionSet;
@@ -77,6 +78,9 @@ abstract class ButterflyCliOption {
                 .withRequiredArg()
                 .ofType(File.class)
                 .describedAs("result file");
+
+        // Modify original folder option
+        optionParser.accepts(CLI_OPTION_MODIFY_ORIGINAL_FOLDER, "Transforms the application in the same folder as the original content. Options (-o) or (-z) are ignored if (-f) is specified");
     }
 
     public static void setOptionSet(String... args) {

@@ -500,50 +500,55 @@ public class TransformationEngine {
     private File prepareOutputFolder(Transformation transformation) {
         logger.debug("Preparing output folder");
 
-        Application application =  transformation.getApplication();
-        Configuration configuration =  transformation.getConfiguration();
+        Application application     = transformation.getApplication();
+        Configuration configuration = transformation.getConfiguration();
+        File transformedAppFolder   = null;
 
         logger.info("Original application folder:\t\t" + application.getFolder());
 
-        File originalAppParent = application.getFolder().getParentFile();
-        if (originalAppParent == null) {
-            originalAppParent = new File(System.getProperty("user.dir"));
-        }
-
-        String transformedAppFolderName = application.getFolder().getName() + "-transformed-" + simpleDateFormat.format(new Date());
-
-        File transformedAppFolder;
-
-        if(configuration.getOutputFolder() != null) {
-            if(!configuration.getOutputFolder().exists()) {
-                throw new IllegalArgumentException("Invalid output folder (" + configuration.getOutputFolder() + ")");
-            }
-            transformedAppFolder = new File(configuration.getOutputFolder().getAbsolutePath() + File.separator + transformedAppFolderName);
+        if (configuration.isModifyOriginalFolder()) {
+            transformedAppFolder = application.getFolder();
         } else {
-            transformedAppFolder = new File(originalAppParent.getAbsolutePath() + File.separator + transformedAppFolderName);
+            File originalAppParent = application.getFolder().getParentFile();
+            if (originalAppParent == null) {
+                originalAppParent = new File(System.getProperty("user.dir"));
+            }
+
+            String transformedAppFolderName = application.getFolder().getName() + "-transformed-" + simpleDateFormat.format(new Date());
+
+            if(configuration.getOutputFolder() != null) {
+                if(!configuration.getOutputFolder().exists()) {
+                    throw new IllegalArgumentException("Invalid output folder (" + configuration.getOutputFolder() + ")");
+                }
+                transformedAppFolder = new File(configuration.getOutputFolder().getAbsolutePath() + File.separator + transformedAppFolderName);
+            } else {
+                transformedAppFolder = new File(originalAppParent.getAbsolutePath() + File.separator + transformedAppFolderName);
+            }
         }
 
         logger.info("Transformed application folder:\t" + transformedAppFolder);
 
         transformation.setTransformedApplicationLocation(transformedAppFolder);
 
-        boolean bDirCreated = transformedAppFolder.mkdir();
-        if(bDirCreated){
-            try {
-                FileUtils.copyDirectory(application.getFolder(), transformedAppFolder);
-            } catch (IOException e) {
-                String exceptionMessage = String.format(
-                        "An error occurred when preparing the transformed application folder (%s). Check also if the original application folder (%s) is valid",
-                        transformedAppFolder, application.getFolder());
-                logger.error(exceptionMessage, e);
-                throw new InternalException(exceptionMessage, e);
+        if (!configuration.isModifyOriginalFolder()) {
+            boolean bDirCreated = transformedAppFolder.mkdir();
+            if(bDirCreated){
+                try {
+                    FileUtils.copyDirectory(application.getFolder(), transformedAppFolder);
+                } catch (IOException e) {
+                    String exceptionMessage = String.format(
+                            "An error occurred when preparing the transformed application folder (%s). Check also if the original application folder (%s) is valid",
+                            transformedAppFolder, application.getFolder());
+                    logger.error(exceptionMessage, e);
+                    throw new InternalException(exceptionMessage, e);
+                }
+                logger.debug("Transformed application folder is prepared");
+            }else{
+                String exceptionMessage = String.format("Transformed application folder (%s) could not be created", transformedAppFolder);
+                InternalException ie  = new InternalException(exceptionMessage);
+                logger.error(exceptionMessage, ie);
+                throw ie;
             }
-            logger.debug("Transformed application folder is prepared");
-        }else{
-            String exceptionMessage = String.format("Transformed application folder (%s) could not be created", transformedAppFolder);
-            InternalException ie  = new InternalException(exceptionMessage);
-            logger.error(exceptionMessage, ie);
-            throw ie;
         }
         return transformedAppFolder;
     }

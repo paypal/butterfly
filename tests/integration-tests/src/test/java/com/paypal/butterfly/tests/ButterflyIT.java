@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
+
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
@@ -69,6 +71,17 @@ public class ButterflyIT {
     public void contentComparisonTest() throws IOException, ParserConfigurationException, SAXException {
         File sampleAppTransformed = new File(run.getTransformedApplication());
         assertEqualFolders(sampleAppTransformedBaseline, sampleAppTransformed);
+    }
+
+    @Test
+    public void modifyFolderTest() throws IOException, ParserConfigurationException, SAXException {
+        File sampleAppCopy = new File("./target/sample-app-copy");
+        FileUtils.copyDirectory(sampleApp, sampleAppCopy);
+
+        run = ButterflyCliApp.run(sampleAppCopy.getAbsolutePath(), "-f");
+
+        assertEquals(run.getExitStatus(), 0);
+        assertEqualFolders(sampleAppTransformedBaseline, sampleAppCopy);
     }
 
 //    @Test(dependsOnMethods = "sampleAppRunTest")
