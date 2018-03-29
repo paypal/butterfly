@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.paypal.butterfly</groupId>
         <artifactId>butterfly-parent</artifactId>
-        <version>2.3.0</version>
+        <version>2.4.0</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -87,11 +87,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <scope>test</scope>
@@ -120,6 +115,11 @@
                         <exclude>com/paypal/butterfly/utilities/operations/text/AbstractLineOperation.java</exclude>
                         <exclude>com/paypal/butterfly/utilities/maven/ModelTree.java</exclude>
                         <exclude>com/paypal/butterfly/utilities/maven/MultipleOutputHandler.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/stax/AbstractStaxOperation.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/stax/EndElementEventCondition.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/stax/EventCondition.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/stax/StartDocumentEventCondition.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/stax/StartElementEventCondition.java</exclude>
                     </sourceFileExcludes>
                 </configuration>
             </plugin>

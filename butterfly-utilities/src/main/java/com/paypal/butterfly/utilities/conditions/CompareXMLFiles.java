@@ -27,6 +27,19 @@ import java.io.IOException;
  */
 public class CompareXMLFiles extends DoubleCondition<CompareXMLFiles> {
 
+    private static final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+    static {
+        factory.setNamespaceAware(true);
+        factory.setCoalescing(true);
+        factory.setIgnoringElementContentWhitespace(true);
+        factory.setIgnoringComments(true);
+
+        XMLUnit.setIgnoreAttributeOrder(true);
+        XMLUnit.setIgnoreComments(true);
+        XMLUnit.setIgnoreWhitespace(true);
+    }
+
     private static final String DESCRIPTION = "Compare XML file %s to another one, return true only if their contents are equal";
 
     /**
@@ -60,23 +73,12 @@ public class CompareXMLFiles extends DoubleCondition<CompareXMLFiles> {
     @Override
     protected boolean compare(File baselineFile, File comparisonFile) {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
-            factory.setNamespaceAware(true);
-            factory.setCoalescing(true);
-            factory.setIgnoringElementContentWhitespace(true);
-            factory.setIgnoringComments(true);
-
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document baselineXml = builder.parse(baselineFile);
             Document comparisonXml = builder.parse(comparisonFile);
 
             baselineXml.normalizeDocument();
             comparisonXml.normalizeDocument();
-
-            XMLUnit.setIgnoreAttributeOrder(true);
-            XMLUnit.setIgnoreComments(true);
-            XMLUnit.setIgnoreWhitespace(true);
 
             return XMLUnit.compareXML(baselineXml, comparisonXml).similar();
         } catch (SAXException | IOException | ParserConfigurationException e) {

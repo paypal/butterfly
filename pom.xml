@@ -6,7 +6,7 @@
 
     <groupId>com.paypal.butterfly</groupId>
     <artifactId>butterfly-parent</artifactId>
-    <version>2.3.0</version>
+    <version>2.4.0</version>
 
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
@@ -102,7 +102,7 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>6.9.6</version>
+                <version>6.14.2</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
@@ -155,6 +155,7 @@
         <module>butterfly-cli-package</module>
         <module>butterfly-metrics-couchdb</module>
         <module>butterfly-metrics-file</module>
+        <module>tests</module>
     </modules>
 
     <profiles>
@@ -255,6 +256,15 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>2.7</version>
+                <reportSets>
+                    <reportSet>
+                        <id>cobertura-report</id>
+                        <reports>
+                            <report>clean</report>
+                            <report>cobertura</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
         </plugins>
     </reporting>
