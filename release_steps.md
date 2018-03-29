@@ -21,7 +21,8 @@
    1. Update release notes
    1. Commit `Releasing x`
    1. Push from <temp branch> to origin <temp branch> (`git push origin <temp branch>`)
-1. Send and merge PR from origin <temp branch> to upstream master
+1. Send and merge PR from origin <temp branch> to upstream develop
+1. Send and merge PR from upstream develop to upstream master
 1. Tag new release from master
    1. Release title should be the version
    1. Add sections `New Features and enhancements` and `Bug fixes` from release notes to Release description
@@ -41,11 +42,13 @@
    1. Update zip link
    1. Update sha256
    1. Verify brew can update or install new version
-1. Working from a temp branch (out of develop) in your fork:
+1. Working from a <temp branch> (out of develop) in your fork:
    1. Rev up all 12 pom files to the next SNAPSHOT version
-   1. Set new Butterfly SNAPSHOT version in `sample-extension` pom file
-   1. Build `butterlfy-parent` and `sample-extension` and make sure they build fine
+   1. Make sure the new Butterfly SNAPSHOT version is set in `sample-extension` pom file
+   1. Build `butterlfy-parent` and make sure it builds fine
    1. Add new version empty section in release notes
-   1. Send PR `Preparing for x` from your temp branch to upstream develop branch
+   1. Commit `Preparing for version x`
+   1. Push from <temp branch> to origin <temp branch> (`git push origin <temp branch>`)
+   1. Send and merge PR from origin <temp branch> to upstream develop
 1. Create new milestone
 1. Add issues to new milestone (if any)
