@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.paypal.butterfly</groupId>
         <artifactId>butterfly-parent</artifactId>
-        <version>2.4.0-SNAPSHOT</version>
+        <version>2.4.0</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -21,5 +21,16 @@
         <module>sample-extension</module>
         <module>integration-tests</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
