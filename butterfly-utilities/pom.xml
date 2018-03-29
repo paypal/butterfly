@@ -115,6 +115,11 @@
                         <exclude>com/paypal/butterfly/utilities/operations/text/AbstractLineOperation.java</exclude>
                         <exclude>com/paypal/butterfly/utilities/maven/ModelTree.java</exclude>
                         <exclude>com/paypal/butterfly/utilities/maven/MultipleOutputHandler.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/stax/AbstractStaxOperation.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/stax/EndElementEventCondition.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/stax/EventCondition.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/stax/StartDocumentEventCondition.java</exclude>
+                        <exclude>com/paypal/butterfly/utilities/operations/pom/stax/StartElementEventCondition.java</exclude>
                     </sourceFileExcludes>
                 </configuration>
             </plugin>
