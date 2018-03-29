@@ -4,13 +4,16 @@
 ## 2.4.0
 
 #### Release date
-TBD
+March 29th, 2018.
 
 #### New features and enhancements
-TBD
+* [115 - Move initialization in CompareXMLFiles to static block](https://github.com/paypal/butterfly/issues/115)
+* [107 - Add javadoc to api.metrics, and hide pom.sax](https://github.com/paypal/butterfly/issues/107)
+* [17 - Add automated integration tests](https://github.com/paypal/butterfly/issues/17)
+* [14 - Add option -f to CLI to modify the original app folder](https://github.com/paypal/butterfly/issues/14)
 
 #### Bug fixes
-TBD
+None
 
 ## 2.3.0
 
