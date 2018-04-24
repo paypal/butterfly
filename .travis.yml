@@ -1,6 +1,11 @@
 language: java
 sudo: required
 
+cache:
+  directories:
+  - .autoconf
+  - $HOME/.m2
+
 jdk:
   - oraclejdk8
 
