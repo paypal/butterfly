@@ -1,6 +1,18 @@
 
 # Release notes
 
+## 2.5.0
+
+#### Release date
+April 25th, 2018
+
+#### New features and enhancements
+* [133 - Need to find arbitrary xpath in xml](https://github.com/paypal/butterfly/issues/133)
+* [134 - Need to do find/replace on xpath](https://github.com/paypal/butterfly/issues/134)
+
+#### Bug fixes
+* [128 - Set up TravisCI to cache its local Maven repo](https://github.com/paypal/butterfly/issues/128)
+
 ## 2.4.0
 
 #### Release date
