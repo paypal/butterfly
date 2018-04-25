@@ -15,7 +15,7 @@ As an analogy, if **Butterfly is a cook**, then **the recipe is the transformati
 
 Butterfly offers a **Service Provider Interface (SPI)** allowing the **transfomration engine** to be completely detached from **transformation templates**. This flexible architecture allows anyone to write transformation templates and plug them easily into Butterfly.
 
-This SPI is represented by [butterfly-extensions-api](https://paypal.github.io/butterfly/javadocs/2.4.0/butterfly-extensions-api/index.html).
+This SPI is represented by [butterfly-extensions-api](https://paypal.github.io/butterfly/javadocs/2.5.0/butterfly-extensions-api/index.html).
 
 ### How to install an extension
 
@@ -103,5 +103,5 @@ When developing a Butterfly extension, it is very helpful to run it from the IDE
 
 Refer to the following javadocs to develop your own Butterfly extension:
 
-1. [butterfly-extensions-api](https://paypal.github.io/butterfly/javadocs/2.4.0/butterfly-extensions-api/index.html): API component to be used by Butterfly extensions when providing their transformation and upgrade templates.
-1. [butterfly-utilities](https://paypal.github.io/butterfly/javadocs/2.4.0/butterfly-utilities/index.html): multiple types of ready-to-use transformation utilities.
+1. [butterfly-extensions-api](https://paypal.github.io/butterfly/javadocs/2.5.0/butterfly-extensions-api/index.html): API component to be used by Butterfly extensions when providing their transformation and upgrade templates.
+1. [butterfly-utilities](https://paypal.github.io/butterfly/javadocs/2..0/butterfly-utilities/index.html): multiple types of ready-to-use transformation utilities.
