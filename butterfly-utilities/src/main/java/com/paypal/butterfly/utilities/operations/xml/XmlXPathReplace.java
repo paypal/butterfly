@@ -63,7 +63,6 @@ public class XmlXPathReplace extends TransformationOperation<XmlXPathReplace> {
      * @param replacementElement
      *            an {@link org.w3c.dom.Element} this is used to replace the
      *            {@link org.w3c.dom.Node} in the search
-     * @return this instance
      */
     public XmlXPathReplace(String xpathExpressionString, Element replacementElement) {
         setXPathExpression(xpathExpressionString);
@@ -79,7 +78,6 @@ public class XmlXPathReplace extends TransformationOperation<XmlXPathReplace> {
      * @param replacementString
      *            a string this is used to replace the text content of the
      *            {@link org.w3c.dom.Node} found in the search
-     * @return this instance
      */
     public XmlXPathReplace(String xpathExpressionString, String replacementString) {
         setXPathExpression(xpathExpressionString);
