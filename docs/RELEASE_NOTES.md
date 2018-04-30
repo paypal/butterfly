@@ -1,6 +1,17 @@
 
 # Release notes
 
+## 2.6.0
+
+#### Release date
+TBD
+
+#### New features and enhancements
+TBD
+
+#### Bug fixes
+TBD
+
 ## 2.5.0
 
 #### Release date
