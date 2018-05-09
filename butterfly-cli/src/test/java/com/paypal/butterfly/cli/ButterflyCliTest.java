@@ -1,5 +1,24 @@
 package com.paypal.butterfly.cli;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import com.paypal.butterfly.cli.logging.LogConfigurator;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
@@ -8,17 +27,6 @@ import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
 import com.test.SampleExtension;
 import com.test.SampleTransformationTemplate;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.powermock.modules.testng.PowerMockTestCase;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.io.File;
-import java.io.IOException;
-
-import static org.mockito.Mockito.*;
 
 /**
  * Butterfly Command Line Interface test
@@ -76,6 +84,39 @@ public class ButterflyCliTest extends PowerMockTestCase {
         int status = butterflyCli.run().getExitStatus();
 
         Assert.assertEquals(status, 0);
+        verify(facade, times(1)).getRegisteredExtension();
+    }
+
+    /**
+     * To Test listing of extensions and results
+     *
+     * @throws IOException
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
+     */
+    @Test
+    public void testListingExtensionsWithResults() throws IOException, InstantiationException, IllegalAccessException {
+        when(facade.getRegisteredExtension()).thenReturn(new SampleExtension());
+
+        Assert.assertNotNull(butterflyCli);
+        Assert.assertNotNull(facade);
+
+        String[] arguments = {"-l", "-r", "results.json"};
+        butterflyCli.setOptionSet(arguments);
+
+        ButterflyCliRun run = butterflyCli.run();
+        List<ButterflyCliExtensionMetaData> extensions = run.getExtensions();
+
+        Assert.assertEquals(1, extensions.size());
+        ButterflyCliExtensionMetaData metaData = extensions.get(0);
+        SampleExtension sampleExtension = SampleExtension.class.newInstance();
+
+        Assert.assertEquals(run.getExitStatus(), 0);
+        Assert.assertEquals(metaData.getName(), sampleExtension.getClass().getName());
+        Assert.assertEquals(metaData.getDescription(), sampleExtension.getDescription());
+        Assert.assertEquals(metaData.getVersion(), "");
+        Assert.assertEquals(metaData.getTemplates().size(), 2);
+
         verify(facade, times(1)).getRegisteredExtension();
     }
 

@@ -1,7 +1,9 @@
 package com.paypal.butterfly.cli;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is just a POJO that represents an execution of
@@ -28,6 +30,8 @@ public class ButterflyCliRun {
     private String logFile;
 
     private String manualInstructionsFile;
+    
+    private List<ButterflyCliExtensionMetaData> extensions = new ArrayList<ButterflyCliExtensionMetaData>();
 
     // TODO
     // Metrics are not first class citizen yet
@@ -124,5 +128,13 @@ public class ButterflyCliRun {
 
     public String getExceptionMessage() {
         return exceptionMessage;
+    }
+
+    public void addExtension(ButterflyCliExtensionMetaData extensionMetaData) {
+        this.extensions.add(extensionMetaData);
+    }
+
+    public List<ButterflyCliExtensionMetaData> getExtensions() {
+        return this.extensions;
     }
 }
