@@ -1,11 +1,9 @@
 package com.paypal.butterfly.utilities.operations.xml;
 
-import java.io.IOException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -13,12 +11,11 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
-import com.paypal.butterfly.extensions.api.TOExecutionResult;
-import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
-import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 
 /**
  * Unit tests for {@link XmlXPathReplace}

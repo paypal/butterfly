@@ -123,13 +123,13 @@ public class ButterflyIT {
             fileRelativePath = getRelativePath(actualFile, actual);
             if (actualFile.isDirectory()) {
                 if (!expectedDirectories.contains(fileRelativePath)) {
-                    Assert.fail("Unexpected folder found: " + fileRelativePath);
+                    fail("Unexpected folder found: " + fileRelativePath);
                 } else {
                     expectedDirectories.remove(fileRelativePath);
                 }
             } else {
                 if (!expectedNonDirectories.contains(fileRelativePath)) {
-                    Assert.fail("Unexpected file found: " + fileRelativePath);
+                    fail("Unexpected file found: " + fileRelativePath);
                 } else {
                     expectedNonDirectories.remove(fileRelativePath);
                 }
