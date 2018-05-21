@@ -1,48 +1,39 @@
 package com.paypal.butterfly.utilities.operations.xml;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
- * Finds a particular xpath in an XML file and can operate two different modes
+ * Modify an XML file based on a given XPath expression.
  * <br>
- * If an {@link org.w3c.dom.Element} is provided, the whole node is replaced by
- * the element.
+ * It has two different modes of operation:
+ * <ol>
+ *     <li>If an {@link org.w3c.dom.Element} is provided, the whole node is replaced by given the element.</li>
+ *     <li>If a String is provided, then the text of the node is replaced by the given String.</li>
+ * </ol>
  * <br>
- * If a string is provided, then the text of the node is replaced
- * by the string.
- * <br>
- * If the xpath expression won't compile, an error is returned.
- * <br>
- * If the file is not a well formed XML file, an error is returned.
+ * If the XPath expression doesn't compile, or if the file is not a well formed XML file, an error is returned.
  *
  * @author mmcrockett
  */
