@@ -3,6 +3,7 @@ package com.paypal.butterfly.utilities.operations.properties;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 import com.paypal.butterfly.utilities.operations.EolHelper;
 import org.codehaus.plexus.util.FileUtils;
@@ -22,7 +23,7 @@ import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
  */
 public class AddProperty extends TransformationOperation<AddProperty> {
 
-    private static final String DESCRIPTION = "Add new property ('%s' = '%s') to file '%s'";
+    private static final String DESCRIPTION = "Add new property (%s = %s) to file %s";
 
     private String propertyName;
     private String propertyValue;
@@ -87,7 +88,7 @@ public class AddProperty extends TransformationOperation<AddProperty> {
                 result = setProperty(transformedAppFolder, transformationContext);
             }
         } catch (IOException e) {
-            result = TOExecutionResult.error(this, e);
+            result = TOExecutionResult.error(this, new TransformationOperationException("Property file could not be modified", e));
         } finally {
             if (fileInputStream != null) try {
                 fileInputStream.close();
@@ -133,7 +134,7 @@ public class AddProperty extends TransformationOperation<AddProperty> {
             String details = String.format("Property '%s' has been added and set to '%s' at '%s'", propertyName, propertyValue, getRelativePath());
             result = TOExecutionResult.success(this, details);
         } catch (IOException e) {
-            result = TOExecutionResult.error(this, e);
+            result = TOExecutionResult.error(this, new TransformationOperationException("Property file could not be modified", e));
         }
         return result;
     }
@@ -157,7 +158,7 @@ public class AddProperty extends TransformationOperation<AddProperty> {
             String details = replace(reader, writer, "(" + propertyName + ")", propertyToBeAdded);
             result = TOExecutionResult.success(this, details);
         } catch (IOException e) {
-            result = TOExecutionResult.error(this, e);
+            result = TOExecutionResult.error(this, new TransformationOperationException("Property file could not be modified", e));
         } finally {
             try {
                 if (writer != null) try {

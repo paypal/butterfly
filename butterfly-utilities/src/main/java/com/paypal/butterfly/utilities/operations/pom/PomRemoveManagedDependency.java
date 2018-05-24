@@ -13,7 +13,7 @@ import org.apache.maven.model.Model;
  */
 public class PomRemoveManagedDependency extends AbstractArtifactPomOperation<PomRemoveManagedDependency> implements ChangeOrRemoveElement<PomRemoveManagedDependency> {
 
-    private static final String DESCRIPTION = "Remove managed dependency entry %s:%s from POM file %s";
+    private static final String DESCRIPTION = "Remove managed dependency %s:%s from POM file %s";
 
     private IfNotPresent ifNotPresent = IfNotPresent.Fail;
 

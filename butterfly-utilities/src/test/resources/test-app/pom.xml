@@ -12,6 +12,10 @@
 
     <artifactId>foo</artifactId>
 
+    <properties>
+        <encoding>UTF-8</encoding>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>xmlunit</groupId>
@@ -43,8 +47,24 @@
             <artifactId>commons-io</artifactId>
             <optional>true</optional>
         </dependency>
-
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <optional>false</optional>
+                <version>4.12</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <optional>true</optional>
+                <version>2.6</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>

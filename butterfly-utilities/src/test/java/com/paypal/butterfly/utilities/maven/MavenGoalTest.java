@@ -22,6 +22,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
+ * Unit test class for {@link MavenGoal}
+ *
  * @author mcrockett
  */
 public class MavenGoalTest {

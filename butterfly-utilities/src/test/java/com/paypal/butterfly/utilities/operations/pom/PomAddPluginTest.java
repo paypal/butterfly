@@ -11,6 +11,11 @@ import java.io.IOException;
 
 import static org.testng.Assert.*;
 
+/**
+ * Unit test class for {@link PomAddPlugin}
+ *
+ * @author facarvalho
+ */
 public class PomAddPluginTest extends TransformationUtilityTestHelper {
 
     @Test

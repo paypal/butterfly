@@ -3,6 +3,7 @@ package com.paypal.butterfly.utilities.operations.text;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 
 import java.io.*;
@@ -124,8 +125,9 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
 
         if (!fileToBeChanged.exists()) {
             // TODO Should this be done as pre-validation?
-            FileNotFoundException ex = new FileNotFoundException("File to be modified has not been found");
-            return TOExecutionResult.error(this, ex);
+            FileNotFoundException ex = new FileNotFoundException(fileToBeChanged.getAbsolutePath() + " (No such file or directory)");
+            TransformationOperationException toex = new TransformationOperationException("Could not replace text", ex);
+            return TOExecutionResult.error(this, toex);
         }
 
         BufferedReader reader = null;
@@ -138,7 +140,7 @@ public class ReplaceText extends TransformationOperation<ReplaceText> {
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileToBeChanged), StandardCharsets.UTF_8));
             result = replace(reader, writer);
         } catch (IOException e) {
-            result = TOExecutionResult.error(this,  e);
+            result = TOExecutionResult.error(this,  new TransformationOperationException("Could not replace text", e));
         } finally {
             try {
                 if (writer != null) try {

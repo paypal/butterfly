@@ -12,6 +12,11 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Unit test class for {@link PomAddDependency}
+ *
+ * @author facarvalho
+ */
 public class PomAddDependencyTest extends TransformationUtilityTestHelper {
 
     @Test

@@ -1,0 +1,3 @@
+Billy: !sample.code.Dog
+   name: Billy
+   breed: lab

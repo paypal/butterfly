@@ -37,12 +37,24 @@ public class XmlXPathExists extends SingleCondition<XmlXPathExists> {
 
     private static final String DESCRIPTION = "Check if xml xpath query %s exists in XML file %s";
 
+    /**
+     * Checks if a particular xpath exists in an XML file.
+     * <br>
+     * If the xpath expression won't compile, an error is returned.
+     * <br>
+     * If the file is not a well formed XML file, an error is returned.
+     */
     public XmlXPathExists() {
     }
 
     /**
+     * Checks if a particular xpath exists in an XML file.
+     * <br>
+     * If the xpath expression won't compile, an error is returned.
+     * <br>
+     * If the file is not a well formed XML file, an error is returned.
+     *
      * @param xpathExpressionString a string that compiles into a {@link javax.xml.xpath.XPathExpression}
-     *   if the expression evaluates to an empty string 'false' is returned, otherwise true
      */
     public XmlXPathExists(String xpathExpressionString) {
         setXPathExpression(xpathExpressionString);
@@ -53,15 +65,23 @@ public class XmlXPathExists extends SingleCondition<XmlXPathExists> {
      * the result of this transformation utility.
      * 
      * @param xpathExpressionString a string that compiles into a {@link javax.xml.xpath.XPathExpression}
-     *   if the expression evaluates to an empty string 'false' is returned, otherwise true
      *
-     * @return this instance
+     * @return this utility instance
      */
     public XmlXPathExists setXPathExpression(String xpathExpressionString) {
         checkForBlankString("XPath Expression", xpathExpressionString);
         this.xpathExpression = checkXPathCompile(xpathExpressionString);
         this.xpathExpressionString = xpathExpressionString;
         return this;
+    }
+
+    /**
+     * Return the XPath expression
+     *
+     * @return the XPath expression
+     */
+    public String getXPathExpressionString() {
+        return xpathExpressionString;
     }
 
     @Override
@@ -87,7 +107,7 @@ public class XmlXPathExists extends SingleCondition<XmlXPathExists> {
             } else {
                 result = TUExecutionResult.value(this, true);
             }
-        } catch (ParserConfigurationException|SAXException|IOException e) {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             result = TUExecutionResult.error(this, new TransformationUtilityException("File content could not be parsed properly in XML format", e));
         } catch (TransformationUtilityException e) {
             result = TUExecutionResult.error(this, e);

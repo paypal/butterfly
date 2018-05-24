@@ -4,6 +4,7 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
@@ -25,7 +26,7 @@ import java.nio.channels.ReadableByteChannel;
  */
 public class ApplyZip extends TransformationOperation<ApplyZip> {
 
-    private static final String DESCRIPTION = "Download, decompress and place contents of zip %s file at %s";
+    private static final String DESCRIPTION = "Download, decompress and place contents of zip file %s at %s";
 
     private URL zipFileUrl;
 
@@ -41,10 +42,10 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
      */
     public ApplyZip(String zipFileUrl) {
         try {
-            checkForBlankString("Zip File URL", zipFileUrl);
+            checkForBlankString("Zip file URL", zipFileUrl);
             setZipFileUrl(new URL(zipFileUrl));
         } catch (MalformedURLException e) {
-            throw new TransformationDefinitionException("Malformed Zip file URL", e);
+            throw new TransformationDefinitionException("Malformed zip file URL", e);
         }
     }
 
@@ -60,7 +61,7 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
     }
 
     public ApplyZip setZipFileUrl(URL zipFileUrl) {
-        checkForNull("Zip File URL", zipFileUrl);
+        checkForNull("Zip file URL", zipFileUrl);
         this.zipFileUrl = zipFileUrl;
         return this;
     }
@@ -96,12 +97,12 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
             ZipFile zipFile = new ZipFile(zipFileDescriptor);
             zipFile.extractAll(zipFileDescriptor.getParent());
 
-            String details = String.format("Zip file '%s' has been downloaded and decompressed into %s", zipFileUrl, getRelativePath(transformedAppFolder, zipFileDescriptor.getParentFile()));
+            String details = String.format("Zip file '%s' has been downloaded and decompressed into %s", zipFileUrl.getFile(), getRelativePath(transformedAppFolder, zipFileDescriptor.getParentFile()));
             result = TOExecutionResult.success(this, details);
-        } catch (ZipException|IOException e) {
-            result = TOExecutionResult.error(this, e);
+        } catch (ZipException | IOException e) {
+            result = TOExecutionResult.error(this, new TransformationOperationException("File could not be unzipped", e));
         } finally {
-            if(fileOutputStream != null) {
+            if (fileOutputStream != null) {
                 try {
                     fileOutputStream.close();
                 } catch (IOException e) {
@@ -115,7 +116,7 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
                     result.addWarning(e);
                 }
             }
-            if(zipFileDescriptor!=null) {
+            if (zipFileDescriptor != null) {
                 FileUtils.deleteQuietly(zipFileDescriptor);
             }
         }
