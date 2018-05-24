@@ -10,6 +10,11 @@ import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
 
+/**
+ * Unit test for {@link PomChangePackaging}
+ *
+ * @author facarvalho
+ */
 public class PomChangePackagingTest extends TransformationUtilityTestHelper {
 
     @Test

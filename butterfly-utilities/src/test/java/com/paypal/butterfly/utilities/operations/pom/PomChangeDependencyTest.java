@@ -12,6 +12,11 @@ import java.io.IOException;
 
 import static org.testng.Assert.*;
 
+/**
+ * Unit test for {@link PomChangeDependency}
+ *
+ * @author facarvalho
+ */
 public class PomChangeDependencyTest extends TransformationUtilityTestHelper {
 
     @Test

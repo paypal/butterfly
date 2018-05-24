@@ -3,6 +3,7 @@ package com.paypal.butterfly.utilities.operations.properties;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.operations.EolBufferedReader;
 
 import java.io.*;
@@ -13,20 +14,26 @@ import static com.paypal.butterfly.utilities.operations.EolHelper.removeEol;
 
 /**
  * Removes a property from a properties file.
+ * If the specified property is not present, a warning is produced.
  *
  * @author facarvalho
  */
 public class RemoveProperty extends TransformationOperation<RemoveProperty> {
 
-    private static final String DESCRIPTION = "Remove property '%s' from file '%s'";
+    private static final String DESCRIPTION = "Remove property %s from file %s";
 
     private String propertyName;
 
+    /**
+     * Operation to remove a property from a properties file.
+     * If the specified property is not present, a warning is produced.
+     */
     public RemoveProperty() {
     }
 
     /**
      * Operation to remove a property from a properties file.
+     * If the specified property is not present, a warning is produced.
      *
      * @param propertyName name to the property to be removed
      */
@@ -84,8 +91,8 @@ public class RemoveProperty extends TransformationOperation<RemoveProperty> {
                 details = String.format("Property '%s' has been removed from '%s'", propertyName, getRelativePath());
                 result = TOExecutionResult.success(this, details);
             } else {
-                details = String.format("Property '%s' has NOT been removed from '%s' because it is not present on it", propertyName, getRelativePath());
-                result = TOExecutionResult.warning(this, details);
+                TransformationOperationException toex = new TransformationOperationException(String.format("Property '%s' has not been removed from '%s' because it is not present", propertyName, getRelativePath()));
+                result = TOExecutionResult.warning(this, toex);
             }
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);
