@@ -1,0 +1,201 @@
+
+plugins {
+    id 'net.saliman.cobertura' version '2.5.4'
+}
+
+description = "Butterfly - Application transformation tool"
+
+allprojects {
+    apply plugin: 'maven'
+    apply plugin: 'signing'
+
+    group = 'com.paypal.butterfly'
+    version = '2.6.0-SNAPSHOT'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+Set testModules = [
+    "sample-extension",
+    "integration-tests",
+    "tests"
+]
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'cobertura'
+
+    def javaVersion = JavaVersion.VERSION_1_7
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+
+    test {
+        testLogging {
+            events "passed", "skipped", "failed", "standardError"
+        }
+    }
+
+    jar {
+        manifest {
+            attributes 'Implementation-Version': version,
+                    'Implementation-Name': name,
+                    'Implementation-Vendor': 'PayPal'
+        }
+    }
+
+    cobertura {
+        coverageFormats = ['xml']
+        coverageReportDir = new File("$buildDir/reports/cobertura")
+        coverageEncoding = 'UTF-8'
+        coverageExcludes = []
+        coverageIgnoreMethodAnnotations = []
+        coverageIgnoreTrivial = false
+
+        // TODO
+        // Turn this ON after increasing code coverage
+        // to a minimum acceptable for every single project
+        coverageCheckHaltOnFailure = false
+
+        coverageCheckBranchRate = 80
+        coverageCheckLineRate = 80
+        coverageCheckPackageBranchRate = 80
+        coverageCheckPackageLineRate = 80
+        coverageCheckTotalBranchRate = 80
+        coverageCheckTotalLineRate = 80
+    }
+
+    test.finalizedBy(project.tasks.coberturaCheck)
+
+    if (!version.endsWith("SNAPSHOT")) {
+
+        if (!name.equals("butterfly-cli-package")) {
+            task javadocJar(type: Jar) {
+                classifier = 'javadoc'
+                from javadoc
+            }
+
+            task sourcesJar(type: Jar) {
+                classifier = 'sources'
+                from sourceSets.main.allSource
+            }
+
+            artifacts {
+                archives javadocJar, sourcesJar
+            }
+        }
+
+        project.ext['signing.keyId'] = "$System.env.GPG_KEYNAME"
+        project.ext['signing.password'] = "$System.env.GPG_PASSPHRASE"
+        project.ext['signing.secretKeyRingFile'] = file("secring.gpg").absolutePath
+
+        signing {
+            sign configurations.archives
+        }
+    }
+
+    // Publishing non test modules
+    if (!testModules.contains(name)) {
+        project.ext['ossrhUsername'] = "$System.env.SONATYPE_USER"
+        project.ext['ossrhPassword'] = "$System.env.SONATYPE_PASSWORD"
+
+        uploadArchives {
+            repositories {
+                mavenDeployer {
+                    if (!version.endsWith("SNAPSHOT")) {
+                        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                    }
+
+                    repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                        authentication(userName: ossrhUsername, password: ossrhPassword)
+                    }
+
+                    snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                        authentication(userName: ossrhUsername, password: ossrhPassword)
+                    }
+
+                    pom.project {
+                        name project.name
+                        description project.description
+                        packaging 'jar'
+
+                        url 'https://github.com/paypal/butterfly'
+
+                        scm {
+                            connection 'scm:git:git@github.com:paypal/butterfly.git'
+                            developerConnection 'scm:git:git@github.com:paypal/butterfly.git'
+                            url 'git@github.com:paypal/butterfly.git'
+                        }
+
+                        licenses {
+                            license {
+                                name 'MIT'
+                                url 'https://opensource.org/licenses/MIT'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'fabiocarvalho777'
+                                name 'Fabio Carvalho'
+                                email 'fabiocarvalho777@gmail.com'
+                                organization 'PayPal'
+                                organizationUrl 'http://www.paypal.com'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+cobertura {
+    coverageFormats = ['xml']
+    coverageReportDir = new File("$buildDir/reports/cobertura")
+    coverageMergeDatafiles = subprojects.collect { new File(it.projectDir, '/build/cobertura/cobertura.ser') }
+}
+
+// Dependencies version management
+ext.lib = [
+
+        // Spring
+        spring_context: "org.springframework:spring-context:4.3.2.RELEASE",
+        spring_boot_starter: "org.springframework.boot:spring-boot-starter:1.4.0.RELEASE",
+        spring_boot_autoconfigure: "org.springframework.boot:spring-boot-autoconfigure:1.4.0.RELEASE",
+
+        // Maven
+        maven_model: "org.apache.maven:maven-model:3.3.9",
+        maven_invoker: "org.apache.maven.shared:maven-invoker:2.2",
+
+        // Parsers
+        gson: "com.google.code.gson:gson:2.7",
+        woodstox_core: "com.fasterxml.woodstox:woodstox-core:5.0.3",
+        xmlunit: "xmlunit:xmlunit:1.5",
+        yamlbeans: "com.esotericsoftware.yamlbeans:yamlbeans:1.08",
+        javaparser_core: "com.github.javaparser:javaparser-core:3.0.1",
+
+        // Drivers
+        lightcouch: "org.lightcouch:lightcouch:0.1.8",
+
+        // Utilities
+        annotations: "com.google.code.findbugs:annotations:3.0.0",
+        commons_io: "commons-io:commons-io:2.5",
+        commons_lang3: "org.apache.commons:commons-lang3:3.7",
+        guava: "com.google.guava:guava:15.0",
+        jopt_simple: "net.sf.jopt-simple:jopt-simple:5.0.2",
+        plexus_utils: "org.codehaus.plexus:plexus-utils:2.0.5",
+        reflections: "org.reflections:reflections:0.9.10",
+        slf4j_api: "org.slf4j:slf4j-api:1.7.21",
+        zip4j: "net.lingala.zip4j:zip4j:1.3.2",
+
+        // Tests
+        testng: "org.testng:testng:6.14.2",
+        mockito_all: "org.mockito:mockito-all:1.10.19",
+        powermock_module_testng: "org.powermock:powermock-module-testng:1.6.5",
+        powermock_api_mockito: "org.powermock:powermock-api-mockito:1.6.5",
+
+]

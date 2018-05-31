@@ -1,0 +1,23 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation lib.commons_lang3,
+            lib.maven_model,
+            lib.annotations,
+            lib.commons_io,
+            lib.slf4j_api
+    testImplementation(lib.testng) {
+        exclude(module: 'aopalliance')
+        exclude(module: 'guava')
+    }
+}
+
+javadoc {
+    exclude 'com/paypal/butterfly/extensions/api/Result.java'
+    exclude 'com/paypal/butterfly/extensions/api/TransformationUtilityList.java'
+    exclude 'com/paypal/butterfly/extensions/api/TransformationUtilityParent.java'
+    exclude 'com/paypal/butterfly/extensions/api/upgrade/UpgradePath.java'
+    exclude 'com/paypal/butterfly/extensions/api/utilities/ManualInstructionRecord.java'
+}
+
+test.useTestNG()

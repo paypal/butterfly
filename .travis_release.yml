@@ -7,4 +7,4 @@ before_install:
   - gpg --import secring.gpg
 
 install:
-  - mvn -s settings.xml deploy -Possrh
+  - ./gradlew uploadArchives

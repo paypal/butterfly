@@ -1,0 +1,36 @@
+apply plugin: 'java-library'
+
+dependencies {
+    api project(':butterfly-extensions-api')
+    implementation lib.commons_io,
+            lib.maven_model,
+            lib.slf4j_api,
+            lib.javaparser_core,
+            lib.zip4j,
+            lib.annotations,
+            lib.maven_invoker,
+            lib.xmlunit,
+            lib.woodstox_core
+    testImplementation lib.guava,
+            lib.mockito_all,
+            lib.yamlbeans,
+            lib.spring_context,
+            lib.spring_boot_autoconfigure
+    testImplementation(lib.testng) {
+        exclude(module: 'aopalliance')
+        exclude(module: 'guava')
+    }
+}
+
+javadoc {
+    exclude 'com/paypal/butterfly/utilities/operations/EolHelper.java'
+    exclude 'com/paypal/butterfly/utilities/operations/EolBufferedReader.java'
+    exclude 'com/paypal/butterfly/utilities/operations/pom/AbstractArtifactPomOperation.java'
+    exclude 'com/paypal/butterfly/utilities/operations/pom/AbstractPomOperation.java'
+    exclude 'com/paypal/butterfly/utilities/operations/text/AbstractLineOperation.java'
+    exclude 'com/paypal/butterfly/utilities/maven/ModelTree.java'
+    exclude 'com/paypal/butterfly/utilities/maven/MultipleOutputHandler.java'
+    exclude 'com/paypal/butterfly/utilities/operations/pom/stax/**'
+}
+
+test.useTestNG()

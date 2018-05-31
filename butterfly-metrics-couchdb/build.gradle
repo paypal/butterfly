@@ -1,0 +1,11 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation project(':butterfly-extensions-api')
+    implementation lib.spring_context,
+            lib.lightcouch,
+            lib.annotations
+    implementation(lib.spring_boot_starter) {
+        exclude(module: 'commons-logging')
+    }
+}
