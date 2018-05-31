@@ -1,0 +1,14 @@
+group = 'com.paypal.butterfly.tests'
+
+dependencies {
+    testCompile project(':butterfly-cli')
+    testCompile project(':butterfly-metrics-file')
+    testCompile project(':tests:sample-extension')
+    testCompile(lib.testng) {
+        exclude(module: 'aopalliance')
+        exclude(module: 'guava')
+    }
+    testCompile lib.xmlunit
+}
+
+test.useTestNG()

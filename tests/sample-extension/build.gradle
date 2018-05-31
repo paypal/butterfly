@@ -1,0 +1,7 @@
+group = 'com.test'
+version = '1.0.0'
+
+dependencies {
+    compile project(':butterfly-utilities')
+    compile project(':butterfly-extensions-api')
+}

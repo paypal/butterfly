@@ -1,17 +1,17 @@
 # Release steps
 
 1. Working from a <temp branch> (out of develop) in your fork:
-   1. Rev up all 12 pom files to the release version
+   1. Rev up root build.gradle file to the release version
    1. Build and test it
    1. javadoc
-      1. generate javadocs for utilities and extensions-api projects: `mvn javadoc:javadoc`
-      1. place javadocs files under `docs/javadocs/<version>`
+      1. create folder `docs/javadocs/<version>`
+      1. generate javadocs for **utilities** and **extensions-api** projects: `./gradlew :butterfly-utilities:javadoc :butterfly-extensions-api:javadoc`
+      1. copy generated javadocs files under `docs/javadocs/<version>`
       1. update **THREE** links in `Extension-development-guide.md`, pointing to latest javadoc
       1. commit only javadocs `Adding javadocs for version x`
    1. doc
       1. update zip link (two places in the URL) in `Installing-Butterfly.md`
    1. sample extension
-      1. make sure `butterfly.version` in `tests/sample-extension/pom.xml` is updated
       1. place `sample-extension` jar under `docs/jar`
       1. update link in `QUICK_START.md` if jar file name changed
    1. sample app (only if changed)
@@ -43,8 +43,7 @@
    1. Update sha256
    1. Verify brew can update or install new version
 1. Working from a <temp branch> (out of develop) in your fork:
-   1. Rev up all 12 pom files to the next SNAPSHOT version
-   1. Make sure the new Butterfly SNAPSHOT version is set in `sample-extension` pom file
+   1. Rev up root build.gradle file to the next SNAPSHOT version
    1. Build `butterlfy-parent` and make sure it builds fine
    1. Add new version empty section in release notes
    1. Commit `Preparing for version x`

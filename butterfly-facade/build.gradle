@@ -1,0 +1,27 @@
+apply plugin: 'java-library'
+
+dependencies {
+    api project(':butterfly-extensions-api')
+    implementation lib.slf4j_api,
+            lib.commons_lang3
+    testImplementation(lib.testng) {
+        exclude(module: 'aopalliance')
+        exclude(module: 'guava')
+    }
+}
+
+test.useTestNG()
+
+task createProperties(dependsOn: processResources) {
+    doLast {
+        new File("$buildDir/resources/main/butterfly.properties").withWriter { w ->
+            Properties p = new Properties()
+            p['butterfly.version'] = project.version.toString()
+            p.store w, null
+        }
+    }
+}
+
+classes {
+    dependsOn createProperties
+}

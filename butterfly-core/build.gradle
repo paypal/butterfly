@@ -1,0 +1,24 @@
+dependencies {
+    compile project(':butterfly-facade')
+    compile project(':butterfly-extensions-api')
+    runtime project(':butterfly-utilities')
+    compile(lib.spring_context) {
+        exclude(module: 'commons-logging')
+    }
+    compile lib.slf4j_api,
+            lib.reflections,
+            lib.commons_io,
+            lib.zip4j,
+            lib.annotations,
+            lib.commons_lang3,
+            lib.plexus_utils
+    testCompile(lib.testng) {
+        exclude(module: 'aopalliance')
+        exclude(module: 'guava')
+    }
+    testCompile lib.mockito_all,
+            lib.powermock_module_testng,
+            lib.powermock_api_mockito
+}
+
+test.useTestNG()

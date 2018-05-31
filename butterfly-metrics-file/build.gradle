@@ -1,0 +1,12 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation project(':butterfly-extensions-api')
+    implementation lib.spring_context,
+            lib.gson,
+            lib.annotations,
+            lib.commons_io
+    implementation(lib.spring_boot_starter) {
+        exclude(module: 'commons-logging')
+    }
+}
