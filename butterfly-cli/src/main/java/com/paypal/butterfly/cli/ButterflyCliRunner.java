@@ -1,5 +1,16 @@
 package com.paypal.butterfly.cli;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
 import com.paypal.butterfly.cli.logging.LogConfigurator;
 import com.paypal.butterfly.cli.logging.LogFileDefiner;
 import com.paypal.butterfly.extensions.api.Extension;
@@ -13,16 +24,6 @@ import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.ButterflyProperties;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Butterfly CLI runner
@@ -74,7 +75,9 @@ public class ButterflyCliRunner extends ButterflyCliOption {
 
         if (optionSet.has(CLI_OPTION_LIST_EXTENSIONS)) {
             try {
-                printExtensionsList(butterflyFacade);
+                ButterflyCliExtensionMetaData extensionMetaData = getExtensionMetaData(butterflyFacade);
+                printExtensionsList(extensionMetaData);
+                run.addExtension(extensionMetaData);
                 run.setExitStatus(0);
                 return run;
             } catch (Exception e) {
@@ -234,26 +237,40 @@ public class ButterflyCliRunner extends ButterflyCliOption {
         return null;
     }
 
-    private static void printExtensionsList(ButterflyFacade butterflyFacade) throws IllegalAccessException, InstantiationException {
+    private static ButterflyCliExtensionMetaData getExtensionMetaData(ButterflyFacade butterflyFacade) throws IllegalAccessException, InstantiationException {
+        ButterflyCliExtensionMetaData extensionMetaData = null;
         Extension extension = butterflyFacade.getRegisteredExtension();
-        if(extension == null) {
+
+        if(extension != null) {
+            Class<? extends TransformationTemplate> template;
+            String version = (StringUtils.isEmpty(extension.getVersion()) ? "" : extension.getVersion());
+            int shortcut = 1;
+
+            extensionMetaData = new ButterflyCliExtensionMetaData(extension.toString(), extension.getDescription(), version);
+    
+            for(Object templateObj : extension.getTemplateClasses().toArray()) {
+                template = (Class<? extends TransformationTemplate>) templateObj;
+                extensionMetaData.addTemplate(template.getName(), shortcut++, ExtensionTypeInitial.getFromClass(template).toString(),  template.newInstance().getDescription());
+            }
+        }
+        
+        return extensionMetaData;
+    }
+
+    private static void printExtensionsList(ButterflyCliExtensionMetaData extensionMetaData) throws IllegalAccessException, InstantiationException {
+        if(extensionMetaData == null) {
             logger.info("There are no registered extensions");
             return;
         }
 
         logger.info("See registered extensions below (shortcut in parenthesis)");
 
-        Class<? extends TransformationTemplate> template;
-        int shortcut = 1;
-
-        String version = (StringUtils.isEmpty(extension.getVersion()) ? "" : String.format("(version %s)", extension.getVersion()));
+        String version = (StringUtils.isEmpty(extensionMetaData.getVersion()) ? "" : String.format("(version %s)", extensionMetaData.getVersion()));
 
         logger.info("");
-        logger.info("- {}: {} {}", extension, extension.getDescription(), version);
-        for(Object templateObj : extension.getTemplateClasses().toArray()) {
-            template = (Class<? extends TransformationTemplate>) templateObj;
-            logger.info("\t ({}) - [{}] \t {} \t {}", shortcut++, ExtensionTypeInitial.getFromClass(template), template.getName(), template.newInstance().getDescription());
-
+        logger.info("- {}: {} {}", extensionMetaData.getName(), extensionMetaData.getDescription(), version);
+        for(ButterflyCliTemplateMetaData templateMetaData : extensionMetaData.getTemplates()) {
+            logger.info("\t ({}) - [{}] \t {} \t {}", templateMetaData.getShortcut(), templateMetaData.getTypeInitial(), templateMetaData.getName(), templateMetaData.getDescription());
         }
     }
 
