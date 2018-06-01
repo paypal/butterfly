@@ -10,7 +10,7 @@ allprojects {
     apply plugin: 'signing'
 
     group = 'com.paypal.butterfly'
-    version = '2.6.0-SNAPSHOT'
+    version = '3.0.0-SNAPSHOT'
 
     repositories {
         mavenLocal()
@@ -34,7 +34,8 @@ subprojects {
 
     test {
         testLogging {
-            events "passed", "skipped", "failed", "standardError"
+            events "failed", "standardError"
+//            events "passed", "skipped", "failed", "standardError"
         }
     }
 
