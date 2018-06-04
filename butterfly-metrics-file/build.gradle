@@ -2,7 +2,8 @@ apply plugin: 'java-library'
 
 dependencies {
     implementation project(':butterfly-extensions-api')
-    implementation lib.spring_context,
+    implementation lib.annotation_api,
+            lib.spring_context,
             lib.gson,
             lib.annotations,
             lib.commons_io
