@@ -78,7 +78,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
                 run.setExitStatus(0);
                 return run;
             } catch (Exception e) {
-                registerError(run, "An error occurred when listing extensions has occurred", e);
+                registerError(run, "An error occurred when listing extensions", e);
                 return run;
             }
         }

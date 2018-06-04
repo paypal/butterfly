@@ -1,6 +1,7 @@
 *.class
 logs/
 transformed-apps/
+metrics/
 test-output/
 gen-metrics/
 

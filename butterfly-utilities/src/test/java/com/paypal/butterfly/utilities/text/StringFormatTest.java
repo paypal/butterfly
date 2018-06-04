@@ -43,7 +43,7 @@ public class StringFormatTest extends TransformationUtilityTestHelper {
 
     @Test(expectedExceptions = TransformationDefinitionException.class, expectedExceptionsMessageRegExp = "Attribute names cannot be null or empty")
     public void invalidArguments2() {
-        new StringFormat("This %s is %s").setAttributeNames(null);
+        new StringFormat("This %s is %s").setAttributeNames((String[]) null);
     }
 
     @Test
