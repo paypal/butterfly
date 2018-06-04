@@ -8,7 +8,6 @@ import com.paypal.butterfly.extensions.api.exception.TransformationUtilityExcept
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.MissingFormatArgumentException;
 
 /**
  * Applies one or more transformation context attributes to a format String, using {@link String#format(String, Object...)}.

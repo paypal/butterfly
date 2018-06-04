@@ -2,7 +2,6 @@ package com.paypal.butterfly.utilities.operations.text;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
