@@ -8,7 +8,6 @@ import com.paypal.butterfly.extensions.api.exception.TransformationUtilityExcept
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.MissingFormatArgumentException;
 
 /**
  * Applies one or more transformation context attributes to a format String, using {@link String#format(String, Object...)}.
@@ -36,17 +35,31 @@ public class StringFormat extends TransformationUtility<StringFormat> {
      * Applies one or more transformation context attributes to a format String, using {@link String#format(String, Object...)}.
      * The order of attributes will be honored when applying the formatting.
      * If the String format and the arguments don't match in type or number, an error is returned.
+     *
+     * @param format the String format to be applied
      */
     public StringFormat(String format) {
         setFormat(format);
     }
 
+    /**
+     * Set the String format to be applied
+     *
+     * @param format the String format to be applied
+     * @return this utility instance
+     */
     public StringFormat setFormat(String format) {
         checkForBlankString("Format", format);
         this.format = format;
         return this;
     }
 
+    /**
+     * Set the name of the transformation context attributes to be applied to the String format
+     *
+     * @param attributeNames the name of the transformation context attributes to be applied to the String format
+     * @return this utility instance
+     */
     public StringFormat setAttributeNames(String... attributeNames) {
         if(attributeNames == null || attributeNames.length == 0) {
             throw new TransformationDefinitionException("Attribute names cannot be null or empty");
@@ -78,7 +91,7 @@ public class StringFormat extends TransformationUtility<StringFormat> {
         }
 
         try {
-            result = TUExecutionResult.value(this, String.format(format, attributeValues));
+            result = TUExecutionResult.value(this, String.format(format, (Object[]) attributeValues));
         } catch(RuntimeException e) {
             result = TUExecutionResult.error(this, new TransformationUtilityException("String format and arguments don't match", e));
         }

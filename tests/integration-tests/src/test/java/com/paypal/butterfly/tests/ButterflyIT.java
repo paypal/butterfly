@@ -3,8 +3,8 @@ package com.paypal.butterfly.tests;
 import com.google.common.io.Files;
 import com.paypal.butterfly.cli.ButterflyCliApp;
 import com.paypal.butterfly.cli.ButterflyCliRun;
+import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
@@ -18,8 +18,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.commons.io.FileUtils;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
