@@ -17,7 +17,18 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
 
     private Set<String> utilityNames = new HashSet<>();
 
-    private String name = getExtensionClass().getSimpleName() + ":" + getClass().getSimpleName();;
+    private String name;
+
+    public TransformationTemplate() {
+        setName();
+    }
+
+    private void setName() {
+        String extensionPrefix = (getExtensionClass() == null? "NO_EXTENSION" : getExtensionClass().getSimpleName());
+        String templateSuffix = getSimpleClassName();
+
+        name = extensionPrefix + ":" + templateSuffix;
+    }
 
     /**
      * Returns the class of the extension this transformation
@@ -260,6 +271,21 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
      */
     public String getApplicationName() {
         return null;
+    }
+
+    /**
+     * Returns the transformation template class simple name
+     * (see {@link Class#getSimpleName()}), or "AnonymousTransformationTemplate"
+     * if that is an anonymous class
+     *
+     * @return the transformation template class simple name
+     */
+    protected String getSimpleClassName() {
+        if (getClass().isAnonymousClass()) {
+            return "AnonymousTransformationTemplate";
+        } else {
+            return getClass().getSimpleName();
+        }
     }
 
 }

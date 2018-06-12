@@ -182,7 +182,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
 
     @Override
     public MultipleOperations setName(String name) {
-        templateOperation.setName(String.format("%s-%s-TEMPLATE_OPERATION", name, templateOperation.getClass().getSimpleName()));
+        templateOperation.setName(String.format("%s-%s-TEMPLATE_OPERATION", name, templateOperation.getSimpleClassName()));
         return super.setName(name);
     }
 
@@ -203,7 +203,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, templateOperation.getClass().getSimpleName());
+        return String.format(DESCRIPTION, templateOperation.getSimpleClassName());
     }
 
     public void setPropertySetter() {
@@ -246,7 +246,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
                     logger.debug("Multiple operation %s has NO file to perform against, it will result in ZERO transformation operations", getName());
                 }
                 operations = new ArrayList<TransformationUtility>();
-                String message = String.format("Multiple operation %s resulted in 0 operations based on %s", getName(), templateOperation.getClass().getSimpleName());
+                String message = String.format("Multiple operation %s resulted in 0 operations based on %s", getName(), templateOperation.getSimpleClassName());
                 return TUExecutionResult.value(this, getChildren()).setDetails(message);
             }
         }
@@ -305,7 +305,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
 
         String message = null;
         if(logger.isDebugEnabled()) {
-            message = String.format("Multiple operation %s resulted in %d operations based on %s", getName(), operations.size(), templateOperation.getClass().getSimpleName());
+            message = String.format("Multiple operation %s resulted in %d operations based on %s", getName(), operations.size(), templateOperation.getSimpleClassName());
         }
         return TUExecutionResult.value(this, getChildren()).setDetails(message);
     }

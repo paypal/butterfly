@@ -83,7 +83,7 @@ public class FilterFiles extends TransformationUtility<FilterFiles> {
 
     @Override
     protected FilterFiles setName(String name) {
-        conditionTemplate.setName(String.format("%s-%s-TEMPLATE_CONDITION", name, conditionTemplate.getClass().getSimpleName()));
+        conditionTemplate.setName(String.format("%s-%s-TEMPLATE_CONDITION", name, conditionTemplate.getSimpleClassName()));
         return super.setName(name);
     }
 
@@ -135,7 +135,7 @@ public class FilterFiles extends TransformationUtility<FilterFiles> {
 
         String details = null;
         if(logger.isDebugEnabled()) {
-            details = String.format("FilterFiles %s resulted in %d files based on %s", getName(), allFiles.size(), conditionTemplate.getClass().getSimpleName());
+            details = String.format("FilterFiles %s resulted in %d files based on %s", getName(), allFiles.size(), conditionTemplate.getSimpleClassName());
         }
         return TUExecutionResult.value(this, allFiles).setDetails(details);
     }

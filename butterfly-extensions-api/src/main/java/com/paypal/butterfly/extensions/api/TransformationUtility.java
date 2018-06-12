@@ -1146,4 +1146,19 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
         return result;
     }
 
+    /**
+     * Returns the transformation utility class simple name
+     * (see {@link Class#getSimpleName()}), or "AnonymousTransformationUtility"
+     * if that is an anonymous class
+     *
+     * @return the transformation utility class simple name
+     */
+    protected String getSimpleClassName() {
+        if (getClass().isAnonymousClass()) {
+            return "AnonymousTransformationUtility";
+        } else {
+            return getClass().getSimpleName();
+        }
+    }
+
 }
