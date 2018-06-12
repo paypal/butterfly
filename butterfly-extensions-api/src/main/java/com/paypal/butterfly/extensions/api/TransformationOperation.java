@@ -82,7 +82,7 @@ public abstract class TransformationOperation<T extends TransformationOperation>
     }
 
     @Override
-    public PerformResult perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
+    public final PerformResult perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
         PerformResult performResult = super.perform(transformedAppFolder, transformationContext);
         if (readFile != null) {
             readFile.deleteOnExit();

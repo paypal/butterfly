@@ -68,6 +68,11 @@ class TransformationContextImpl implements TransformationContext {
         return results.get(utilityName);
     }
 
+    @Override
+    public boolean contains(String name) {
+        return attributes.containsKey(name);
+    }
+
     /**
      * Puts a new transformation context attribute, using its name as key.
      * If another attribute had already been associated with same key,
