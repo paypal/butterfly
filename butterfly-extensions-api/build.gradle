@@ -6,6 +6,7 @@ dependencies {
             lib.annotations,
             lib.commons_io,
             lib.slf4j_api
+    testImplementation lib.mockito_all
     testImplementation(lib.testng) {
         exclude(module: 'aopalliance')
         exclude(module: 'guava')

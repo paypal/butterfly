@@ -49,7 +49,7 @@ public class Abort extends TransformationUtility<Abort> {
      * @return this transformation utility instance
      */
     public Abort setAbortionMessage(String abortionMessage) {
-        abortOnFailure(true, abortionMessage);
+        abortOnFailure(abortionMessage);
         return this;
     }
 

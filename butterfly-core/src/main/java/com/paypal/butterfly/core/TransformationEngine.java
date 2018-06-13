@@ -402,7 +402,7 @@ public class TransformationEngine {
     }
 
     private void processError(TransformationUtility utility, Exception e, String order, TransformationContextImpl transformationContext) throws TransformationException {
-        if (utility.abortOnFailure()) {
+        if (utility.isAbortOnFailure()) {
             logger.error("*** Transformation will be aborted due to failure in {} ***", utility.getName());
             String abortionMessage = utility.getAbortionMessage();
             if (abortionMessage != null) {

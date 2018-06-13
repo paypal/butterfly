@@ -38,19 +38,19 @@ public class ExtensionTest {
 
 	@Test
 	public void goodPomTest() throws FileNotFoundException {
-		Model model = uut.getRootPomFile(getFolder("/testapps/goodPom"));
+		Model model = uut.getRootPomFile(getFolder("/sample_pom_files/goodPom"));
 		Assert.assertNotNull(model);
 	}
 
 	@Test
 	public void noPomTest() throws FileNotFoundException {
-		Model model = uut.getRootPomFile(getFolder("/testapps/noPom"));
+		Model model = uut.getRootPomFile(getFolder("/sample_pom_files/noPom"));
 		Assert.assertNull(model);
 	}
 
 	@Test
 	public void badPomTest() throws FileNotFoundException {
-		Model model = uut.getRootPomFile(getFolder("/testapps/badPom"));
+		Model model = uut.getRootPomFile(getFolder("/sample_pom_files/badPom"));
 		Assert.assertNull(model);
 	}
 
