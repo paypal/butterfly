@@ -1,104 +1,125 @@
 package com.paypal.butterfly.extensions.api;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-
+import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import org.apache.maven.model.Model;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.testng.annotations.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import static org.testng.Assert.*;
+
+/**
+ * Unit tests for {@link Extension}
+ *
+ * @author facarvalho
+ */
 public class ExtensionTest {
 
-	private Extension<Object> uut;
+    @Test
+	public void basicTest() {
+		Extension extension = new SampleExtension();
 
-	@BeforeClass
-	public void before() {
-		uut = new Extension<Object>() {
-			@Override
-			public String getDescription() {
-				return null;
-			}
-
-			@Override
-			public String getVersion() {
-				return null;
-			}
-
-			@Override
-			public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) {
-				return null;
-			}
-		};
+		assertEquals(extension.getDescription(), "Test extension");
+        assertEquals(extension.getVersion(), "1.0.0");
+        assertEquals(extension.toString(), "com.paypal.butterfly.extensions.api.ExtensionTest$SampleExtension");
 	}
 
 	@Test
-	public void goodPomTest() throws FileNotFoundException {
-		Model model = uut.getRootPomFile(getFolder("/sample_pom_files/goodPom"));
-		Assert.assertNotNull(model);
-	}
+    public void templatesTest() {
+        Extension extension = new SampleExtension();
 
-	@Test
-	public void noPomTest() throws FileNotFoundException {
-		Model model = uut.getRootPomFile(getFolder("/sample_pom_files/noPom"));
-		Assert.assertNull(model);
-	}
+        assertNotNull(extension.getTemplateClasses());
+        assertEquals(extension.getTemplateClasses().size(), 0);
 
-	@Test
-	public void badPomTest() throws FileNotFoundException {
-		Model model = uut.getRootPomFile(getFolder("/sample_pom_files/badPom"));
-		Assert.assertNull(model);
-	}
+        extension.add(SampleTransformationTemplate1.class);
+        assertEquals(extension.getTemplateClasses().size(), 1);
+        assertEquals(extension.getTemplateClasses().get(0), SampleTransformationTemplate1.class);
 
-	@Test
-	public void templateClassesTest() {
-		uut.add(Class1.class);
-		uut.add(Class2.class);
-		uut.add(Class3.class);
-		List<Class<? extends TransformationTemplate>> templateList = uut.getTemplateClasses();
-		Assert.assertTrue(templateList.containsAll(Arrays.asList(Class1.class, Class2.class, Class3.class)));
-	}
-	
-	private File getFolder(String folderPath) throws FileNotFoundException {
-		URL url = ExtensionTest.class.getResource(folderPath);
-		if (url != null) {
-			try {
-				File folder = new File(url.toURI());
-				return folder;
-			} catch (URISyntaxException e) {
-			}
-		}
-		throw new FileNotFoundException("App folder " + folderPath + " not found in classpath");
-	}
+        extension.add(SampleTransformationTemplate2.class);
+        extension.add(SampleTransformationTemplate3.class);
+        assertEquals(extension.getTemplateClasses().size(), 3);
+        assertTrue(extension.getTemplateClasses().contains(SampleTransformationTemplate1.class));
+        assertTrue(extension.getTemplateClasses().contains(SampleTransformationTemplate2.class));
+        assertTrue(extension.getTemplateClasses().contains(SampleTransformationTemplate3.class));
+    }
 
-	private static class TemplateBase extends TransformationTemplate {
+    @Test
+    public void automaticResolutionTest() throws URISyntaxException, TemplateResolutionException {
+        File appFolder = new File(getClass().getResource("/test-app").toURI());
 
-		@Override
-		public Class<? extends Extension<?>> getExtensionClass() {
-			return null;
-		}
+        Extension extension = new Extension() {
+            @Override
+            public String getDescription() {return null;}
+            @Override
+            public String getVersion() {return null;}
 
-		@Override
-		public String getDescription() {
-			return null;
-		}
+            @Override
+            public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException {
+                return (Class<? extends TransformationTemplate>) getTemplateClasses().get(0);
+            }
+        };
+        extension.add(SampleTransformationTemplate2.class);
 
-		@Override
-		public String getApplicationType() {
-			return null;
-		}
+        assertEquals(extension.automaticResolution(appFolder), SampleTransformationTemplate2.class);
+    }
 
-		@Override
-		public String getApplicationName() {
-			return null;
-		}}
+    @Test(expectedExceptions = TemplateResolutionException.class, expectedExceptionsMessageRegExp = "No transformation template could be resolved")
+    public void notSupportedAutomaticResolutionTest() throws URISyntaxException, TemplateResolutionException {
+        File appFolder = new File(getClass().getResource("/test-app").toURI());
+        new SampleExtension().automaticResolution(appFolder);
+    }
 
-	private static class Class1 extends TemplateBase {}
-	private static class Class2 extends TemplateBase {}
-	private static class Class3 extends TemplateBase {}
+    @Test
+    public void rootPomFileTest() throws URISyntaxException, IOException, XmlPullParserException {
+        Extension extension = new SampleExtension();
+        Model rootPomFile = extension.getRootPomFile(new File(getClass().getResource("/sample_pom_files/goodPom").toURI()));
+
+        assertNotNull(rootPomFile);
+        assertEquals(rootPomFile.getGroupId(), "com.test.123");
+        assertEquals(rootPomFile.getArtifactId(), "test123");
+        assertEquals(rootPomFile.getVersion(), "1.0.0");
+        assertEquals(rootPomFile.getPackaging(), "pom");
+        assertEquals(rootPomFile.getName(), "test application");
+    }
+
+    @Test(expectedExceptions = XmlPullParserException.class)
+    public void parseErrorRootPomFileTest() throws URISyntaxException, IOException, XmlPullParserException {
+        new SampleExtension().getRootPomFile(new File(getClass().getResource("/sample_pom_files/badPom").toURI()));
+    }
+
+    @Test(expectedExceptions = FileNotFoundException.class)
+    public void noRootPomFileTest() throws URISyntaxException, IOException, XmlPullParserException {
+        new SampleExtension().getRootPomFile(new File(getClass().getResource("/sample_pom_files/noPom").toURI()));
+    }
+
+    private static abstract class BaseSampleTransformationTemplate extends TransformationTemplate {
+        @Override
+        public Class<? extends Extension> getExtensionClass() {
+            return Extension.class;
+        }
+        @Override
+        public String getDescription() {
+            return "Test transformation template";
+        }
+    }
+
+    private static class SampleExtension extends Extension {
+        @Override
+        public String getDescription() {
+            return "Test extension";
+        }
+        @Override
+        public String getVersion() {
+            return "1.0.0";
+        }
+    }
+
+    private static class SampleTransformationTemplate1 extends BaseSampleTransformationTemplate {}
+    private static class SampleTransformationTemplate2 extends BaseSampleTransformationTemplate {}
+    private static class SampleTransformationTemplate3 extends BaseSampleTransformationTemplate {}
 
 }

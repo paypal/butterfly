@@ -9,13 +9,12 @@ import java.io.File;
 
 import static org.testng.Assert.*;
 
+/**
+ * Unit tests for {@link TransformationUtility}
+ *
+ * @author facarvalho
+ */
 public class TransformationUtilityTest extends TransformationUtilityTestHelper {
-
-    // TODO
-    //
-    // applyPropertiesFromContext
-    // perform
-    // clone
 
     @Test
     public void basicTest() {
@@ -37,13 +36,12 @@ public class TransformationUtilityTest extends TransformationUtilityTestHelper {
         assertFalse(transformationUtility.wasFileExplicitlySet());
         assertFalse(transformationUtility.isAbortOnFailure());
 
-        transformationUtility.setSaveResult(false);
+        assertEquals(transformationUtility, transformationUtility.setSaveResult(false));
         assertFalse(transformationUtility.isSaveResult());
 
         TransformationTemplate transformationTemplate = getNewTestTransformationTemplate();
 
-        transformationTemplate.add(transformationUtility);
-
+        assertEquals(transformationTemplate.add(transformationUtility), "NO_EXTENSION:AnonymousTransformationTemplate-1-AnonymousTransformationUtility");
         assertFalse(transformationUtility.hasBeenPerformed());
         assertEquals(transformationUtility.getName(), "NO_EXTENSION:AnonymousTransformationTemplate-1-AnonymousTransformationUtility");
         assertEquals(transformationUtility.getContextAttributeName(), "NO_EXTENSION:AnonymousTransformationTemplate-1-AnonymousTransformationUtility");
@@ -751,7 +749,7 @@ public class TransformationUtilityTest extends TransformationUtilityTestHelper {
 
     @Test
     public void executeIfObject() {
-        UtilityCondition utilityCondition = getNewUtilityCondition(true);
+        UtilityCondition utilityCondition = getNewTestUtilityCondition(true);
         TransformationUtility transformationUtility = getNewTestTransformationUtility().executeIf(utilityCondition);
 
         assertFalse(transformationUtility.hasBeenPerformed());
@@ -765,7 +763,7 @@ public class TransformationUtilityTest extends TransformationUtilityTestHelper {
 
     @Test
     public void executeIfObjectSkip() {
-        UtilityCondition utilityCondition = getNewUtilityCondition(false);
+        UtilityCondition utilityCondition = getNewTestUtilityCondition(false);
         TransformationUtility transformationUtility = getNewTestTransformationUtility().setName("TU").executeIf(utilityCondition);
 
         assertFalse(transformationUtility.hasBeenPerformed());
@@ -850,49 +848,6 @@ public class TransformationUtilityTest extends TransformationUtilityTestHelper {
         assertNotEquals(tu1, tu2);
         assertEquals(tu2.setName("TUA"), tu2);
         assertEquals(tu1, tu2);
-    }
-
-    private UtilityCondition getNewUtilityCondition(boolean result) {
-        return new UtilityCondition() {
-            @Override
-            public String getDescription() {
-                return "Test utility condition";
-            }
-            @Override
-            protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-                return TUExecutionResult.value(this, result);
-            }
-        };
-    }
-
-    /*
-     * Returns a sample TU that just returns a File object referencing the file it is supposed to work with
-     */
-    private TransformationUtility getNewTestTransformationUtility() {
-        return new TransformationUtility() {
-            @Override
-            public String getDescription() {
-                return "Test transformation utility";
-            }
-            @Override
-            protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-                File file = getAbsoluteFile(transformedAppFolder, transformationContext);
-                return TUExecutionResult.value(this, file);
-            }
-        };
-    }
-
-    private TransformationTemplate getNewTestTransformationTemplate() {
-        return new TransformationTemplate() {
-            @Override
-            public Class<? extends Extension> getExtensionClass() {
-                return null;
-            }
-            @Override
-            public String getDescription() {
-                return "Test transformation template";
-            }
-        };
     }
 
 }
