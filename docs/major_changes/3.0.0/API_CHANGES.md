@@ -27,3 +27,11 @@ Notice that all these removed methods were already marked as deprecated in the l
 |---|---|---|:---:|
 |`com.paypal.butterfly.extensions.api.TransformationUtility.abortOnFailure()`|`com.paypal.butterfly.extensions.api.TransformationUtility.isAbortOnFailure()`||YES|
 |`com.paypal.butterfly.extensions.api.TransformationUtility.abortOnFailure(boolean, String)`|`com.paypal.butterfly.extensions.api.TransformationUtility.abortOnFailure(String)`||YES|
+
+### Changed methods
+
+This section list methods that had their signature preserved, in terms of return type and list of parameters, but that might have had their contract changed in terms of documented behavior or exceptions they might throw.
+
+| Method | What changed |
+|---|---|
+|`com.paypal.butterfly.extensions.api.Extension.getRootPomFile(File)`|Instead of returning `null` it now throws `IOException`, if pom file does not exist, or any error happens when trying to read it. Also it throws `XmlPullParserException` if any error happens when trying to parse the pom file.|

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * Provides logging statements during transformation time.
@@ -25,7 +26,7 @@ public class Log extends TransformationUtility<Log> {
     private static Logger logger = LoggerFactory.getLogger(TransformationUtility.class);
 
     // Log level
-    private Level logLevel = null;
+    private Level logLevel = Level.INFO;
 
     // Log message
     private String logMessage;
@@ -66,6 +67,38 @@ public class Log extends TransformationUtility<Log> {
     }
 
     /**
+     * Returns the log level
+     *
+     * @return the log level
+     */
+    public Level getLogLevel() {
+        return logLevel;
+    }
+
+    /**
+     * Returns the log message
+     *
+     * @return the log message
+     */
+    public String getLogMessage() {
+        return logMessage;
+    }
+
+    /**
+     * Returns a copy of the array containing
+     * all attribute names used by this Log transformation utility.
+     * Returns {@code null} if there are no attributes.
+     *
+     * @return all attribute names used by this Log transformation utility
+     */
+    public String[] getAttributeNames() {
+        if (attributeNames == null) {
+            return null;
+        }
+        return Arrays.copyOf(attributeNames, attributeNames.length);
+    }
+
+    /**
      * Sets names of transformation context attributes to be used
      * as arguments for this log statement
      *
@@ -87,12 +120,9 @@ public class Log extends TransformationUtility<Log> {
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         Object[] attributes = getAttributes(transformedAppFolder, transformationContext);
 
-        if (logLevel == null && attributes.length == 1 && attributes[0] == null) {
+        if (attributes.length == 1 && attributes[0] == null) {
             logger.warn(logMessage, attributes);
         } else {
-            if (logLevel == null) {
-                logLevel = Level.INFO;
-            }
             switch (logLevel) {
                 case ERROR:
                     logger.error(logMessage, attributes);

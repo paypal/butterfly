@@ -3,6 +3,7 @@ package com.paypal.butterfly.extensions.api;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,34 +80,24 @@ public abstract class Extension<E> {
      * {@link #automaticResolution(File)} method based on one or more Maven pom files
      *
      * @param folder the folder where the pom.xml file would be
-     * @return the Model object related to the pom.xml file under {@code folder}, or null, if that file does
-     *              not exist, or any error happens when trying to read and parse it
+     * @return the Model object related to the pom.xml file under {@code folder}
+     * @throws IOException if pom file does not exist, or any error happens when trying to read it
+     * @throws XmlPullParserException if any error happens when trying to parse the pom file
      */
-    protected Model getRootPomFile(File folder) {
-        File pomFile = null;
+    protected Model getRootPomFile(File folder) throws IOException, XmlPullParserException {
         FileInputStream fileInputStream = null;
-        Model model = null;
+        Model model;
 
         try {
             MavenXpp3Reader reader = new MavenXpp3Reader();
-            pomFile = new File(folder, "pom.xml");
-            if (!pomFile.exists()) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("This application does not have a pom.xml file on its root folder");
-                }
-                return null;
-            }
+            File pomFile = new File(folder, "pom.xml");
             fileInputStream = new FileInputStream(pomFile);
             model = reader.read(fileInputStream);
-        } catch (Exception e) {
-            if (logger.isDebugEnabled()) {
-                logger.error("Error happened when trying to read and parse pom.xml file " + pomFile, e);
-            }
         } finally {
             if (fileInputStream != null) try {
                 fileInputStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Error happened when trying to close file", e);
             }
         }
 

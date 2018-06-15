@@ -63,17 +63,22 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
     @Override
     public final String add(TransformationUtility utility) {
         if (utility.getParent() != null) {
-            String exceptionMessage = String.format("Invalid attempt to add already registered transformation utility %s to template transformation utility %s", utility.getName(), name);
+            String exceptionMessage = String.format("Invalid attempt to add already registered transformation utility %s to transformation template %s", utility.getName(), name);
             throw new  TransformationDefinitionException(exceptionMessage);
         }
         // TODO
         // Here I should check the TUs inside of utilities groups and multiple operations as well
         if (utility.getName() != null && utilityNames.contains(utility.getName())) {
-            String exceptionMessage = String.format("Invalid attempt to add transformation utility %s to template transformation utility %s. Its name is already registered", utility.getName(), name);
+            String exceptionMessage = String.format("Invalid attempt to add transformation utility %s to transformation template %s. Its name is already registered", utility.getName(), name);
             throw new  TransformationDefinitionException(exceptionMessage);
         }
         if (!utility.isFileSet()) {
-            String exceptionMessage = String.format("Neither absolute, nor relative path, have been set for transformation utility %s", utility.getName());
+            String exceptionMessage;
+            if (utility.getName() == null) {
+                exceptionMessage = "Neither absolute, nor relative path, have been set for this transformation utility";
+            } else {
+                exceptionMessage = String.format("Neither absolute, nor relative path, have been set for transformation utility %s", utility.getName());
+            }
             throw new  TransformationDefinitionException(exceptionMessage);
         }
 
