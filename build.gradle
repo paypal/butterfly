@@ -180,7 +180,7 @@ ext.lib = [
         woodstox_core: "com.fasterxml.woodstox:woodstox-core:5.0.3",
         xmlunit: "xmlunit:xmlunit:1.5",
         yamlbeans: "com.esotericsoftware.yamlbeans:yamlbeans:1.08",
-        javaparser_core: "com.github.javaparser:javaparser-core:3.0.1",
+        javaparser_core: "com.github.javaparser:javaparser-core:3.6.9",
 
         // Drivers
         lightcouch: "org.lightcouch:lightcouch:0.1.8",
