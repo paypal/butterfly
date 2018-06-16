@@ -318,6 +318,18 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
         return operation;
     }
 
+    /**
+     * Returns all {@link TransformationOperation} instances generated out of the
+     * transformation operation template.
+     * Those instances though are not accessible during transformation definition time,
+     * neither before this multiple operations is performed.
+     * Actually, the purpose of a multiple operation is exactly to generate
+     * all children transformation operation instances, which get them executed behind the scenes
+     * by the transformation engine.
+     *
+     * @return the generated multiple transformation operation instances, based on the specified
+     * transformation operation template
+     */
     @Override
     public List<TransformationUtility> getChildren() {
         if (operations == null) {
