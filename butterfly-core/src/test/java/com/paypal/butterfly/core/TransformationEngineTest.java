@@ -4,6 +4,7 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetricsListener;
 import com.paypal.butterfly.extensions.api.metrics.TransformationStatistics;
+import com.paypal.butterfly.facade.ButterflyProperties;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
 import com.paypal.butterfly.facade.exception.TransformationException;
@@ -15,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import paypal.butterfly.sample.JavaEEToSpringBoot;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,7 +81,7 @@ public class TransformationEngineTest extends TestHelper {
         assertNull(metrics.getAbortDetails());
         assertNull(metrics.getApplicationName());
         assertNull(metrics.getApplicationType());
-        assertNull(metrics.getButterflyVersion());
+        assertEquals(metrics.getButterflyVersion(), ButterflyProperties.getString("butterfly.version"));
         assertNull(metrics.getFromVersion());
         assertNull(metrics.getUpgradeCorrelationId());
         assertNotNull(metrics.getMetricsId());
@@ -116,7 +118,7 @@ public class TransformationEngineTest extends TestHelper {
         Application application = new Application(transformedAppFolder);
         Configuration configuration = new Configuration();
 
-        TransformationTemplate transformationTemplate = new com.extensiontest.SampleTransformationTemplate();
+        TransformationTemplate transformationTemplate = new JavaEEToSpringBoot();
         Transformation transformation = new TemplateTransformation(application, transformationTemplate, configuration);
 
         TransformationResult transformationResult = transformationEngine.perform(transformation);
@@ -135,7 +137,7 @@ public class TransformationEngineTest extends TestHelper {
         assertNull(metrics.getAbortDetails());
         assertNull(metrics.getApplicationName());
         assertNull(metrics.getApplicationType());
-        assertNull(metrics.getButterflyVersion());
+        assertEquals(metrics.getButterflyVersion(), ButterflyProperties.getString("butterfly.version"));
         assertNull(metrics.getFromVersion());
         assertNull(metrics.getUpgradeCorrelationId());
         assertNotNull(metrics.getMetricsId());

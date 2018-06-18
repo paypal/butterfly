@@ -1,4 +1,4 @@
-group = 'com.test'
+group = 'com.paypal.butterfly.sample'
 version = '1.0.0'
 
 dependencies {

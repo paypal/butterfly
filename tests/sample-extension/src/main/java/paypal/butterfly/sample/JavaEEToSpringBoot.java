@@ -1,4 +1,4 @@
-package com.extensiontest;
+package paypal.butterfly.sample;
 
 
 import com.paypal.butterfly.extensions.api.Extension;
@@ -15,14 +15,14 @@ import java.net.URL;
 
 /**
  * Sample transformation template to migrate the sample-app
- * from a WAR deployment application model to a Spring Boot
- * application model
+ * from a Java EE WAR deployment application model to a
+ * Java Spring Boot application model
  *
  * @author facarvalho
  */
-public class SampleTransformationTemplate extends TransformationTemplate {
+public class JavaEEToSpringBoot extends TransformationTemplate {
 
-    public SampleTransformationTemplate() {
+    public JavaEEToSpringBoot() {
 
         // Checking first it the app has a root pom.xml file,
         // and aborting if not
@@ -62,12 +62,12 @@ public class SampleTransformationTemplate extends TransformationTemplate {
 
     @Override
     public Class<? extends Extension> getExtensionClass() {
-        return SampleExtension.class;
+        return SampleButterflyExtension.class;
     }
 
     @Override
     public String getDescription() {
-        return "Sample transformation template";
+        return "Java EE to Spring Boot transformation template";
     }
 
 }

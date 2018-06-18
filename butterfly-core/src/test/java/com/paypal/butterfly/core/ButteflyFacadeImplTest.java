@@ -1,18 +1,20 @@
 package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.core.exception.InternalException;
-import com.paypal.butterfly.core.sample.ExtensionSample;
 import com.paypal.butterfly.core.sample.SampleTransformationTemplate;
 import com.paypal.butterfly.core.sample.SampleUpgradeStep;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import paypal.butterfly.sample.JavaEEToSpringBoot;
+import paypal.butterfly.sample.SampleButterflyExtension;
 
 import java.io.File;
 
@@ -46,19 +48,13 @@ public class ButteflyFacadeImplTest extends PowerMockTestCase {
         when(extensionRegistry.getExtension()).thenReturn(extensionRegistry_test.getExtension());
         Extension extension = butterflyFacadeImpl.getRegisteredExtension();
         Assert.assertNotNull(extension);
-        Assert.assertTrue(extension instanceof ExtensionSample);
-    }
-
-    @Test(expectedExceptions = TemplateResolutionException.class, expectedExceptionsMessageRegExp = "No transformation template applies")
-    public void testAutomaticResolutionNoTemplate() throws TemplateResolutionException {
-        when(extensionRegistry.getExtension()).thenReturn(extensionRegistry_test.getExtension());
-        Assert.assertEquals(butterflyFacadeImpl.automaticResolution(new File("testTransformation1")), null);
+        Assert.assertTrue(extension instanceof SampleButterflyExtension);
     }
 
     @Test
     public void testAutomaticResolutionTemplate() throws TemplateResolutionException {
         when(extensionRegistry.getExtension()).thenReturn(extensionRegistry_test.getExtension());
-        Assert.assertEquals(butterflyFacadeImpl.automaticResolution(applicationFolder), SampleTransformationTemplate.class);
+        Assert.assertEquals(butterflyFacadeImpl.automaticResolution(applicationFolder), JavaEEToSpringBoot.class);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "Template class name cannot be blank")

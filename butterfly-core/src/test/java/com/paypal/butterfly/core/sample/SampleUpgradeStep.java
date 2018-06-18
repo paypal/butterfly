@@ -25,7 +25,7 @@ public class SampleUpgradeStep extends UpgradeStep {
 
     @Override
     public Class<? extends Extension> getExtensionClass() {
-        return ExtensionSample.class;
+        return null;
     }
 
     @Override
