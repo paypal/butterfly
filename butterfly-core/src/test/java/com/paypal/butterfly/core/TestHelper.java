@@ -1,5 +1,6 @@
-package com.paypal.butterfly.extensions.api;
+package com.paypal.butterfly.core;
 
+import com.paypal.butterfly.extensions.api.*;
 import org.apache.commons.io.FileUtils;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeClass;
@@ -17,7 +18,7 @@ import java.net.URISyntaxException;
  *
  * @author facarvalho
  */
-public abstract class TransformationUtilityTestHelper {
+public abstract class TestHelper {
 
     protected File appFolder;
     protected File transformedAppFolder;
@@ -82,11 +83,22 @@ public abstract class TransformationUtilityTestHelper {
         };
     }
 
+    private static class SampleExtension extends Extension {
+        @Override
+        public String getDescription() {
+            return null;
+        }
+        @Override
+        public String getVersion() {
+            return null;
+        }
+    }
+
     protected TransformationTemplate getNewTestTransformationTemplate() {
         return new TransformationTemplate() {
             @Override
             public Class<? extends Extension> getExtensionClass() {
-                return null;
+                return SampleExtension.class;
             }
             @Override
             public String getDescription() {

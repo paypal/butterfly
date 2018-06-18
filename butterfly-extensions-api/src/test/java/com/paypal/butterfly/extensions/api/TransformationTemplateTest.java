@@ -2,7 +2,6 @@ package com.paypal.butterfly.extensions.api;
 
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.utilities.Log;
-import org.mockito.Mockito;
 import org.slf4j.event.Level;
 import org.testng.annotations.Test;
 
@@ -13,7 +12,7 @@ import static org.testng.Assert.*;
  *
  * @author facarvalho
  */
-public class TransformationTemplateTest extends TransformationUtilityTestHelper {
+public class TransformationTemplateTest extends TestHelper {
 
     @Test
     public void basicTest() {

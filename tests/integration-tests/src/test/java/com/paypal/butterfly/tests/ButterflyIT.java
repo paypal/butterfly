@@ -29,13 +29,13 @@ public class ButterflyIT {
     private File transformedApps;
     private ButterflyCliRun run;
 
-    private static final File BUILD_DIR = new File("./build");
+    private static final File TEST_OUTPUT_DIR = new File("./out/test/resources");
 
     @BeforeClass
     public void setUp() {
         sampleApp = new File("../sample-app");
         sampleAppTransformedBaseline = new File("../sample-app-transformed-baseline");
-        transformedApps = new File(BUILD_DIR, "transformed-apps");
+        transformedApps = new File(TEST_OUTPUT_DIR, "transformed-apps");
         transformedApps.mkdir();
     }
 
@@ -75,7 +75,7 @@ public class ButterflyIT {
 
     @Test
     public void modifyFolderTest() throws IOException, ParserConfigurationException, SAXException {
-        File sampleAppCopy = new File(BUILD_DIR, "sample-app-copy");
+        File sampleAppCopy = new File(TEST_OUTPUT_DIR, "sample-app-copy");
         FileUtils.copyDirectory(sampleApp, sampleAppCopy);
 
         run = ButterflyCliApp.run(sampleAppCopy.getAbsolutePath(), "-f");
