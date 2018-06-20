@@ -14,7 +14,7 @@ import static org.testng.Assert.*;
  *
  * @author facarvalho
  */
-public class TransformationUtilityTest extends TransformationUtilityTestHelper {
+public class TransformationUtilityTest extends TestHelper {
 
     @Test
     public void basicTest() {

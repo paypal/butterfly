@@ -1,6 +1,6 @@
 package com.paypal.butterfly.core;
 
-import com.paypal.butterfly.core.sample.SampleTransformationTemplate;
+import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;
 import org.apache.commons.io.FileUtils;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -31,7 +31,7 @@ public class CompressionHandlerTest extends PowerMockTestCase {
     public void testCompressionWithValidFilePath() throws IOException {
 
         transformedApplicationLocation = new File(this.getClass().getClassLoader().getResource("testTransformation").getFile());
-        transformation= new TemplateTransformation(new Application(transformedApplicationLocation),new SampleTransformationTemplate(),null);
+        transformation= new TemplateTransformation(new Application(transformedApplicationLocation), new JavaEEToSpringBoot(),null);
         transformation.setTransformedApplicationLocation(transformedApplicationLocation);
         PowerMockito.mockStatic(FileUtils.class);
         compressionHandler.compress(transformation);
@@ -42,7 +42,7 @@ public class CompressionHandlerTest extends PowerMockTestCase {
     @Test
     public void testCompressionWithInValidFilePath() {
         transformedApplicationLocation = new File(this.getClass().getClassLoader().getResource("testTransformation").getFile());
-        transformation= new TemplateTransformation(new Application(transformedApplicationLocation),new SampleTransformationTemplate(),null);
+        transformation= new TemplateTransformation(new Application(transformedApplicationLocation), new JavaEEToSpringBoot(),null);
         transformation.setTransformedApplicationLocation(new File("test1_transformed"));
         compressionHandler.compress(transformation);
         Assert.assertFalse(new File(transformation.getTransformedApplicationLocation().getAbsolutePath() + ".zip").exists());

@@ -3,6 +3,7 @@ package com.paypal.butterfly.tests;
 import com.google.common.io.Files;
 import com.paypal.butterfly.cli.ButterflyCliApp;
 import com.paypal.butterfly.cli.ButterflyCliRun;
+import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.testng.annotations.BeforeClass;
@@ -20,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 public class ButterflyIT {
@@ -29,13 +31,14 @@ public class ButterflyIT {
     private File transformedApps;
     private ButterflyCliRun run;
 
-    private static final File BUILD_DIR = new File("./build");
+    private static final File TEST_OUTPUT_DIR = new File("./build");
 
     @BeforeClass
     public void setUp() {
-        sampleApp = new File("../sample-app");
-        sampleAppTransformedBaseline = new File("../sample-app-transformed-baseline");
-        transformedApps = new File(BUILD_DIR, "transformed-apps");
+        sampleApp = new File("../sample-apps/echo");
+        sampleAppTransformedBaseline = new File("../transformed-baseline/echo-JavaEEToSpringBoot");
+
+        transformedApps = new File(TEST_OUTPUT_DIR, "transformed-apps");
         transformedApps.mkdir();
     }
 
@@ -62,8 +65,8 @@ public class ButterflyIT {
     }
 
     @Test
-    public void sampleAppRunTest() throws IOException, ParserConfigurationException, SAXException {
-        run = ButterflyCliApp.run(sampleApp.getAbsolutePath(), "-o", transformedApps.getAbsolutePath());
+    public void sampleAppRunTest() throws IOException {
+        run = ButterflyCliApp.run(sampleApp.getAbsolutePath(), "-o", transformedApps.getAbsolutePath(), "-t", JavaEEToSpringBoot.class.getName());
         assertEquals(run.getExitStatus(), 0);
     }
 
@@ -75,10 +78,10 @@ public class ButterflyIT {
 
     @Test
     public void modifyFolderTest() throws IOException, ParserConfigurationException, SAXException {
-        File sampleAppCopy = new File(BUILD_DIR, "sample-app-copy");
+        File sampleAppCopy = new File(TEST_OUTPUT_DIR, "sample-app-copy");
         FileUtils.copyDirectory(sampleApp, sampleAppCopy);
 
-        run = ButterflyCliApp.run(sampleAppCopy.getAbsolutePath(), "-f");
+        run = ButterflyCliApp.run(sampleAppCopy.getAbsolutePath(), "-f", "-t", JavaEEToSpringBoot.class.getName());
 
         assertEquals(run.getExitStatus(), 0);
         assertEqualFolders(sampleAppTransformedBaseline, sampleAppCopy);

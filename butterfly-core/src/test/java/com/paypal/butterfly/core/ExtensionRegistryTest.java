@@ -1,7 +1,7 @@
 package com.paypal.butterfly.core;
 
-import com.paypal.butterfly.core.sample.ExtensionSample;
 import com.paypal.butterfly.extensions.api.Extension;
+import com.paypal.butterfly.extensions.springboot.ButterflySpringBootExtension;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -17,7 +17,7 @@ public class ExtensionRegistryTest {
         ExtensionRegistry extensionRegistry  = new ExtensionRegistry();
         Extension extension = extensionRegistry.getExtension();
         Assert.assertNotNull(extension);
-        Assert.assertTrue(extension instanceof ExtensionSample);
+        Assert.assertTrue(extension instanceof ButterflySpringBootExtension);
     }
 
 }

@@ -13,6 +13,7 @@ dependencies {
             lib.annotations,
             lib.commons_lang3,
             lib.plexus_utils
+    testCompile project(':extensions-catalog:butterfly-springboot-extension')
     testCompile(lib.testng) {
         exclude(module: 'aopalliance')
         exclude(module: 'guava')

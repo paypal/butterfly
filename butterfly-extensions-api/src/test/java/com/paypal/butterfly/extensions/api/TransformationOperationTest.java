@@ -13,7 +13,7 @@ import static org.testng.Assert.*;
  *
  * @author facarvalho
  */
-public class TransformationOperationTest extends TransformationUtilityTestHelper {
+public class TransformationOperationTest extends TestHelper {
 
     @Test
     public void performTest() throws IOException {

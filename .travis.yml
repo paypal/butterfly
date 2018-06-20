@@ -15,7 +15,7 @@ branches:
   - butterfly_3
 
 install:
-  - ./gradlew build
+  - ./gradlew build --scan
   - ./gradlew cobertura
 
 after_script:
