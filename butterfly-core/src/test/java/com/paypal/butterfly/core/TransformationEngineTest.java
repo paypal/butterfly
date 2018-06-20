@@ -4,11 +4,16 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetricsListener;
 import com.paypal.butterfly.extensions.api.metrics.TransformationStatistics;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
+import com.paypal.butterfly.extensions.springboot.ButterflySpringBootExtension;
+import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;
+import com.paypal.butterfly.extensions.springboot.SpringBootUpgrade_1_5_6_to_1_5_7;
 import com.paypal.butterfly.facade.ButterflyProperties;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
 import com.paypal.butterfly.facade.exception.TransformationException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -16,7 +21,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import paypal.butterfly.sample.JavaEEToSpringBoot;
 
 import java.io.File;
 import java.io.IOException;
@@ -108,9 +112,9 @@ public class TransformationEngineTest extends TestHelper {
     }
 
     @Test
-    public void sampleExtensionTest() throws TransformationException, IOException {
-        File appFolder = new File("../tests/sample-app");
-        File transformedAppFolder = new File("./out/test/resources/sample-app-transformed");
+    public void javaEEToSpringBootTest() throws TransformationException, IOException {
+        File appFolder = new File("../tests/sample-apps/echo");
+        File transformedAppFolder = new File("./out/test/resources/echo-transformed");
         FileUtils.deleteDirectory(transformedAppFolder);
         FileUtils.copyDirectory(appFolder, transformedAppFolder);
         System.out.printf("Transformed sample app folder: %s\n", transformedAppFolder.getAbsolutePath());
@@ -139,6 +143,7 @@ public class TransformationEngineTest extends TestHelper {
         assertNull(metrics.getApplicationType());
         assertEquals(metrics.getButterflyVersion(), ButterflyProperties.getString("butterfly.version"));
         assertNull(metrics.getFromVersion());
+        assertNull(metrics.getToVersion());
         assertNull(metrics.getUpgradeCorrelationId());
         assertNotNull(metrics.getMetricsId());
         assertEquals(metrics.getOriginalApplicationLocation(), transformedAppFolder.getAbsolutePath());
@@ -155,6 +160,61 @@ public class TransformationEngineTest extends TestHelper {
         assertEquals(statistics.getTOExecutionResultErrorCount(), 0);
         assertEquals(statistics.getTOExecutionResultNoOpCount(), 0);
         assertEquals(statistics.getTOExecutionResultSuccessCount(), 16);
+        assertEquals(statistics.getTOExecutionResultWarningCount(), 0);
+        assertEquals(statistics.getUtilitiesCount(), 2);
+        assertEquals(statistics.getTUExecutionResultErrorCount(), 0);
+        assertEquals(statistics.getTUExecutionResultNullCount(), 0);
+        assertEquals(statistics.getTUExecutionResultValueCount(), 1);
+        assertEquals(statistics.getTUExecutionResultWarningCount(), 0);
+    }
+
+    @Test(dependsOnMethods = "javaEEToSpringBootTest")
+    public void springBootUpgradeTest() throws TransformationException {
+
+        // The application to be modified is the result of javaEEToSpringBootTest
+        File appFolder = new File("./out/test/resources/echo-transformed");
+
+        Application application = new Application(appFolder);
+        Configuration configuration = new Configuration();
+
+        UpgradePath upgradePath = new UpgradePath(SpringBootUpgrade_1_5_6_to_1_5_7.class);
+        Transformation transformation = new UpgradePathTransformation(application, upgradePath, configuration);
+
+        TransformationResult transformationResult = transformationEngine.perform(transformation);
+
+        assertEquals(transformationResult.getConfiguration(), configuration);
+        assertFalse(transformationResult.hasManualInstructions());
+        assertNull(transformationResult.getManualInstructionsFile());
+        assertEquals(transformationResult.getTransformedApplicationLocation(), appFolder);
+        assertNotNull(transformationResult);
+
+        List<TransformationMetrics> metricsList = metricsListener.metricsList;
+        assertNotNull(metricsList);
+        assertEquals(metricsList.size(), 1);
+
+        TransformationMetrics metrics = metricsList.get(0);
+        assertNull(metrics.getAbortDetails());
+        assertNull(metrics.getApplicationName());
+        assertNull(metrics.getApplicationType());
+        assertEquals(metrics.getButterflyVersion(), ButterflyProperties.getString("butterfly.version"));
+        assertEquals(metrics.getFromVersion(), "1.5.6");
+        assertEquals(metrics.getToVersion(), "1.5.7");
+        assertFalse(StringUtils.isBlank(metrics.getUpgradeCorrelationId()));
+        assertNotNull(metrics.getMetricsId());
+        assertEquals(metrics.getOriginalApplicationLocation(), appFolder.getAbsolutePath());
+        assertEquals(metrics.getTemplateName(), ButterflySpringBootExtension.class.getSimpleName() + ":" + SpringBootUpgrade_1_5_6_to_1_5_7.class.getSimpleName());
+        assertEquals(System.getProperty("user.name"), metrics.getUserId());
+
+        TransformationStatistics statistics = metrics.getStatistics();
+        assertEquals(statistics.getManualInstructionsCount(), 0);
+        assertEquals(statistics.getOperationsCount(), 1);
+        assertEquals(statistics.getPerformResultErrorCount(), 0);
+        assertEquals(statistics.getPerformResultExecutionResultCount(), 2);
+        assertEquals(statistics.getPerformResultSkippedConditionCount(), 1);
+        assertEquals(statistics.getPerformResultSkippedDependencyCount(), 0);
+        assertEquals(statistics.getTOExecutionResultErrorCount(), 0);
+        assertEquals(statistics.getTOExecutionResultNoOpCount(), 0);
+        assertEquals(statistics.getTOExecutionResultSuccessCount(), 1);
         assertEquals(statistics.getTOExecutionResultWarningCount(), 0);
         assertEquals(statistics.getUtilitiesCount(), 2);
         assertEquals(statistics.getTUExecutionResultErrorCount(), 0);

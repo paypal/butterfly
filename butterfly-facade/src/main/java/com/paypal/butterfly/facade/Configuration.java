@@ -48,8 +48,11 @@ public class Configuration {
      *                     supposed to be placed
      */
     public void setOutputFolder(File outputFolder) {
-        if(outputFolder != null && (!outputFolder.exists() || !outputFolder.isDirectory())) {
-            throw new IllegalArgumentException(String.format("Invalid application folder %s",outputFolder));
+        if(outputFolder != null && !outputFolder.exists()) {
+            throw new IllegalArgumentException(String.format("Invalid application folder, it does not exist %s", outputFolder));
+        }
+        if(outputFolder != null && !outputFolder.isDirectory()) {
+            throw new IllegalArgumentException(String.format("Invalid application folder, that is not a directory %s", outputFolder));
         }
         this.outputFolder = outputFolder;
     }

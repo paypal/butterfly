@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 public class ButterflyIT {
@@ -30,12 +31,13 @@ public class ButterflyIT {
     private File transformedApps;
     private ButterflyCliRun run;
 
-    private static final File TEST_OUTPUT_DIR = new File("./out/test/resources");
+    private static final File TEST_OUTPUT_DIR = new File("./build");
 
     @BeforeClass
     public void setUp() {
         sampleApp = new File("../sample-apps/echo");
         sampleAppTransformedBaseline = new File("../transformed-baseline/echo-JavaEEToSpringBoot");
+
         transformedApps = new File(TEST_OUTPUT_DIR, "transformed-apps");
         transformedApps.mkdir();
     }
@@ -63,7 +65,7 @@ public class ButterflyIT {
     }
 
     @Test
-    public void sampleAppRunTest() throws IOException, ParserConfigurationException, SAXException {
+    public void sampleAppRunTest() throws IOException {
         run = ButterflyCliApp.run(sampleApp.getAbsolutePath(), "-o", transformedApps.getAbsolutePath(), "-t", JavaEEToSpringBoot.class.getName());
         assertEquals(run.getExitStatus(), 0);
     }
