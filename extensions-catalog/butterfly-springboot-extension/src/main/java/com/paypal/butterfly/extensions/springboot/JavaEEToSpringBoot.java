@@ -1,4 +1,4 @@
-package paypal.butterfly.sample;
+package com.paypal.butterfly.extensions.springboot;
 
 
 import com.paypal.butterfly.extensions.api.Extension;
@@ -62,7 +62,7 @@ public class JavaEEToSpringBoot extends TransformationTemplate {
 
     @Override
     public Class<? extends Extension> getExtensionClass() {
-        return SampleButterflyExtension.class;
+        return ButterflySpringBootExtension.class;
     }
 
     @Override

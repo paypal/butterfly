@@ -1,4 +1,4 @@
-package paypal.butterfly.sample;
+package com.paypal.butterfly.extensions.springboot;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
@@ -7,19 +7,20 @@ import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException
 import java.io.File;
 
 /**
- * Butterfly sample extension
+ * Butterfly Spring Boot extension
  *
  * @author facarvalho
  */
-public class SampleButterflyExtension extends Extension {
+public class ButterflySpringBootExtension extends Extension {
 
-    public SampleButterflyExtension() {
+    public ButterflySpringBootExtension() {
         add(JavaEEToSpringBoot.class);
+        add(SpringBootUpgrade_1_5_6_to_1_5_7.class);
     }
 
     @Override
     public String getDescription() {
-        return "Sample extension";
+        return "Butterfly Spring Boot extension";
     }
 
     @Override
@@ -29,7 +30,8 @@ public class SampleButterflyExtension extends Extension {
 
     @Override
     public Class<? extends TransformationTemplate> automaticResolution(File file) throws TemplateResolutionException {
-        return JavaEEToSpringBoot.class;
+        // TODO
+        return null;
     }
 
 }
