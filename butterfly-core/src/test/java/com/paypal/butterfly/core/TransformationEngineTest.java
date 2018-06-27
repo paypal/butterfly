@@ -1,5 +1,6 @@
 package com.paypal.butterfly.core;
 
+import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetricsListener;
@@ -24,6 +25,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,7 +54,7 @@ public class TransformationEngineTest extends TestHelper {
         metricsHandler.setupListeners();
     }
 
-    static class SimpleTransformationMetricsListener implements TransformationMetricsListener {
+    private static class SimpleTransformationMetricsListener implements TransformationMetricsListener {
         List<TransformationMetrics> metricsList;
         @Override
         public void notify(List<TransformationMetrics> metricsList) {
@@ -215,6 +217,65 @@ public class TransformationEngineTest extends TestHelper {
         assertEquals(statistics.getTOExecutionResultErrorCount(), 0);
         assertEquals(statistics.getTOExecutionResultNoOpCount(), 0);
         assertEquals(statistics.getTOExecutionResultSuccessCount(), 1);
+        assertEquals(statistics.getTOExecutionResultWarningCount(), 0);
+        assertEquals(statistics.getUtilitiesCount(), 2);
+        assertEquals(statistics.getTUExecutionResultErrorCount(), 0);
+        assertEquals(statistics.getTUExecutionResultNullCount(), 0);
+        assertEquals(statistics.getTUExecutionResultValueCount(), 1);
+        assertEquals(statistics.getTUExecutionResultWarningCount(), 0);
+    }
+
+    // TODO
+//    @Test
+    public void abortTest() throws TransformationException, IOException, URISyntaxException {
+        File appFolder = new File(getClass().getResource("/test-app-2").toURI());
+
+        File transformedAppFolder = new File("./out/test/resources/test-app-2-transformed");
+        FileUtils.deleteDirectory(transformedAppFolder);
+        FileUtils.copyDirectory(appFolder, transformedAppFolder);
+        System.out.printf("Transformed sample app folder: %s\n", transformedAppFolder.getAbsolutePath());
+
+        Application application = new Application(transformedAppFolder);
+        Configuration configuration = new Configuration();
+
+        TransformationTemplate transformationTemplate = new JavaEEToSpringBoot();
+        Transformation transformation = new TemplateTransformation(application, transformationTemplate, configuration);
+
+        TransformationResult transformationResult = transformationEngine.perform(transformation);
+
+        assertEquals(transformationResult.getConfiguration(), configuration);
+        assertFalse(transformationResult.hasManualInstructions());
+        assertNull(transformationResult.getManualInstructionsFile());
+        assertEquals(transformationResult.getTransformedApplicationLocation(), transformedAppFolder);
+        assertNotNull(transformationResult);
+
+        List<TransformationMetrics> metricsList = metricsListener.metricsList;
+        assertNotNull(metricsList);
+        assertEquals(metricsList.size(), 1);
+
+        TransformationMetrics metrics = metricsList.get(0);
+        assertNull(metrics.getAbortDetails());
+        assertNull(metrics.getApplicationName());
+        assertNull(metrics.getApplicationType());
+        assertEquals(metrics.getButterflyVersion(), ButterflyProperties.getString("butterfly.version"));
+        assertNull(metrics.getFromVersion());
+        assertNull(metrics.getToVersion());
+        assertNull(metrics.getUpgradeCorrelationId());
+        assertNotNull(metrics.getMetricsId());
+        assertEquals(metrics.getOriginalApplicationLocation(), transformedAppFolder.getAbsolutePath());
+        assertEquals(metrics.getTemplateName(), transformationTemplate.getName());
+        assertEquals(metrics.getUserId(), System.getProperty("user.name"));
+
+        TransformationStatistics statistics = metrics.getStatistics();
+        assertEquals(statistics.getManualInstructionsCount(), 0);
+        assertEquals(statistics.getOperationsCount(), 0);
+        assertEquals(statistics.getPerformResultErrorCount(), 0);
+        assertEquals(statistics.getPerformResultExecutionResultCount(), 2);
+        assertEquals(statistics.getPerformResultSkippedConditionCount(), 0);
+        assertEquals(statistics.getPerformResultSkippedDependencyCount(), 0);
+        assertEquals(statistics.getTOExecutionResultErrorCount(), 0);
+        assertEquals(statistics.getTOExecutionResultNoOpCount(), 0);
+        assertEquals(statistics.getTOExecutionResultSuccessCount(), 0);
         assertEquals(statistics.getTOExecutionResultWarningCount(), 0);
         assertEquals(statistics.getUtilitiesCount(), 2);
         assertEquals(statistics.getTUExecutionResultErrorCount(), 0);

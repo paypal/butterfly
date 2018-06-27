@@ -10,6 +10,7 @@ include ':butterfly-cli'
 include ':butterfly-cli-package'
 include ':butterfly-metrics-couchdb'
 include ':butterfly-metrics-file'
+include ':butterfly-test'
 include ':extensions-catalog:butterfly-springboot-extension'
 include ':tests:integration-tests'
 include ':tests'
@@ -22,6 +23,7 @@ project(':butterfly-cli').projectDir = "$rootDir/butterfly-cli" as File
 project(':butterfly-cli-package').projectDir = "$rootDir/butterfly-cli-package" as File
 project(':butterfly-metrics-couchdb').projectDir = "$rootDir/butterfly-metrics-couchdb" as File
 project(':butterfly-metrics-file').projectDir = "$rootDir/butterfly-metrics-file" as File
+project(':butterfly-test').projectDir = "$rootDir/butterfly-test" as File
 project(':extensions-catalog:butterfly-springboot-extension').projectDir = "$rootDir/extensions-catalog/butterfly-springboot-extension" as File
 project(':tests:integration-tests').projectDir = "$rootDir/tests/integration-tests" as File
 project(':tests').projectDir = "$rootDir/tests" as File

@@ -1,0 +1,162 @@
+Butterfly application transformation tool (version TEST)
+
+Usage:	 butterfly [options] [application folder]
+
+The following options are available:
+
+Option                           Description                                   
+------                           -----------                                   
+-?, -h                           Show this help                                
+-d                               Runs Butterfly in debug mode                  
+-f                               Transforms the application in the same folder 
+                                   as the original content. Options (-o) or (- 
+                                   z) are ignored if (-f) is specified         
+-l                               List all registered extensions and their      
+                                   transformation templates                    
+-o <File: output>                The folder location in the file system where  
+                                   the transformed application should be       
+                                   placed. It defaults to same location where  
+                                   original application is. Transformed        
+                                   application is placed under a new folder    
+                                   whose name is same as original folder, plus 
+                                   "-transformed-yyyyMMddHHmmssSSS" suffix     
+-r <File: result file>           Creates a result file in JSON format          
+                                   containing details, not about the           
+                                   transformation itself, but about the CLI    
+                                   execution                                   
+-s <Integer: template shortcut>  The shortcut number to the transformation     
+                                   template to be executed. If both shortcut (-
+                                   s) and template class (-t) name are         
+                                   supplied, the shortcut will be ignored. If  
+                                   the chosen transformation template is an    
+                                   upgrade template, then the application will 
+                                   be upgraded all the way to the latest       
+                                   version possible, unless upgrade version (- 
+                                   u) is specified                             
+-t <template>                    The Java class name of the transformation     
+                                   template to be executed. This option has    
+                                   precedence over -s. If the chosen           
+                                   transformation template is an upgrade       
+                                   template, then the application will be      
+                                   upgraded all the way to the latest version  
+                                   possible, unless upgrade version (-u) is    
+                                   specified                                   
+-u <upgrade version>             The version the application should be upgraded
+                                   to. This option only makes sense if the     
+                                   transformation template to be used is also  
+                                   an upgrade template. If not, it is ignored. 
+                                   If it is, but this option is not specified, 
+                                   then the application will be upgraded all   
+                                   the way to the latest version possible      
+-v                               Runs Butterfly in verbose mode, printing log  
+                                   messages not just in a log file, but also on
+                                   the console                                 
+-z                               Outputs a zip file instead of a folder        
+Butterfly application transformation tool (version TEST)
+
+Usage:	 butterfly [options] [application folder]
+
+The following options are available:
+
+Option                           Description                                   
+------                           -----------                                   
+-?, -h                           Show this help                                
+-d                               Runs Butterfly in debug mode                  
+-f                               Transforms the application in the same folder 
+                                   as the original content. Options (-o) or (- 
+                                   z) are ignored if (-f) is specified         
+-l                               List all registered extensions and their      
+                                   transformation templates                    
+-o <File: output>                The folder location in the file system where  
+                                   the transformed application should be       
+                                   placed. It defaults to same location where  
+                                   original application is. Transformed        
+                                   application is placed under a new folder    
+                                   whose name is same as original folder, plus 
+                                   "-transformed-yyyyMMddHHmmssSSS" suffix     
+-r <File: result file>           Creates a result file in JSON format          
+                                   containing details, not about the           
+                                   transformation itself, but about the CLI    
+                                   execution                                   
+-s <Integer: template shortcut>  The shortcut number to the transformation     
+                                   template to be executed. If both shortcut (-
+                                   s) and template class (-t) name are         
+                                   supplied, the shortcut will be ignored. If  
+                                   the chosen transformation template is an    
+                                   upgrade template, then the application will 
+                                   be upgraded all the way to the latest       
+                                   version possible, unless upgrade version (- 
+                                   u) is specified                             
+-t <template>                    The Java class name of the transformation     
+                                   template to be executed. This option has    
+                                   precedence over -s. If the chosen           
+                                   transformation template is an upgrade       
+                                   template, then the application will be      
+                                   upgraded all the way to the latest version  
+                                   possible, unless upgrade version (-u) is    
+                                   specified                                   
+-u <upgrade version>             The version the application should be upgraded
+                                   to. This option only makes sense if the     
+                                   transformation template to be used is also  
+                                   an upgrade template. If not, it is ignored. 
+                                   If it is, but this option is not specified, 
+                                   then the application will be upgraded all   
+                                   the way to the latest version possible      
+-v                               Runs Butterfly in verbose mode, printing log  
+                                   messages not just in a log file, but also on
+                                   the console                                 
+-z                               Outputs a zip file instead of a folder        
+Butterfly application transformation tool (version TEST)
+
+Usage:	 butterfly [options] [application folder]
+
+The following options are available:
+
+Option                           Description                                   
+------                           -----------                                   
+-?, -h                           Show this help                                
+-d                               Runs Butterfly in debug mode                  
+-f                               Transforms the application in the same folder 
+                                   as the original content. Options (-o) or (- 
+                                   z) are ignored if (-f) is specified         
+-l                               List all registered extensions and their      
+                                   transformation templates                    
+-o <File: output>                The folder location in the file system where  
+                                   the transformed application should be       
+                                   placed. It defaults to same location where  
+                                   original application is. Transformed        
+                                   application is placed under a new folder    
+                                   whose name is same as original folder, plus 
+                                   "-transformed-yyyyMMddHHmmssSSS" suffix     
+-r <File: result file>           Creates a result file in JSON format          
+                                   containing details, not about the           
+                                   transformation itself, but about the CLI    
+                                   execution                                   
+-s <Integer: template shortcut>  The shortcut number to the transformation     
+                                   template to be executed. If both shortcut (-
+                                   s) and template class (-t) name are         
+                                   supplied, the shortcut will be ignored. If  
+                                   the chosen transformation template is an    
+                                   upgrade template, then the application will 
+                                   be upgraded all the way to the latest       
+                                   version possible, unless upgrade version (- 
+                                   u) is specified                             
+-t <template>                    The Java class name of the transformation     
+                                   template to be executed. This option has    
+                                   precedence over -s. If the chosen           
+                                   transformation template is an upgrade       
+                                   template, then the application will be      
+                                   upgraded all the way to the latest version  
+                                   possible, unless upgrade version (-u) is    
+                                   specified                                   
+-u <upgrade version>             The version the application should be upgraded
+                                   to. This option only makes sense if the     
+                                   transformation template to be used is also  
+                                   an upgrade template. If not, it is ignored. 
+                                   If it is, but this option is not specified, 
+                                   then the application will be upgraded all   
+                                   the way to the latest version possible      
+-v                               Runs Butterfly in verbose mode, printing log  
+                                   messages not just in a log file, but also on
+                                   the console                                 
+-z                               Outputs a zip file instead of a folder        
