@@ -1,14 +1,17 @@
 group = 'com.paypal.butterfly.tests'
 
 dependencies {
+    testCompile project(':butterfly-test')
     testCompile project(':butterfly-cli')
-    testCompile project(':butterfly-metrics-file')
     testCompile project(':extensions-catalog:butterfly-springboot-extension')
+    testCompile lib.commons_io,
+        lib.mockito_all,
+        lib.powermock_module_testng,
+        lib.powermock_api_mockito
     testCompile(lib.testng) {
         exclude(module: 'aopalliance')
         exclude(module: 'guava')
     }
-    testCompile lib.xmlunit
 }
 
 test.useTestNG()

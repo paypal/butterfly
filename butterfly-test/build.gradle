@@ -1,0 +1,7 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation project(':butterfly-cli')
+    implementation project(':butterfly-metrics-file')
+    implementation lib.xmlunit
+}
