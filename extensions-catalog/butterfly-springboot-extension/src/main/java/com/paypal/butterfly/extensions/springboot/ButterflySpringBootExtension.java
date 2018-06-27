@@ -1,10 +1,10 @@
 package com.paypal.butterfly.extensions.springboot;
 
+import java.io.File;
+
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
-
-import java.io.File;
 
 /**
  * Butterfly Spring Boot extension
