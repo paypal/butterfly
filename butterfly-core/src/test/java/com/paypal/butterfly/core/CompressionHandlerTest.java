@@ -30,7 +30,7 @@ public class CompressionHandlerTest extends PowerMockTestCase {
     @Test
     public void testCompressionWithValidFilePath() throws IOException {
 
-        transformedApplicationLocation = new File(this.getClass().getClassLoader().getResource("testTransformation").getFile());
+        transformedApplicationLocation = new File(this.getClass().getClassLoader().getResource("test-app-2").getFile());
         transformation= new TemplateTransformation(new Application(transformedApplicationLocation), new JavaEEToSpringBoot(),null);
         transformation.setTransformedApplicationLocation(transformedApplicationLocation);
         PowerMockito.mockStatic(FileUtils.class);
@@ -41,7 +41,7 @@ public class CompressionHandlerTest extends PowerMockTestCase {
 
     @Test
     public void testCompressionWithInValidFilePath() {
-        transformedApplicationLocation = new File(this.getClass().getClassLoader().getResource("testTransformation").getFile());
+        transformedApplicationLocation = new File(this.getClass().getClassLoader().getResource("test-app-2").getFile());
         transformation= new TemplateTransformation(new Application(transformedApplicationLocation), new JavaEEToSpringBoot(),null);
         transformation.setTransformedApplicationLocation(new File("test1_transformed"));
         compressionHandler.compress(transformation);

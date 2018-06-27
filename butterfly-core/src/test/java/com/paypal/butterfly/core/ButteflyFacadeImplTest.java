@@ -39,7 +39,7 @@ public class ButteflyFacadeImplTest extends PowerMockTestCase {
 
     private ExtensionRegistry extensionRegistry_test = new ExtensionRegistry();
 
-    private File applicationFolder = new File(this.getClass().getClassLoader().getResource("testTransformation").getFile());
+    private File applicationFolder = new File(this.getClass().getClassLoader().getResource("test-app-2").getFile());
 
     @Test
     public void testGetRegisteredExtension() {

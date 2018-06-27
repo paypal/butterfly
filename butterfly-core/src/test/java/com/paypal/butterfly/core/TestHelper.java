@@ -26,7 +26,7 @@ public abstract class TestHelper {
 
     @BeforeClass
     public void beforeClass() throws URISyntaxException, IOException {
-        appFolder = new File(getClass().getResource("/test-app").toURI());
+        appFolder = new File(getClass().getResource("/test-app-1").toURI());
     }
 
     @BeforeMethod
