@@ -2,13 +2,13 @@ apply plugin: 'java-library'
 
 dependencies {
     api project(':butterfly-extensions-api')
+    api lib.maven_invoker
     implementation lib.commons_io,
             lib.maven_model,
             lib.slf4j_api,
             lib.javaparser_core,
             lib.zip4j,
             lib.annotations,
-            lib.maven_invoker,
             lib.xmlunit,
             lib.woodstox_core
     testImplementation lib.guava,

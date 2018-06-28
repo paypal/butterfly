@@ -25,7 +25,6 @@ allprojects {
 }
 
 Set testModules = [
-    "sample-extension",
     "integration-tests",
     "tests"
 ]
