@@ -1,0 +1,47 @@
+
+description = "Butterfly BOM (Bill of Materials)"
+
+// List of all Butterfly projects to be exposed as an API and shared in Butterfly BOM
+def api = [
+        'com.paypal.butterfly:butterfly-facade',
+        'com.paypal.butterfly:butterfly-extensions-api',
+        'com.paypal.butterfly:butterfly-utilities',
+        'com.paypal.butterfly:butterfly-metrics-couchdb',
+        'com.paypal.butterfly:butterfly-metrics-file',
+        'com.paypal.butterfly:butterfly-test',
+]
+
+install {
+    repositories.mavenInstaller {
+        pom.whenConfigured {
+            packaging = "pom"
+            withXml {
+                asNode().children().last() + {
+                    delegate.dependencyManagement {
+                        delegate.dependencies {
+                            def d = []
+
+                            // Adding Butterfly API dependencies defined above
+                            api.each { a -> d.add(a + ':' + version)}
+
+                            // And also all dependencies managed in the root project under ext.lib
+                            d.addAll(parent.lib.values())
+
+                            // Inserting each managed dependency in the pom.xml file
+                            d.each { p ->
+                                if (p != project) {
+                                    def pa = p.tokenize(':')
+                                    delegate.dependency {
+                                        delegate.groupId(pa[0])
+                                        delegate.artifactId(pa[1])
+                                        delegate.version(pa[2])
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

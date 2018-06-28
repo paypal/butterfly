@@ -2,6 +2,7 @@ rootProject.name = 'butterfly'
 
 enableFeaturePreview('IMPROVED_POM_SUPPORT')
 
+include ':butterfly-bom'
 include ':butterfly-facade'
 include ':butterfly-extensions-api'
 include ':butterfly-utilities'
@@ -15,6 +16,7 @@ include ':extensions-catalog:butterfly-springboot-extension'
 include ':tests:integration-tests'
 include ':tests'
 
+project(':butterfly-bom').projectDir = "$rootDir/butterfly-bom" as File
 project(':butterfly-facade').projectDir = "$rootDir/butterfly-facade" as File
 project(':butterfly-extensions-api').projectDir = "$rootDir/butterfly-extensions-api" as File
 project(':butterfly-utilities').projectDir = "$rootDir/butterfly-utilities" as File
