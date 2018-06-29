@@ -1,15 +1,16 @@
 package com.paypal.butterfly.utilities.operations.file;
 
-import com.paypal.butterfly.extensions.api.TOExecutionResult;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
-import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
-import org.apache.commons.io.FileUtils;
-import org.testng.annotations.Test;
+import static org.testng.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.testng.Assert.*;
+import org.apache.commons.io.FileUtils;
+import org.testng.annotations.Test;
+
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
 
 /**
  * Unit test class for {@link CopyFile}
@@ -82,7 +83,8 @@ public class CopyFileTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
         assertEquals(executionResult.getException().getMessage(), "File could not be copied");
-        assertEquals(executionResult.getException().getCause().getMessage(), new File(transformedAppFolder, "blah").getAbsolutePath() + " (Is a directory)");
+        assertEquals(executionResult.getException().getCause().getClass(), IOException.class);
+        assertEquals(executionResult.getException().getCause().getMessage(), "/blah (Is a directory)");
         assertEquals(copyFile.getDescription(), "Copy file blah to src/main/resources");
         assertNull(executionResult.getDetails());
     }
