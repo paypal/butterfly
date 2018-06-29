@@ -1,11 +1,11 @@
 apply plugin: 'java-library'
 
 dependencies {
+    api lib.slf4j_api
     implementation lib.commons_lang3,
             lib.maven_model,
             lib.annotations,
-            lib.commons_io,
-            lib.slf4j_api
+            lib.commons_io
     testImplementation lib.mockito_all
     testImplementation(lib.testng) {
         exclude(module: 'aopalliance')

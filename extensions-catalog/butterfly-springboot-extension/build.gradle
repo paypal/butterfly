@@ -1,5 +1,4 @@
 group = 'com.paypal.butterfly.extensions'
-version = '1.0.0'
 
 dependencies {
     compile project(':butterfly-utilities')

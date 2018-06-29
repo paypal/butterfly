@@ -126,7 +126,8 @@ public class MoveFileTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
         assertEquals(executionResult.getException().getMessage(), "File could not be moved");
-        assertEquals(executionResult.getException().getCause().getMessage(), new File(transformedAppFolder, "blah").getAbsolutePath() + " (Is a directory)");
+        assertEquals(executionResult.getException().getCause().getClass(), IOException.class);
+        assertEquals(executionResult.getException().getCause().getMessage(), "/blah (Is a directory)");
         assertEquals(moveFile.getDescription(), "Move file blah to src");
         assertNull(executionResult.getDetails());
     }

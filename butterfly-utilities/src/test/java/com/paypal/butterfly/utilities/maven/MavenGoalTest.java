@@ -3,7 +3,7 @@ package com.paypal.butterfly.utilities.maven;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import org.apache.maven.shared.invoker.*;
-import org.codehaus.plexus.util.cli.CommandLineException;
+import org.apache.maven.shared.utils.cli.CommandLineException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -54,9 +54,7 @@ public class MavenGoalTest {
     public void setsRequestObjectCorrectly() {
         String[] goals = {"a", "b", "c"};
         mavenGoal.setGoals(goals);
-        mavenGoal.setFailAtEnd();
         mavenGoal.execution(null, null);
-        verify(request, times(1)).setFailureBehavior(InvocationRequest.REACTOR_FAIL_AT_END);
         verify(request, times(1)).setPomFile(absoluteFile);
         verify(request, times(1)).setGoals(anyList());
     }
@@ -65,7 +63,6 @@ public class MavenGoalTest {
     public void doesntSetIfFailureBehaviorIsUnset() {
         Mockito.reset(request);
         mavenGoal.execution(null, null);
-        verify(request, times(0)).setFailureBehavior(anyString());
     }
 
     @Test(expectedExceptions = TransformationDefinitionException.class)
