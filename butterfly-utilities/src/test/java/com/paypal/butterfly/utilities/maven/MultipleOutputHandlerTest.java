@@ -5,6 +5,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.mockito.Mock;
@@ -50,7 +51,7 @@ public class MultipleOutputHandlerTest {
     }
 
     @Test
-    public void callsAllRegisteredHandlersWithLine() {
+    public void callsAllRegisteredHandlersWithLine() throws IOException {
         BogusMavenInvocationOutputHandler handler0 = Mockito.mock(BogusMavenInvocationOutputHandler.class);
         BogusMavenInvocationOutputHandler handler1 = Mockito.mock(BogusMavenInvocationOutputHandler.class);
         multiHandler.register(handler0);
@@ -64,7 +65,7 @@ public class MultipleOutputHandlerTest {
     }
 
     @Test
-    public void doesntAllowAHandlerExceptionToStopConsuming() {
+    public void doesntAllowAHandlerExceptionToStopConsuming() throws IOException {
         BogusMavenInvocationOutputHandler handler = Mockito.mock(BogusMavenInvocationOutputHandler.class);
         BogusMavenInvocationOutputHandler badHandler = Mockito.mock(BogusMavenInvocationOutputHandler.class);
         Mockito.doThrow(new IllegalStateException("barf test failure")).when(badHandler).consumeLine(anyString());
@@ -76,7 +77,7 @@ public class MultipleOutputHandlerTest {
     }
 
     @Test
-    public void returnsExceptionInResultsIfHandlerThrows() {
+    public void returnsExceptionInResultsIfHandlerThrows() throws IOException {
         BogusMavenInvocationOutputHandler badHandler = Mockito.mock(BogusMavenInvocationOutputHandler.class);
         Mockito.doThrow(new IllegalStateException("barf test failure")).when(badHandler).consumeLine(anyString());
         multiHandler.register(badHandler);
@@ -89,7 +90,7 @@ public class MultipleOutputHandlerTest {
     }
 
     @Test
-    public void stopsCallingHandlerIfItThrows() {
+    public void stopsCallingHandlerIfItThrows() throws IOException {
         BogusMavenInvocationOutputHandler badHandler = Mockito.mock(BogusMavenInvocationOutputHandler.class);
         Mockito.doThrow(new IllegalStateException("barf test failure")).when(badHandler).consumeLine(anyString());
         multiHandler.register(badHandler);

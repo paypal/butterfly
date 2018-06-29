@@ -1,15 +1,16 @@
 package com.paypal.butterfly.utilities.maven;
 
-import com.paypal.butterfly.extensions.api.TUExecutionResult;
-import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.TransformationUtility;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import org.apache.maven.shared.invoker.*;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
+
+import org.apache.maven.shared.invoker.*;
+
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
+import com.paypal.butterfly.extensions.api.TransformationContext;
+import com.paypal.butterfly.extensions.api.TransformationUtility;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 /**
  * Runs one or more Maven goals against a specific Maven POM file.
@@ -27,9 +28,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     private MavenInvocationOutputHandler[] outputHandlers = {};
 
     private MultipleOutputHandler multipleOutputHandler = new MultipleOutputHandler();
-    
-    private String mavenFailureBehavior = null;
-    
+
     private InvocationRequest request = new DefaultInvocationRequest();
 
     private Invoker invoker = new DefaultInvoker();
@@ -99,16 +98,6 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     }
 
     /**
-     * Set the maven failure behavior to only fail at the end.
-     *
-     * @return this utility instance
-     */
-    public MavenGoal setFailAtEnd() {
-        mavenFailureBehavior = InvocationRequest.REACTOR_FAIL_AT_END;
-        return this;
-    }
-
-    /**
      * If this is set to true, then in case the maven goal command
      * does not succeed, then a warn result type will be returned,
      * instead of error. The default value is error.
@@ -169,10 +158,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
             request.setPomFile(pomFile);
             request.setGoals(Arrays.asList(goals));
             request.setOutputHandler(multipleOutputHandler);
-
-            if (mavenFailureBehavior != null) {
-                request.setFailureBehavior(mavenFailureBehavior);
-            }
+            request.setBatchMode(true);
 
             if (null != properties && !properties.isEmpty()) {
                 request.setProperties(properties);

@@ -19,6 +19,7 @@ import java.io.IOException;
  *  <li>If a file <code>source</code> in <code>destinationDirectory</code> exists, it will be overwritten.</li>
  *  <li>If you want to move a set of specific files from one location to another, then use a multiple transformation operation (see {@code TransformationTemplate.addMultiple()}) with {@link MoveFile}.</li>
  *  <li>If you want to move a directory and its content from one location to another, then use {@link MoveDirectory} instead.</li>
+ *  <li>If source file is actually a directory, an operation results in error.</li>
  * </ol>
  *
  * @see CopyFile
@@ -47,16 +48,21 @@ public class MoveFile extends AbstractToOperation<MoveFile> {
     protected TOExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         File fileFrom = getAbsoluteFile(transformedAppFolder, transformationContext);
         File fileTo = getFileTo(transformedAppFolder, transformationContext);
-        TOExecutionResult result = null;
+        TOExecutionResult result;
 
         // TODO
         // Check if it is really a file and if it exists!
 
         try {
-            String details = String.format("File '%s' has been moved to '%s'", getRelativePath(), getRelativePath(transformedAppFolder, fileTo));
-            FileUtils.copyFileToDirectory(fileFrom, fileTo);
-            FileUtils.fileDelete(fileFrom.getAbsolutePath());
-            result = TOExecutionResult.success(this, details);
+            if (fileFrom.isDirectory()) {
+                IOException ex = new IOException(getRelativePath(transformedAppFolder, fileFrom) + " (Is a directory)");
+                result = TOExecutionResult.error(this, new TransformationOperationException("File could not be moved", ex));
+            } else {
+                String details = String.format("File '%s' has been moved to '%s'", getRelativePath(), getRelativePath(transformedAppFolder, fileTo));
+                FileUtils.copyFileToDirectory(fileFrom, fileTo);
+                FileUtils.fileDelete(fileFrom.getAbsolutePath());
+                result = TOExecutionResult.success(this, details);
+            }
         } catch (IOException e) {
             result = TOExecutionResult.error(this, new TransformationOperationException("File could not be moved", e));
         }
