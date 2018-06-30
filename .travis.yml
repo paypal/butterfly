@@ -15,12 +15,11 @@ branches:
   - butterfly_3
 
 install:
-  - ./gradlew build --scan
-  - ./gradlew cobertura
+  - ./gradlew build jacocoRootReport jacocoTestCoverageVerification --scan
 
 after_script:
   # Installing Codacy code coverage reporter upload tool and uploading Cobertura report to Codacy
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
       wget https://github.com/codacy/codacy-coverage-reporter/releases/download/1.0.13/codacy-coverage-reporter-1.0.13-assembly.jar -O ccr.jar;
-      java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./build/reports/cobertura/coverage.xml --projectToken $CODACY_PROJECT_TOKEN;
+      java -cp ccr.jar com.codacy.CodacyCoverageReporter -l Java -r ./build/reports/jacoco/coverage.xml --projectToken $CODACY_PROJECT_TOKEN;
     fi
