@@ -2,7 +2,7 @@ package com.paypal.butterfly.test;
 
 import org.testng.annotations.Test;
 
-public class TransformationTestTest {
+public class AssertTest {
 
     @Test
     public void test() {

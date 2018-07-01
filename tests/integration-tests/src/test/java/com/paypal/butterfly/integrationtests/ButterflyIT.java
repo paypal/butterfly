@@ -1,17 +1,14 @@
 package com.paypal.butterfly.integrationtests;
 
-import static com.paypal.butterfly.test.TransformationTest.assertTransformation;
+import static com.paypal.butterfly.test.Assert.assertTransformation;
 import static org.testng.Assert.assertEquals;
 
 import java.io.*;
 import java.net.URISyntaxException;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.xml.sax.SAXException;
 
 import com.google.common.io.Files;
 import com.paypal.butterfly.cli.ButterflyCliApp;
@@ -90,7 +87,7 @@ public class ButterflyIT {
     }
 
     @Test
-    public void modifyFolderTest() throws IOException, ParserConfigurationException, SAXException {
+    public void modifyFolderTest() throws IOException {
         File sampleAppCopy = Files.createTempDir();
         FileUtils.copyDirectory(sampleApp, sampleAppCopy);
 

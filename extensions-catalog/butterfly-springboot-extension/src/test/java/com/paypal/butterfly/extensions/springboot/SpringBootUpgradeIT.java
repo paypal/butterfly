@@ -1,17 +1,17 @@
 package com.paypal.butterfly.extensions.springboot;
 
+import static com.paypal.butterfly.test.Assert.assertTransformation;
+
 import java.io.File;
 
 import org.testng.annotations.Test;
-
-import com.paypal.butterfly.test.TransformationTest;
 
 /**
  * Integration tests for upgrade steps
  *
  * @author facarvalho
  */
-public class SpringBootUpgradeIT extends TransformationTest {
+public class SpringBootUpgradeIT {
 
     @Test
     public void test() {
