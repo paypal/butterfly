@@ -10,4 +10,10 @@ dependencies {
     implementation(lib.spring_boot_starter) {
         exclude(module: 'commons-logging')
     }
+    testImplementation(lib.testng) {
+        exclude(module: 'aopalliance')
+        exclude(module: 'guava')
+    }
 }
+
+test.useTestNG()

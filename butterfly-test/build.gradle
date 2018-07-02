@@ -3,4 +3,10 @@ apply plugin: 'java-library'
 dependencies {
     implementation project(':butterfly-cli')
     implementation lib.xmlunit
+    testImplementation(lib.testng) {
+        exclude(module: 'aopalliance')
+        exclude(module: 'guava')
+    }
 }
+
+test.useTestNG()

@@ -3,13 +3,16 @@ package com.paypal.butterfly.test;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -19,7 +22,7 @@ import com.paypal.butterfly.cli.ButterflyCliApp;
 import com.paypal.butterfly.cli.ButterflyCliRun;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 
-public abstract class TransformationTest {
+public abstract class Assert {
 
     private static File transformedApps;
     private static Throwable transformedAppsThrowable;
@@ -34,37 +37,76 @@ public abstract class TransformationTest {
 
     /**
      * Transforms {@code originalApplication} using {@code transformationTemplate} and compares the generated transformed application
-     * with a baseline application {@code baselineApplication}, throwing {@link FailedAssertException} if their content differ
+     * with a baseline application {@code baselineApplication}, failing the assertion if their content differ
      *
      * @param baselineApplication a folder containing a baseline manually transformed application, to be compared against the generated transformed application
      * @param originalApplication the original application, to be transformed
      * @param transformationTemplate the transformation template used to transform the original application
-     * @throws FailedAssertException if the transformed application is not the same as the baseline application
      */
-    public static void assertTransformation(File baselineApplication, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate) throws FailedAssertException {
+    public static void assertTransformation(File baselineApplication, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate) {
+        assertTransformation(baselineApplication, originalApplication, transformationTemplate, null, null, null);
+    }
+
+    /**
+     * Transforms {@code originalApplication} using {@code transformationTemplate} and compares the generated transformed application
+     * with a baseline application {@code baselineApplication}, failing the assertion if their content differ
+     *
+     * @param baselineApplication a folder containing a baseline manually transformed application, to be compared against the generated transformed application
+     * @param originalApplication the original application, to be transformed
+     * @param transformationTemplate the transformation template used to transform the original application
+     * @param verbose if true, runs Butterfly in verbose mode, printing log messages not just in a log file, but also on the console
+     * @param debug if true, runs Butterfly in debug mode
+     * @param version the version the application should be upgraded to. This option only makes sense if the transformation template to be used is also an upgrade template.
+     *                If not, it is ignored. If it is, but this option is not specified, then the application will be upgraded all the way to the latest version possible
+     */
+    public static void assertTransformation(File baselineApplication, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate, Boolean verbose, Boolean debug, String version) {
+        if (baselineApplication == null || !baselineApplication.exists() || !baselineApplication.isDirectory()) {
+            throw new IllegalArgumentException("Baseline application file is null, does not exist or is not a directory: " + (baselineApplication == null ? "null" : baselineApplication.getAbsolutePath()));
+        }
+        if (originalApplication == null || !originalApplication.exists() || !originalApplication.isDirectory()) {
+            throw new IllegalArgumentException("Original application file is null, does not exist or is not a directory: " + (originalApplication == null ? "null" : originalApplication.getAbsolutePath()));
+        }
         if (!transformedApps.exists() || !transformedApps.isDirectory()) {
             if (transformedAppsThrowable != null) {
-                throw new FailedAssertException("Temporary transformation directory could not be created", transformedAppsThrowable);
+                throw new AssertionError("Temporary transformation directory could not be created", transformedAppsThrowable);
             } else if (!transformedApps.canWrite()) {
-                throw new FailedAssertException("Temporary transformation directory could not be created, no permission to write at: " + transformedApps.getAbsolutePath());
+                throw new AssertionError("Temporary transformation directory could not be created, no permission to write at: " + transformedApps.getAbsolutePath());
             } else {
-                throw new FailedAssertException("Temporary transformation directory could not be created: " + transformedApps.getAbsolutePath());
+                throw new AssertionError("Temporary transformation directory could not be created: " + transformedApps.getAbsolutePath());
             }
         }
 
         ButterflyCliRun run;
         try {
-            run = ButterflyCliApp.run(originalApplication.getAbsolutePath(), "-o", transformedApps.getAbsolutePath(), "-t", transformationTemplate.getName());
+            List<String> argumentsList = new ArrayList<>();
+
+            argumentsList.add(originalApplication.getAbsolutePath());
+            argumentsList.add("-o");
+            argumentsList.add(transformedApps.getAbsolutePath());
+            argumentsList.add("-t");
+            argumentsList.add(transformationTemplate.getName());
+
+            if (verbose != null && verbose) argumentsList.add("-v");
+            if (debug != null && debug) argumentsList.add("-d");
+            if (StringUtils.isNotBlank(version)) {
+                argumentsList.add("-u");
+                argumentsList.add(version);
+            }
+
+            String[] arguments = new String[argumentsList.size()];
+            arguments = argumentsList.toArray(arguments);
+
+            run = ButterflyCliApp.run(arguments);
         } catch (IOException e) {
-            throw new FailedAssertException(e);
+            throw new AssertionError(e);
         }
         if (run.getExitStatus() != 0) {
             String errorMessage = run.getErrorMessage();
             String exceptionMessage = run.getExceptionMessage();
             if (exceptionMessage == null) {
-                throw new FailedAssertException(errorMessage);
+                throw new AssertionError(errorMessage);
             } else {
-                throw new FailedAssertException(errorMessage + " \n" + exceptionMessage);
+                throw new AssertionError(errorMessage + " \n" + exceptionMessage);
             }
         }
 
@@ -74,13 +116,12 @@ public abstract class TransformationTest {
 
     /**
      * Compares the generated transformed application {@code transformedApplication}
-     * with a baseline application {@code baselineApplication}, throwing {@link FailedAssertException} if their content differ
+     * with a baseline application {@code baselineApplication}, failing the assertion if their content differ
      *
      * @param baselineApplication a folder containing a baseline manually transformed application, to be compared against the generated transformed application
      * @param transformedApplication a folder containing the automatically transformed application, to be compared against the baseline application
-     * @throws FailedAssertException if the transformed application is not the same as the baseline application
      */
-    public static void assertTransformation(File baselineApplication, File transformedApplication) throws FailedAssertException {
+    public static void assertTransformation(File baselineApplication, File transformedApplication) {
         if (baselineApplication == null || !baselineApplication.exists() || !baselineApplication.isDirectory()) throw new IllegalArgumentException("Specified expected file is null, does not exist or is not a directory");
         if (transformedApplication == null || !transformedApplication.exists() || !transformedApplication.isDirectory()) throw new IllegalArgumentException("Specified actual file is null, does not exist, or is not a directory");
 
@@ -88,7 +129,7 @@ public abstract class TransformationTest {
         try {
             assertEqualFolderContent(baselineApplication, baselineApplication, transformedApplication);
         } catch (IOException | ParserConfigurationException | SAXException e) {
-            throw new FailedAssertException(e);
+            throw new AssertionError(e);
         }
     }
 
@@ -193,7 +234,7 @@ public abstract class TransformationTest {
     }
 
     private static void fail(String failureMessage) {
-        throw new FailedAssertException(failureMessage);
+        throw new AssertionError(failureMessage);
     }
 
 }

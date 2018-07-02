@@ -158,6 +158,7 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
             request.setPomFile(pomFile);
             request.setGoals(Arrays.asList(goals));
             request.setOutputHandler(multipleOutputHandler);
+            request.setBatchMode(true);
 
             if (null != properties && !properties.isEmpty()) {
                 request.setProperties(properties);

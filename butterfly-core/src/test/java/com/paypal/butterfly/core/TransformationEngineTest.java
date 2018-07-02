@@ -1,6 +1,24 @@
 package com.paypal.butterfly.core;
 
-import com.paypal.butterfly.extensions.api.TransformationContext;
+import static org.testng.Assert.*;
+import static org.testng.AssertJUnit.assertNull;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationContext;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetricsListener;
@@ -13,24 +31,6 @@ import com.paypal.butterfly.facade.ButterflyProperties;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
 import com.paypal.butterfly.facade.exception.TransformationException;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.context.ApplicationContext;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.List;
-
-import static org.testng.Assert.*;
-import static org.testng.AssertJUnit.assertNull;
 
 public class TransformationEngineTest extends TestHelper {
 

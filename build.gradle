@@ -1,7 +1,6 @@
 
 plugins {
     id 'com.gradle.build-scan' version '1.14'
-    id 'net.saliman.cobertura' version '2.5.4'
 }
 
 description = "Butterfly - Application transformation tool"
@@ -9,6 +8,7 @@ description = "Butterfly - Application transformation tool"
 allprojects {
     apply plugin: 'maven'
     apply plugin: 'signing'
+    apply plugin: "jacoco"
 
     group = 'com.paypal.butterfly'
     version = '3.0.0-SNAPSHOT'
@@ -31,7 +31,6 @@ Set testModules = [
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'cobertura'
 
     def javaVersion = JavaVersion.VERSION_1_8
     sourceCompatibility = javaVersion
@@ -51,29 +50,6 @@ subprojects {
                     'Implementation-Vendor': 'PayPal'
         }
     }
-
-    cobertura {
-        coverageFormats = ['xml']
-        coverageReportDir = new File("$buildDir/reports/cobertura")
-        coverageEncoding = 'UTF-8'
-        coverageExcludes = []
-        coverageIgnoreMethodAnnotations = []
-        coverageIgnoreTrivial = false
-
-        // TODO
-        // Turn this ON after increasing code coverage
-        // to a minimum acceptable for every single project
-        coverageCheckHaltOnFailure = false
-
-        coverageCheckBranchRate = 80
-        coverageCheckLineRate = 80
-        coverageCheckPackageBranchRate = 80
-        coverageCheckPackageLineRate = 80
-        coverageCheckTotalBranchRate = 80
-        coverageCheckTotalLineRate = 80
-    }
-
-    test.finalizedBy(project.tasks.coberturaCheck)
 
     if (!version.endsWith("SNAPSHOT")) {
 
@@ -157,12 +133,41 @@ subprojects {
         }
     }
 
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule { element = 'PACKAGE'; limit { minimum = 0.43 }; includes = ['com.paypal.butterfly.cli*'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.51 }; includes = ['com.paypal.butterfly.core*'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.extensions*'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.facade*'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.metrics*'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.test*'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.82 }; includes = ['com.paypal.butterfly.utilities*'] }
+        }
+    }
+
 }
 
-cobertura {
-    coverageFormats = ['xml']
-    coverageReportDir = new File("$buildDir/reports/cobertura")
-    coverageMergeDatafiles = subprojects.collect { new File(it.projectDir, '/build/cobertura/cobertura.ser') }
+task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
+    def coverageProjects = subprojects.stream().filter({sb -> !(sb.name in [
+            'butterfly-bom',
+            'butterfly-cli-package',
+            'tests',
+            'integration-tests',
+            'extensions-catalog'
+    ])}).collect()
+
+    additionalSourceDirs = files(coverageProjects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(coverageProjects.sourceSets.main.allSource.srcDirs)
+    classDirectories =  files(coverageProjects.sourceSets.main.output)
+    executionData = files(coverageProjects.jacocoTestReport.executionData)
+    reports {
+        html.enabled = true
+        xml.enabled = true
+        csv.enabled = false
+
+        html.destination file("${buildDir}/reports/jacoco/html")
+        xml.destination file("${buildDir}/reports/jacoco/coverage.xml")
+    }
 }
 
 // Dependencies version management
