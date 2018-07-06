@@ -25,8 +25,8 @@ import java.util.List;
 @Component
 public class MdFileManualInstructionsHandler implements TransformationListener {
 
-    private static final String MANUAL_INSTRUCTIONS_MAIN_FILE = "MANUAL_INSTRUCTIONS_%s.md";
-    private static final String MANUAL_INSTRUCTIONS_BASELINE_FILE = "MANUAL_INSTRUCTIONS_BASELINE.md";
+    public static final String MANUAL_INSTRUCTIONS_MAIN_FILE = "BUTTERFLY_MANUAL_INSTRUCTIONS.md";
+    private static final String MANUAL_INSTRUCTIONS_BASELINE_FILE = "BUTTERFLY_MANUAL_INSTRUCTIONS_BASELINE.md";
     private static final String MANUAL_INSTRUCTIONS_DIR = "BUTTERFLY_MANUAL_INSTRUCTIONS";
     private static final String SECTION_TITLE_FORMAT = "%n### Manual instructions upgrading to version %s%n%n";
     private static final String DESCRIPTION_LINE_FORMAT = "1. [%s](%s/%s)%n";
@@ -92,18 +92,17 @@ public class MdFileManualInstructionsHandler implements TransformationListener {
 
     private File createMainManualInstructionsFile(Transformation transformation) throws IOException {
         try {
-            final String timestamp = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
 
             // Creating manual instructions directory
             File transformedAppFolder = transformation.getTransformedApplicationLocation();
-            String manualInstructiondDirName = String.format("%s_%s", MANUAL_INSTRUCTIONS_DIR, timestamp);
+            String manualInstructiondDirName = MANUAL_INSTRUCTIONS_DIR;
             File manualInstructionsDir = new File(transformedAppFolder, manualInstructiondDirName);
             if (!manualInstructionsDir.mkdir()) {
                 throw new IOException("Manual instructions directory " + manualInstructionsDir + " could not be created");
             }
 
             // Creating manual instructions baseline file
-            String manualInstructiondFileName = String.format(MANUAL_INSTRUCTIONS_MAIN_FILE, timestamp);
+            String manualInstructiondFileName = MANUAL_INSTRUCTIONS_MAIN_FILE;
             File manualInstructionsFile = new File(transformedAppFolder, manualInstructiondFileName);
             URL baselineFileURL = getClass().getClassLoader().getResource(MANUAL_INSTRUCTIONS_BASELINE_FILE);
             FileUtils.copyURLToFile(baselineFileURL, manualInstructionsFile);

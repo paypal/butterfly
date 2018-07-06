@@ -43,10 +43,14 @@ public class TransformationEngine {
     @Autowired
     private ApplicationContext applicationContext;
 
+    private TransformationValidator validator;
+
     @PostConstruct
     public void setupListeners() {
         Map<String, TransformationListener> beans = applicationContext.getBeansOfType(TransformationListener.class);
         transformationListeners = beans.values();
+
+        validator = applicationContext.getBean(TransformationValidator.class);
     }
 
     /**
@@ -58,6 +62,10 @@ public class TransformationEngine {
      * @return the result after performing this transformation
      */
     public TransformationResult perform(Transformation transformation) throws TransformationException {
+
+        // Throws an ApplicationValidationException if validation fails
+        validator.preTransformation(transformation);
+
         if(logger.isDebugEnabled()) {
             logger.debug("Requested transformation: {}", transformation);
         }
@@ -537,7 +545,7 @@ public class TransformationEngine {
                     FileUtils.copyDirectory(application.getFolder(), transformedAppFolder);
                 } catch (IOException e) {
                     String exceptionMessage = String.format(
-                            "An error occurred when preparing the transformed application folder (%s). Check also if the original application folder (%s) is valid",
+                            "An exception occurred when preparing the transformed application folder (%s). Check also if the original application folder (%s) is valid",
                             transformedAppFolder, application.getFolder());
                     logger.error(exceptionMessage, e);
                     throw new InternalException(exceptionMessage, e);

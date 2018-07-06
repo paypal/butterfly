@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
         ExtensionRegistry.class,
         ButterflyFacadeImpl.class,
         TransformationEngine.class,
+        TransformationValidatorImpl.class,
         CompressionHandler.class,
         MdFileManualInstructionsHandler.class,
         MetricsHandler.class
