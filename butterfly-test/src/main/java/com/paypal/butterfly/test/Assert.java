@@ -169,6 +169,7 @@ public abstract class Assert {
         }
 
         File[] actualFiles = actual.listFiles();
+
         for (File actualFile : actualFiles) {
             fileRelativePath = getRelativePath(actualFile, actual);
             if (actualFile.isDirectory()) {
@@ -206,6 +207,9 @@ public abstract class Assert {
         String filePath = file.getAbsolutePath();
         String parentPath = parent.getAbsolutePath();
 
+        if (filePath.equals(parentPath)) {
+            return "";
+        }
         if (filePath.equals(parentPath) || !filePath.startsWith(parentPath + File.separatorChar)) {
             throw new IllegalArgumentException("File " + file + " is not a direct nor indirect child of " + parent);
         }
