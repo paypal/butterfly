@@ -43,6 +43,10 @@ subprojects {
         }
     }
 
+//    compileJava {
+//        options.compilerArgs += ["-Xlint:deprecation", "-Xlint:unchecked"]
+//    }
+
     jar {
         manifest {
             attributes 'Implementation-Version': version,

@@ -4,7 +4,6 @@ import java.io.File;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 
 /**
  * Butterfly Spring Boot extension
@@ -29,7 +28,7 @@ public class ButterflySpringBootExtension extends Extension {
     }
 
     @Override
-    public Class<? extends TransformationTemplate> automaticResolution(File file) throws TemplateResolutionException {
+    public Class<? extends TransformationTemplate> automaticResolution(File file) {
         // TODO
         return null;
     }
