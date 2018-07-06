@@ -506,7 +506,7 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
 
                 method.invoke(this, value);
             } catch (Exception e) {
-                String exceptionMessage = String.format("An error happened when setting property '%s' from context attribute '%s' in '%s'", propertyName, attributeName, name);
+                String exceptionMessage = String.format("An exception happened when setting property '%s' from context attribute '%s' in '%s'", propertyName, attributeName, name);
                 throw new TransformationUtilityException(exceptionMessage, e);
             }
         }
@@ -639,7 +639,7 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
                 TUExecutionResult conditionExecutionResult = (TUExecutionResult) utilityCondition.execution(transformedAppFolder, transformationContext);
                 conditionResult = conditionExecutionResult.getValue();
             } catch (Exception e) {
-                logger.error("Error happened when executing utility condition " + utilityCondition.getName(), e);
+                logger.error("An exception happened when executing utility condition " + utilityCondition.getName(), e);
             } finally {
                 if (conditionResult == null || conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue()) {
                     String utilityConditionName = (utilityCondition.getName() == null ? utilityCondition.toString() : utilityCondition.getName());

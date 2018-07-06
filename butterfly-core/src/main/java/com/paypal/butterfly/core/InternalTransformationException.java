@@ -18,8 +18,8 @@ class InternalTransformationException extends TransformationException {
         this.transformationContext = transformationContext;
     }
 
-    InternalTransformationException(String exceptionMessage, Exception exception, TransformationContextImpl transformationContext) {
-        super(exceptionMessage, exception);
+    InternalTransformationException(String exceptionMessage, Throwable throwable, TransformationContextImpl transformationContext) {
+        super(exceptionMessage, throwable);
         this.transformationContext = transformationContext;
     }
 

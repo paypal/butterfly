@@ -39,7 +39,7 @@ public class CompressionHandler {
 
             logger.info("Transformed application has been compressed to {}", compressedFile.getAbsoluteFile());
         } catch (Exception e) {
-            logger.error("Error when compressing transformed application", e);
+            logger.error("An exception happened when compressing transformed application", e);
         }
     }
 

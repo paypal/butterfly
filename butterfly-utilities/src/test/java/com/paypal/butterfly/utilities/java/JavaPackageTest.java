@@ -30,7 +30,7 @@ public class JavaPackageTest extends TransformationUtilityTestHelper {
         Assert.assertNull(executionResult.getValue());
         Assert.assertNotNull(executionResult.getException());
         Assert.assertEquals(executionResult.getException().getClass(), TransformationUtilityException.class);
-        Assert.assertEquals(executionResult.getException().getMessage(), "An error happened when trying to read and parse the specified Java file /src/main/java/com/testapp/NoCompilationUnits.java");
+        Assert.assertEquals(executionResult.getException().getMessage(), "An exception happened when trying to read and parse the specified Java file /src/main/java/com/testapp/NoCompilationUnits.java");
         Assert.assertEquals(javaPackage.getDescription(), "Retrieve the package of a Java class file src/main/java/com/testapp/NoCompilationUnits.java");
     }
 

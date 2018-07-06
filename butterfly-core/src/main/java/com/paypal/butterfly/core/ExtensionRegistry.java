@@ -96,7 +96,7 @@ public class ExtensionRegistry {
                 extension = extensionClass.newInstance();
                 _extensions.add(extension);
             } catch (Exception e) {
-                logger.error("Error when registering extension class " + extensionClass, e);
+                logger.error("An exception happened when registering extension class " + extensionClass, e);
             }
         }
 

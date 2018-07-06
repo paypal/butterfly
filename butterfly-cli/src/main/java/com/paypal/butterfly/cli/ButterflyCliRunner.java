@@ -77,7 +77,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
                 printExtensionsList(butterflyFacade);
                 run.setExitStatus(0);
                 return run;
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 registerError(run, "An error occurred when listing extensions", e);
                 return run;
             }
@@ -207,8 +207,8 @@ public class ButterflyCliRunner extends ButterflyCliOption {
         } catch (IllegalArgumentException e) {
             registerError(run, "This transformation request input arguments are invalid", e);
             return run;
-        } catch (Exception e) {
-            registerError(run, "An unexpected exception happened when processing this transformation request", e);
+        } catch (Throwable e) {
+            registerError(run, "An error happened when processing this transformation request", e);
             return run;
         }
 
@@ -261,14 +261,14 @@ public class ButterflyCliRunner extends ButterflyCliOption {
         registerError(run, errorMessage, null);
     }
 
-    private void registerError(ButterflyCliRun run, String errorMessage, Exception exception) {
-        if (exception == null || !logConfigurator.isVerboseMode()) {
+    private void registerError(ButterflyCliRun run, String errorMessage, Throwable throwable) {
+        if (throwable == null || !logConfigurator.isVerboseMode()) {
             logger.error(errorMessage);
         } else {
-            logger.error(errorMessage, exception);
+            logger.error(errorMessage, throwable);
         }
-        if (exception != null) {
-            run.setExceptionMessage(exception.getMessage());
+        if (throwable != null) {
+            run.setExceptionMessage(throwable.getMessage());
         }
         run.setErrorMessage(errorMessage);
         run.setExitStatus(1);

@@ -440,7 +440,7 @@ public class TransformationUtilityTest extends TestHelper {
         assertEquals(performResult.getException().getClass(), TransformationUtilityException.class);
         assertEquals(performResult.getException().getMessage(), "Utility TU has failed");
         assertEquals(performResult.getException().getCause().getClass(), TransformationUtilityException.class);
-        assertEquals(performResult.getException().getCause().getMessage(), "An error happened when setting property 'number' from context attribute 'ATT' in 'TU'");
+        assertEquals(performResult.getException().getCause().getMessage(), "An exception happened when setting property 'number' from context attribute 'ATT' in 'TU'");
         assertEquals(performResult.getException().getCause().getCause().getClass(), IllegalArgumentException.class);
         assertNull(performResult.getException().getCause().getCause().getMessage());
     }

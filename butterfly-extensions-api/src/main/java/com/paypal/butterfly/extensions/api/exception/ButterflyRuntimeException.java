@@ -11,8 +11,8 @@ public class ButterflyRuntimeException extends RuntimeException {
         super(exceptionMessage);
     }
 
-    public ButterflyRuntimeException(String exceptionMessage, Exception exception) {
-        super(exceptionMessage, exception);
+    public ButterflyRuntimeException(String exceptionMessage, Throwable throwable) {
+        super(exceptionMessage, throwable);
     }
 
 }

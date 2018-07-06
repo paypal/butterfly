@@ -14,8 +14,8 @@ public class TransformationException extends ButterflyException {
         super(exceptionMessage);
     }
 
-    public TransformationException(String exceptionMessage, Exception exception) {
-        super(exceptionMessage, exception);
+    public TransformationException(String exceptionMessage, Throwable throwable) {
+        super(exceptionMessage, throwable);
     }
 
 }

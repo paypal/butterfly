@@ -44,7 +44,7 @@ class MultipleOutputHandler implements MavenInvocationOutputHandler<MultipleOutp
                     handler.consumeLine(line);
                 } catch (Exception e) {
                     if(logger.isDebugEnabled()) {
-                        logger.error(handler.getClass().getName() + " has failed due to an exception ", e);
+                        logger.error(handler.getClass().getName() + " has failed due to an exception", e);
                     }
                     failedHandlers.put(handler, e);
                 }
