@@ -20,6 +20,27 @@ import static org.testng.Assert.assertEquals;
 public class AddPropertyTest extends TransformationUtilityTestHelper {
 
     @Test
+    public void successAddToEmptyFile() throws IOException {
+        final String relativeFilePath = "/src/main/resources/application-empty.properties";
+        final String testKey = "testkey";
+        final String testValue = "testvalue";
+
+        AddProperty addProperty = new AddProperty().setPropertyName(testKey).setPropertyValue(testValue).relative(relativeFilePath);
+
+        TOExecutionResult executionResult = addProperty.execution(transformedAppFolder, transformationContext);
+        assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+
+        assertChangedFile(relativeFilePath);
+        assertLineCount(relativeFilePath, 1);
+
+        Properties properties = getProperties(relativeFilePath);
+
+        assertEquals(properties.size(), 1);
+        assertEquals(properties.getProperty(testKey), testValue);
+
+    }
+
+    @Test
     public void successAddTest() throws IOException {
         AddProperty addProperty = new AddProperty().setPropertyName("zoo").setPropertyValue("zoov").relative("/src/main/resources/application.properties");
         assertEquals(addProperty.getPropertyName(), "zoo");

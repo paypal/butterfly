@@ -127,7 +127,9 @@ public class AddProperty extends TransformationOperation<AddProperty> {
         TOExecutionResult result;
         try {
             String propertyToBeAdded = String.format("%s = %s", propertyName, propertyValue);
-            FileUtils.fileAppend(fileToBeChanged.getAbsolutePath(), EolHelper.findEolDefaultToOs(fileToBeChanged));
+            if (fileToBeChanged.length() != 0) {
+                FileUtils.fileAppend(fileToBeChanged.getAbsolutePath(), EolHelper.findEolDefaultToOs(fileToBeChanged));
+            }
             FileUtils.fileAppend(fileToBeChanged.getAbsolutePath(), propertyToBeAdded);
             String details = String.format("Property '%s' has been added and set to '%s' at '%s'", propertyName, propertyValue, getRelativePath());
             result = TOExecutionResult.success(this, details);

@@ -15,6 +15,7 @@ public abstract class EolHelper {
      * Finds out what EOL character(s) are used by the specified text file.
      * If the specified file has no EOL characters null will be returned, and if more than
      * one type of EOL character(s) are used, the very first EOL occurrence will be returned.
+     * If the file is empty, it returns null.
      *
      * @param textFile file to be analyzed based on its EOL character(s)
      * @return  the very first occurrence of EOL used in the specified text file, or null,
@@ -28,6 +29,9 @@ public abstract class EolHelper {
         }
         if (!textFile.isFile()) {
             throw new IllegalArgumentException("Text file is not a file");
+        }
+        if (textFile.length() == 0) {
+            return null;
         }
         EolBufferedReader eolBufferedReader = null;
         try {

@@ -34,6 +34,12 @@ public class EolHelperTest {
     }
 
     @Test
+    public void findEolForEmptyFileTest() throws IOException, URISyntaxException {
+        File file = new File(EolHelperTest.class.getResource("/test-app/src/main/resources/application-empty.properties").toURI());
+        Assert.assertEquals(EolHelper.findEol(file), null);
+    }
+
+    @Test
     public void removeEolTest() {
         Assert.assertEquals(EolHelper.removeEol(LINE1), "blah");
         Assert.assertEquals(EolHelper.removeEol(LINE2), "blah");
