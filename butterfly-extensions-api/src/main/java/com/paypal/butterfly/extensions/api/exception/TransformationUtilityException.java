@@ -13,8 +13,8 @@ public class TransformationUtilityException extends ButterflyRuntimeException {
         super(exceptionMessage);
     }
 
-    public TransformationUtilityException(String exceptionMessage, Exception exception) {
-        super(exceptionMessage, exception);
+    public TransformationUtilityException(String exceptionMessage, Throwable throwable) {
+        super(exceptionMessage, throwable);
     }
 
 }

@@ -39,9 +39,16 @@ subprojects {
     test {
         testLogging {
             events "failed"
-//            events "passed", "skipped", "failed", "standardError"
+//            events "started", "passed", "skipped", "failed", "standardError"
+
+//            outputs.upToDateWhen {false}
+//            showStandardStreams = true
         }
     }
+
+//    compileJava {
+//        options.compilerArgs += ["-Xlint:deprecation", "-Xlint:unchecked"]
+//    }
 
     jar {
         manifest {

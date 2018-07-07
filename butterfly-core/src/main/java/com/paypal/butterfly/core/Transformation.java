@@ -85,7 +85,7 @@ public abstract class Transformation {
         try {
             version = extension.newInstance().getVersion();
         } catch (Exception e) {
-            logger.warn("Error happened when retrieving extension version", e);
+            logger.warn("An exception happened when retrieving extension version", e);
         }
         return version;
     }

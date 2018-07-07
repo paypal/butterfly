@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
+import com.paypal.butterfly.extensions.api.exception.ApplicationValidationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mockito.InjectMocks;
@@ -19,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.io.Files;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
 import com.paypal.butterfly.extensions.api.metrics.TransformationMetricsListener;
@@ -50,6 +52,7 @@ public class TransformationEngineTest extends TestHelper {
         MockitoAnnotations.initMocks(this);
         Mockito.when(applicationContext.getBeansOfType(TransformationListener.class)).thenReturn(Collections.singletonMap(null, metricsHandler));
         Mockito.when(applicationContext.getBeansOfType(TransformationMetricsListener.class)).thenReturn(Collections.singletonMap(null, metricsListener));
+        Mockito.when(applicationContext.getBean(TransformationValidator.class)).thenReturn(new TransformationValidatorImpl());
         transformationEngine.setupListeners();
         metricsHandler.setupListeners();
     }
@@ -230,8 +233,7 @@ public class TransformationEngineTest extends TestHelper {
     public void abortTest() throws TransformationException, IOException, URISyntaxException {
         File appFolder = new File(getClass().getResource("/test-app-2").toURI());
 
-        File transformedAppFolder = new File("./out/test/resources/test-app-2-transformed");
-        FileUtils.deleteDirectory(transformedAppFolder);
+        File transformedAppFolder = Files.createTempDir();
         FileUtils.copyDirectory(appFolder, transformedAppFolder);
         System.out.printf("Transformed sample app folder: %s\n", transformedAppFolder.getAbsolutePath());
 
@@ -282,6 +284,29 @@ public class TransformationEngineTest extends TestHelper {
         assertEquals(statistics.getTUExecutionResultNullCount(), 0);
         assertEquals(statistics.getTUExecutionResultValueCount(), 1);
         assertEquals(statistics.getTUExecutionResultWarningCount(), 0);
+    }
+
+    @Test
+    public void pendingManualChangesTest() throws IOException, URISyntaxException, TransformationException {
+        File appFolder = new File(getClass().getResource("/test-app-3").toURI());
+
+        File transformedAppFolder = Files.createTempDir();
+        FileUtils.copyDirectory(appFolder, transformedAppFolder);
+        System.out.printf("Transformed sample app folder: %s\n", transformedAppFolder.getAbsolutePath());
+
+        Application application = new Application(transformedAppFolder);
+        Configuration configuration = new Configuration();
+
+        TransformationTemplate transformationTemplate = new JavaEEToSpringBoot();
+        Transformation transformation = new TemplateTransformation(application, transformationTemplate, configuration);
+
+        try {
+            transformationEngine.perform(transformation);
+            fail("An ApplicationValidationException was supposed to be thrown (since application had a pending manual instruction) but was not");
+        } catch (ApplicationValidationException e) {
+            String exceptionMessage = String.format("This application has pending manual instructions. Perform manual instructions at the following file first, then remove it, and run Butterfly again: %s/%s", transformedAppFolder.getAbsolutePath(), MdFileManualInstructionsHandler.MANUAL_INSTRUCTIONS_MAIN_FILE);
+            assertEquals(e.getMessage(), exceptionMessage);
+        }
     }
 
 }

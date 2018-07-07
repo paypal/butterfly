@@ -54,7 +54,7 @@ public class JavaPackage extends TransformationUtility<JavaPackage> {
             Optional<PackageDeclaration> packageDeclaration = compilationUnit.getPackageDeclaration();
             result = TUExecutionResult.value(this, packageDeclaration.get().getNameAsString());
         } catch (Exception  e) {
-            TransformationUtilityException tue = new TransformationUtilityException("An error happened when trying to read and parse the specified Java file " + getRelativePath(transformedAppFolder, javaClassFile), e);
+            TransformationUtilityException tue = new TransformationUtilityException("An exception happened when trying to read and parse the specified Java file " + getRelativePath(transformedAppFolder, javaClassFile), e);
             result = TUExecutionResult.error(this, tue);
         } finally {
             try {

@@ -17,8 +17,8 @@ public class InternalException extends ButterflyRuntimeException {
         super(exceptionMessage);
     }
 
-    public InternalException(String exceptionMessage, Exception exception) {
-        super(exceptionMessage, exception);
+    public InternalException(String exceptionMessage, Throwable throwable) {
+        super(exceptionMessage, throwable);
     }
 
 }

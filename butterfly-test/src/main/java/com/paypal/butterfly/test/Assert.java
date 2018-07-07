@@ -1,12 +1,8 @@
 package com.paypal.butterfly.test;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,6 +10,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -22,7 +20,15 @@ import com.paypal.butterfly.cli.ButterflyCliApp;
 import com.paypal.butterfly.cli.ButterflyCliRun;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 
+/**
+ * Assert class to test Butterfly transformations,
+ * making sure applications were transformed properly
+ *
+ * @author facarvalho
+ */
 public abstract class Assert {
+
+    private static final Logger logger = LoggerFactory.getLogger(Assert.class);
 
     private static File transformedApps;
     private static Throwable transformedAppsThrowable;
@@ -125,6 +131,10 @@ public abstract class Assert {
         if (baselineApplication == null || !baselineApplication.exists() || !baselineApplication.isDirectory()) throw new IllegalArgumentException("Specified expected file is null, does not exist or is not a directory");
         if (transformedApplication == null || !transformedApplication.exists() || !transformedApplication.isDirectory()) throw new IllegalArgumentException("Specified actual file is null, does not exist, or is not a directory");
 
+        logger.info("Comparing the following folders:");
+        logger.info("Baseline application:\t{}", baselineApplication);
+        logger.info("Transformed application:\t{}", transformedApplication);
+
         assertEqualFolderStructure(baselineApplication, baselineApplication, transformedApplication);
         try {
             assertEqualFolderContent(baselineApplication, baselineApplication, transformedApplication);
@@ -133,10 +143,21 @@ public abstract class Assert {
         }
     }
 
+    /*
+     * Check if the expected and actual folders have the same number of files and folders, and with same names.
+     * This check is done recursively and not evaluate file contents, only name.
+     */
     private static void assertEqualFolderStructure(File baselineApplication, File expected, File actual) {
+
+        // All direct files and folders inside `expected`
         File[] expectedFiles = expected.listFiles();
+
+        // All direct folders inside `expected`
         Set<String> expectedDirectories = new HashSet<>();
+
+        // All direct files inside `expected`
         Set<String> expectedNonDirectories = new HashSet<>();
+
         String fileRelativePath;
         for (File expectedFile : expectedFiles) {
             fileRelativePath = getRelativePath(expectedFile, expected);
@@ -148,17 +169,18 @@ public abstract class Assert {
         }
 
         File[] actualFiles = actual.listFiles();
+
         for (File actualFile : actualFiles) {
             fileRelativePath = getRelativePath(actualFile, actual);
             if (actualFile.isDirectory()) {
                 if (!expectedDirectories.contains(fileRelativePath)) {
-                    fail("Unexpected folder found: " + fileRelativePath);
+                    fail("Unexpected folder found: " + getRelativePath(expected, baselineApplication) + fileRelativePath);
                 } else {
                     expectedDirectories.remove(fileRelativePath);
                 }
             } else {
                 if (!expectedNonDirectories.contains(fileRelativePath)) {
-                    fail("Unexpected file found: " + fileRelativePath);
+                    fail("Unexpected file found: " + getRelativePath(expected, baselineApplication) + fileRelativePath);
                 } else {
                     expectedNonDirectories.remove(fileRelativePath);
                 }
@@ -166,32 +188,40 @@ public abstract class Assert {
         }
 
         if(expectedDirectories.size() > 0) {
-            fail(String.format("%d directories missing at %s", expectedDirectories.size(), getRelativePath(expected, baselineApplication)));
+            String missingFolder = getRelativePath(expected, baselineApplication) + expectedDirectories.iterator().next();
+            fail("Folder missing: " + missingFolder);
         } else if(expectedNonDirectories.size() > 0) {
-            fail(String.format("%d files missing at %s", expectedNonDirectories.size(), getRelativePath(expected, baselineApplication)));
+            String missingFile = getRelativePath(expected, baselineApplication) + expectedNonDirectories.iterator().next();
+            fail("File missing: " + missingFile);
         } else {
-            for (File file : expected.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File pathname) {
-                    return pathname.isDirectory();
-                }
-            })) {
-                assertEqualFolderStructure(baselineApplication, file, new File(actual, file.getName()));
-            }
+            Arrays.stream(expected.listFiles(pathName -> pathName.isDirectory()))
+                    .forEach(file -> assertEqualFolderStructure(baselineApplication, file, new File(actual, file.getName())));
         }
     }
 
+    /*
+     * Given a file and a supposed parent, return the relative path from
+     * the parent file to the child file
+     */
     private static String getRelativePath(File file, File parent) {
         String filePath = file.getAbsolutePath();
         String parentPath = parent.getAbsolutePath();
 
+        if (filePath.equals(parentPath)) {
+            return "";
+        }
         if (filePath.equals(parentPath) || !filePath.startsWith(parentPath + File.separatorChar)) {
-            throw new IllegalArgumentException("Specified file is not a direct nor indirect child of given parent");
+            throw new IllegalArgumentException("File " + file + " is not a direct nor indirect child of " + parent);
         }
 
         return filePath.substring(parentPath.length(), filePath.length());
     }
 
+    /*
+     * Compare every file under the expected and actual folders and sub-folders making sure their content is the same.
+     * This method assumes the expected and actual folders are structurally identical, meaning, they have same number
+     * of files and folders and they are named the same
+     */
     private static void assertEqualFolderContent(File baselineApplication, File expected, File actual) throws IOException, ParserConfigurationException, SAXException {
         for (File expectedFile : expected.listFiles()) {
             File actualFile = new File(actual, expectedFile.getName());
@@ -211,6 +241,9 @@ public abstract class Assert {
         }
     }
 
+    /*
+     * Returns true only if both XML files have same content
+     */
     private static boolean xmlEqual(File file1, File file2) throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 

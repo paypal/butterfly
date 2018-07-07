@@ -11,8 +11,8 @@ public class TransformationDefinitionException extends ButterflyRuntimeException
         super(exceptionMessage);
     }
 
-    public TransformationDefinitionException(String exceptionMessage, Exception exception) {
-        super(exceptionMessage, exception);
+    public TransformationDefinitionException(String exceptionMessage, Throwable throwable) {
+        super(exceptionMessage, throwable);
     }
 
 }

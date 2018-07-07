@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
  *
  * @author facarvalho
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class TestHelper {
 
     protected File appFolder;
@@ -25,29 +26,16 @@ public abstract class TestHelper {
     protected TransformationContext transformationContext;
 
     @BeforeClass
-    public void beforeClass() throws URISyntaxException, IOException {
+    public void beforeClass() throws URISyntaxException {
         appFolder = new File(getClass().getResource("/test-app-1").toURI());
     }
 
     @BeforeMethod
-    public void beforeMethod(Method method) throws URISyntaxException, IOException {
+    public void beforeMethod(Method method) throws IOException {
         transformedAppFolder = new File(appFolder.getParentFile(), String.format("test-app_%s_%s_%s", method.getDeclaringClass().getSimpleName(), method.getName(), System.currentTimeMillis()));
         FileUtils.copyDirectory(appFolder, transformedAppFolder);
         System.out.printf("Transformed app folder: %s\n", transformedAppFolder.getAbsolutePath());
         transformationContext = Mockito.mock(TransformationContext.class);
-    }
-
-    protected UtilityCondition getNewTestUtilityCondition(boolean result) {
-        return new UtilityCondition() {
-            @Override
-            public String getDescription() {
-                return "Test utility condition";
-            }
-            @Override
-            protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-                return TUExecutionResult.value(this, result);
-            }
-        };
     }
 
     /*
@@ -63,22 +51,6 @@ public abstract class TestHelper {
             protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
                 File file = getAbsoluteFile(transformedAppFolder, transformationContext);
                 return TUExecutionResult.value(this, file);
-            }
-        };
-    }
-
-    /*
-     * Returns a sample NO_OP TO
-     */
-    protected TransformationOperation<TransformationOperation> getNewTestTransformationOperation() {
-        return new TransformationOperation() {
-            @Override
-            public String getDescription() {
-                return "Test transformation operation";
-            }
-            @Override
-            protected ExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-                return TOExecutionResult.noOp(this, "nothing to be changed");
             }
         };
     }

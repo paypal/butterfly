@@ -101,7 +101,7 @@ public class RelatedArtifacts extends TransformationUtility<RelatedArtifacts> {
         } catch(TransformationUtilityException e) {
             return TUExecutionResult.error(this, e);
         } catch (Exception e) {
-            TransformationUtilityException tue = new TransformationUtilityException("Error happened when trying to parse and evaluate pom files", e);
+            TransformationUtilityException tue = new TransformationUtilityException("An exception happened when trying to parse and evaluate pom files", e);
             return TUExecutionResult.error(this, tue);
         }
     }

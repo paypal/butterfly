@@ -45,7 +45,7 @@ public class ButterflyProperties {
                 logger.warn("File butterfly.properties could not be found in butterfly-cli, assuming Butterfly is being run in development environment");
             }
         } catch (Exception e) {
-            logger.error("Exception thrown when obtaining Butterfly version", e);
+            logger.error("An exception happened when obtaining Butterfly version", e);
         } finally {
             if (fileInputStream != null) {
                 try {
