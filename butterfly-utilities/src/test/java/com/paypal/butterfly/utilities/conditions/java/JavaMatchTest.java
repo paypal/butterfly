@@ -70,6 +70,54 @@ public class JavaMatchTest extends TransformationUtilityTestHelper {
     }
 
     @Test
+    public void packageInfoDefaultUnitTest() {
+        final String relativePath = "/src/main/java/com/testapp/package-info.java";
+
+        JavaMatch javaMatch = new JavaMatch().relative(relativePath);
+
+        Set<JavaCondition> conditions = new HashSet<>();
+        conditions.add(ext);
+        conditions.add(new AnnotatedWith(SuppressWarnings.class));
+
+        javaMatch.setConditions(conditions);
+
+        TUExecutionResult executionResult = javaMatch.execution(transformedAppFolder, transformationContext);
+
+        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.WARNING);
+        Assert.assertFalse((Boolean) executionResult.getValue());
+        Assert.assertEquals(executionResult.getWarnings().size(), 1);
+        Assert.assertEquals(executionResult.getWarnings().get(0).getClass(), TransformationUtilityException.class);
+
+        File packageInfoFile = new File(transformedAppFolder, relativePath);
+        final String warningMessage = "Skipping execution for " + packageInfoFile.getAbsolutePath() + ". This is a package-info.java file.";
+        Assert.assertEquals(executionResult.getWarnings().get(0).getMessage(), warningMessage);
+    }
+
+    @Test
+    public void packageInfoSetterTest() {
+        final String relativePath = "/src/main/java/com/testapp/package-info.java";
+
+        JavaMatch javaMatch = new JavaMatch().relative(relativePath).setPackageInfo(true);
+
+        Set<JavaCondition> conditions = new HashSet<>();
+        conditions.add(ext);
+        conditions.add(new AnnotatedWith(SuppressWarnings.class));
+
+        javaMatch.setConditions(conditions);
+
+        TUExecutionResult executionResult = javaMatch.execution(transformedAppFolder, transformationContext);
+
+        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.WARNING);
+        Assert.assertTrue((Boolean) executionResult.getValue());
+        Assert.assertEquals(executionResult.getWarnings().size(), 1);
+        Assert.assertEquals(executionResult.getWarnings().get(0).getClass(), TransformationUtilityException.class);
+
+        File packageInfoFile = new File(transformedAppFolder, relativePath);
+        final String warningMessage = "Skipping execution for " + packageInfoFile.getAbsolutePath() + ". This is a package-info.java file.";
+        Assert.assertEquals(executionResult.getWarnings().get(0).getMessage(), warningMessage);
+    }
+
+    @Test
     public void commentedOutShortClassTest() {
         JavaMatch javaMatch = new JavaMatch().relative("/src/main/java/com/testapp/CommentedOutShort.java");
 
