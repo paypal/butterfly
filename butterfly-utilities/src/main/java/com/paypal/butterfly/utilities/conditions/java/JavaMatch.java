@@ -20,6 +20,9 @@ import java.util.Set;
  * more than one type, only the outer one will be considered
  * during evaluation. If it has none, the evaluation will result
  * in false and a warning be returned.
+ * If the Java class file is named package-info.java, the file content
+ * will not be evaluated and false and a warning will be returned.
+ * The boolean result for package-info.java file is configurable though.
  *
  * @author facarvalho
  */
@@ -28,6 +31,8 @@ public class JavaMatch extends SingleCondition<JavaMatch> {
     private static final String DESCRIPTION = "Check if Java class in '%s' matches all specified criteria";
 
     private Set<JavaCondition> conditions = new HashSet<>();
+
+    private boolean packageInfo;
 
     /**
      * This utility parses and evaluates the specified Java class file
@@ -80,6 +85,28 @@ public class JavaMatch extends SingleCondition<JavaMatch> {
     }
 
     /**
+     * Returns the current boolean status of packageInfo.
+     *
+     * @return this packageInfo boolean status
+     */
+    public boolean getPackageInfo() {
+        return this.packageInfo;
+    }
+
+    /**
+     * Sets the result value for package info warning.
+     * By default the result for package-info.java
+     * file will be false.
+     *
+     * @param packageInfo boolean status of value for packageInfo warning
+     * @return this transformation utility condition instance
+     */
+    public JavaMatch setPackageInfo(boolean packageInfo) {
+        this.packageInfo = packageInfo;
+        return this;
+    }
+
+    /**
      * Add a new Java condition to be evaluated against the Java class.
      *
      * @param condition a Java condition to be used to evaluate the specified class
@@ -105,6 +132,10 @@ public class JavaMatch extends SingleCondition<JavaMatch> {
         try {
             fileInputStream = new FileInputStream(javaClassFile);
             CompilationUnit compilationUnit = JavaParser.parse(fileInputStream);
+
+            if (javaClassFile.getName().equals("package-info.java")) {
+                return TUExecutionResult.warning(this, new TransformationUtilityException("Skipping execution for " + javaClassFile.getAbsolutePath() + ". This is a package-info.java file."), this.packageInfo);
+            }
 
             // TODO
             // This should be done as part of validation, as soon as
