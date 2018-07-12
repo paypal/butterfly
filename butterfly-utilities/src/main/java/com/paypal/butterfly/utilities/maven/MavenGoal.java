@@ -11,6 +11,7 @@ import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Runs one or more Maven goals against a specific Maven POM file.
@@ -19,7 +20,7 @@ import com.paypal.butterfly.extensions.api.exception.TransformationUtilityExcept
  */
 public class MavenGoal extends TransformationUtility<MavenGoal> {
 
-    private static final String DESCRIPTION = "Execute Maven goal %s against pom file %s";
+    private static final String DESCRIPTION = "Execute Maven goal ";
 
     private String[] goals = {};
 
@@ -141,12 +142,19 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, Arrays.toString(goals), getRelativePath());
+        String description = DESCRIPTION + Arrays.toString(goals);
+        if (!StringUtils.isBlank(getRelativePath())) {
+            description += " against pom file " + getRelativePath();
+        }
+        return description;
     }
 
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
+
+        // This can be a pom.xml file or a the "base directory", the folder where Maven is supposed to run
+        File file = getAbsoluteFile(transformedAppFolder, transformationContext);
+
         TUExecutionResult result = null;
         InvocationResult invocationResult = null;
 
@@ -155,12 +163,17 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
                 multipleOutputHandler.register(outputHandler);
             }
 
-            request.setPomFile(pomFile);
+            if (file.exists() && file.isFile() && file.getName().equals("pom.xml")) {
+                request.setPomFile(file);
+            } else {
+                request.setBaseDirectory(file);
+            }
+
             request.setGoals(Arrays.asList(goals));
             request.setOutputHandler(multipleOutputHandler);
             request.setBatchMode(true);
 
-            if (null != properties && !properties.isEmpty()) {
+            if (properties != null && !properties.isEmpty()) {
                 request.setProperties(properties);
             }
 

@@ -55,7 +55,7 @@ public class MavenGoalTest {
         String[] goals = {"a", "b", "c"};
         mavenGoal.setGoals(goals);
         mavenGoal.execution(null, null);
-        verify(request, times(1)).setPomFile(absoluteFile);
+        verify(request, times(0)).setPomFile(absoluteFile);
         verify(request, times(1)).setGoals(anyList());
     }
 
@@ -97,7 +97,7 @@ public class MavenGoalTest {
     public void providesADescription() {
         String[] goals = {"x", "y", "z"};
         MavenGoal mGoal = new MavenGoal(goals);
-        Assert.assertEquals(mGoal.getDescription(), "Execute Maven goal [x, y, z] against pom file ");
+        Assert.assertEquals(mGoal.getDescription(), "Execute Maven goal [x, y, z]");
     }
 
     @Test
