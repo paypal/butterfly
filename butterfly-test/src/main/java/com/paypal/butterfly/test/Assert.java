@@ -132,8 +132,8 @@ public abstract class Assert {
         if (transformedApplication == null || !transformedApplication.exists() || !transformedApplication.isDirectory()) throw new IllegalArgumentException("Specified actual file is null, does not exist, or is not a directory");
 
         logger.info("Comparing the following folders:");
-        logger.info("Baseline application:\t{}", baselineApplication);
-        logger.info("Transformed application:\t{}", transformedApplication);
+        logger.info("Baseline application: {}", baselineApplication.getAbsolutePath());
+        logger.info("Transformed application: {}", transformedApplication.getAbsolutePath());
 
         assertEqualFolderStructure(baselineApplication, baselineApplication, transformedApplication);
         try {
