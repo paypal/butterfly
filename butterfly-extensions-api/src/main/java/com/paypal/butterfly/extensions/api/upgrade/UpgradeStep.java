@@ -24,4 +24,9 @@ public abstract class UpgradeStep extends UpgradeTemplate {
      */
     public abstract UpgradeStep getNextStep();
 
+    @Override
+    public void setBlank(boolean blank) {
+        throw new UnsupportedOperationException("Upgrade steps cannot be blank, so this setter doesn't apply in this case");
+    }
+
 }

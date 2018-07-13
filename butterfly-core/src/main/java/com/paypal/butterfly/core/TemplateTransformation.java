@@ -18,7 +18,7 @@ public class TemplateTransformation extends Transformation {
     private TransformationTemplate template;
 
     public TemplateTransformation(Application application, TransformationTemplate template, Configuration configuration) {
-        super(application, configuration);
+        super(application, configuration, template.isBlank());
         if (template == null) {
             throw new IllegalArgumentException("Upgrade path cannot be null");
         }
