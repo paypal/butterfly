@@ -4,6 +4,8 @@ import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import com.paypal.butterfly.utilities.operations.pom.PomAddParent;
+import com.paypal.butterfly.utilities.operations.pom.PomChangeParentVersion;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -17,19 +19,12 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 /**
- * Retrieves the value of an element,
- * or one of its attributes, in a XML file.
- * <br>
- * <strong>Note: if more than one element match
- * the specified XML element, the very first
- * one will be used</strong>
- * <br>
- * If no element, nor attribute, is found,
- * {@link com.paypal.butterfly.extensions.api.TUExecutionResult.Type#NULL} is returned.
- * If the file is not a well formed XML file, an error is returned.
+ * This transformation utility is deprecated.
+ * Please use {@link XmlXPathElement} instead.
  *
  * @author facarvalho
  */
+@Deprecated
 public class XmlElement extends TransformationUtility<XmlElement> {
 
     private String xmlElement;
