@@ -6,15 +6,18 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.maven.shared.invoker.*;
+import org.codehaus.plexus.util.StringUtils;
 
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Runs one or more Maven goals against a specific Maven POM file.
+ * Runs one or more Maven goals against a specific Maven POM file or a directory.
+ * It produces as result a map whose key is {@code Class<? extends MavenInvocationOutputHandler>}
+ * and the value is {@link Object}, which is the result of each registered {@link MavenInvocationOutputHandler}.
+ * If no output handler is registered, or no result is produced for any reason, and empty map is returned.
  *
  * @author facarvalho
  */
@@ -37,13 +40,19 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     private boolean warnOnError = false;
 
     /**
-     * Utility to run one or more Maven goals against a specific Maven POM file
+     * Runs one or more Maven goals against a specific Maven POM file or a directory.
+     * It produces as result a map whose key is {@code Class<? extends MavenInvocationOutputHandler>}
+     * and the value is {@link Object}, which is the result of each registered {@link MavenInvocationOutputHandler}.
+     * If no output handler is registered, or no result is produced for any reason, and empty map is returned.
      */
     public MavenGoal() {
     }
 
     /**
-     * Utility to run one or more Maven goals against a specific Maven POM file
+     * Runs one or more Maven goals against a specific Maven POM file or a directory.
+     * It produces as result a map whose key is {@code Class<? extends MavenInvocationOutputHandler>}
+     * and the value is {@link Object}, which is the result of each registered {@link MavenInvocationOutputHandler}.
+     * If no output handler is registered, or no result is produced for any reason, and empty map is returned.
      *
      * @param goals Maven goals to be executed
      */
@@ -52,7 +61,10 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     }
 
     /**
-     * Utility to run one or more Maven goals against a specific Maven POM file
+     * Runs one or more Maven goals against a specific Maven POM file or a directory.
+     * It produces as result a map whose key is {@code Class<? extends MavenInvocationOutputHandler>}
+     * and the value is {@link Object}, which is the result of each registered {@link MavenInvocationOutputHandler}.
+     * If no output handler is registered, or no result is produced for any reason, and empty map is returned.
      *
      * @param goals Maven goals to be executed
      * @param outputHandlers output handlers to be executed against the Maven goals execution result
