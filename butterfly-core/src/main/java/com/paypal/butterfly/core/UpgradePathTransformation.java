@@ -19,7 +19,7 @@ public class UpgradePathTransformation extends Transformation {
     private UpgradePath upgradePath;
 
     public UpgradePathTransformation(Application application, UpgradePath upgradePath, Configuration configuration) {
-        super(application, configuration);
+        super(application, configuration, false);
         if (upgradePath == null) {
             throw new IllegalArgumentException("Upgrade path cannot be null");
         }

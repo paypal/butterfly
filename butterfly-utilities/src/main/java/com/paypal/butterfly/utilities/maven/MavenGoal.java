@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.maven.shared.invoker.*;
+import org.codehaus.plexus.util.StringUtils;
 
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
@@ -13,13 +14,16 @@ import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 /**
- * Runs one or more Maven goals against a specific Maven POM file.
+ * Runs one or more Maven goals against a specific Maven POM file or a directory.
+ * It produces as result a map whose key is {@code Class<? extends MavenInvocationOutputHandler>}
+ * and the value is {@link Object}, which is the result of each registered {@link MavenInvocationOutputHandler}.
+ * If no output handler is registered, or no result is produced for any reason, and empty map is returned.
  *
  * @author facarvalho
  */
 public class MavenGoal extends TransformationUtility<MavenGoal> {
 
-    private static final String DESCRIPTION = "Execute Maven goal %s against pom file %s";
+    private static final String DESCRIPTION = "Execute Maven goal ";
 
     private String[] goals = {};
 
@@ -36,13 +40,19 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     private boolean warnOnError = false;
 
     /**
-     * Utility to run one or more Maven goals against a specific Maven POM file
+     * Runs one or more Maven goals against a specific Maven POM file or a directory.
+     * It produces as result a map whose key is {@code Class<? extends MavenInvocationOutputHandler>}
+     * and the value is {@link Object}, which is the result of each registered {@link MavenInvocationOutputHandler}.
+     * If no output handler is registered, or no result is produced for any reason, and empty map is returned.
      */
     public MavenGoal() {
     }
 
     /**
-     * Utility to run one or more Maven goals against a specific Maven POM file
+     * Runs one or more Maven goals against a specific Maven POM file or a directory.
+     * It produces as result a map whose key is {@code Class<? extends MavenInvocationOutputHandler>}
+     * and the value is {@link Object}, which is the result of each registered {@link MavenInvocationOutputHandler}.
+     * If no output handler is registered, or no result is produced for any reason, and empty map is returned.
      *
      * @param goals Maven goals to be executed
      */
@@ -51,7 +61,10 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
     }
 
     /**
-     * Utility to run one or more Maven goals against a specific Maven POM file
+     * Runs one or more Maven goals against a specific Maven POM file or a directory.
+     * It produces as result a map whose key is {@code Class<? extends MavenInvocationOutputHandler>}
+     * and the value is {@link Object}, which is the result of each registered {@link MavenInvocationOutputHandler}.
+     * If no output handler is registered, or no result is produced for any reason, and empty map is returned.
      *
      * @param goals Maven goals to be executed
      * @param outputHandlers output handlers to be executed against the Maven goals execution result
@@ -141,12 +154,19 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, Arrays.toString(goals), getRelativePath());
+        String description = DESCRIPTION + Arrays.toString(goals);
+        if (!StringUtils.isBlank(getRelativePath())) {
+            description += " against pom file " + getRelativePath();
+        }
+        return description;
     }
 
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-        File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
+
+        // This can be a pom.xml file or a the "base directory", the folder where Maven is supposed to run
+        File file = getAbsoluteFile(transformedAppFolder, transformationContext);
+
         TUExecutionResult result = null;
         InvocationResult invocationResult = null;
 
@@ -155,12 +175,17 @@ public class MavenGoal extends TransformationUtility<MavenGoal> {
                 multipleOutputHandler.register(outputHandler);
             }
 
-            request.setPomFile(pomFile);
+            if (file.exists() && file.isFile() && file.getName().equals("pom.xml")) {
+                request.setPomFile(file);
+            } else {
+                request.setBaseDirectory(file);
+            }
+
             request.setGoals(Arrays.asList(goals));
             request.setOutputHandler(multipleOutputHandler);
             request.setBatchMode(true);
 
-            if (null != properties && !properties.isEmpty()) {
+            if (properties != null && !properties.isEmpty()) {
                 request.setProperties(properties);
             }
 

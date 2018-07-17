@@ -32,6 +32,9 @@ class TransformationContextImpl implements TransformationContext {
     private String upgradeCorrelationId;
     private AbortDetails abortDetails;
 
+    private TransformationContextImpl() {
+    }
+
     void setCollectStats(boolean collectStats) {
         this.collectStats = collectStats;
         if (collectStats) {

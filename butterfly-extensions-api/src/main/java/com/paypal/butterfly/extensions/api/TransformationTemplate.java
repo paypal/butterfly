@@ -13,11 +13,23 @@ import java.util.*;
  */
 public abstract class TransformationTemplate implements TransformationUtilityList {
 
+    // This is the name of the transformation context attribute that holds a File object pointing to
+    // the baseline application, in case of blank transformations
+    public static final String BASELINE = "BASELINE_APPLICATION_LOCATION";
+
     private List<TransformationUtility> utilityList = new ArrayList<>();
 
     private Set<String> utilityNames = new HashSet<>();
 
     private String name;
+
+    // Flag stating whether this is a blank transformation or not
+    // Commonly transformations are done by first copying all files and folders the current application has, and then performing a set of ordered operations,
+    // one by one, on top of those files, until the final result is reached.
+    // However, a few times transformations might be so massive that it would make more sense to take a reverse approach, starting from a blank folder,
+    // followed by a set of copies from the original application folder plus eventual operations.
+    // This reverse approach is called "blank transformation".
+    private boolean blank = false;
 
     public TransformationTemplate() {
         setName();
@@ -291,6 +303,31 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
         } else {
             return getClass().getSimpleName();
         }
+    }
+
+    /**
+     * Sets whether this is a blank transformation template or not.
+     * Commonly transformations are done by first copying all files and folders the current application has, and then performing a set of ordered operations,
+     * one by one, on top of those files, until the final result is reached.
+     * However, a few times transformations might be so massive that it would make more sense to take a reverse approach, starting from a blank folder,
+     * followed by a set of copies from the original application folder plus eventual operations.
+     * This reverse approach is called "blank transformation".
+     * By default transformation templates are not blank. Notice that {@link com.paypal.butterfly.extensions.api.upgrade.UpgradeStep} cannot be blank.
+     *
+     * @param blank whether this is a blank transformation template or not
+     */
+    public void setBlank(boolean blank) {
+        this.blank = blank;
+    }
+
+    /**
+     * Return whether this is a blank transformation template or not.
+     * See {@link #setBlank(boolean)}.
+     *
+     * @return whether this is a blank transformation template or not
+     */
+    public boolean isBlank() {
+        return blank;
     }
 
 }

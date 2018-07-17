@@ -23,7 +23,7 @@ public class XmlXPathExistsTest extends TransformationUtilityTestHelper {
         Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.VALUE);
         Assert.assertNotNull(executionResult.getValue());
         Assert.assertEquals(executionResult.getValue(), true);
-        Assert.assertEquals(xmlXPathExists.getDescription(), "Check if xml xpath query /project/artifactId/text() exists in XML file pom.xml");
+        Assert.assertEquals(xmlXPathExists.getDescription(), "Check if XML XPath query /project/artifactId/text() exists in XML file pom.xml");
     }
 
     @Test
@@ -33,7 +33,7 @@ public class XmlXPathExistsTest extends TransformationUtilityTestHelper {
         Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.VALUE);
         Assert.assertNotNull(executionResult.getValue());
         Assert.assertEquals(executionResult.getValue(), false);
-        Assert.assertEquals(xmlXPathExists.getDescription(), "Check if xml xpath query /project/blahblah exists in XML file pom.xml");
+        Assert.assertEquals(xmlXPathExists.getDescription(), "Check if XML XPath query /project/blahblah exists in XML file pom.xml");
     }
 
     @Test(expectedExceptions = TransformationDefinitionException.class)
@@ -57,7 +57,7 @@ public class XmlXPathExistsTest extends TransformationUtilityTestHelper {
         TUExecutionResult executionResult = xmlXPathExists.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.ERROR);
         Assert.assertNull(executionResult.getValue());
-        Assert.assertEquals(xmlXPathExists.getDescription(), "Check if xml xpath query blah exists in XML file src/main/resources/dogs.yaml");
+        Assert.assertEquals(xmlXPathExists.getDescription(), "Check if XML XPath query blah exists in XML file src/main/resources/dogs.yaml");
         Assert.assertNotNull(executionResult.getException());
         Assert.assertEquals(executionResult.getException().getClass(), TransformationUtilityException.class);
         Assert.assertEquals(executionResult.getException().getMessage(), "File content could not be parsed properly in XML format");

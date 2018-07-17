@@ -2,6 +2,7 @@ package com.paypal.butterfly.utilities.file;
 
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
+import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -269,7 +270,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
     }
 
     @Test
-    public void folderPathRegexTest() {
+    public void folderPathRegexTest1() {
         FindFiles findFiles =  new FindFiles().setPathRegex("(.*\\/resources.*)").setRecursive(true);
         findFiles.setIncludeFiles(false).setIncludeFolders(true);
         TUExecutionResult executionResult = findFiles.execution(transformedAppFolder, transformationContext);
@@ -288,6 +289,28 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertTrue(findFiles.isIncludeFolders());
         Assert.assertEquals(findFiles.getDescription(), "Find files whose name and/or path match regular expression and are under the root folder and sub-folders");
         Assert.assertNull(executionResult.getException());
+    }
+
+    @Test
+    public void folderPathRegexTest2() {
+        final String MAIN_PROJECT = "MAIN_PROJECT";
+        Mockito.when(transformationContext.get(MAIN_PROJECT)).thenReturn(transformedAppFolder);
+        Mockito.when(transformationContext.contains(MAIN_PROJECT)).thenReturn(true);
+        FindFiles findFiles = new FindFiles("searchdriver", "(\\/(Dev|QA|Production|Pre-Production|Sandbox)\\/config\\/com)")
+                .absolute(MAIN_PROJECT, "/src/main/webapp/WEB-INF/configuration")
+                .setIncludeFiles(false)
+                .setIncludeFolders(true);
+        TUExecutionResult executionResult = findFiles.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.VALUE);
+        Assert.assertNotNull(executionResult.getValue());
+
+        List<File> files = (List<File>) executionResult.getValue();
+        Assert.assertEquals(files.size(), 5);
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/webapp/WEB-INF/configuration/Dev/config/com/searchdriver")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/webapp/WEB-INF/configuration/QA/config/com/searchdriver")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/webapp/WEB-INF/configuration/Production/config/com/searchdriver")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/webapp/WEB-INF/configuration/Pre-Production/config/com/searchdriver")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/webapp/WEB-INF/configuration/Sandbox/config/com/searchdriver")));
     }
 
     @Test
@@ -407,8 +430,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertNotNull(executionResult.getValue());
 
         List<File> files = (List<File>) executionResult.getValue();
-        Assert.assertEquals(files.size(), 54);
-
+        Assert.assertEquals(files.size(), 80);
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "src")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "blah")));
 

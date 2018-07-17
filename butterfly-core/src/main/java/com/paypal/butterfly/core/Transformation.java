@@ -1,5 +1,6 @@
 package com.paypal.butterfly.core;
 
+import com.google.common.io.Files;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.facade.Configuration;
 import org.slf4j.Logger;
@@ -27,15 +28,38 @@ public abstract class Transformation {
     // The location where to place the transformed application
     private File transformedApplicationLocation;
 
+    // The location where the baseline application code is
+    // The baseline application is a copy of the original application, used only for
+    // blank transformations
+    private File baselineApplicationLocation = null;
+
     // Text file containing main manual instructions document (if any)
     private File manualInstructionsFile;
 
     // Directory containing manual instructions documents (if any)
     private File manualInstructionsDir;
 
-    Transformation(Application application, Configuration configuration) {
+    // Whether the transformation template set in this transformation object
+    // is a "blank transformation" or not
+    private boolean blank;
+
+    Transformation(Application application, Configuration configuration, boolean blank) {
         this.application = application;
         this.configuration = configuration;
+        setBlank(blank);
+    }
+
+    private void setBlank(boolean blank) {
+        this.blank = blank;
+        if (blank) {
+            if (configuration.isModifyOriginalFolder()) {
+                baselineApplicationLocation = Files.createTempDir();
+                logger.debug("Baseline directory pointing to temporary directory: {}", baselineApplicationLocation.getAbsolutePath());
+            } else {
+                baselineApplicationLocation = application.getFolder();
+                logger.debug("Baseline directory pointing to original application folder: {}", baselineApplicationLocation.getAbsolutePath());
+            }
+        }
     }
 
     void setTransformedApplicationLocation(File transformedApplicationLocation) {
@@ -60,6 +84,10 @@ public abstract class Transformation {
 
     File getTransformedApplicationLocation() {
         return transformedApplicationLocation;
+    }
+
+    File getBaselineApplicationLocation() {
+        return baselineApplicationLocation;
     }
 
     File getManualInstructionsFile() {
@@ -88,6 +116,10 @@ public abstract class Transformation {
             logger.warn("An exception happened when retrieving extension version", e);
         }
         return version;
+    }
+
+    public boolean isBlank() {
+        return blank;
     }
 
 }

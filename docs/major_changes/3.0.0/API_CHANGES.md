@@ -17,7 +17,7 @@ Notice that all these removed classes and interfaces were already marked as depr
 
 | Class or interface | Replacement | Notes | TO BE DEPRECATED |
 |---|---|---|---|
-|||||
+|`com.paypal.butterfly.utilities.xml.XmlElement`|`com.paypal.butterfly.utilities.xml.XmlXPathElement`|||
 
 ### Removed methods
 
