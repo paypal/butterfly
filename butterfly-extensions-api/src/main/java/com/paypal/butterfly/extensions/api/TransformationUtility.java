@@ -346,14 +346,14 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
             if(!transformationContext.contains(absoluteFileFromContextAttribute)) {
                 String exceptionMessage = String.format("Context attribute %s, which is supposed to define absolute file for %s, does not exist", absoluteFileFromContextAttribute, name);
                 // FIXME a better exception is necessary here for cases when the absolute path transformation context attribute value is null
-                throw  new  TransformationUtilityException(exceptionMessage);
+                throw new TransformationUtilityException(exceptionMessage);
             }
 
             absoluteFile = (File) transformationContext.get(absoluteFileFromContextAttribute);
             if(absoluteFile == null) {
                 String exceptionMessage = String.format("Context attribute %s, which is supposed to define absolute file for %s, is null", absoluteFileFromContextAttribute, name);
                 // FIXME a better exception is necessary here for cases when the absolute path transformation context attribute value is null
-                throw  new  TransformationUtilityException(exceptionMessage);
+                throw new TransformationUtilityException(exceptionMessage);
             }
             if(additionalRelativePath != null) {
                 absoluteFile = new File(absoluteFile, additionalRelativePath);
