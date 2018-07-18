@@ -181,6 +181,7 @@ public class TransformationEngine {
 
         TransformationContextImpl transformationContext = performUtilities(template, template.getUtilities(), transformedAppFolder, previousTransformationContext, transformation);
 
+        logger.info("");
         logger.info("Transformation has been completed");
 
         return transformationContext;

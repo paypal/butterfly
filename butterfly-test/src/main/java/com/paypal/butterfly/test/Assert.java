@@ -32,12 +32,27 @@ public abstract class Assert {
 
     private static File transformedApps;
     private static Throwable transformedAppsThrowable;
+    private static DocumentBuilder builder;
+    private static ParserConfigurationException xmlParserConfigurationException;
 
     static {
         try {
             transformedApps = Files.createTempDir();
         } catch (Throwable t) {
             transformedAppsThrowable = t;
+        }
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+        factory.setNamespaceAware(true);
+        factory.setCoalescing(true);
+        factory.setIgnoringElementContentWhitespace(true);
+        factory.setIgnoringComments(true);
+
+        try {
+            builder = factory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            xmlParserConfigurationException = e;
         }
     }
 
@@ -74,11 +89,11 @@ public abstract class Assert {
         }
         if (!transformedApps.exists() || !transformedApps.isDirectory()) {
             if (transformedAppsThrowable != null) {
-                throw new AssertionError("Temporary transformation directory could not be created", transformedAppsThrowable);
+                throw new IllegalStateException("Temporary transformation directory could not be created", transformedAppsThrowable);
             } else if (!transformedApps.canWrite()) {
-                throw new AssertionError("Temporary transformation directory could not be created, no permission to write at: " + transformedApps.getAbsolutePath());
+                throw new IllegalStateException("Temporary transformation directory could not be created, no permission to write at: " + transformedApps.getAbsolutePath());
             } else {
-                throw new AssertionError("Temporary transformation directory could not be created: " + transformedApps.getAbsolutePath());
+                throw new IllegalStateException("Temporary transformation directory could not be created: " + transformedApps.getAbsolutePath());
             }
         }
 
@@ -244,26 +259,37 @@ public abstract class Assert {
     /*
      * Returns true only if both XML files have same content
      */
-    private static boolean xmlEqual(File file1, File file2) throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    private static boolean xmlEqual(File expectedFile, File actualFile) throws IOException {
+        if (xmlParserConfigurationException != null) {
+            throw new IllegalStateException("XML parser could not be configured", xmlParserConfigurationException);
+        }
 
-        factory.setNamespaceAware(true);
-        factory.setCoalescing(true);
-        factory.setIgnoringElementContentWhitespace(true);
-        factory.setIgnoringComments(true);
+        boolean file1parsed = false;
+        boolean file2parsed = false;
 
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document file1Xml = builder.parse(file1);
-        Document file2Xml = builder.parse(file2);
+        try {
+            Document file1Xml = builder.parse(expectedFile);
+            file1parsed = true;
+            Document file2Xml = builder.parse(actualFile);
+            file2parsed = true;
 
-        file1Xml.normalizeDocument();
-        file2Xml.normalizeDocument();
+            file1Xml.normalizeDocument();
+            file2Xml.normalizeDocument();
 
-        XMLUnit.setIgnoreAttributeOrder(true);
-        XMLUnit.setIgnoreComments(true);
-        XMLUnit.setIgnoreWhitespace(true);
+            XMLUnit.setIgnoreAttributeOrder(true);
+            XMLUnit.setIgnoreComments(true);
+            XMLUnit.setIgnoreWhitespace(true);
 
-        return XMLUnit.compareXML(file1Xml, file2Xml).similar();
+            return XMLUnit.compareXML(file1Xml, file2Xml).similar();
+        } catch (SAXException | IOException e) {
+            if (file1parsed ^ file2parsed) {
+                // This means only one file couldn't be parsed, which means they are not equal
+                return false;
+            }
+            // This means both files couldn't be parsed, so this comparison is being delegated to
+            // a regular file comparison
+            return Files.equal(expectedFile, actualFile);
+        }
     }
 
     private static void fail(String failureMessage) {

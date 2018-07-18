@@ -27,10 +27,11 @@ import java.io.IOException;
 /**
  * Modify an XML file based on a given XPath expression.
  * <br>
- * It has two different modes of operation:
+ * It has the following different modes of operation:
  * <ol>
- *     <li>If an {@link org.w3c.dom.Element} is provided, the whole node is replaced by given the element.</li>
- *     <li>If a String is provided, then the text of the node is replaced by the given String.</li>
+ *     <li>If an {@link org.w3c.dom.Element} is provided, every matched node is replaced by given the element.</li>
+ *     <li>If a String is provided, the text of every matched node is replaced by the given String.</li>
+ *     <li>If neither {@link org.w3c.dom.Element} nor String are provided, every matched node is removed.</li>
  * </ol>
  * <br>
  * If the XPath expression doesn't compile, or if the file is not a well formed XML file, an error is returned.
@@ -38,19 +39,38 @@ import java.io.IOException;
  * @author mmcrockett
  */
 public class XmlXPathReplace extends TransformationOperation<XmlXPathReplace> {
-    private static final String DESCRIPTION = "Replace %s of xpath %s in XML file %s with %s";
+
+    private static final String DESCRIPTION = "Replace %s of XPath %s in XML file %s with %s";
 
     private String xpathExpressionString;
     private XPathExpression xpathExpression;
     private Object replacementObject;
-    private boolean textReplace;
+    private Mode mode;
+
+    private enum Mode {
+        TextReplace, ElementReplace, Removal
+    }
 
     /**
-     * @param xpathExpressionString
-     *            a string that compiles into a
-     *            {@link javax.xml.xpath.XPathExpression} if the expression
-     *            evaluates to an empty string 'false' is returned, otherwise
-     *            true
+     * Modify an XML file based on a given XPath expression.
+     * Since neither {@link org.w3c.dom.Element} nor String are provided, the matched node will be removed.
+     * <br>
+     * If the XPath expression doesn't compile, or if the file is not a well formed XML file, an error is returned.
+     *
+     * @param xpathExpressionString a String that compiles into a {@link javax.xml.xpath.XPathExpression}
+     */
+    public XmlXPathReplace(String xpathExpressionString) {
+        setXPathExpression(xpathExpressionString);
+        mode = Mode.Removal;
+    }
+
+    /**
+     * Modify an XML file based on a given XPath expression.
+     * Since an {@link org.w3c.dom.Element} is provided, the whole node is replaced by given the element.
+     * <br>
+     * If the XPath expression doesn't compile, or if the file is not a well formed XML file, an error is returned.
+     *
+     * @param xpathExpressionString a String that compiles into a {@link javax.xml.xpath.XPathExpression}
      * @param replacementElement
      *            an {@link org.w3c.dom.Element} this is used to replace the
      *            {@link org.w3c.dom.Node} in the search
@@ -61,13 +81,16 @@ public class XmlXPathReplace extends TransformationOperation<XmlXPathReplace> {
     }
 
     /**
-     * @param xpathExpressionString
-     *            a string that compiles into a
-     *            {@link javax.xml.xpath.XPathExpression} if the expression
-     *            evaluates to an empty string 'false' is returned, otherwise
-     *            true
+     * Modify an XML file based on a given XPath expression.
+     * <br>
+     * It has the following different modes of operation:
+     * Since a String is provided, then the text of the node is replaced by the given String.
+     * <br>
+     * If the XPath expression doesn't compile, or if the file is not a well formed XML file, an error is returned.
+     *
+     * @param xpathExpressionString a String that compiles into a {@link javax.xml.xpath.XPathExpression}
      * @param replacementString
-     *            a string this is used to replace the text content of the
+     *            a String this is used to replace the text content of the
      *            {@link org.w3c.dom.Node} found in the search
      */
     public XmlXPathReplace(String xpathExpressionString, String replacementString) {
@@ -77,25 +100,34 @@ public class XmlXPathReplace extends TransformationOperation<XmlXPathReplace> {
 
     @Override
     public String getDescription() {
-        if (this.textReplace) {
-            return String.format(DESCRIPTION, "text", xpathExpressionString, getRelativePath(), replacementObject);
-        } else {
-            return String.format(DESCRIPTION, "node", xpathExpressionString, getRelativePath(),
-                    "user supplied XML Element");
+        String description = null;
+
+        switch (mode) {
+            case TextReplace:
+                description = String.format(DESCRIPTION, "text", xpathExpressionString, getRelativePath(), replacementObject);
+                break;
+            case ElementReplace:
+                description = String.format(DESCRIPTION, "node", xpathExpressionString, getRelativePath(), "user supplied XML Element");
+                break;
+            case Removal:
+                description = String.format("Remove every node that matches XPath %s in XML file %s", xpathExpressionString, getRelativePath());
+                break;
         }
+
+        return description;
     }
 
     /**
-     * The string that is used to replace the text result of xpath expression.
+     * The String that is used to replace the text result of xpath expression.
      * 
      * @param replacementString
-     *            a string used to replace text() of xpath.
+     *            a String used to replace text() of xpath.
      *
      * @return this instance
      */
     public XmlXPathReplace setReplacementString(String replacementString) {
-        checkForNull("Replacement String", replacementString);
-        this.textReplace = true;
+        checkForBlankString("Replacement String", replacementString);
+        mode = Mode.TextReplace;
         this.replacementObject = replacementString;
         return this;
     }
@@ -112,7 +144,7 @@ public class XmlXPathReplace extends TransformationOperation<XmlXPathReplace> {
      */
     public XmlXPathReplace setReplacementElement(Element replacementElement) {
         checkForNull("Replacement Element", replacementElement);
-        this.textReplace = false;
+        mode = Mode.ElementReplace;
         this.replacementObject = replacementElement;
         return this;
     }
@@ -122,7 +154,7 @@ public class XmlXPathReplace extends TransformationOperation<XmlXPathReplace> {
      * results to replace.
      * 
      * @param xpathExpressionString
-     *            a string that compiles into a
+     *            a String that compiles into a
      *            {@link javax.xml.xpath.XPathExpression}
      *
      * @return this instance
@@ -142,8 +174,7 @@ public class XmlXPathReplace extends TransformationOperation<XmlXPathReplace> {
         try {
             expr = xpath.compile(expression);
         } catch (XPathExpressionException e) {
-            throw new TransformationDefinitionException(
-                    "XPath expression '" + expression + "' didn't compile correctly.");
+            throw new TransformationDefinitionException("XPath expression '" + expression + "' didn't compile correctly.");
         }
 
         return expr;
@@ -163,24 +194,29 @@ public class XmlXPathReplace extends TransformationOperation<XmlXPathReplace> {
             Document doc = builder.parse(readFile);
             nodes = (NodeList) xpathExpression.evaluate(doc, XPathConstants.NODESET);
 
-            for (int idx = 0; idx < nodes.getLength(); idx++) {
-                Node node = nodes.item(idx);
-
-                if (this.textReplace) {
-                    node.setTextContent((String) replacementObject);
-                } else {
-                    Node newNode = doc.importNode((Element) replacementObject, true);
-                    node.getParentNode().replaceChild(newNode, node);
+            if (nodes.getLength() > 0) {
+                for (int idx = 0; idx < nodes.getLength(); idx++) {
+                    Node node = nodes.item(idx);
+                    switch (mode) {
+                        case TextReplace:
+                            node.setTextContent((String) replacementObject);
+                            break;
+                        case ElementReplace:
+                            Node newNode = doc.importNode((Element) replacementObject, true);
+                            node.getParentNode().replaceChild(newNode, node);
+                            break;
+                        case Removal:
+                            node.getParentNode().removeChild(node);
+                            break;
+                    }
                 }
+                Transformer xformer = TransformerFactory.newInstance().newTransformer();
+                xformer.transform(new DOMSource(doc), new StreamResult(fileToBeChanged));
             }
-
-            Transformer xformer = TransformerFactory.newInstance().newTransformer();
-            xformer.transform(new DOMSource(doc), new StreamResult(fileToBeChanged));
-
         } catch (ParserConfigurationException | SAXException | IOException e) {
             result = TOExecutionResult.error(this,
                     new TransformationOperationException("File content could not be parsed properly in XML format", e));
-        } catch (TransformationUtilityException | TransformerException e) {
+        } catch (TransformerException e) {
             result = TOExecutionResult.error(this, e);
         } catch (XPathExpressionException e) {
             result = TOExecutionResult.error(this,
@@ -190,7 +226,7 @@ public class XmlXPathReplace extends TransformationOperation<XmlXPathReplace> {
         if (result == null) {
             if (nodes != null) {
                 String details = String.format(
-                        "File %s has had %d node(s) where value replacement was applied based on xml xpath expression '%s'",
+                        "File %s has had %d node(s) where modification was applied based on xml xpath expression '%s'",
                         getRelativePath(), nodes.getLength(), xpathExpressionString);
                 if (nodes.getLength() > 0) {
                     result = TOExecutionResult.success(this, details);
