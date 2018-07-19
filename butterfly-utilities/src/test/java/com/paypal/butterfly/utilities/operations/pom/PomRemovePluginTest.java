@@ -82,7 +82,7 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
         TOExecutionResult executionResult = pomRemovePlugin.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
-        assertEquals(executionResult.getException().getMessage(), "Pom file could not be modified");
+        assertEquals(executionResult.getException().getMessage(), "POM file could not be modified");
         assertEquals(executionResult.getException().getCause().getClass(), FileNotFoundException.class);
         assertEquals(executionResult.getException().getCause().getMessage(), new File(transformedAppFolder, "non_existent_file.xml").getAbsolutePath() + " (No such file or directory)");
     }

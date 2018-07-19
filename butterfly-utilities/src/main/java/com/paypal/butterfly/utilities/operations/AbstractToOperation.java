@@ -1,7 +1,11 @@
-package com.paypal.butterfly.utilities.operations.file;
+package com.paypal.butterfly.utilities.operations;
 
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.utilities.operations.file.CopyDirectory;
+import com.paypal.butterfly.utilities.operations.file.CopyFile;
+import com.paypal.butterfly.utilities.operations.file.MoveDirectory;
+import com.paypal.butterfly.utilities.operations.file.MoveFile;
 
 import java.io.File;
 
@@ -17,7 +21,7 @@ import java.io.File;
  *
  * @author facarvalho
  */
-abstract class AbstractToOperation<A extends AbstractToOperation> extends TransformationOperation<A> {
+public abstract class AbstractToOperation<A extends AbstractToOperation> extends TransformationOperation<A> {
 
     protected String description;
 
