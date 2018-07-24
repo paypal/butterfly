@@ -42,7 +42,7 @@ abstract class AbstractPomOperation<T extends AbstractPomOperation> extends Tran
                 writer.write(fileOutputStream, model);
             }
         } catch (XmlPullParserException | IOException e) {
-            result = TOExecutionResult.error(this, new TransformationOperationException("Pom file could not be modified", e));
+            result = TOExecutionResult.error(this, new TransformationOperationException("POM file could not be modified", e));
         } finally {
             try {
                 if (fileInputStream != null) try {
