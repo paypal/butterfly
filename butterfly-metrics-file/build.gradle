@@ -1,6 +1,7 @@
 apply plugin: 'java-library'
 
 dependencies {
+    implementation project(':butterfly-metrics')
     implementation project(':butterfly-extensions-api')
     implementation lib.annotation_api,
             lib.spring_context,

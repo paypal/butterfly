@@ -1,7 +1,7 @@
 package com.paypal.butterfly.core;
 
-import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
-import com.paypal.butterfly.extensions.api.metrics.TransformationMetricsListener;
+import com.paypal.butterfly.metrics.TransformationMetrics;
+import com.paypal.butterfly.metrics.TransformationMetricsListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
 package com.paypal.butterfly.metrics.couchdb;
 
-import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
-import com.paypal.butterfly.extensions.api.metrics.TransformationMetricsListener;
+import com.paypal.butterfly.metrics.TransformationMetrics;
+import com.paypal.butterfly.metrics.TransformationMetricsListener;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.CouchDbException;

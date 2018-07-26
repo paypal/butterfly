@@ -1,6 +1,7 @@
 dependencies {
     compile project(':butterfly-facade')
     compile project(':butterfly-extensions-api')
+    compile project(':butterfly-metrics')
     runtime project(':butterfly-utilities')
     compile(lib.spring_context) {
         exclude(module: 'commons-logging')

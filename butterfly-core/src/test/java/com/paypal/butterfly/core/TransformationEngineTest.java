@@ -22,9 +22,9 @@ import org.testng.annotations.Test;
 
 import com.google.common.io.Files;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
-import com.paypal.butterfly.extensions.api.metrics.TransformationMetricsListener;
-import com.paypal.butterfly.extensions.api.metrics.TransformationStatistics;
+import com.paypal.butterfly.metrics.TransformationMetrics;
+import com.paypal.butterfly.metrics.TransformationMetricsListener;
+import com.paypal.butterfly.metrics.TransformationStatistics;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.springboot.ButterflySpringBootExtension;
 import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;

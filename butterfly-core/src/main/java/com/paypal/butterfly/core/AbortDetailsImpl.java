@@ -1,5 +1,6 @@
-package com.paypal.butterfly.extensions.api.metrics;
+package com.paypal.butterfly.core;
 
+import com.paypal.butterfly.metrics.AbortDetails;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
@@ -7,7 +8,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  *
  * @author facarvalho
  */
-public class AbortDetails {
+public class AbortDetailsImpl implements AbortDetails {
 
     private String utilityName;
     private String abortMessage;
@@ -15,7 +16,7 @@ public class AbortDetails {
     private String exceptionMessage;
     private String exceptionStackTrace;
 
-    public AbortDetails(Exception ex, String abortMessage, String utilityName) {
+    public AbortDetailsImpl(Exception ex, String abortMessage, String utilityName) {
         if (ex == null) {
             throw new IllegalArgumentException("Exception object cannot be null");
         }
@@ -30,22 +31,27 @@ public class AbortDetails {
         this.exceptionStackTrace = ExceptionUtils.getStackTrace(ex);
     }
 
+    @Override
     public String getUtilityName() {
         return utilityName;
     }
 
+    @Override
     public String getAbortMessage() {
         return abortMessage;
     }
 
-    public String getExceptionClass() {
+    @Override
+    public String getExceptionClassName() {
         return exceptionClass;
     }
 
+    @Override
     public String getExceptionMessage() {
         return exceptionMessage;
     }
 
+    @Override
     public String getExceptionStackTrace() {
         return exceptionStackTrace;
     }

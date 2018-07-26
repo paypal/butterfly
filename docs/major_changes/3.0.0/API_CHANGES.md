@@ -9,7 +9,7 @@ Notice that it does not include additions, that is documented in [Butterfly 3.0.
 
 | From | To | Notes |
 |---|---|---|
-||||
+|`com.paypal.butterfly.extensions.api.metrics`|`com.paypal.butterfly.metrics`|API project `butterfly-metrics` has been created. Also, `AbortDetails` class was converted to an interface|
 
 ### Removed classes and interfaces
 
@@ -28,6 +28,7 @@ Notice that all these removed methods were already marked as deprecated in the l
 |`com.paypal.butterfly.extensions.api.TransformationUtility.abortOnFailure()`|`com.paypal.butterfly.extensions.api.TransformationUtility.isAbortOnFailure()`||YES|
 |`com.paypal.butterfly.extensions.api.TransformationUtility.abortOnFailure(boolean, String)`|`com.paypal.butterfly.extensions.api.TransformationUtility.abortOnFailure(String)`||YES|
 |`com.paypal.butterfly.utilities.maven.MavenGoal.setFailAtEnd()`|NA|Removed after upgrading `org.apache.maven.shared:maven-invoker` from version 2.2 to 3.0.1, which removed method `org.apache.maven.shared.invoker.InvocationRequest.setFailureBehavior(String)`|YES|
+|`com.paypal.butterfly.extensions.api.metrics.AbortDetails.getExceptionClass()`|`com.paypal.butterfly.metrics.AbortDetails.getExceptionClassName()`||YES|
 
 ### Changed methods
 

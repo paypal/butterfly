@@ -1,7 +1,5 @@
 package com.paypal.butterfly.extensions.api;
 
-import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
-
 import java.io.File;
 
 /**
@@ -13,8 +11,7 @@ import java.io.File;
  * {@link TransformationTemplate#getApplicationName()}. The
  * application name mostly will only be known after the transformation
  * has began, but it might be necessary to know it outside of transformation
- * time (after it). For example, the metrics system needs to know it, as
- * seen in {@link TransformationMetrics#getApplicationName()}.
+ * time (after it).
  *
  * @author facarvalho
  */

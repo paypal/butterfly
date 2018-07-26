@@ -2,8 +2,8 @@ package com.paypal.butterfly.metrics.file;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
-import com.paypal.butterfly.extensions.api.metrics.TransformationMetricsListener;
+import com.paypal.butterfly.metrics.TransformationMetrics;
+import com.paypal.butterfly.metrics.TransformationMetricsListener;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;

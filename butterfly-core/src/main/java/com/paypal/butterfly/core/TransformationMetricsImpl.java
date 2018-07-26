@@ -1,9 +1,9 @@
 package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.metrics.AbortDetails;
-import com.paypal.butterfly.extensions.api.metrics.TransformationMetrics;
-import com.paypal.butterfly.extensions.api.metrics.TransformationStatistics;
+import com.paypal.butterfly.metrics.AbortDetails;
+import com.paypal.butterfly.metrics.TransformationMetrics;
+import com.paypal.butterfly.metrics.TransformationStatistics;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.facade.ButterflyProperties;
 import org.slf4j.Logger;
