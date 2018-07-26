@@ -1,11 +1,12 @@
-package com.paypal.butterfly.facade;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.paypal.butterfly.core;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class obtains Butterfly properties via its
@@ -14,22 +15,51 @@ import java.util.Properties;
  *
  * @author facarvalho
  */
-public class ButterflyProperties {
+class ButterflyProperties {
 
     private static Properties properties;
 
     private static Logger logger = LoggerFactory.getLogger(ButterflyProperties.class);
 
-    public static Object get(String propertyName) {
+    /**
+     * Returns a property value as Object, given its name, or null,
+     * if there is no property with such name
+     *
+     * @param propertyName the name of the property
+     * @return a property value, given its name, or null,
+     *         if there is no property with such name
+     * @throws IllegalArgumentException if the specified property name is null or blank
+     */
+    static Object get(String propertyName) {
+        if (StringUtils.isBlank(propertyName)) {
+            throw new IllegalArgumentException("Property name cannot be null nor blank");
+        }
         if (properties != null) {
             return properties.get(propertyName);
         }
         throw new IllegalStateException("Properties could not be loaded");
     }
 
-    public static String getString(String propertyName) {
+    /**
+     * Retrieves a property value as String, given its name.
+     * If the property value is not a String, its {@link #toString()}
+     * value will be returned instead
+     *
+     * @param propertyName the name of the property
+     * @return a property value, given its name, or null,
+     *         if there is no property with such name
+     * @throws IllegalArgumentException if the specified property name is null or blank
+     */
+    static String getString(String propertyName) {
+        if (StringUtils.isBlank(propertyName)) {
+            throw new IllegalArgumentException("Property name cannot be null nor blank");
+        }
         if (properties != null) {
-            return (String) properties.get(propertyName);
+            Object value = properties.get(propertyName);
+            if (value == null) {
+                return null;
+            }
+            return value.toString();
         }
         throw new IllegalStateException("Properties could not be loaded");
     }

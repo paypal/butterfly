@@ -10,19 +10,3 @@ dependencies {
         exclude(module: 'guava')
     }
 }
-
-test.useTestNG()
-
-task createProperties(dependsOn: processResources) {
-    doLast {
-        new File("$buildDir/resources/main/butterfly.properties").withWriter { w ->
-            Properties p = new Properties()
-            p['butterfly.version'] = project.version.toString()
-            p.store w, null
-        }
-    }
-}
-
-classes {
-    dependsOn createProperties
-}

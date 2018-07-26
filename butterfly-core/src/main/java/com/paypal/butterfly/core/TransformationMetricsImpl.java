@@ -1,17 +1,17 @@
 package com.paypal.butterfly.core;
 
-import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.metrics.AbortDetails;
-import com.paypal.butterfly.metrics.TransformationMetrics;
-import com.paypal.butterfly.metrics.TransformationStatistics;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
-import com.paypal.butterfly.facade.ButterflyProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
+import com.paypal.butterfly.metrics.AbortDetails;
+import com.paypal.butterfly.metrics.TransformationMetrics;
+import com.paypal.butterfly.metrics.TransformationStatistics;
 
 /**
  * POJO containing statistics and meta-data about

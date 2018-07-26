@@ -8,7 +8,6 @@ import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.facade.ButterflyFacade;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
-import com.paypal.butterfly.facade.ButterflyProperties;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

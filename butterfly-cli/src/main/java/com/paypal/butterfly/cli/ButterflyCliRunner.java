@@ -1,5 +1,17 @@
 package com.paypal.butterfly.cli;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import com.paypal.butterfly.facade.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
 import com.paypal.butterfly.cli.logging.LogConfigurator;
 import com.paypal.butterfly.cli.logging.LogFileDefiner;
 import com.paypal.butterfly.extensions.api.Extension;
@@ -10,19 +22,8 @@ import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.facade.ButterflyFacade;
-import com.paypal.butterfly.facade.ButterflyProperties;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Butterfly CLI runner
@@ -43,7 +44,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
     public ButterflyCliRun run() throws IOException {
         ButterflyCliRun run = new ButterflyCliRun();
         Configuration configuration = null;
-        run.setButterflyVersion(ButterflyProperties.getString("butterfly.version"));
+        run.setButterflyVersion(butterflyFacade.getButterflyVersion());
 
         logger.info(ButterflyCliApp.getBanner());
 

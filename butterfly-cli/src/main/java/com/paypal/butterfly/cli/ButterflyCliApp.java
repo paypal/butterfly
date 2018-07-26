@@ -1,10 +1,10 @@
 package com.paypal.butterfly.cli;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.paypal.butterfly.cli.logging.LogFileDefiner;
-import com.paypal.butterfly.facade.ButterflyProperties;
-import joptsimple.OptionException;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +13,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.paypal.butterfly.cli.logging.LogFileDefiner;
+import com.paypal.butterfly.facade.ButterflyFacade;
+
+import joptsimple.OptionException;
 
 /**
  * Butterfly CLI Spring Boot entry point
@@ -38,14 +40,16 @@ public class ButterflyCliApp extends ButterflyCliOption {
     }
 
     public static ButterflyCliRun run(String... arguments) throws IOException {
+        ConfigurableApplicationContext applicationContext = SpringApplication.run(ButterflyCliApp.class, arguments);
+        ButterflyFacade butterflyFacade = applicationContext.getBean(ButterflyFacade.class);
+
         setButterflyHome();
-        setEnvironment(arguments);
+        setEnvironment(arguments, butterflyFacade);
 
         logger = LoggerFactory.getLogger(ButterflyCliApp.class);
 
-        setBanner();
+        setBanner(butterflyFacade);
 
-        ConfigurableApplicationContext applicationContext = SpringApplication.run(ButterflyCliApp.class, arguments);
         ButterflyCliRunner butterflyCliRunner = applicationContext.getBean(ButterflyCliRunner.class);
         ButterflyCliRun run = butterflyCliRunner.run();
         run.setInputArguments(arguments);
@@ -66,7 +70,7 @@ public class ButterflyCliApp extends ButterflyCliOption {
     }
 
     @SuppressWarnings("PMD.DoNotCallSystemExit")
-    private static void setEnvironment(String[] arguments) {
+    private static void setEnvironment(String[] arguments, ButterflyFacade butterflyFacade) {
         if(arguments.length != 0){
             try {
                 setOptionSet(arguments);
@@ -75,7 +79,7 @@ public class ButterflyCliApp extends ButterflyCliOption {
                 LogFileDefiner.setLogFileName(applicationFolder, debug);
             } catch (OptionException e) {
                 Logger logger = LoggerFactory.getLogger(ButterflyCliApp.class);
-                setBanner();
+                setBanner(butterflyFacade);
                 logger.info(getBanner());
                 logger.error(e.getMessage());
                 System.exit(1);
@@ -101,14 +105,14 @@ public class ButterflyCliApp extends ButterflyCliOption {
         return applicationFolder;
     }
 
-    private static void setBanner() {
+    private static void setBanner(ButterflyFacade butterflyFacade) {
 
         // Ideally the version should be gotten from the façade Spring bean.
         // However, it is not available this early, so we are getting it directly
         // from the CLI artifact, assuming that the CLI jar will always bring together
         // the exact same version of butterfly-core, which is the component to officially
         // define Butterfly version
-        banner = String.format("Butterfly application transformation tool (version %s)", ButterflyProperties.getString("butterfly.version"));
+        banner = String.format("Butterfly application transformation tool (version %s)", butterflyFacade.getButterflyVersion());
     }
 
     public static File getButterflyHome() {
