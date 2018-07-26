@@ -58,7 +58,8 @@ public abstract class Assert {
 
     /**
      * Transforms {@code originalApplication} using {@code transformationTemplate} and compares the generated transformed application
-     * with a baseline application {@code baselineApplication}, failing the assertion if their content differ
+     * with a baseline application {@code baselineApplication}, failing the assertion if their content differ.
+     * Notice that this transformation happens in a separated and temporary folder, keeping the original application folder preserved.
      *
      * @param baselineApplication a folder containing a baseline manually transformed application, to be compared against the generated transformed application
      * @param originalApplication the original application, to be transformed
@@ -70,7 +71,8 @@ public abstract class Assert {
 
     /**
      * Transforms {@code originalApplication} using {@code transformationTemplate} and compares the generated transformed application
-     * with a baseline application {@code baselineApplication}, failing the assertion if their content differ
+     * with a baseline application {@code baselineApplication}, failing the assertion if their content differ.
+     * Notice that this transformation happens in a separated and temporary folder, keeping the original application folder preserved.
      *
      * @param baselineApplication a folder containing a baseline manually transformed application, to be compared against the generated transformed application
      * @param originalApplication the original application, to be transformed
@@ -136,8 +138,8 @@ public abstract class Assert {
     }
 
     /**
-     * Compares the generated transformed application {@code transformedApplication}
-     * with a baseline application {@code baselineApplication}, failing the assertion if their content differ
+     * Compares the generated transformed application, whose code is supposed to be in {@code transformedApplication},
+     * with a baseline application {@code baselineApplication}, failing the assertion if their content differ.
      *
      * @param baselineApplication a folder containing a baseline manually transformed application, to be compared against the generated transformed application
      * @param transformedApplication a folder containing the automatically transformed application, to be compared against the baseline application
@@ -155,6 +157,81 @@ public abstract class Assert {
             assertEqualFolderContent(baselineApplication, baselineApplication, transformedApplication);
         } catch (IOException | ParserConfigurationException | SAXException e) {
             throw new AssertionError(e);
+        }
+    }
+
+    /**
+     * Attempts to transform {@code originalApplication} using {@code transformationTemplate} and assert that transformation fails and is aborted,
+     * besides resulting in the expected abort message.
+     * Notice that this transformation happens in a separated and temporary folder, keeping the original application folder preserved.
+     *
+     * @param originalApplication the original application, to be transformed
+     * @param transformationTemplate the transformation template used to transform the original application
+     * @param expectedAbortMessage the expected abort message, to be compared against the actual
+     */
+    public static void assertAbort(File originalApplication, Class<? extends TransformationTemplate> transformationTemplate, String expectedAbortMessage) {
+        assertAbort(originalApplication, transformationTemplate, null, null, null, expectedAbortMessage);
+    }
+
+    /**
+     * Attempts to transform {@code originalApplication} using {@code transformationTemplate} and assert that transformation fails and is aborted,
+     * besides resulting in the expected abort message.
+     * Notice that this transformation happens in a separated and temporary folder, keeping the original application folder preserved.
+     *
+     * @param originalApplication the original application, to be transformed
+     * @param transformationTemplate the transformation template used to transform the original application
+     * @param verbose if true, runs Butterfly in verbose mode, printing log messages not just in a log file, but also on the console
+     * @param debug if true, runs Butterfly in debug mode
+     * @param version the version the application should be upgraded to. This option only makes sense if the transformation template to be used is also an upgrade template.
+     *                If not, it is ignored. If it is, but this option is not specified, then the application will be upgraded all the way to the latest version possible
+     * @param expectedAbortMessage the expected abort message, to be compared against the actual
+     */
+    public static void assertAbort(File originalApplication, Class<? extends TransformationTemplate> transformationTemplate, Boolean verbose, Boolean debug, String version, String expectedAbortMessage) {
+        if (originalApplication == null || !originalApplication.exists() || !originalApplication.isDirectory()) {
+            throw new IllegalArgumentException("Original application file is null, does not exist or is not a directory: " + (originalApplication == null ? "null" : originalApplication.getAbsolutePath()));
+        }
+        if (!transformedApps.exists() || !transformedApps.isDirectory()) {
+            if (transformedAppsThrowable != null) {
+                throw new IllegalStateException("Temporary transformation directory could not be created", transformedAppsThrowable);
+            } else if (!transformedApps.canWrite()) {
+                throw new IllegalStateException("Temporary transformation directory could not be created, no permission to write at: " + transformedApps.getAbsolutePath());
+            } else {
+                throw new IllegalStateException("Temporary transformation directory could not be created: " + transformedApps.getAbsolutePath());
+            }
+        }
+
+        ButterflyCliRun run;
+        try {
+            List<String> argumentsList = new ArrayList<>();
+
+            argumentsList.add(originalApplication.getAbsolutePath());
+            argumentsList.add("-o");
+            argumentsList.add(transformedApps.getAbsolutePath());
+            argumentsList.add("-t");
+            argumentsList.add(transformationTemplate.getName());
+
+            if (verbose != null && verbose) argumentsList.add("-v");
+            if (debug != null && debug) argumentsList.add("-d");
+            if (StringUtils.isNotBlank(version)) {
+                argumentsList.add("-u");
+                argumentsList.add(version);
+            }
+
+            String[] arguments = new String[argumentsList.size()];
+            arguments = argumentsList.toArray(arguments);
+
+            run = ButterflyCliApp.run(arguments);
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        if (run.getExitStatus() != 0) {
+            String actualAbortMessage = run.getExceptionMessage();
+            if ((actualAbortMessage != null && expectedAbortMessage != null && !actualAbortMessage.equals(expectedAbortMessage)) ||
+                    (actualAbortMessage == null && expectedAbortMessage != null) || (actualAbortMessage != null && expectedAbortMessage == null ) ) {
+                throw new AssertionError("expected [" + expectedAbortMessage + "] but found [" + actualAbortMessage + "]");
+            }
+        } else {
+            throw new AssertionError("Transformation did not abort, it completed successfully. Transformed application can be found at: " + run.getTransformedApplication());
         }
     }
 

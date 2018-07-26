@@ -3,6 +3,7 @@ apply plugin: 'java-library'
 dependencies {
     implementation project(':butterfly-cli')
     implementation lib.xmlunit
+    testImplementation project(':extensions-catalog:butterfly-springboot-extension')
     testImplementation(lib.testng) {
         exclude(module: 'aopalliance')
         exclude(module: 'guava')
