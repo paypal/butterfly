@@ -9,7 +9,6 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
-import com.paypal.butterfly.extensions.api.exception.ApplicationValidationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mockito.InjectMocks;
@@ -22,17 +21,17 @@ import org.testng.annotations.Test;
 
 import com.google.common.io.Files;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.metrics.TransformationMetrics;
-import com.paypal.butterfly.metrics.TransformationMetricsListener;
-import com.paypal.butterfly.metrics.TransformationStatistics;
+import com.paypal.butterfly.extensions.api.exception.ApplicationValidationException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.springboot.ButterflySpringBootExtension;
 import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;
 import com.paypal.butterfly.extensions.springboot.SpringBootUpgrade_1_5_6_to_1_5_7;
-import com.paypal.butterfly.facade.ButterflyProperties;
 import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
 import com.paypal.butterfly.facade.exception.TransformationException;
+import com.paypal.butterfly.metrics.TransformationMetrics;
+import com.paypal.butterfly.metrics.TransformationMetricsListener;
+import com.paypal.butterfly.metrics.TransformationStatistics;
 
 public class TransformationEngineTest extends TestHelper {
 
@@ -68,7 +67,7 @@ public class TransformationEngineTest extends TestHelper {
     @Test
     public void basicTest() throws TransformationException {
         Application application = new Application(transformedAppFolder);
-        Configuration configuration = new Configuration();
+        Configuration configuration = new ConfigurationImpl();
 
         TransformationTemplate transformationTemplate = getNewTestTransformationTemplate();
         transformationTemplate.add(getNewTestTransformationUtility());
@@ -125,7 +124,7 @@ public class TransformationEngineTest extends TestHelper {
         System.out.printf("Transformed sample app folder: %s\n", transformedAppFolder.getAbsolutePath());
 
         Application application = new Application(transformedAppFolder);
-        Configuration configuration = new Configuration();
+        Configuration configuration = new ConfigurationImpl();
 
         TransformationTemplate transformationTemplate = new JavaEEToSpringBoot();
         Transformation transformation = new TemplateTransformation(application, transformationTemplate, configuration);
@@ -180,7 +179,7 @@ public class TransformationEngineTest extends TestHelper {
         File appFolder = new File("./out/test/resources/echo-transformed");
 
         Application application = new Application(appFolder);
-        Configuration configuration = new Configuration();
+        Configuration configuration = new ConfigurationImpl();
 
         UpgradePath upgradePath = new UpgradePath(SpringBootUpgrade_1_5_6_to_1_5_7.class);
         Transformation transformation = new UpgradePathTransformation(application, upgradePath, configuration);
@@ -238,7 +237,7 @@ public class TransformationEngineTest extends TestHelper {
         System.out.printf("Transformed sample app folder: %s\n", transformedAppFolder.getAbsolutePath());
 
         Application application = new Application(transformedAppFolder);
-        Configuration configuration = new Configuration();
+        Configuration configuration = new ConfigurationImpl();
 
         TransformationTemplate transformationTemplate = new JavaEEToSpringBoot();
         Transformation transformation = new TemplateTransformation(application, transformationTemplate, configuration);
@@ -295,7 +294,7 @@ public class TransformationEngineTest extends TestHelper {
         System.out.printf("Transformed sample app folder: %s\n", transformedAppFolder.getAbsolutePath());
 
         Application application = new Application(transformedAppFolder);
-        Configuration configuration = new Configuration();
+        Configuration configuration = new ConfigurationImpl();
 
         TransformationTemplate transformationTemplate = new JavaEEToSpringBoot();
         Transformation transformation = new TemplateTransformation(application, transformationTemplate, configuration);

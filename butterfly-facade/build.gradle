@@ -3,10 +3,4 @@ apply plugin: 'java-library'
 dependencies {
     api project(':butterfly-extensions-api')
     api project(':butterfly-metrics')
-    implementation lib.slf4j_api,
-            lib.commons_lang3
-    testImplementation(lib.testng) {
-        exclude(module: 'aopalliance')
-        exclude(module: 'guava')
-    }
 }

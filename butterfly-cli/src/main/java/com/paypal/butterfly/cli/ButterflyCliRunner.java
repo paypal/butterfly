@@ -135,10 +135,11 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             logger.info("-z option has been set, transformed application will be placed into a zip file");
         }
 
-        if (optionSet.has(CLI_OPTION_MODIFY_ORIGINAL_FOLDER)) {
-            configuration = new Configuration();
-        } else {
-            configuration = new Configuration(transformedApplicationFolder, createZip);
+        configuration = butterflyFacade.newConfiguration();
+
+        if (!optionSet.has(CLI_OPTION_MODIFY_ORIGINAL_FOLDER)) {
+            configuration.setOutputFolder(transformedApplicationFolder);
+            configuration.setZipOutput(createZip);
         }
 
         // Setting extensions log level to DEBUG

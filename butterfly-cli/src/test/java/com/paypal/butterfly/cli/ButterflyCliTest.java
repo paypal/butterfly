@@ -1,5 +1,18 @@
 package com.paypal.butterfly.cli;
 
+import static org.mockito.Mockito.*;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import com.paypal.butterfly.cli.logging.LogConfigurator;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
@@ -8,17 +21,6 @@ import com.paypal.butterfly.facade.Configuration;
 import com.paypal.butterfly.facade.TransformationResult;
 import com.test.SampleExtension;
 import com.test.SampleTransformationTemplate;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.powermock.modules.testng.PowerMockTestCase;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.io.File;
-import java.io.IOException;
-
-import static org.mockito.Mockito.*;
 
 /**
  * Butterfly Command Line Interface test
@@ -41,9 +43,16 @@ public class ButterflyCliTest extends PowerMockTestCase {
     private LogConfigurator logConfigurator;
 
     private File sampleAppFolder;
+    private Configuration configuration;
 
     @BeforeMethod
     public void beforeTest() throws ButterflyException {
+
+        configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.isZipOutput()).thenReturn(false);
+        Mockito.when(configuration.isModifyOriginalFolder()).thenReturn(true);
+        Mockito.when(configuration.getOutputFolder()).thenReturn(sampleAppFolder);
+
         TransformationResult mockResult = mock(TransformationResult.class);
 
         when(facade.transform(any(File.class), any(String.class))).thenReturn(mockResult);
@@ -52,6 +61,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
         when(facade.transform(any(File.class), any(Class.class), any(Configuration.class))).thenReturn(mockResult);
         when(facade.transform(any(File.class), any(UpgradePath.class))).thenReturn(mockResult);
         when(facade.transform(any(File.class), any(UpgradePath.class), any(Configuration.class))).thenReturn(mockResult);
+        when(facade.newConfiguration()).thenReturn(configuration);
 
         File file = new File("");
         when(mockResult.getTransformedApplicationLocation()).thenReturn(file);
@@ -91,8 +101,10 @@ public class ButterflyCliTest extends PowerMockTestCase {
         butterflyCli.setOptionSet(arguments);
         int status = butterflyCli.run().getExitStatus();
 
+        Mockito.when(configuration.isZipOutput()).thenReturn(true);
+
         Assert.assertEquals(status, 0);
-        verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(new Configuration(null, true)));
+        verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(configuration));
     }
 
     /**
@@ -110,7 +122,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
         int status = butterflyCli.run().getExitStatus();
 
         Assert.assertEquals(status, 0);
-        verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(new Configuration(null, false)));
+        verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(configuration));
     }
 
     /**
@@ -128,8 +140,10 @@ public class ButterflyCliTest extends PowerMockTestCase {
         butterflyCli.setOptionSet(arguments);
         int status = butterflyCli.run().getExitStatus();
 
+        Mockito.when(configuration.isZipOutput()).thenReturn(true);
+
         Assert.assertEquals(status, 0);
-        verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(new Configuration(null, true)));
+        verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(configuration));
         verify(facade, times(0)).getRegisteredExtension();
     }
 
@@ -151,8 +165,12 @@ public class ButterflyCliTest extends PowerMockTestCase {
      * @throws ButterflyException
      */
     @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testTransformationWithNonExistDir() throws IOException, ButterflyException {
-        String arguments[] = {sampleAppFolder.getAbsolutePath(), "-t", "com.test.SampleTransformationTemplate", "-v", "-o", "PATH_TO_OUTPUT_FOLDER"};
+    public void testTransformationWithNonExistDir() throws IOException {
+        final String filePath = "PATH_TO_OUTPUT_FOLDER";
+
+        Mockito.when(configuration.setOutputFolder(new File(filePath))).thenThrow(IllegalArgumentException.class);
+
+        String arguments[] = {sampleAppFolder.getAbsolutePath(), "-t", "com.test.SampleTransformationTemplate", "-v", "-o", filePath};
         butterflyCli.setOptionSet(arguments);
         butterflyCli.run();
     }
@@ -170,8 +188,10 @@ public class ButterflyCliTest extends PowerMockTestCase {
         butterflyCli.setOptionSet(arguments);
         int status = butterflyCli.run().getExitStatus();
 
+        Mockito.when(configuration.getOutputFolder()).thenReturn(new File(currentDir));
+
         Assert.assertEquals(status, 0);
-        verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(new Configuration(new File(currentDir), false)));
+        verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(configuration));
     }
 
     @Test
@@ -182,7 +202,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
         int status = butterflyCli.run().getExitStatus();
 
         verify(facade, times(1)).automaticResolution(eq(sampleAppFolder));
-        verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(new Configuration(null, false)));
+        verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(configuration));
         Assert.assertEquals(status, 0);
     }
 
@@ -193,7 +213,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
         int status = butterflyCli.run().getExitStatus();
 
         verify(facade, times(1)).automaticResolution(eq(sampleAppFolder));
-        verify(facade, times(0)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(new Configuration(null, false)));
+        verify(facade, times(0)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(configuration));
         Assert.assertEquals(status, 1);
     }
 
@@ -204,7 +224,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
         int status = butterflyCli.run().getExitStatus();
 
         verify(facade, times(0)).automaticResolution(eq(sampleAppFolder));
-        verify(facade, times(0)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(new Configuration(null, false)));
+        verify(facade, times(0)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(configuration));
         Assert.assertEquals(status, 1);
     }
 
@@ -215,6 +235,7 @@ public class ButterflyCliTest extends PowerMockTestCase {
         int status = butterflyCli.run().getExitStatus();
 
         Assert.assertEquals(status, 0);
-        verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(new Configuration()));
+        verify(facade, times(1)).transform(eq(sampleAppFolder), eq(SampleTransformationTemplate.class), eq(configuration));
     }
+
 }

@@ -162,6 +162,7 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
             'extensions-catalog',
 
             // API projects without concrete classes to be tested
+            'butterfly-facade',
             'butterfly-metrics',
 
             // Test projects

@@ -1,21 +1,22 @@
 package com.paypal.butterfly.core;
 
-import com.paypal.butterfly.core.exception.InternalException;
-import com.paypal.butterfly.extensions.api.Extension;
-import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.exception.ButterflyException;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
-import com.paypal.butterfly.facade.ButterflyFacade;
-import com.paypal.butterfly.facade.Configuration;
-import com.paypal.butterfly.facade.TransformationResult;
-import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
+import java.io.File;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import com.paypal.butterfly.core.exception.InternalException;
+import com.paypal.butterfly.extensions.api.Extension;
+import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.exception.ButterflyException;
+import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
+import com.paypal.butterfly.facade.ButterflyFacade;
+import com.paypal.butterfly.facade.Configuration;
+import com.paypal.butterfly.facade.TransformationResult;
 
 /**
  * Butterfly Façade implementation
@@ -69,8 +70,13 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
+    public Configuration newConfiguration() {
+        return new ConfigurationImpl();
+    }
+
+    @Override
     public TransformationResult transform(File applicationFolder, String templateClassName) throws ButterflyException {
-        return transform(applicationFolder, templateClassName, new Configuration());
+        return transform(applicationFolder, templateClassName, new ConfigurationImpl());
     }
 
     @Override
@@ -90,7 +96,7 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
 
     @Override
     public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) throws ButterflyException {
-        return transform(applicationFolder, templateClass, new Configuration());
+        return transform(applicationFolder, templateClass, new ConfigurationImpl());
     }
 
     @Override
@@ -104,7 +110,7 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
 
     @Override
     public TransformationResult transform(File applicationFolder, UpgradePath upgradePath) throws ButterflyException {
-        return transform(applicationFolder, upgradePath, new Configuration());
+        return transform(applicationFolder, upgradePath, new ConfigurationImpl());
     }
 
     @Override
@@ -123,7 +129,7 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
 
         TransformationResult transformationResult = transformationEngine.perform(transformation);
 
-        if(configuration.isZipOutput()){
+        if(!configuration.isModifyOriginalFolder() && configuration.isZipOutput()){
             compressionHandler.compress(transformation);
         }
 

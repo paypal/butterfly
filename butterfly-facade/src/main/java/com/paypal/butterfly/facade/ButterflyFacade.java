@@ -1,12 +1,12 @@
 package com.paypal.butterfly.facade;
 
+import java.io.File;
+
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
-
-import java.io.File;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 
 /**
  * Butterfly façade
@@ -46,6 +46,13 @@ public interface ButterflyFacade {
      * @throws TemplateResolutionException if no template applies or if no or multiple extension have been registered
      */
     Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException;
+
+    /**
+     * Creates and returns a new blank {@link Configuration} object.
+     *
+     * @return a brand new {@link Configuration} object
+     */
+    Configuration newConfiguration();
 
     /**
      * Transform an application
