@@ -2,61 +2,37 @@ package com.paypal.butterfly.core;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
-import com.paypal.butterfly.metrics.AbortDetails;
-import com.paypal.butterfly.metrics.TransformationMetrics;
-import com.paypal.butterfly.metrics.TransformationStatistics;
+import com.paypal.butterfly.api.metrics.TransformationMetrics;
+import com.paypal.butterfly.api.metrics.TransformationStatistics;
 
 /**
  * POJO containing statistics and meta-data about
- * the result of a transformation execution
+ * the result of a transformation template execution
  *
  * @author facarvalho
  */
-public class TransformationMetricsImpl implements TransformationMetrics {
+class TransformationMetricsImpl implements TransformationMetrics {
 
-    private static final Logger logger = LoggerFactory.getLogger(TransformationMetricsImpl.class);
-
-    private transient Transformation transformation;
     private transient TransformationContextImpl transformationContext;
     private transient TransformationTemplate transformationTemplate;
 
-    private String butterflyVersion;
     private String templateName;
+    private String templateClassName;
     private String dateTime;
     private long timestamp;
-    private String userId;
-    private String applicationType;
-    private String applicationName;
     private String fromVersion;
     private String toVersion;
-    private boolean requiresManualInstructions;
-    private boolean successfulTransformation = false;
+    private boolean hasManualInstructions;
+    private boolean successful = false;
     private TransformationStatistics statistics;
-    private String upgradeCorrelationId;
-    private AbortDetails abortDetails;
-    private String metricsId;
-    private String originalApplicationLocation;
-    private String transformedApplicationLocation;
 
-    public TransformationMetricsImpl(Transformation transformation, TransformationContextImpl transformationContext) {
-        setTransformation(transformation);
+    TransformationMetricsImpl(TransformationContextImpl transformationContext) {
         setTransformationContext(transformationContext);
         setTransformationTemplate();
         setMetaData();
-    }
-
-    private void setTransformation(Transformation transformation) {
-        if (transformation == null) {
-            throw new IllegalArgumentException("transformation object cannot be null");
-        }
-        this.transformation = transformation;
     }
 
     private void setTransformationContext(TransformationContextImpl transformationContext) {
@@ -76,42 +52,29 @@ public class TransformationMetricsImpl implements TransformationMetrics {
     private void setMetaData() {
         Date runDateTime = new Date();
 
-        userId = System.getProperty("user.name");
         timestamp = runDateTime.getTime();
         dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(runDateTime);
-        butterflyVersion = ButterflyProperties.getString("butterfly.version");
         templateName = transformationTemplate.getName();
-        applicationType = transformationTemplate.getApplicationType();
-        applicationName = transformationTemplate.getApplicationName();
+        templateClassName = transformationTemplate.getClass().getName();
 
         if (transformationTemplate instanceof UpgradeStep) {
             fromVersion = ((UpgradeStep) transformationTemplate).getCurrentVersion();
             toVersion = ((UpgradeStep) transformationTemplate).getNextVersion();
-            upgradeCorrelationId = transformationContext.getUpgradeCorrelationId();
         }
 
-        requiresManualInstructions = transformationContext.hasManualInstructions();
-        successfulTransformation = transformationContext.isSuccessfulTransformation();
+        hasManualInstructions = transformationContext.hasManualInstructions();
+        successful = transformationContext.isSuccessfulTransformation();
         statistics = transformationContext.getStatistics();
-        abortDetails = transformationContext.getAbortDetails();
-        originalApplicationLocation = transformation.getApplication().getFolder().getAbsolutePath();
-        transformedApplicationLocation = transformation.getTransformedApplicationLocation().getAbsolutePath();
-
-        metricsId =  UUID.randomUUID().toString();
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Metrics generated: {}", metricsId);
-        }
-    }
-
-    @Override
-    public String getButterflyVersion() {
-        return butterflyVersion;
     }
 
     @Override
     public String getTemplateName() {
         return templateName;
+    }
+
+    @Override
+    public String getTemplateClassName() {
+        return templateClassName;
     }
 
     @Override
@@ -125,21 +88,6 @@ public class TransformationMetricsImpl implements TransformationMetrics {
     }
 
     @Override
-    public String getUserId() {
-        return userId;
-    }
-
-    @Override
-    public String getApplicationType() {
-        return applicationType;
-    }
-
-    @Override
-    public String getApplicationName() {
-        return applicationName;
-    }
-
-    @Override
     public String getFromVersion() {
         return fromVersion;
     }
@@ -150,43 +98,18 @@ public class TransformationMetricsImpl implements TransformationMetrics {
     }
 
     @Override
-    public boolean isRequiresManualInstructions() {
-        return requiresManualInstructions;
+    public boolean hasManualInstructions() {
+        return hasManualInstructions;
     }
 
     @Override
-    public boolean isSuccessfulTransformation() {
-        return successfulTransformation;
+    public boolean isSuccessful() {
+        return successful;
     }
 
     @Override
     public TransformationStatistics getStatistics() {
         return statistics;
-    }
-
-    @Override
-    public String getUpgradeCorrelationId() {
-        return upgradeCorrelationId;
-    }
-
-    @Override
-    public String getMetricsId() {
-        return metricsId;
-    }
-
-    @Override
-    public AbortDetails getAbortDetails() {
-        return abortDetails;
-    }
-
-    @Override
-    public String getOriginalApplicationLocation() {
-        return originalApplicationLocation;
-    }
-
-    @Override
-    public String getTransformedApplicationLocation() {
-        return transformedApplicationLocation;
     }
 
 }

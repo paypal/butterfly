@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import com.paypal.butterfly.facade.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -16,14 +15,13 @@ import com.paypal.butterfly.cli.logging.LogConfigurator;
 import com.paypal.butterfly.cli.logging.LogFileDefiner;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.exception.ButterflyRuntimeException;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
-import com.paypal.butterfly.facade.ButterflyFacade;
-import com.paypal.butterfly.facade.Configuration;
-import com.paypal.butterfly.facade.TransformationResult;
+import com.paypal.butterfly.api.ButterflyFacade;
+import com.paypal.butterfly.api.Configuration;
+import com.paypal.butterfly.api.TransformationResult;
 
 /**
  * Butterfly CLI runner
@@ -98,7 +96,6 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             registerError(run, errorMessage);
             return run;
         }
-        run.setApplication(applicationFolder);
 
         File transformedApplicationFolder = (File) optionSet.valueOf(CLI_OPTION_TRANSFORMED_APP_FOLDER);
 
@@ -135,11 +132,12 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             logger.info("-z option has been set, transformed application will be placed into a zip file");
         }
 
-        configuration = butterflyFacade.newConfiguration();
-
-        if (!optionSet.has(CLI_OPTION_MODIFY_ORIGINAL_FOLDER)) {
-            configuration.setOutputFolder(transformedApplicationFolder);
-            configuration.setZipOutput(createZip);
+        if (optionSet.has(CLI_OPTION_MODIFY_ORIGINAL_FOLDER)) {
+            configuration = butterflyFacade.newConfiguration();
+        } else if (transformedApplicationFolder == null) {
+            configuration = butterflyFacade.newConfiguration(createZip);
+        } else {
+            configuration = butterflyFacade.newConfiguration(transformedApplicationFolder, createZip);
         }
 
         // Setting extensions log level to DEBUG
@@ -151,14 +149,13 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             }
         }
 
+        TransformationResult transformationResult = null;
+
         try {
             if (templateClass == null) {
                 templateClass = (Class<? extends TransformationTemplate>) Class.forName(templateClassName);
             }
 
-            run.setTransformationTemplate(templateClass.getName());
-
-            TransformationResult transformationResult = null;
             if (UpgradeStep.class.isAssignableFrom(templateClass)) {
                 Class<? extends UpgradeStep> firstStepClass = (Class<? extends UpgradeStep>) templateClass;
                 String upgradeVersion = (String) optionSet.valueOf(CLI_OPTION_UPGRADE_VERSION);
@@ -170,51 +167,55 @@ public class ButterflyCliRunner extends ButterflyCliOption {
                 logger.info("Performing transformation (it might take a few seconds)");
                 transformationResult = butterflyFacade.transform(applicationFolder, templateClass, configuration);
             }
-            logger.info("");
-            logger.info("----------------------------------------------");
-            logger.info("Application has been transformed successfully!");
-            logger.info("----------------------------------------------");
-            logger.info("Transformed application folder: {}", transformationResult.getTransformedApplicationLocation());
-            logger.info("Check log file for details: {}", LogFileDefiner.getLogFile());
 
-            run.setTransformedApplication(transformationResult.getTransformedApplicationLocation());
             run.setLogFile(LogFileDefiner.getLogFile());
 
-            if (transformationResult.hasManualInstructions()) {
+            if (transformationResult.isSuccessful()) {
                 logger.info("");
-                logger.info(" **************************************************************************************");
-                logger.info(" *** THIS APPLICATION REQUIRES POST-TRANSFORMATION MANUAL INSTRUCTIONS");
-                logger.info(" *** Read manual instructions document for further details:");
-                logger.info(" *** {}", transformationResult.getManualInstructionsFile());
-                logger.info(" **************************************************************************************");
+                logger.info("----------------------------------------------");
+                logger.info("Application has been transformed successfully!");
+                logger.info("----------------------------------------------");
+                logger.info("Transformed application folder: {}", transformationResult.getTransformedApplicationDir());
+                logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
 
-                run.setManualInstructionsFile(transformationResult.getManualInstructionsFile());
+                if (transformationResult.hasManualInstructions()) {
+                    logger.info("");
+                    logger.info(" **************************************************************************************");
+                    logger.info(" *** THIS APPLICATION REQUIRES POST-TRANSFORMATION MANUAL INSTRUCTIONS");
+                    logger.info(" *** Read manual instructions document for further details:");
+                    logger.info(" *** {}", transformationResult.getManualInstructionsFile());
+                    logger.info(" **************************************************************************************");
+                }
+                logger.info("");
+            } else {
+                transformationAbort(run, transformationResult.getAbortDetails().getAbortMessage());
             }
-            logger.info("");
-        } catch (ButterflyException | ButterflyRuntimeException e) {
-            logger.info("");
-            logger.info("--------------------------------------------------------------------------------------------");
-            logger.error("*** Transformation has been aborted due to:");
-            logger.error("*** {}", e.getMessage());
-            logger.info("--------------------------------------------------------------------------------------------");
-            logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
-
-            run.setErrorMessage("Transformation has been aborted due to: " + e.getMessage());
-            run.setExceptionMessage(e.getMessage());
-            run.setExitStatus(1);
-            return run;
+        } catch (ButterflyRuntimeException e) {
+            transformationAbort(run, e.getMessage());
         } catch (ClassNotFoundException e) {
             registerError(run, "The specified transformation template class has not been found", e);
-            return run;
         } catch (IllegalArgumentException e) {
             registerError(run, "This transformation request input arguments are invalid", e);
-            return run;
         } catch (Throwable e) {
             registerError(run, "An error happened when processing this transformation request", e);
-            return run;
+        } finally {
+            run.setTransformationResult(transformationResult);
         }
 
         return run;
+    }
+
+    private void transformationAbort(ButterflyCliRun run, String abortMessage) {
+        logger.info("");
+        logger.info("--------------------------------------------------------------------------------------------");
+        logger.error("*** Transformation has been aborted due to:");
+        logger.error("*** {}", abortMessage);
+        logger.info("--------------------------------------------------------------------------------------------");
+        logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
+
+        run.setErrorMessage("Transformation has been aborted due to: " + abortMessage);
+        run.setExceptionMessage(abortMessage);
+        run.setExitStatus(1);
     }
 
     private Class<? extends TransformationTemplate> getTemplateClass(int shortcut) {

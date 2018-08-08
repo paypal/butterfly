@@ -3,7 +3,7 @@ apply plugin: 'application'
 mainClassName = 'com.paypal.butterfly.cli.ButterflyCliApp'
 
 dependencies {
-    compile project(':butterfly-facade')
+    compile project(':butterfly-api')
     compile project(':butterfly-extensions-api')
     runtime project(':butterfly-core')
     compile lib.jopt_simple,

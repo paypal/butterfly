@@ -321,10 +321,10 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
     }
 
     /**
-     * Return whether this is a blank transformation template or not.
+     * Returns true if this is a blank transformation template.
      * See {@link #setBlank(boolean)}.
      *
-     * @return whether this is a blank transformation template or not
+     * @return true if this is a blank transformation template
      */
     public boolean isBlank() {
         return blank;

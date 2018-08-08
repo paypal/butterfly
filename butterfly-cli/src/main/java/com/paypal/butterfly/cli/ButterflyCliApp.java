@@ -15,8 +15,11 @@ import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import com.paypal.butterfly.api.ButterflyFacade;
 import com.paypal.butterfly.cli.logging.LogFileDefiner;
-import com.paypal.butterfly.facade.ButterflyFacade;
 
 import joptsimple.OptionException;
 
@@ -40,13 +43,13 @@ public class ButterflyCliApp extends ButterflyCliOption {
     }
 
     public static ButterflyCliRun run(String... arguments) throws IOException {
-        ConfigurableApplicationContext applicationContext = SpringApplication.run(ButterflyCliApp.class, arguments);
-        ButterflyFacade butterflyFacade = applicationContext.getBean(ButterflyFacade.class);
-
         setButterflyHome();
-        setEnvironment(arguments, butterflyFacade);
+        setEnvironment(arguments);
 
         logger = LoggerFactory.getLogger(ButterflyCliApp.class);
+
+        ConfigurableApplicationContext applicationContext = SpringApplication.run(ButterflyCliApp.class, arguments);
+        ButterflyFacade butterflyFacade = applicationContext.getBean(ButterflyFacade.class);
 
         setBanner(butterflyFacade);
 
@@ -70,7 +73,7 @@ public class ButterflyCliApp extends ButterflyCliOption {
     }
 
     @SuppressWarnings("PMD.DoNotCallSystemExit")
-    private static void setEnvironment(String[] arguments, ButterflyFacade butterflyFacade) {
+    private static void setEnvironment(String[] arguments) {
         if(arguments.length != 0){
             try {
                 setOptionSet(arguments);
@@ -79,8 +82,7 @@ public class ButterflyCliApp extends ButterflyCliOption {
                 LogFileDefiner.setLogFileName(applicationFolder, debug);
             } catch (OptionException e) {
                 Logger logger = LoggerFactory.getLogger(ButterflyCliApp.class);
-                setBanner(butterflyFacade);
-                logger.info(getBanner());
+                logger.info("Butterfly application transformation tool");
                 logger.error(e.getMessage());
                 System.exit(1);
             }
@@ -126,7 +128,17 @@ public class ButterflyCliApp extends ButterflyCliOption {
     }
 
     private static void writeResultFile(ButterflyCliRun run) {
-        GsonBuilder gsonBuilder = new GsonBuilder().setPrettyPrinting();
+        GsonBuilder gsonBuilder = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(File.class, new TypeAdapter<File>() {
+            @Override
+            public void write(JsonWriter jsonWriter, File file) throws IOException {
+                String fileAbsolutePath = (file == null ? null : file.getAbsolutePath());
+                jsonWriter.value(fileAbsolutePath);
+            }
+            @Override
+            public File read(JsonReader jsonReader) {
+                throw new UnsupportedOperationException("There is no support for deserializing transformation result objects at the moment");
+            }
+        });
         Gson gson = gsonBuilder.create();
         String runJsonString = gson.toJson(run);
         File resultFile = (File) optionSet.valueOf(CLI_OPTION_RESULT_FILE);

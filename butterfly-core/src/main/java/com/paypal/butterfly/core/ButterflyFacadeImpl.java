@@ -8,15 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.paypal.butterfly.core.exception.InternalException;
+import com.paypal.butterfly.api.*;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
-import com.paypal.butterfly.facade.ButterflyFacade;
-import com.paypal.butterfly.facade.Configuration;
-import com.paypal.butterfly.facade.TransformationResult;
 
 /**
  * Butterfly Façade implementation
@@ -24,7 +21,7 @@ import com.paypal.butterfly.facade.TransformationResult;
  * @author facarvalho
  */
 @Component
-public class ButterflyFacadeImpl implements ButterflyFacade {
+class ButterflyFacadeImpl implements ButterflyFacade {
 
     private static final String VERSION = ButterflyProperties.getString("butterfly.version");
 
@@ -75,6 +72,16 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
+    public Configuration newConfiguration(boolean zipOutput) {
+        return new ConfigurationImpl(zipOutput);
+    }
+
+    @Override
+    public Configuration newConfiguration(File outputFolder, boolean zipOutput) {
+        return new ConfigurationImpl(outputFolder, zipOutput);
+    }
+
+    @Override
     public TransformationResult transform(File applicationFolder, String templateClassName) throws ButterflyException {
         return transform(applicationFolder, templateClassName, new ConfigurationImpl());
     }
@@ -88,49 +95,48 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
             Class<TransformationTemplate> templateClass = (Class<TransformationTemplate>) Class.forName(templateClassName);
             return transform(applicationFolder, templateClass, configuration);
         } catch (ClassNotFoundException e) {
-            String exceptionMessage = "Template class " + templateClassName + " not found. Run Butterfly in debug mode and double check if its extension has been properly registered";
-            logger.error(exceptionMessage, e);
-            throw new InternalException(exceptionMessage, e);
+            String exceptionMessage = "Template class " + templateClassName + " not found, double check if its extension has been properly registered";
+            throw new ButterflyException(exceptionMessage, e);
         }
     }
 
     @Override
-    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) throws ButterflyException {
+    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) {
         return transform(applicationFolder, templateClass, new ConfigurationImpl());
     }
 
     @Override
-    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException {
+    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) {
         TransformationTemplate template = getTemplate(templateClass);
-        Application application = new Application(applicationFolder);
-        Transformation transformation = new TemplateTransformation(application, template, configuration);
+        Application application = new ApplicationImpl(applicationFolder);
+        TransformationRequest transformationRequest = new TemplateTransformationRequest(application, template, configuration);
 
-        return transform(transformation);
+        return transform(transformationRequest);
     }
 
     @Override
-    public TransformationResult transform(File applicationFolder, UpgradePath upgradePath) throws ButterflyException {
+    public TransformationResult transform(File applicationFolder, UpgradePath upgradePath) {
         return transform(applicationFolder, upgradePath, new ConfigurationImpl());
     }
 
     @Override
-    public TransformationResult transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) throws ButterflyException {
-        Application application = new Application(applicationFolder);
-        Transformation transformation = new UpgradePathTransformation(application, upgradePath, configuration);
+    public TransformationResult transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) {
+        Application application = new ApplicationImpl(applicationFolder);
+        TransformationRequest transformationRequest = new UpgradePathTransformationRequest(application, upgradePath, configuration);
 
-        return transform(transformation);
+        return transform(transformationRequest);
     }
 
-    private TransformationResult transform(Transformation transformation) throws ButterflyException {
-        Configuration configuration = transformation.getConfiguration();
+    private TransformationResult transform(TransformationRequest transformationRequest) {
+        Configuration configuration = transformationRequest.getConfiguration();
         if (logger.isDebugEnabled()) {
-            logger.debug("Transformation configuration: {}", configuration);
+            logger.debug("Transformation request configuration: {}", configuration);
         }
 
-        TransformationResult transformationResult = transformationEngine.perform(transformation);
+        TransformationResult transformationResult = transformationEngine.perform(transformationRequest);
 
         if(!configuration.isModifyOriginalFolder() && configuration.isZipOutput()){
-            compressionHandler.compress(transformation);
+            compressionHandler.compress(transformationResult);
         }
 
         return transformationResult;

@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import com.paypal.butterfly.facade.Configuration;
+import com.paypal.butterfly.api.Configuration;
 
 /**
  * Butterfly configuration object
@@ -19,38 +19,64 @@ class ConfigurationImpl implements Configuration {
     private boolean modifyOriginalFolder = true;
 
     /**
-     * Butterfly default configuration
+     * Creates and returns a new {@link Configuration} object
+     * set to apply the transformation against the original application folder
+     * and the result will not be compressed to a zip file.
+     * <br>
+     * Notice that calling this method will result in {@link Configuration#isModifyOriginalFolder()}
+     * to return {@code true}.
+     *
+     * @return a brand new {@link Configuration} object
      */
     ConfigurationImpl() {
     }
 
-    @Override
-    public Configuration setOutputFolder(File outputFolder) {
-        if(outputFolder != null && !outputFolder.exists()) {
-            throw new IllegalArgumentException(String.format("Invalid application folder, it does not exist %s", outputFolder));
+    /**
+     * Creates and returns a new {@link Configuration} object
+     * set to place the transformed application at a new folder at the original application
+     * parent folder, besides compressing it to a zip file, depending on {@code zipOutput}.
+     * <br>
+     * The transformed application folder's name is the same as original folder,
+     * plus a "-transformed-yyyyMMddHHmmssSSS" suffix.
+     * <br>
+     * Notice that calling this method will result in {@link Configuration#isModifyOriginalFolder()}
+     * to return {@code false}.
+     *
+     * @param zipOutput if true, the transformed application folder will be compressed into a zip file
+     * @return a brand new {@link Configuration} object
+     */
+    ConfigurationImpl(boolean zipOutput) {
+        this.zipOutput = zipOutput;
+        modifyOriginalFolder = false;
+    }
+
+    /**
+     * Creates and returns a new {@link Configuration} object
+     * set to place the transformed application at {@code outputFolder},
+     * and compress it to a zip file or not, depending on {@code zipOutput}.
+     * <br>
+     * Notice that calling this method will result in {@link Configuration#isModifyOriginalFolder()}
+     * to return {@code false}.
+     *
+     * @param outputFolder the output folder where the transformed application is
+     *                     supposed to be placed
+     * @param zipOutput if true, the transformed application folder will be compressed into a zip file
+     * @return a brand new {@link Configuration} object
+     * @throws IllegalArgumentException if {@code outputFolder} is null, does not exist, or is not a directory
+     */
+    ConfigurationImpl(File outputFolder, boolean zipOutput) {
+        if(outputFolder == null) {
+            throw new IllegalArgumentException(String.format("Output folder object cannot be null"));
         }
-        if(outputFolder != null && !outputFolder.isDirectory()) {
-            throw new IllegalArgumentException(String.format("Invalid application folder, that is not a directory %s", outputFolder));
+        if(!outputFolder.exists()) {
+            throw new IllegalArgumentException(String.format("Output folder does not exist %s", outputFolder.getAbsolutePath()));
+        }
+        if(!outputFolder.isDirectory()) {
+            throw new IllegalArgumentException(String.format("Output folder is not a directory %s", outputFolder.getAbsolutePath()));
         }
         this.outputFolder = outputFolder;
-        this.modifyOriginalFolder = false;
-        return this;
-    }
-
-    @Override
-    public Configuration setZipOutput(boolean zipOutput) {
         this.zipOutput = zipOutput;
-        return this;
-    }
-
-    @Override
-    public Configuration setModifyOriginalFolder(boolean modifyOriginalFolder) {
-        this.modifyOriginalFolder = modifyOriginalFolder;
-        if (modifyOriginalFolder) {
-            this.outputFolder = null;
-            this.zipOutput = false;
-        }
-        return this;
+        modifyOriginalFolder = false;
     }
 
     @Override

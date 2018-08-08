@@ -1,6 +1,0 @@
-apply plugin: 'java-library'
-
-dependencies {
-    api project(':butterfly-extensions-api')
-    api project(':butterfly-metrics')
-}

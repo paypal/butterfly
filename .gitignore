@@ -2,6 +2,7 @@
 logs/
 transformed-apps/
 metrics/
+results/
 !butterfly-metrics-*/**
 test-output/
 gen-metrics/

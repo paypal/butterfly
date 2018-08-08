@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Import;
         TransformationEngine.class,
         TransformationValidatorImpl.class,
         CompressionHandler.class,
-        MdFileManualInstructionsHandler.class,
-        MetricsHandler.class
+        ManualInstructionsHandler.class,
+        GitHubMdFileManualInstructionsWriter.class,
 })
 public class ButterflyCoreConfig {
 }

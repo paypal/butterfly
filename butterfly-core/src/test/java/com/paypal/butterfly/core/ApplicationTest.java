@@ -12,8 +12,7 @@ import java.io.File;
  */
 public class ApplicationTest {
 
-    private Application application = new Application(
-            new File(this.getClass().getClassLoader().getResource("test-app-2").getFile()));
+    private ApplicationImpl application = new ApplicationImpl(new File(this.getClass().getClassLoader().getResource("test-app-2").getFile()));
 
     @Test
     public void testGetFolder() {

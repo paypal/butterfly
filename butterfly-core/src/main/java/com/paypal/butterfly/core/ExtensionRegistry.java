@@ -20,7 +20,7 @@ import java.util.*;
  * @author facarvalho
  */
 @Component
-public class ExtensionRegistry {
+class ExtensionRegistry {
 
     private static Logger logger = LoggerFactory.getLogger(ExtensionRegistry.class);
 
@@ -127,7 +127,7 @@ public class ExtensionRegistry {
      * @throws IllegalStateException if multiple extensions have been registered
      * @return the registered extension
      */
-    public Extension getExtension() {
+    Extension getExtension() {
         int numberOfExtensions = getExtensions().size();
         if (numberOfExtensions > 1) {
             throw new IllegalStateException("More than one Butterfly extension have been registered");

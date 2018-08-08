@@ -3,11 +3,11 @@ description = "Butterfly BOM (Bill of Materials)"
 
 // List of all Butterfly projects to be exposed as an API and shared in Butterfly BOM
 def api = [
-        'com.paypal.butterfly:butterfly-facade',
+        'com.paypal.butterfly:butterfly-api',
         'com.paypal.butterfly:butterfly-extensions-api',
         'com.paypal.butterfly:butterfly-utilities',
-        'com.paypal.butterfly:butterfly-metrics-couchdb',
-        'com.paypal.butterfly:butterfly-metrics-file',
+        'com.paypal.butterfly:butterfly-persist-couchdb',
+        'com.paypal.butterfly:butterfly-persist-file',
         'com.paypal.butterfly:butterfly-test',
 ]
 

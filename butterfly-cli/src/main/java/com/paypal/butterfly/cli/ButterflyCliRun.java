@@ -3,6 +3,8 @@ package com.paypal.butterfly.cli;
 import java.io.File;
 import java.util.Arrays;
 
+import com.paypal.butterfly.api.TransformationResult;
+
 /**
  * This is just a POJO that represents an execution of
  * Butterfly. Its purpose is to facilitate printing a
@@ -14,72 +16,39 @@ import java.util.Arrays;
 public class ButterflyCliRun {
 
     private String butterflyVersion;
-
     private String[] inputArguments;
-
-    private String application;
-
-    private String transformationTemplate;
-
     private int exitStatus;
-
-    private String transformedApplication;
-
-    private String logFile;
-
-    private String manualInstructionsFile;
-
-    // TODO
-    // Metrics are not first class citizen yet
-    // They work as an opt-in feature
-    private String metricsFile;
-
+    private File logFile;
     private String errorMessage;
-
     private String exceptionMessage;
+    private TransformationResult transformationResult;
 
-    public void setButterflyVersion(String butterflyVersion) {
+    void setButterflyVersion(String butterflyVersion) {
         this.butterflyVersion = butterflyVersion;
     }
 
-    public void setInputArguments(String[] inputArguments) {
+    void setInputArguments(String[] inputArguments) {
         this.inputArguments = Arrays.copyOf(inputArguments, inputArguments.length);
     }
 
-    public void setApplication(File application) {
-        this.application = application.getAbsolutePath();
-    }
-
-    public void setTransformationTemplate(String transformationTemplate) {
-        this.transformationTemplate = transformationTemplate;
-    }
-
-    public void setExitStatus(int exitStatus) {
+    void setExitStatus(int exitStatus) {
         this.exitStatus = exitStatus;
     }
 
-    public void setTransformedApplication(File transformedApplication) {
-        this.transformedApplication = transformedApplication.getAbsolutePath();
+    void setLogFile(File logFile) {
+        this.logFile = logFile;
     }
 
-    public void setLogFile(File logFile) {
-        this.logFile = logFile.getAbsolutePath();
-    }
-
-    public void setManualInstructionsFile(File manualInstructionsFile) {
-        this.manualInstructionsFile = manualInstructionsFile.getAbsolutePath();
-    }
-
-    public void setMetricsFile(File metricsFile) {
-        this.metricsFile = metricsFile.getAbsolutePath();
-    }
-
-    public void setErrorMessage(String errorMessage) {
+    void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
-    public void setExceptionMessage(String exceptionMessage) {
+    void setExceptionMessage(String exceptionMessage) {
         this.exceptionMessage = exceptionMessage;
+    }
+
+    void setTransformationResult(TransformationResult transformationResult) {
+        this.transformationResult = transformationResult;
     }
 
     public int getExitStatus() {
@@ -94,28 +63,8 @@ public class ButterflyCliRun {
         return Arrays.copyOf(inputArguments, inputArguments.length);
     }
 
-    public String getApplication() {
-        return application;
-    }
-
-    public String getTransformationTemplate() {
-        return transformationTemplate;
-    }
-
-    public String getTransformedApplication() {
-        return transformedApplication;
-    }
-
-    public String getLogFile() {
+    public File getLogFile() {
         return logFile;
-    }
-
-    public String getManualInstructionsFile() {
-        return manualInstructionsFile;
-    }
-
-    public String getMetricsFile() {
-        return metricsFile;
     }
 
     public String getErrorMessage() {
@@ -125,4 +74,9 @@ public class ButterflyCliRun {
     public String getExceptionMessage() {
         return exceptionMessage;
     }
+
+    public TransformationResult getTransformationResult() {
+        return transformationResult;
+    }
+
 }

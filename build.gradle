@@ -142,12 +142,13 @@ subprojects {
 
     jacocoTestCoverageVerification {
         violationRules {
-            rule { element = 'PACKAGE'; limit { minimum = 0.43 }; includes = ['com.paypal.butterfly.cli*'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.cli*'] }
             rule { element = 'PACKAGE'; limit { minimum = 0.50 }; includes = ['com.paypal.butterfly.core*'] }
-            rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.extensions*'] }
-            rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.facade*'] }
-            rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.metrics*'] }
-            rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.test*'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.57 }; includes = ['com.paypal.butterfly.extensions.api'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.extensions.api*'] }
+            rule { element = 'PACKAGE'; limit { minimum = 1.00 }; includes = ['com.paypal.butterfly.extensions.springboot*'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.persist*'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.44 }; includes = ['com.paypal.butterfly.test*'] }
             rule { element = 'PACKAGE'; limit { minimum = 0.82 }; includes = ['com.paypal.butterfly.utilities*'] }
         }
     }
@@ -162,8 +163,7 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
             'extensions-catalog',
 
             // API projects without concrete classes to be tested
-            'butterfly-facade',
-            'butterfly-metrics',
+            'butterfly-api',
 
             // Test projects
             'tests',

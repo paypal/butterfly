@@ -1,22 +1,26 @@
 package com.paypal.butterfly.core;
 
-import com.paypal.butterfly.metrics.AbortDetails;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import com.paypal.butterfly.api.metrics.AbortDetails;
 
 /**
  * POJO describing a transformation abort.
  *
  * @author facarvalho
  */
-public class AbortDetailsImpl implements AbortDetails {
+class AbortDetailsImpl implements AbortDetails {
 
+    private String templateName;
+    private String templateClassName;
     private String utilityName;
+    private String utilityClassName;
     private String abortMessage;
-    private String exceptionClass;
+    private String exceptionClassName;
     private String exceptionMessage;
     private String exceptionStackTrace;
 
-    public AbortDetailsImpl(Exception ex, String abortMessage, String utilityName) {
+    AbortDetailsImpl(Exception ex, String abortMessage, String templateName, String templateClassName, String utilityName, String utilityClassName) {
         if (ex == null) {
             throw new IllegalArgumentException("Exception object cannot be null");
         }
@@ -24,16 +28,34 @@ public class AbortDetailsImpl implements AbortDetails {
             throw new IllegalArgumentException("Utility name cannot be null");
         }
 
+        this.templateName = templateName;
+        this.templateClassName = templateClassName;
         this.utilityName = utilityName;
+        this.utilityClassName = utilityClassName;
         this.abortMessage = abortMessage;
-        this.exceptionClass = ex.getClass().getSimpleName();
+        this.exceptionClassName = ex.getClass().getName();
         this.exceptionMessage = ex.getMessage();
         this.exceptionStackTrace = ExceptionUtils.getStackTrace(ex);
     }
 
     @Override
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    @Override
+    public String getTemplateClassName() {
+        return templateClassName;
+    }
+
+    @Override
     public String getUtilityName() {
         return utilityName;
+    }
+
+    @Override
+    public String getUtilityClassName() {
+        return utilityClassName;
     }
 
     @Override
@@ -43,7 +65,7 @@ public class AbortDetailsImpl implements AbortDetails {
 
     @Override
     public String getExceptionClassName() {
-        return exceptionClass;
+        return exceptionClassName;
     }
 
     @Override

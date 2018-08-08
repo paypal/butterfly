@@ -1,13 +1,13 @@
 dependencies {
-    compile project(':butterfly-facade')
+    compile project(':butterfly-api')
     compile project(':butterfly-extensions-api')
-    compile project(':butterfly-metrics')
     runtime project(':butterfly-utilities')
     compile(lib.spring_context) {
         exclude(module: 'commons-logging')
     }
     compile lib.annotation_api,
             lib.slf4j_api,
+            lib.gson,
             lib.reflections,
             lib.commons_io,
             lib.zip4j,

@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.paypal.butterfly.extensions.api.utilities.Abort;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,16 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.paypal.butterfly.core.exception.InternalException;
 import com.paypal.butterfly.extensions.api.*;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.extensions.api.utilities.ManualInstruction;
 import com.paypal.butterfly.extensions.api.utilities.ManualInstructionRecord;
-import com.paypal.butterfly.facade.Configuration;
-import com.paypal.butterfly.facade.TransformationResult;
-import com.paypal.butterfly.facade.exception.TransformationException;
+import com.paypal.butterfly.api.*;
+import com.paypal.butterfly.api.exception.TransformationException;
+import com.paypal.butterfly.api.metrics.TransformationMetrics;
 
 /**
  * The transformation engine in charge of
@@ -32,7 +33,7 @@ import com.paypal.butterfly.facade.exception.TransformationException;
  * @author facarvalho
  */
 @Component
-public class TransformationEngine {
+class TransformationEngine {
 
     private static final Logger logger = LoggerFactory.getLogger(TransformationEngine.class);
 
@@ -46,73 +47,51 @@ public class TransformationEngine {
     @Autowired
     private ApplicationContext applicationContext;
 
+    private ManualInstructionsHandler manualInstructionsHandler;
+
     private TransformationValidator validator;
 
     @PostConstruct
-    public void setupListeners() {
+    void setupListeners() {
         Map<String, TransformationListener> beans = applicationContext.getBeansOfType(TransformationListener.class);
         transformationListeners = beans.values();
 
         validator = applicationContext.getBean(TransformationValidator.class);
+        manualInstructionsHandler = applicationContext.getBean(ManualInstructionsHandler.class);
     }
 
     /**
-     * Perform an application transformation based on the specified {@link Transformation}
+     * Perform an application transformation based on the specified {@link TransformationRequest}
      * object
      *
-     * @param transformation the transformation object
-     * @throws TransformationException if the transformation is aborted for any reason
-     * @return the result after performing this transformation
+     * @param transformationRequest the transformationRequest object
+     * @return the result after performing this transformationRequest
      */
-    public TransformationResult perform(Transformation transformation) throws TransformationException {
+    TransformationResult perform(TransformationRequest transformationRequest) {
 
         // Throws an ApplicationValidationException if validation fails
-        validator.preTransformation(transformation);
+        validator.preTransformation(transformationRequest);
 
         if(logger.isDebugEnabled()) {
-            logger.debug("Requested transformation: {}", transformation);
+            logger.debug("Requested transformationRequest: {}", transformationRequest);
         }
-        logger.info("Extension name:\t\t\t\t\t{}", transformation.getExtensionName());
-        logger.info("Extension version:\t\t\t\t{}", transformation.getExtensionVersion());
-        logger.info("Transformation template:\t\t\t{}", transformation.getTemplateName());
+        logger.info("Extension name:\t\t\t\t\t{}", transformationRequest.getExtensionName());
+        logger.info("Extension version:\t\t\t\t{}", transformationRequest.getExtensionVersion());
+        logger.info("Transformation template:\t\t\t{}", transformationRequest.getTemplateClassName());
 
-        File transformedAppFolder = prepareOutputFolder(transformation);
+        File transformedAppFolder = prepareOutputFolder(transformationRequest);
         List<TransformationContextImpl> transformationContexts = new ArrayList<>();
 
-        try {
-            TransformationResult transformationResult = performTransformation(transformedAppFolder, transformation, transformationContexts);
-            postTransformationNotification(transformation, transformationContexts);
+        TransformationResult transformationResult = performTransformation(transformedAppFolder, transformationRequest, transformationContexts);
 
-            return transformationResult;
-        } catch (InternalTransformationException e) {
-            TransformationContextImpl abortedTransformationContext = e.getTransformationContext();
-            if (abortedTransformationContext != null) {
-                transformationContexts.add(abortedTransformationContext);
-            }
-            postTransformationAbortionNotification(transformation, transformationContexts);
-
-            throw e;
+        if (transformationResult.isSuccessful()) {
+            manualInstructionsHandler.processManualInstructions(transformationResult, transformationContexts);
+            transformationListeners.forEach(l -> l.postTransformation(transformationRequest, transformationResult));
+        } else {
+            transformationListeners.forEach(l -> l.postTransformationAbort(transformationRequest, transformationResult));
         }
-    }
 
-    /*
-     * Notify transformation listeners about an successfully completed transformation
-     */
-    private void postTransformationNotification(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
-        List<TransformationContextImpl> transformationContextsUnmodifiableList = getTransformationContextsReadonlyList(transformationContexts);
-        for (TransformationListener listener : transformationListeners) {
-            listener.postTransformation(transformation, transformationContextsUnmodifiableList);
-        }
-    }
-
-    /*
-     * Notify transformation listeners about an aborted transformation
-     */
-    private void postTransformationAbortionNotification(Transformation transformation, List<TransformationContextImpl> transformationContexts) {
-        List<TransformationContextImpl> transformationContextsUnmodifiableList = getTransformationContextsReadonlyList(transformationContexts);
-        for (TransformationListener listener : transformationListeners) {
-            listener.postTransformationAbort(transformation, transformationContextsUnmodifiableList);
-        }
+        return transformationResult;
     }
 
     /*
@@ -128,19 +107,38 @@ public class TransformationEngine {
         return Collections.unmodifiableList(transformationContexts);
     }
 
-    private TransformationResult performTransformation(File transformedAppFolder, Transformation transformation, List<TransformationContextImpl> transformationContexts) throws InternalTransformationException {
-        if (transformation instanceof UpgradePathTransformation) {
-            UpgradePath upgradePath = ((UpgradePathTransformation) transformation).getUpgradePath();
-            performUpgrade(upgradePath, transformedAppFolder, transformationContexts, transformation);
-        } else if (transformation instanceof TemplateTransformation) {
-            TransformationTemplate template = ((TemplateTransformation) transformation).getTemplate();
-            TransformationContextImpl transformationContext = performTemplate(template, transformedAppFolder, null, transformation);
-            transformationContexts.add(transformationContext);
-        } else {
-            throw new InternalTransformationException("Transformation type not recognized", null);
+    private TransformationResult performTransformation(File transformedAppFolder, TransformationRequest transformationRequest, List<TransformationContextImpl> transformationContexts) {
+        if (transformationRequest == null) {
+            throw new InternalException("Transformation request cannot be null");
+        }
+        if (!(transformationRequest instanceof UpgradePathTransformationRequest || transformationRequest instanceof TemplateTransformationRequest)) {
+            throw new InternalException("Transformation request type not recognized: " + transformationRequest.getClass().getName());
         }
 
-        TransformationResult transformationResult = new TransformationResultImpl(transformation, transformedAppFolder);
+        TransformationResultImpl transformationResult = new TransformationResultImpl(transformationRequest, transformedAppFolder);
+
+        try {
+            if (transformationRequest instanceof UpgradePathTransformationRequest) {
+                UpgradePath upgradePath = ((UpgradePathTransformationRequest) transformationRequest).getUpgradePath();
+                performUpgrade(upgradePath, transformedAppFolder, transformationContexts, transformationRequest);
+            } else if (transformationRequest instanceof TemplateTransformationRequest) {
+                TransformationTemplate template = ((TemplateTransformationRequest) transformationRequest).getTemplate();
+                TransformationContextImpl transformationContext = performTemplate(template, transformedAppFolder, null, transformationRequest);
+                transformationContexts.add(transformationContext);
+            }
+        } catch (InternalTransformationException e) {
+            TransformationContextImpl abortedTransformationContext = e.getTransformationContext();
+            if (abortedTransformationContext != null) {
+                transformationContexts.add(abortedTransformationContext);
+            }
+
+            transformationResult.setAbortDetails(abortedTransformationContext.getAbortDetails());
+        }
+
+        // If the transformation was an upgrade, the list will have one metrics object per upgrade step.
+        // If it is not, then the list will have just one item.
+        List<TransformationMetrics> metricsList = transformationContexts.stream().map(c -> new TransformationMetricsImpl(c)).collect(Collectors.toList());
+        transformationResult.setTransformationMetrics(metricsList);
 
         return transformationResult;
     }
@@ -148,7 +146,7 @@ public class TransformationEngine {
     /*
      * Upgrade the application based on an upgrade path (from an original version to a target version)
      */
-    private void performUpgrade(UpgradePath upgradePath, File transformedAppFolder, List<TransformationContextImpl> transformationContexts, Transformation transformation) throws InternalTransformationException {
+    private void performUpgrade(UpgradePath upgradePath, File transformedAppFolder, List<TransformationContextImpl> transformationContexts, TransformationRequest transformationRequest) throws InternalTransformationException {
         logger.info("");
         logger.info("====================================================================================================================================");
         logger.info("\tUpgrade path from version {} to version {}", upgradePath.getOriginalVersion(), upgradePath.getUpgradeVersion());
@@ -166,7 +164,7 @@ public class TransformationEngine {
 
             // The context passed to this method call is not the same as the one returned,
             // although the variable holding them is the same
-            previousContext = performTemplate(upgradeStep, transformedAppFolder, previousContext, transformation);
+            previousContext = performTemplate(upgradeStep, transformedAppFolder, previousContext, transformationRequest);
             transformationContexts.add(previousContext);
         }
     }
@@ -175,11 +173,11 @@ public class TransformationEngine {
      * Transform the application based on a single transformation template.
      * *** Notice that this transformation template can also be an upgrade step ***
      */
-    private TransformationContextImpl performTemplate(TransformationTemplate template, File transformedAppFolder, TransformationContextImpl previousTransformationContext, Transformation transformation) throws InternalTransformationException {
+    private TransformationContextImpl performTemplate(TransformationTemplate template, File transformedAppFolder, TransformationContextImpl previousTransformationContext, TransformationRequest transformationRequest) throws InternalTransformationException {
         logger.info("====================================================================================================================================");
         logger.info("Beginning transformation");
 
-        TransformationContextImpl transformationContext = performUtilities(template, template.getUtilities(), transformedAppFolder, previousTransformationContext, transformation);
+        TransformationContextImpl transformationContext = performUtilities(template, template.getUtilities(), transformedAppFolder, previousTransformationContext, transformationRequest);
 
         logger.info("");
         logger.info("Transformation has been completed");
@@ -191,12 +189,12 @@ public class TransformationEngine {
      * Performs a list of transformation utilities against an application.
      * Notice that any of those utilities can be operations
      */
-    private TransformationContextImpl performUtilities(TransformationTemplate template, List<TransformationUtility> utilities, File transformedAppFolder, TransformationContextImpl previousTransformationContext, Transformation transformation) throws InternalTransformationException {
+    private TransformationContextImpl performUtilities(TransformationTemplate template, List<TransformationUtility> utilities, File transformedAppFolder, TransformationContextImpl previousTransformationContext, TransformationRequest transformationRequest) throws InternalTransformationException {
         int operationsExecutionOrder = 1;
         TransformationContextImpl transformationContext = TransformationContextImpl.getTransformationContext(previousTransformationContext);
         transformationContext.setTransformationTemplate(template);
         if (template.isBlank()) {
-            File baseline = transformation.getBaselineApplicationLocation();
+            File baseline = ((AbstractTransformationRequest) transformationRequest).getBaselineApplicationDir();
             if (baseline == null || !baseline.exists() || !baseline.isDirectory()) {
                 // TODO save exception and abortion description into the transformationContext
                 throw new InternalTransformationException("Baseline application location is invalid: " + baseline, transformationContext);
@@ -270,15 +268,12 @@ public class TransformationEngine {
         boolean conditionResult;
         List<File> subList = new ArrayList<>();
 
+        int warnings = 0;
+
         for (File file : files) {
             condition = utility.newConditionInstance(transformedAppFolder, file);
 
             PerformResult innerPerformResult = condition.perform(transformedAppFolder, transformationContext);
-
-            // FIXME
-            // Check here the PerformResult type. It should be ExecutionResult, but if it is not, then decide what to do
-            // (what happens when the execution of a regular condition fails? does it return false? or does it do something else?),
-            // but definition `processUtilityExecutionResult` cannot be called, otherwise it will result in a NPE!
 
             processUtilityExecutionResult(condition, innerPerformResult, transformationContext);
 
@@ -288,6 +283,9 @@ public class TransformationEngine {
                 conditionResult = (boolean) ((TUExecutionResult) innerPerformResult.getExecutionResult()).getValue();
                 if (conditionResult) {
                     subList.add(file);
+                }
+                if (innerPerformResult.getExecutionResult().getType().equals(TUExecutionResult.Type.WARNING)) {
+                    warnings++;
                 }
             } else {
                 Exception innerException;
@@ -303,7 +301,12 @@ public class TransformationEngine {
             }
         }
 
-        TUExecutionResult filterFilesExecutionResult = TUExecutionResult.value(utility, subList);
+        TUExecutionResult filterFilesExecutionResult;
+        if (warnings == 0) {
+            filterFilesExecutionResult = TUExecutionResult.value(utility, subList);
+        } else {
+            filterFilesExecutionResult = TUExecutionResult.warning(utility, warnings + " warnings were generated when filtering files", subList);
+        }
         return PerformResult.executionResult(utility, filterFilesExecutionResult);
     }
 
@@ -423,17 +426,19 @@ public class TransformationEngine {
 
     private void processError(TransformationUtility utility, Exception e, String order, TransformationContextImpl transformationContext) throws TransformationException {
         if (utility.isAbortOnFailure()) {
-            logger.error("*** Transformation will be aborted due to failure in {} ***", utility.getName());
+            logger.error("*** Transformation will be aborted due to {}{} ***", (utility instanceof Abort? "" : "failure in "), utility.getName());
             String abortionMessage = utility.getAbortionMessage();
             if (abortionMessage != null) {
                 logger.error("*** {} ***", abortionMessage);
             }
-            logger.error("*** Description: {}", utility.getDescription());
-            logger.error("*** Cause: {}", e.getMessage());
+            if (!(utility instanceof Abort)) {
+                logger.error("*** Description: {}", utility.getDescription());
+                logger.error("*** Cause: {}", e.getMessage());
+            }
             logger.error("*** Exception stack trace:", e);
 
             String exceptionMessage = (abortionMessage != null ? abortionMessage : utility.getName() + " failed when performing transformation");
-            transformationContext.transformationAborted(e, exceptionMessage, utility.getName());
+            transformationContext.transformationAborted(e, exceptionMessage, utility.getName(), utility.getClass().getName());
 
             throw new TransformationException(exceptionMessage, e);
         } else {
@@ -479,7 +484,7 @@ public class TransformationEngine {
         switch (executionResult.getType()) {
             case NULL:
                 if (utility.isSaveResult() && logger.isDebugEnabled()) {
-                    logger.warn("\t-\t - {}. {} has returned NULL", utility, utility.getName());
+                    logger.debug("\t-\t - {}. {} has returned NULL", utility, utility.getName());
                 }
                 break;
             case VALUE:
@@ -517,11 +522,11 @@ public class TransformationEngine {
         logger.error("\t{}\t - '{}' has resulted in an unexpected execution result type {}", order, utility.getName(), executionResult.getType());
     }
 
-    private File prepareOutputFolder(Transformation transformation) {
+    private File prepareOutputFolder(TransformationRequest transformationRequest) {
         logger.debug("Preparing output folder");
 
-        Application application = transformation.getApplication();
-        Configuration configuration = transformation.getConfiguration();
+        Application application = transformationRequest.getApplication();
+        Configuration configuration = transformationRequest.getConfiguration();
         File transformedAppFolder;
 
         logger.info("Original application folder:\t\t" + application.getFolder());
@@ -548,15 +553,14 @@ public class TransformationEngine {
 
         logger.info("Transformed application folder:\t" + transformedAppFolder);
 
-        transformation.setTransformedApplicationLocation(transformedAppFolder);
+        File baselineAppFolder = ((AbstractTransformationRequest) transformationRequest).getBaselineApplicationDir();
 
-        File baselineAppFolder = transformation.getBaselineApplicationLocation();
-        if (transformation.isBlank()) {
-            logger.info("Baseline application folder:\t\t" + baselineAppFolder);
+        if (transformationRequest.isBlank()) {
+            logger.info("Baseline application folder:\t\t{}", baselineAppFolder);
         }
 
         if (configuration.isModifyOriginalFolder()) {
-            if (transformation.isBlank()) {
+            if (transformationRequest.isBlank()) {
                 try {
                     FileUtils.copyDirectory(application.getFolder(), baselineAppFolder);
                 } catch (IOException e) {
@@ -570,7 +574,7 @@ public class TransformationEngine {
         } else {
             boolean bDirCreated = transformedAppFolder.mkdir();
             if(bDirCreated){
-                if (!transformation.isBlank()) {
+                if (!transformationRequest.isBlank()) {
                     try {
                         FileUtils.copyDirectory(application.getFolder(), transformedAppFolder);
                     } catch (IOException e) {
