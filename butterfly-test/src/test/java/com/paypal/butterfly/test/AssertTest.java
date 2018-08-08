@@ -102,7 +102,7 @@ public class AssertTest {
 
     @Test
     public void assertAbortTest() {
-        assertAbort(TEST_RESOURCES, JavaEEToSpringBoot.class, "This application does not have a root pom.xml file");
+        assertAbort(TEST_RESOURCES, JavaEEToSpringBoot.class, true, true, null, "This application does not have a root pom.xml file");
     }
 
 }
