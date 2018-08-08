@@ -2,7 +2,7 @@ package com.paypal.butterfly.core;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import com.paypal.butterfly.api.metrics.AbortDetails;
+import com.paypal.butterfly.api.AbortDetails;
 
 /**
  * POJO describing a transformation abort.

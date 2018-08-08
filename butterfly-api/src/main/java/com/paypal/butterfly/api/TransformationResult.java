@@ -4,9 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import com.paypal.butterfly.api.metrics.AbortDetails;
-import com.paypal.butterfly.api.metrics.TransformationMetrics;
-
 /**
  * Transformation result
  *

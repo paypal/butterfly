@@ -16,8 +16,8 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.paypal.butterfly.api.TransformationRequest;
 import com.paypal.butterfly.api.TransformationResult;
-import com.paypal.butterfly.api.metrics.AbortDetails;
-import com.paypal.butterfly.api.metrics.TransformationMetrics;
+import com.paypal.butterfly.api.AbortDetails;
+import com.paypal.butterfly.api.TransformationMetrics;
 
 /**
  * The transformation result implementation

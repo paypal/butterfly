@@ -24,7 +24,7 @@ import com.paypal.butterfly.extensions.api.utilities.ManualInstruction;
 import com.paypal.butterfly.extensions.api.utilities.ManualInstructionRecord;
 import com.paypal.butterfly.api.*;
 import com.paypal.butterfly.api.exception.TransformationException;
-import com.paypal.butterfly.api.metrics.TransformationMetrics;
+import com.paypal.butterfly.api.TransformationMetrics;
 
 /**
  * The transformation engine in charge of

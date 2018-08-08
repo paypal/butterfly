@@ -5,8 +5,8 @@ import java.util.Date;
 
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
-import com.paypal.butterfly.api.metrics.TransformationMetrics;
-import com.paypal.butterfly.api.metrics.TransformationStatistics;
+import com.paypal.butterfly.api.TransformationMetrics;
+import com.paypal.butterfly.api.TransformationStatistics;
 
 /**
  * POJO containing statistics and meta-data about

@@ -9,8 +9,8 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import com.paypal.butterfly.api.TransformationResult;
-import com.paypal.butterfly.api.metrics.TransformationMetrics;
-import com.paypal.butterfly.api.metrics.TransformationStatistics;
+import com.paypal.butterfly.api.TransformationMetrics;
+import com.paypal.butterfly.api.TransformationStatistics;
 
 /**
  * Integration tests for {@link JavaEEToSpringBoot}

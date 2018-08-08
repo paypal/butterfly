@@ -1,7 +1,7 @@
 package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.api.*;
-import com.paypal.butterfly.api.metrics.TransformationStatistics;
+import com.paypal.butterfly.api.TransformationStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

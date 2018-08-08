@@ -29,9 +29,9 @@ import com.paypal.butterfly.extensions.springboot.SpringBootUpgrade_1_5_6_to_1_5
 import com.paypal.butterfly.api.Application;
 import com.paypal.butterfly.api.Configuration;
 import com.paypal.butterfly.api.TransformationResult;
-import com.paypal.butterfly.api.metrics.AbortDetails;
-import com.paypal.butterfly.api.metrics.TransformationMetrics;
-import com.paypal.butterfly.api.metrics.TransformationStatistics;
+import com.paypal.butterfly.api.AbortDetails;
+import com.paypal.butterfly.api.TransformationMetrics;
+import com.paypal.butterfly.api.TransformationStatistics;
 
 public class TransformationEngineTest extends TestHelper {
 

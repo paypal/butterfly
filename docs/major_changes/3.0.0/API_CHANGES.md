@@ -10,7 +10,7 @@ Notice that it does not include additions, that is documented in [Butterfly 3.0.
 | From | To | Notes |
 |---|---|---|
 |`com.paypal.butterfly.facade`|`com.paypal.butterfly.api`|Notice API project `butterfly-api` has been created, replacing `butterfly-facade`.|
-|`com.paypal.butterfly.extensions.api.metrics`|`com.paypal.butterfly.api.metrics`|Those interfaces were moved to `butterfly-api` project. Also, `AbortDetails` class was converted to an interface.|
+|`com.paypal.butterfly.extensions.api.metrics`|`com.paypal.butterfly.api`|Those interfaces were moved to `butterfly-api` project. Also, `AbortDetails` class was converted to an interface.|
 |`com.paypal.butterfly.facade.Configuration`|`com.paypal.butterfly.api.Configuration`|This class was converted to an interface and moved to `butterfly-api` project. Notice also that its constructor and setters are not available anymore. To create a `Configuration` object, use the `newConfiguration()` methods in `com.paypal.butterfly.api.ButterflyFacade`.|
 |`com.paypal.butterfly.facade.ButterflyFacade`|`com.paypal.butterfly.api.ButterflyFacade`|This interface was moved to `butterfly-api` project. Notice also that now every `transform` method returns `com.paypal.butterfly.api.TransformationResult` and don't throw `ButterflyException` anymore (except the ones that take the template class as a `String` parameter).|
 
@@ -31,7 +31,7 @@ Notice that all these removed methods were already marked as deprecated in the l
 |`com.paypal.butterfly.extensions.api.TransformationUtility.abortOnFailure()`|`com.paypal.butterfly.extensions.api.TransformationUtility.isAbortOnFailure()`||YES|
 |`com.paypal.butterfly.extensions.api.TransformationUtility.abortOnFailure(boolean, String)`|`com.paypal.butterfly.extensions.api.TransformationUtility.abortOnFailure(String)`||YES|
 |`com.paypal.butterfly.utilities.maven.MavenGoal.setFailAtEnd()`|NA|Removed after upgrading `org.apache.maven.shared:maven-invoker` from version 2.2 to 3.0.1, which removed method `org.apache.maven.shared.invoker.InvocationRequest.setFailureBehavior(String)`|YES|
-|`com.paypal.butterfly.extensions.api.metrics.AbortDetails.getExceptionClass()`|`com.paypal.butterfly.api.metrics.AbortDetails.getExceptionClassName()`||YES|
+|`com.paypal.butterfly.extensions.api.metrics.AbortDetails.getExceptionClass()`|`com.paypal.butterfly.api.AbortDetails.getExceptionClassName()`||YES|
 |`com.paypal.butterfly.facade.Configuration.Configuration()`|`com.paypal.butterfly.api.ButterflyFacade.newConfiguration()`|`Configuration` class has been converted to an interface. The factory method in the facade should be used instead to get a new configuration object|YES|
 |`com.paypal.butterfly.facade.Configuration.Configuration(File, boolean)`|`com.paypal.butterfly.api.ButterflyFacade.newConfiguration()`|`Configuration` class has been converted to an interface. The factory method in the facade should be used instead to get a new configuration object|YES|
 
