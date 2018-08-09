@@ -11,31 +11,62 @@ def api = [
         'com.paypal.butterfly:butterfly-test',
 ]
 
-install {
-    repositories.mavenInstaller {
-        pom.whenConfigured {
-            packaging = "pom"
-            withXml {
-                asNode().children().last() + {
-                    delegate.dependencyManagement {
-                        delegate.dependencies {
-                            def d = []
+install.repositories.mavenInstaller {
+    pom.whenConfigured {
+        packaging = "pom"
+        withXml {
+            asNode().children().last() + {
+                delegate.dependencyManagement {
+                    delegate.dependencies {
+                        def d = []
 
-                            // Adding Butterfly API dependencies defined above
-                            api.each { a -> d.add(a + ':' + version)}
+                        // Adding Butterfly API dependencies defined above
+                        api.each { a -> d.add(a + ':' + version) }
 
-                            // And also all dependencies managed in the root project under ext.lib
-                            d.addAll(parent.lib.values())
+                        // And also all dependencies managed in the root project under ext.lib
+                        d.addAll(parent.lib.values())
 
-                            // Inserting each managed dependency in the pom.xml file
-                            d.each { p ->
-                                if (p != project) {
-                                    def pa = p.tokenize(':')
-                                    delegate.dependency {
-                                        delegate.groupId(pa[0])
-                                        delegate.artifactId(pa[1])
-                                        delegate.version(pa[2])
-                                    }
+                        // Inserting each managed dependency in the pom.xml file
+                        d.each { p ->
+                            if (p != project) {
+                                def pa = p.tokenize(':')
+                                delegate.dependency {
+                                    delegate.groupId(pa[0])
+                                    delegate.artifactId(pa[1])
+                                    delegate.version(pa[2])
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+uploadArchives.repositories.mavenDeployer {
+    pom.whenConfigured {
+        packaging = "pom"
+        withXml {
+            asNode().children().last() + {
+                delegate.dependencyManagement {
+                    delegate.dependencies {
+                        def d = []
+
+                        // Adding Butterfly API dependencies defined above
+                        api.each { a -> d.add(a + ':' + version)}
+
+                        // And also all dependencies managed in the root project under ext.lib
+                        d.addAll(parent.lib.values())
+
+                        // Inserting each managed dependency in the pom.xml file
+                        d.each { p ->
+                            if (p != project) {
+                                def pa = p.tokenize(':')
+                                delegate.dependency {
+                                    delegate.groupId(pa[0])
+                                    delegate.artifactId(pa[1])
+                                    delegate.version(pa[2])
                                 }
                             }
                         }
