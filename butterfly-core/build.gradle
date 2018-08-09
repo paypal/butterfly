@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':butterfly-facade')
+    compile project(':butterfly-api')
     compile project(':butterfly-extensions-api')
     runtime project(':butterfly-utilities')
     compile(lib.spring_context) {
@@ -7,6 +7,7 @@ dependencies {
     }
     compile lib.annotation_api,
             lib.slf4j_api,
+            lib.gson,
             lib.reflections,
             lib.commons_io,
             lib.zip4j,
@@ -24,3 +25,17 @@ dependencies {
 }
 
 test.useTestNG()
+
+task createProperties(dependsOn: processResources) {
+    doLast {
+        new File("$buildDir/resources/main/butterfly.properties").withWriter { w ->
+            Properties p = new Properties()
+            p['butterfly.version'] = project.version.toString()
+            p.store w, null
+        }
+    }
+}
+
+classes {
+    dependsOn createProperties
+}

@@ -3,8 +3,8 @@ package com.paypal.butterfly.core;
 import com.paypal.butterfly.extensions.api.PerformResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.metrics.AbortDetails;
-import com.paypal.butterfly.extensions.api.metrics.TransformationStatistics;
+import com.paypal.butterfly.api.AbortDetails;
+import com.paypal.butterfly.api.TransformationStatistics;
 import com.paypal.butterfly.extensions.api.utilities.ManualInstructionRecord;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.StringUtils;
@@ -35,14 +35,15 @@ class TransformationContextImpl implements TransformationContext {
     private TransformationContextImpl() {
     }
 
-    void setCollectStats(boolean collectStats) {
+    TransformationContextImpl setCollectStats(boolean collectStats) {
         this.collectStats = collectStats;
         if (collectStats) {
             statistics = new TransformationStatisticsImpl();
         }
+        return this;
     }
 
-    void setTransformationTemplate(TransformationTemplate transformationTemplate) {
+    TransformationContextImpl setTransformationTemplate(TransformationTemplate transformationTemplate) {
         if(transformationTemplate == null) {
             throw new IllegalArgumentException("Transformation template object cannot be null");
         }
@@ -50,6 +51,7 @@ class TransformationContextImpl implements TransformationContext {
         if (upgradeCorrelationId == null) {
             upgradeCorrelationId = String.format("%s_%s", transformationTemplate.getExtensionClass().getSimpleName(), UUID.randomUUID().toString());
         }
+        return this;
     }
 
     @Override
@@ -103,7 +105,7 @@ class TransformationContextImpl implements TransformationContext {
      * @param name the transformation utility name
      * @param resultObject the result object
      */
-    void putResult(String name, PerformResult resultObject) {
+    TransformationContextImpl putResult(String name, PerformResult resultObject) {
         if(StringUtils.isBlank(name)) {
             throw new IllegalArgumentException("Result name cannot be null nor blank");
         }
@@ -115,6 +117,7 @@ class TransformationContextImpl implements TransformationContext {
         if (collectStats) {
             statistics.registerResult(resultObject);
         }
+        return this;
     }
 
     /**
@@ -122,7 +125,7 @@ class TransformationContextImpl implements TransformationContext {
      *
      * @param manualInstructionRecord the manual instruction record to be added to the list
      */
-    void registerManualInstruction(ManualInstructionRecord manualInstructionRecord) {
+    TransformationContextImpl registerManualInstruction(ManualInstructionRecord manualInstructionRecord) {
         if(manualInstructionRecord == null) {
             throw new IllegalArgumentException("Manual instruction record object cannot be null");
         }
@@ -131,6 +134,7 @@ class TransformationContextImpl implements TransformationContext {
         if (collectStats) {
             statistics.addManualInstruction();
         }
+        return this;
     }
 
     /**
@@ -189,9 +193,10 @@ class TransformationContextImpl implements TransformationContext {
         return upgradeCorrelationId;
     }
 
-    void transformationAborted(Exception ex, String abortMessage, String utilityName) {
+    TransformationContextImpl transformationAborted(Exception ex, String abortMessage, String utilityName, String utilityClassName) {
         successfulTransformation = false;
-        abortDetails = new AbortDetails(ex, abortMessage, utilityName);
+        abortDetails = new AbortDetailsImpl(ex, abortMessage, transformationTemplate.getName(), transformationTemplate.getClass().getName(), utilityName, utilityClassName);
+        return this;
     }
 
     AbortDetails getAbortDetails() {

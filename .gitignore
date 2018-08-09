@@ -1,8 +1,8 @@
 *.class
 logs/
 transformed-apps/
+results/
 metrics/
-!butterfly-metrics-*/**
 test-output/
 gen-metrics/
 

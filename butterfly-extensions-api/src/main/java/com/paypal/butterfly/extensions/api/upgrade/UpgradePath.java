@@ -170,6 +170,17 @@ public final class UpgradePath {
      * as the first step in this upgrade path
      */
     public String getFirstStepTemplateName() {
+        return firstStep.getName();
+    }
+
+    /**
+     * Return the class name of the upgrade template to be performed
+     * as the first step in this upgrade path
+     *
+     * @return the class name of the upgrade template to be performed
+     * as the first step in this upgrade path
+     */
+    public String getFirstStepTemplateClassName() {
         return firstStep.getClass().getName();
     }
 

@@ -6,7 +6,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.*;
 import java.net.URISyntaxException;
 
-import com.paypal.butterfly.core.MdFileManualInstructionsHandler;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -118,7 +117,7 @@ public class ButterflyIT {
         ButterflyCliRun run = ButterflyCliApp.run(appDir.getAbsolutePath(), "-o", outDir.getAbsolutePath(), "-t", JavaEEToSpringBoot.class.getName());
         assertEquals(run.getExitStatus(), 1);
 
-        String exceptionMessage = String.format("This application has pending manual instructions. Perform manual instructions at the following file first, then remove it, and run Butterfly again: %s/%s", appDir.getAbsolutePath(), MdFileManualInstructionsHandler.MANUAL_INSTRUCTIONS_MAIN_FILE);
+        String exceptionMessage = String.format("This application has pending manual instructions. Perform manual instructions at the following file first, then remove it, and run Butterfly again: %s/BUTTERFLY_MANUAL_INSTRUCTIONS.md", appDir.getAbsolutePath());
         assertEquals(run.getExceptionMessage(), exceptionMessage);
         assertEquals(run.getErrorMessage(), "Transformation has been aborted due to: " + exceptionMessage);
     }

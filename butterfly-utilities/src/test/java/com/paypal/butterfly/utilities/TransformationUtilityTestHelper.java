@@ -37,7 +37,7 @@ public abstract class TransformationUtilityTestHelper {
     protected TransformationContext transformationContext;
 
     @BeforeClass
-    public void beforeClass() throws URISyntaxException, IOException {
+    public void beforeClass() throws URISyntaxException {
         appFolder = new File(getClass().getResource("/test-app").toURI());
     }
 

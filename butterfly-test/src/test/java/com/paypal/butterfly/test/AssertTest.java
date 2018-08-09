@@ -1,9 +1,11 @@
 package com.paypal.butterfly.test;
 
+import static com.paypal.butterfly.test.Assert.assertAbort;
 import static com.paypal.butterfly.test.Assert.assertTransformation;
 
 import java.io.File;
 
+import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -96,6 +98,11 @@ public class AssertTest {
         File expected = new File(TEST_RESOURCES, "/app6");
         File actual = new File(TEST_RESOURCES, "/app1");
         assertTransformation(expected, actual);
+    }
+
+    @Test
+    public void assertAbortTest() {
+        assertAbort(TEST_RESOURCES, JavaEEToSpringBoot.class, true, true, null, "This application does not have a root pom.xml file");
     }
 
 }

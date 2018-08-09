@@ -3,28 +3,28 @@ rootProject.name = 'butterfly'
 enableFeaturePreview('IMPROVED_POM_SUPPORT')
 
 include ':butterfly-bom'
-include ':butterfly-facade'
+include ':butterfly-api'
 include ':butterfly-extensions-api'
 include ':butterfly-utilities'
 include ':butterfly-core'
 include ':butterfly-cli'
 include ':butterfly-cli-package'
-include ':butterfly-metrics-couchdb'
-include ':butterfly-metrics-file'
+include ':butterfly-persist-couchdb'
+include ':butterfly-persist-file'
 include ':butterfly-test'
 include ':extensions-catalog:butterfly-springboot-extension'
 include ':tests:integration-tests'
 include ':tests'
 
 project(':butterfly-bom').projectDir = "$rootDir/butterfly-bom" as File
-project(':butterfly-facade').projectDir = "$rootDir/butterfly-facade" as File
+project(':butterfly-api').projectDir = "$rootDir/butterfly-api" as File
 project(':butterfly-extensions-api').projectDir = "$rootDir/butterfly-extensions-api" as File
 project(':butterfly-utilities').projectDir = "$rootDir/butterfly-utilities" as File
 project(':butterfly-core').projectDir = "$rootDir/butterfly-core" as File
 project(':butterfly-cli').projectDir = "$rootDir/butterfly-cli" as File
 project(':butterfly-cli-package').projectDir = "$rootDir/butterfly-cli-package" as File
-project(':butterfly-metrics-couchdb').projectDir = "$rootDir/butterfly-metrics-couchdb" as File
-project(':butterfly-metrics-file').projectDir = "$rootDir/butterfly-metrics-file" as File
+project(':butterfly-persist-couchdb').projectDir = "$rootDir/butterfly-persist-couchdb" as File
+project(':butterfly-persist-file').projectDir = "$rootDir/butterfly-persist-file" as File
 project(':butterfly-test').projectDir = "$rootDir/butterfly-test" as File
 project(':extensions-catalog:butterfly-springboot-extension').projectDir = "$rootDir/extensions-catalog/butterfly-springboot-extension" as File
 project(':tests:integration-tests').projectDir = "$rootDir/tests/integration-tests" as File

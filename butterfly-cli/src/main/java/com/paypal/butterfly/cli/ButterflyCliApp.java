@@ -1,10 +1,10 @@
 package com.paypal.butterfly.cli;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.paypal.butterfly.cli.logging.LogFileDefiner;
-import com.paypal.butterfly.facade.ButterflyProperties;
-import joptsimple.OptionException;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +13,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import com.paypal.butterfly.api.ButterflyFacade;
+import com.paypal.butterfly.cli.logging.LogFileDefiner;
+
+import joptsimple.OptionException;
 
 /**
  * Butterfly CLI Spring Boot entry point
@@ -43,9 +48,11 @@ public class ButterflyCliApp extends ButterflyCliOption {
 
         logger = LoggerFactory.getLogger(ButterflyCliApp.class);
 
-        setBanner();
-
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ButterflyCliApp.class, arguments);
+        ButterflyFacade butterflyFacade = applicationContext.getBean(ButterflyFacade.class);
+
+        setBanner(butterflyFacade);
+
         ButterflyCliRunner butterflyCliRunner = applicationContext.getBean(ButterflyCliRunner.class);
         ButterflyCliRun run = butterflyCliRunner.run();
         run.setInputArguments(arguments);
@@ -75,8 +82,7 @@ public class ButterflyCliApp extends ButterflyCliOption {
                 LogFileDefiner.setLogFileName(applicationFolder, debug);
             } catch (OptionException e) {
                 Logger logger = LoggerFactory.getLogger(ButterflyCliApp.class);
-                setBanner();
-                logger.info(getBanner());
+                logger.info("Butterfly application transformation tool");
                 logger.error(e.getMessage());
                 System.exit(1);
             }
@@ -101,14 +107,14 @@ public class ButterflyCliApp extends ButterflyCliOption {
         return applicationFolder;
     }
 
-    private static void setBanner() {
+    private static void setBanner(ButterflyFacade butterflyFacade) {
 
         // Ideally the version should be gotten from the façade Spring bean.
         // However, it is not available this early, so we are getting it directly
         // from the CLI artifact, assuming that the CLI jar will always bring together
         // the exact same version of butterfly-core, which is the component to officially
         // define Butterfly version
-        banner = String.format("Butterfly application transformation tool (version %s)", ButterflyProperties.getString("butterfly.version"));
+        banner = String.format("Butterfly application transformation tool (version %s)", butterflyFacade.getButterflyVersion());
     }
 
     public static File getButterflyHome() {
@@ -122,7 +128,17 @@ public class ButterflyCliApp extends ButterflyCliOption {
     }
 
     private static void writeResultFile(ButterflyCliRun run) {
-        GsonBuilder gsonBuilder = new GsonBuilder().setPrettyPrinting();
+        GsonBuilder gsonBuilder = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(File.class, new TypeAdapter<File>() {
+            @Override
+            public void write(JsonWriter jsonWriter, File file) throws IOException {
+                String fileAbsolutePath = (file == null ? null : file.getAbsolutePath());
+                jsonWriter.value(fileAbsolutePath);
+            }
+            @Override
+            public File read(JsonReader jsonReader) {
+                throw new UnsupportedOperationException("There is no support for deserializing transformation result objects at the moment");
+            }
+        });
         Gson gson = gsonBuilder.create();
         String runJsonString = gson.toJson(run);
         File resultFile = (File) optionSet.valueOf(CLI_OPTION_RESULT_FILE);
