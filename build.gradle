@@ -58,17 +58,22 @@ subprojects {
         }
     }
 
-    if (!version.endsWith("SNAPSHOT")) {
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
 
+    if (version.endsWith("SNAPSHOT")) {
+        if (!name.equals("butterfly-cli-package")) {
+            artifacts {
+                archives sourcesJar
+            }
+        }
+    } else {
         if (!name.equals("butterfly-cli-package")) {
             task javadocJar(type: Jar) {
                 classifier = 'javadoc'
                 from javadoc
-            }
-
-            task sourcesJar(type: Jar) {
-                classifier = 'sources'
-                from sourceSets.main.allSource
             }
 
             artifacts {
