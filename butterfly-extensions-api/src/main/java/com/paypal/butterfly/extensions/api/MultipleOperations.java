@@ -1,14 +1,15 @@
 package com.paypal.butterfly.extensions.api;
 
-import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 /**
  * Transformation utility to perform multiple transformation operations. Multiple transformation operations
@@ -276,29 +277,30 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
         }
 
         TransformationOperation operation;
-        operations = new ArrayList<TransformationUtility>();
+        operations = new ArrayList<>();
         int order = 1;
         try {
             for(File file : allFiles) {
                 if (!multipleConfigurations) {
-                    operation = createClone(order, transformedAppFolder, file);
+                    operation = createClone(order, transformedAppFolder, file, transformationContext);
                     operations.add(operation);
                     order++;
                 } else {
                     Object[] propertyValuesArray = propertyValues.toArray();
                     for (Object propertyValue : propertyValuesArray) {
-                        operation = createClone(order, transformedAppFolder, file);
+                        operation = createClone(order, transformedAppFolder, file, transformationContext);
                         propertySetter.invoke(operation, propertyValue);
                         operations.add(operation);
                         order++;
                     }
                 }
             }
-        } catch (CloneNotSupportedException e) {
-            TransformationUtilityException tue = new TransformationUtilityException("The template transformation operation is not cloneable", e);
-            return TUExecutionResult.error(this, tue);
         } catch (InvocationTargetException | IllegalAccessException e) {
             String exceptionMessage = String.format("It was not possible to set property %s, in object of type %s, during multiple operation multiple configuration setting pre-execution", propertyName, templateOperation.getClass().getName());
+            TransformationUtilityException tue = new TransformationUtilityException(exceptionMessage, e);
+            return TUExecutionResult.error(this, tue);
+        } catch (IllegalStateException e) {
+            String exceptionMessage = String.format("Illegal file set to multiple operations");
             TransformationUtilityException tue = new TransformationUtilityException(exceptionMessage, e);
             return TUExecutionResult.error(this, tue);
         }
@@ -310,10 +312,29 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
         return TUExecutionResult.value(this, getChildren()).setDetails(message);
     }
 
-    private TransformationOperation createClone(int order, File transformedAppFolder, File file) throws CloneNotSupportedException {
+    private TransformationOperation createClone(int order, File transformedAppFolder, File targetFile, TransformationContext transformationContext) {
         TransformationOperation operation = (TransformationOperation) templateOperation.copy();
         operation.setParent(this, order);
-        operation.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
+
+        String relativePath = TransformationUtility.getRelativePath(transformedAppFolder, targetFile);
+        if (targetFile.getAbsolutePath().equals(relativePath)) {
+            // This means the target file path is not within the transformed application folder.
+            // This can only happen if the target file is in the baseline application (in case the
+            // transformation template is blank)
+            if (getTransformationTemplate().isBlank()) {
+                File baselineApplicationFolder = (File) transformationContext.get(TransformationTemplate.BASELINE);
+                relativePath = TransformationUtility.getRelativePath(baselineApplicationFolder, targetFile);
+                if (targetFile.getAbsolutePath().equals(relativePath)) {
+                    throw new IllegalStateException("Illegal attempt to manipulate a file outside of transformed application and baseline application folders");
+                } else {
+                    operation.absolute(TransformationTemplate.BASELINE, relativePath);
+                }
+            } else {
+                throw new IllegalStateException("Illegal attempt to manipulate a file outside of transformed application folder");
+            }
+        } else {
+            operation.relative(relativePath);
+        }
 
         return operation;
     }
