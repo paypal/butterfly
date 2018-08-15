@@ -55,6 +55,9 @@ class TransformationEngine {
     void setupListeners() {
         Map<String, TransformationListener> beans = applicationContext.getBeansOfType(TransformationListener.class);
         transformationListeners = beans.values();
+        if (transformationListeners == null) {
+            transformationListeners = Collections.emptyList();
+        }
 
         validator = applicationContext.getBean(TransformationValidator.class);
         manualInstructionsHandler = applicationContext.getBean(ManualInstructionsHandler.class);

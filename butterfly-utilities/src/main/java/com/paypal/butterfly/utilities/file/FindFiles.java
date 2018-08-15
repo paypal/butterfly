@@ -112,19 +112,14 @@ public class FindFiles extends TransformationUtility<FindFiles> {
      *      used during transformation execution uses another character
      *      as file separator, that will be automatically converted
      *      by this utility</li>
-     *      <li>Setting this to a non null value automatically sets
-     *      recursive property to true</li>
-     *      <li>This regular expression will be evaluated against
-     *      the file path <strong>starting from the search root
-     *      directory</strong></li>
+     *      <li>The path regular expression will be evaluated starting from
+     *      the path defined  by {@link #relative(String)},
+     *      {@link #absolute(String)} or {@link #absolute(String, String)}.
+     *      If not set explicitly, then the search will happen from the root
+     *      of the transformed application, which is equivalent to setting
+     *      {@link #relative(String)} to {@code "."}
      * </ul>
      * <br>
-     * The root directory from where the search should take place
-     * can be defined by {@link #relative(String)},
-     * {@link #absolute(String)} or {@link #absolute(String, String)}.
-     * If not set explicitly, then the search will happen from the root
-     * of the transformed application, which is equivalent to setting
-     * {@link #relative(String)} to {@code "."}
      *
      * @param nameRegex regular expression to be applied against file name during search
      * @param pathRegex regular expression to be applied against file path during search
