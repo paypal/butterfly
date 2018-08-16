@@ -1,7 +1,10 @@
 package com.paypal.butterfly.cli;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import com.paypal.butterfly.api.TransformationResult;
 
@@ -22,6 +25,7 @@ public class ButterflyCliRun {
     private String errorMessage;
     private String exceptionMessage;
     private TransformationResult transformationResult;
+    private List<ExtensionMetaData> extensions = new ArrayList<>();
 
     void setButterflyVersion(String butterflyVersion) {
         this.butterflyVersion = butterflyVersion;
@@ -51,6 +55,10 @@ public class ButterflyCliRun {
         this.transformationResult = transformationResult;
     }
 
+    void addExtensionMetaData(ExtensionMetaData extensionMetaData) {
+        extensions.add(extensionMetaData);
+    }
+
     public int getExitStatus() {
         return exitStatus;
     }
@@ -77,6 +85,10 @@ public class ButterflyCliRun {
 
     public TransformationResult getTransformationResult() {
         return transformationResult;
+    }
+
+    public List<ExtensionMetaData> getExtensions() {
+        return Collections.unmodifiableList(extensions);
     }
 
 }

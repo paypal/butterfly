@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.paypal.butterfly.api.ButterflyFacade;
+import com.paypal.butterfly.api.Configuration;
+import com.paypal.butterfly.api.TransformationResult;
 import com.paypal.butterfly.cli.logging.LogConfigurator;
 import com.paypal.butterfly.cli.logging.LogFileDefiner;
 import com.paypal.butterfly.extensions.api.Extension;
@@ -19,9 +22,6 @@ import com.paypal.butterfly.extensions.api.exception.ButterflyRuntimeException;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
-import com.paypal.butterfly.api.ButterflyFacade;
-import com.paypal.butterfly.api.Configuration;
-import com.paypal.butterfly.api.TransformationResult;
 
 /**
  * Butterfly CLI runner
@@ -41,7 +41,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
 
     public ButterflyCliRun run() throws IOException {
         ButterflyCliRun run = new ButterflyCliRun();
-        Configuration configuration = null;
+        Configuration configuration;
         run.setButterflyVersion(butterflyFacade.getButterflyVersion());
 
         logger.info(ButterflyCliApp.getBanner());
@@ -73,7 +73,11 @@ public class ButterflyCliRunner extends ButterflyCliOption {
 
         if (optionSet.has(CLI_OPTION_LIST_EXTENSIONS)) {
             try {
-                printExtensionsList(butterflyFacade);
+                ExtensionMetaData extensionMetaData = getExtensionsMetaData(butterflyFacade);
+                if (extensionMetaData != null) {
+                    run.addExtensionMetaData(extensionMetaData);
+                }
+                printExtensionMetaData(extensionMetaData);
                 run.setExitStatus(0);
                 return run;
             } catch (Throwable e) {
@@ -237,27 +241,26 @@ public class ButterflyCliRunner extends ButterflyCliOption {
         return null;
     }
 
-    private static void printExtensionsList(ButterflyFacade butterflyFacade) throws IllegalAccessException, InstantiationException {
+    private ExtensionMetaData getExtensionsMetaData(ButterflyFacade butterflyFacade) throws IllegalAccessException, InstantiationException {
         Extension extension = butterflyFacade.getRegisteredExtension();
         if(extension == null) {
+            return null;
+        }
+        return ExtensionMetaData.newExtensionMetaData(extension);
+    }
+
+    private void printExtensionMetaData(ExtensionMetaData extensionMetaData) {
+        if(extensionMetaData == null) {
             logger.info("There are no registered extensions");
             return;
         }
 
+        String version = (StringUtils.isEmpty(extensionMetaData.getVersion()) ? "" : String.format("(version %s)", extensionMetaData.getVersion()));
+
         logger.info("See registered extensions below (shortcut in parenthesis)");
-
-        Class<? extends TransformationTemplate> template;
-        int shortcut = 1;
-
-        String version = (StringUtils.isEmpty(extension.getVersion()) ? "" : String.format("(version %s)", extension.getVersion()));
-
         logger.info("");
-        logger.info("- {}: {} {}", extension, extension.getDescription(), version);
-        for(Object templateObj : extension.getTemplateClasses().toArray()) {
-            template = (Class<? extends TransformationTemplate>) templateObj;
-            logger.info("\t ({}) - [{}] \t {} \t {}", shortcut++, ExtensionTypeInitial.getFromClass(template), template.getName(), template.newInstance().getDescription());
-
-        }
+        logger.info("- {}: {} {}", extensionMetaData.getName(), extensionMetaData.getDescription(), version);
+        extensionMetaData.getTemplates().forEach(t -> logger.info("\t ({}) - [{}] \t {} \t {}", t.getShortcut(), t.getTemplateType().getInitials(), t.getName(), t.getDescription()));
     }
 
     private void registerError(ButterflyCliRun run, String errorMessage) {
@@ -275,21 +278,6 @@ public class ButterflyCliRunner extends ButterflyCliOption {
         }
         run.setErrorMessage(errorMessage);
         run.setExitStatus(1);
-    }
-
-    private enum ExtensionTypeInitial {
-        TT, US, VC;
-
-        public static ExtensionTypeInitial getFromClass(Class<? extends TransformationTemplate> template) {
-            if(UpgradeStep.class.isAssignableFrom(template)) return US;
-
-            if(TransformationTemplate.class.isAssignableFrom(template)) return TT;
-
-            // TODO
-//            if(Validation.class.isAssignableFrom(template)) return VC;
-
-            throw new IllegalArgumentException("Class " + template.getName() + " is not recognized as an extension type");
-        }
     }
 
 }
