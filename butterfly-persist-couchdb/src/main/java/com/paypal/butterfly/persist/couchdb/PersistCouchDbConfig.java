@@ -32,7 +32,7 @@ public class PersistCouchDbConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(PersistCouchDbConfig.class);
 
-    private static final GsonBuilder gsonBuilder = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(File.class, new TypeAdapter<File>() {
+    private static final GsonBuilder gsonBuilder = new GsonBuilder().serializeNulls().setPrettyPrinting().registerTypeAdapter(File.class, new TypeAdapter<File>() {
         @Override
         public void write(JsonWriter jsonWriter, File file) throws IOException {
             String fileAbsolutePath = (file == null ? null : file.getAbsolutePath());

@@ -222,7 +222,7 @@ class TransformationResultImpl implements TransformationResult {
     @Override
     public String toJson() {
         if (gson == null) {
-            gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(File.class, new TypeAdapter<File>() {
+            gson = new GsonBuilder().serializeNulls().setPrettyPrinting().registerTypeAdapter(File.class, new TypeAdapter<File>() {
                 @Override
                 public void write(JsonWriter jsonWriter, File file) throws IOException {
                     String fileAbsolutePath = (file == null ? null : file.getAbsolutePath());
