@@ -128,7 +128,7 @@ public class ButterflyCliApp extends ButterflyCliOption {
     }
 
     private static void writeResultFile(ButterflyCliRun run) {
-        GsonBuilder gsonBuilder = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(File.class, new TypeAdapter<File>() {
+        GsonBuilder gsonBuilder = new GsonBuilder().serializeNulls().setPrettyPrinting().registerTypeAdapter(File.class, new TypeAdapter<File>() {
             @Override
             public void write(JsonWriter jsonWriter, File file) throws IOException {
                 String fileAbsolutePath = (file == null ? null : file.getAbsolutePath());
