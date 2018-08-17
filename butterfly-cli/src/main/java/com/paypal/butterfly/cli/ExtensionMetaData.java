@@ -1,6 +1,8 @@
 package com.paypal.butterfly.cli;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
@@ -17,7 +19,6 @@ public class ExtensionMetaData {
     private String description;
     private String version;
     private List<TemplateMetaData> templates = new ArrayList<>();
-    private NavigableSet<String> supportedUpgradeVersions = new TreeSet<>();
 
     private ExtensionMetaData() {
     }
@@ -31,16 +32,8 @@ public class ExtensionMetaData {
         int shortcut = 1;
         for(Object templateObj : extension.getTemplateClasses().toArray()) {
             Class<? extends TransformationTemplate> template = (Class<? extends TransformationTemplate>) templateObj;
-            TemplateMetaData templateMetaData = extensionMetaData.addTemplate(template, shortcut);
-            if (templateMetaData.getUpgradeToVersion() != null) {
-                extensionMetaData.supportedUpgradeVersions.add(templateMetaData.getUpgradeToVersion());
-            }
+            extensionMetaData.addTemplate(template, shortcut);
             shortcut++;
-        }
-        if (extensionMetaData.supportedUpgradeVersions.size() == 0) {
-            extensionMetaData.supportedUpgradeVersions = null;
-        } else {
-            extensionMetaData.supportedUpgradeVersions = Collections.unmodifiableNavigableSet(extensionMetaData.supportedUpgradeVersions);
         }
 
         return extensionMetaData;
@@ -75,7 +68,4 @@ public class ExtensionMetaData {
         return Collections.unmodifiableList(templates);
     }
 
-    public NavigableSet<String> getSupportedUpgradeVersions() {
-        return supportedUpgradeVersions;
-    }
 }
