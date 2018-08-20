@@ -8,4 +8,4 @@ before_install:
   - export SECRING_FILE="$PWD/secring.gpg"
 
 install:
-  - ./gradlew uploadArchives closeAndReleaseRepository --scan
+  - ./gradlew uploadArchives --scan

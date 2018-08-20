@@ -78,7 +78,7 @@ public class RunScript extends TransformationUtility<RunScript> {
      * @param key the attribute key name, to be used as placeholder in the script text
      * @param attributeName the name of the transformation context attribute name whose value
      *                      should be inserted in the script, replacing the key
-     * @return
+     * @return this utility instance
      */
     public RunScript addAttribute(String key, String attributeName) {
         checkForBlankString("key", key);

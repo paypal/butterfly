@@ -46,6 +46,8 @@ public abstract class AbstractToOperation<A extends AbstractToOperation> extends
      * @see CopyDirectory
      * @see MoveFile
      * @see MoveDirectory
+     *
+     * @param description  the operation description
      */
     protected AbstractToOperation(String description) {
         setDescription(description);
