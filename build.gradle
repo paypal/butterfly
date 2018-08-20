@@ -54,13 +54,15 @@ subprojects {
 //    }
 
     ext {
-        sonatypeStagingUsername = System.getenv('SONATYPE_USER')
-        sonatypeStagingPassword = System.getenv('SONATYPE_PASSWORD')
+        ossrhStagingProfileId = System.getenv('MAVEN_STAGING_PROFILE_ID')
+        ossrhUsername = System.getenv('SONATYPE_USER')
+        ossrhPassword = System.getenv('SONATYPE_PASSWORD')
     }
 
     nexusStaging {
-        username = sonatypeStagingUsername
-        password = sonatypeStagingPassword
+        stagingProfileId = ossrhStagingProfileId
+        username = ossrhUsername
+        password = ossrhPassword
     }
 
     jar {
@@ -105,9 +107,6 @@ subprojects {
 
     // Publishing non test modules
     if (!testModules.contains(name)) {
-        project.ext['ossrhUsername'] = "$System.env.SONATYPE_USER"
-        project.ext['ossrhPassword'] = "$System.env.SONATYPE_PASSWORD"
-
         uploadArchives {
             repositories {
                 mavenDeployer {
