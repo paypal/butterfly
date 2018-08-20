@@ -136,7 +136,13 @@ public abstract class Assert {
             if (exceptionMessage == null) {
                 throw new AssertionError(errorMessage);
             } else {
-                throw new AssertionError(errorMessage + " \n" + exceptionMessage);
+                String stackTrace;
+                try {
+                    stackTrace = "\n" + run.getTransformationResult().getAbortDetails().getExceptionStackTrace();
+                } catch (NullPointerException e) {
+                    stackTrace = "";
+                }
+                throw new AssertionError(errorMessage + " \n" + exceptionMessage + stackTrace);
             }
         }
 
@@ -272,7 +278,7 @@ public abstract class Assert {
 
     public static void assertErrors(TransformationResult transformationResult, int expectedNumberOfErrors) {
         long actualNumberOfErrors = transformationResult.getMetrics().stream()
-                .mapToInt(m -> m.getStatistics().getTUExecutionResultErrorCount() + m.getStatistics().getTOExecutionResultErrorCount()).sum();
+                .mapToInt(m -> m.getStatistics().getPerformResultErrorCount() + m.getStatistics().getTUExecutionResultErrorCount() + m.getStatistics().getTOExecutionResultErrorCount()).sum();
 
         if (actualNumberOfErrors != expectedNumberOfErrors) {
             throw new AssertionError("expected [" + expectedNumberOfErrors + "] but found [" + actualNumberOfErrors + "]");

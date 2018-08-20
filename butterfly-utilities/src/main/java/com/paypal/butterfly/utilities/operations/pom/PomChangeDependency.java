@@ -29,7 +29,7 @@ public class PomChangeDependency extends AbstractArtifactPomOperation<PomChangeD
     private String version;
     private String scope;
     private String type;
-    private boolean optional;
+    private Boolean optional;
 
     // Removable properties, letting them to have default values, or be managed when applicable.
     private boolean removeVersion = false;
@@ -133,7 +133,7 @@ public class PomChangeDependency extends AbstractArtifactPomOperation<PomChangeD
         return type;
     }
 
-    public boolean isOptional() {
+    public Boolean isOptional() {
         return optional;
     }
 
@@ -169,7 +169,7 @@ public class PomChangeDependency extends AbstractArtifactPomOperation<PomChangeD
             if (removeVersion) dependency.setVersion(null); else if (version != null) dependency.setVersion(version);
             if (removeScope) dependency.setScope(null); else if (scope != null) dependency.setScope(scope);
             if (removeType) dependency.setType(null); else if (type != null) dependency.setType(type);
-            if (removeOptional) dependency.setOptional(null); else dependency.setOptional(optional);
+            if (removeOptional) dependency.setOptional(null); else if (optional != null) dependency.setOptional(optional);
 
             model.addDependency(dependency);
 
