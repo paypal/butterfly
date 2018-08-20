@@ -1,9 +1,11 @@
 
 plugins {
     id 'com.gradle.build-scan' version '1.14'
+    id "io.codearte.nexus-staging" version "0.11.0"
 }
-
 description = "Butterfly - Application transformation tool"
+
+apply plugin: 'io.codearte.nexus-staging'
 
 allprojects {
     apply plugin: 'maven'
@@ -30,6 +32,7 @@ Set testModules = [
 ]
 
 subprojects {
+
     apply plugin: 'java'
 
     def javaVersion = JavaVersion.VERSION_1_8
@@ -49,6 +52,16 @@ subprojects {
 //    compileJava {
 //        options.compilerArgs += ["-Xlint:deprecation", "-Xlint:unchecked"]
 //    }
+
+    ext {
+        sonatypeStagingUsername = System.getenv('SONATYPE_USER')
+        sonatypeStagingPassword = System.getenv('SONATYPE_PASSWORD')
+    }
+
+    nexusStaging {
+        username = sonatypeStagingUsername
+        password = sonatypeStagingPassword
+    }
 
     jar {
         manifest {
