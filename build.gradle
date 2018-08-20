@@ -1,11 +1,8 @@
 
 plugins {
     id 'com.gradle.build-scan' version '1.14'
-    id "io.codearte.nexus-staging" version "0.11.0"
 }
 description = "Butterfly - Application transformation tool"
-
-apply plugin: 'io.codearte.nexus-staging'
 
 allprojects {
     apply plugin: 'maven'
@@ -54,15 +51,8 @@ subprojects {
 //    }
 
     ext {
-        ossrhStagingProfileId = System.getenv('MAVEN_STAGING_PROFILE_ID')
         ossrhUsername = System.getenv('SONATYPE_USER')
         ossrhPassword = System.getenv('SONATYPE_PASSWORD')
-    }
-
-    nexusStaging {
-        stagingProfileId = ossrhStagingProfileId
-        username = ossrhUsername
-        password = ossrhPassword
     }
 
     jar {
