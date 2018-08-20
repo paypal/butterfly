@@ -37,16 +37,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <optional>false</optional>
-                <version>4.12</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <optional>true</optional>
-                <version>2.6</version>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>6.14.6</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
