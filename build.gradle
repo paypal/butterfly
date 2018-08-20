@@ -69,7 +69,7 @@ subprojects {
                 archives sourcesJar
             }
         }
-    } else {
+    } else if (System.getenv("SECRING_FILE") != null) {
         if (!name.equals("butterfly-cli-package")) {
             task javadocJar(type: Jar) {
                 classifier = 'javadoc'
@@ -83,7 +83,7 @@ subprojects {
 
         project.ext['signing.keyId'] = "$System.env.GPG_KEYNAME"
         project.ext['signing.password'] = "$System.env.GPG_PASSPHRASE"
-        project.ext['signing.secretKeyRingFile'] = file("secring.gpg").absolutePath
+        project.ext['signing.secretKeyRingFile'] = "$System.env.SECRING_FILE"
 
         signing {
             sign configurations.archives
@@ -98,7 +98,7 @@ subprojects {
         uploadArchives {
             repositories {
                 mavenDeployer {
-                    if (!version.endsWith("SNAPSHOT")) {
+                    if (!version.endsWith("SNAPSHOT") && System.getenv("SECRING_FILE") != null) {
                         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
                     }
 

@@ -1,2 +1,2 @@
 install:
-  - ./gradlew uploadArchives
+  - ./gradlew uploadArchives --scan
