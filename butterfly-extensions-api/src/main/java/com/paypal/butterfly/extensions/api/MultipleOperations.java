@@ -244,7 +244,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
                 multipleFiles = false;
             } else {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Multiple operation %s has NO file to perform against, it will result in ZERO transformation operations", getName());
+                    logger.debug("Multiple operation {} has NO file to perform against, it will result in ZERO transformation operations", getName());
                 }
                 operations = new ArrayList<TransformationUtility>();
                 String message = String.format("Multiple operation %s resulted in 0 operations based on %s", getName(), templateOperation.getSimpleClassName());
