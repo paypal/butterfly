@@ -1,15 +1,17 @@
 package com.paypal.butterfly.utilities.file;
 
-import com.paypal.butterfly.extensions.api.TUExecutionResult;
-import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.TransformationUtility;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.*;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
+import com.paypal.butterfly.extensions.api.TransformationContext;
+import com.paypal.butterfly.extensions.api.TransformationUtility;
 
 /**
  * Finds files based on a regular expression
@@ -31,8 +33,10 @@ import java.util.Collection;
  * of the transformed application, which is equivalent to setting
  * {@link #relative(String)} to {@code "."}
  * <br>
- * If no files have been found, an empty list is returned and a
- * warning is stated in the result
+ * If no files are found, an empty list is returned and the
+ * result type is {@link TUExecutionResult.Type#VALUE}, unless
+ * {@link #warnIfNoFilesFound()} is called, then an empty list is still returned,
+ * but the result type will be {@link TUExecutionResult.Type#WARNING}
  *
  * @author facarvalho
  */
@@ -45,6 +49,8 @@ public class FindFiles extends TransformationUtility<FindFiles> {
     private boolean recursive;
     private boolean includeFiles = true;
     private boolean includeFolders = false;
+    private boolean warnIfNoFilesFound = false;
+    private boolean errorIfNoFilesFound = false;
 
     public FindFiles() {
     }
@@ -218,6 +224,34 @@ public class FindFiles extends TransformationUtility<FindFiles> {
     }
 
     /**
+     * By default, if no files are found, an empty list is returned
+     * and the result type is {@link TUExecutionResult.Type#VALUE}.
+     * However, if this method is called, then an empty list is still returned,
+     * but the result type will be {@link TUExecutionResult.Type#WARNING}
+     *
+     * @return this transformation utility instance
+     */
+    public FindFiles warnIfNoFilesFound() {
+        warnIfNoFilesFound = true;
+        errorIfNoFilesFound = false;
+        return this;
+    }
+
+    /**
+     * By default, if no files are found, an empty list is returned
+     * and the result type is {@link TUExecutionResult.Type#VALUE}.
+     * However, if this method is called, then an empty list is still returned,
+     * but the result type will be {@link TUExecutionResult.Type#WARNING}
+     *
+     * @return this transformation utility instance
+     */
+    public FindFiles errorIfNoFilesFound() {
+        warnIfNoFilesFound = false;
+        errorIfNoFilesFound = true;
+        return this;
+    }
+
+    /**
      * Returns the file name regular expression
      *
      * @return the file name regular expression
@@ -318,12 +352,17 @@ public class FindFiles extends TransformationUtility<FindFiles> {
             files.addAll(folders);
         }
 
-        TUExecutionResult result = null;
+        TUExecutionResult result;
 
-        if(files.size() == 0) {
-            result = TUExecutionResult.warning(this, "No files have been found", new ArrayList<File>(files));
+        if(files.isEmpty() && warnIfNoFilesFound) {
+            result = TUExecutionResult.warning(this, "No files have been found", new ArrayList<>(files));
+        } else if(files.isEmpty() && errorIfNoFilesFound) {
+            result = TUExecutionResult.error(this, new TransformationUtilityException("No files have been found"), new ArrayList<>(files));
         } else {
-            result = TUExecutionResult.value(this, new ArrayList<File>(files));
+            result = TUExecutionResult.value(this, new ArrayList<>(files));
+            if (files.isEmpty()) {
+                result.setDetails("No files have been found");
+            }
         }
 
         return result;
