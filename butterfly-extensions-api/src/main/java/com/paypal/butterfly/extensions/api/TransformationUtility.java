@@ -674,7 +674,7 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
             // This if and the following below, even though similar, address different execution paths,
             // so they must both be here, do not remove none of them thinking that this is redundant code
             if (result == null && ex == null) {
-                String exceptionMessage = String.format("Utility %s has failed and has not produced any exception detailing the failure. This utility code might be defective, or you might be using a non supported JRE (such as Open JDK 1.7).", getName());
+                String exceptionMessage = String.format("Utility %s has failed but has not produced any exception, check if its code is defective.", getName());
                 ex = new TransformationUtilityException(exceptionMessage);
                 logger.error("", ex);
             }
@@ -682,7 +682,7 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
         }
 
         if (result == null) {
-            String exceptionMessage = String.format("Utility %s has failed and has not produced any exception detailing the failure. This utility code might be defective, since they must never return null.", getName());
+            String exceptionMessage = String.format("Utility %s has failed but has not produced any exception, check if its code is defective.", getName());
             ex = new TransformationUtilityException(exceptionMessage);
             result = PerformResult.error(this, ex);
         }

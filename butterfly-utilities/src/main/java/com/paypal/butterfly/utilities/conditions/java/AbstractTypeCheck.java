@@ -6,9 +6,11 @@ import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionExc
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Evaluates the specified
- * compilation unit based on an abstract check
- * against a specified type.
+ * This abstract class is helpful in case the compilation unit has multiple types
+ * and the condition has to be evaluated against every type.
+ * That would be true for example when checking if types extend a particular class.
+ * That is not the case though if checking for example if a compilation unit has
+ * a particular import statement.
  *
  * @author facarvalho
  */
