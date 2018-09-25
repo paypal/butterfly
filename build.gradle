@@ -155,7 +155,7 @@ subprojects {
             rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.extensions.api*'] }
             rule { element = 'PACKAGE'; limit { minimum = 1.00 }; includes = ['com.paypal.butterfly.extensions.springboot*'] }
             rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.persist*'] }
-            rule { element = 'PACKAGE'; limit { minimum = 0.43 }; includes = ['com.paypal.butterfly.test*'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.39 }; includes = ['com.paypal.butterfly.test*'] }
             rule { element = 'PACKAGE'; limit { minimum = 0.82 }; includes = ['com.paypal.butterfly.utilities*'] }
         }
     }

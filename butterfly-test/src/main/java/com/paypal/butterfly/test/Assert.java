@@ -70,7 +70,7 @@ public abstract class Assert {
      * @return a {@link TransformationResult} object, which can be used to assert in details this transformation generated the expected result and metrics
      */
     public static TransformationResult assertTransformation(File baselineApplication, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate) {
-        return assertTransformation(baselineApplication, originalApplication, transformationTemplate, null, null, null);
+        return assertTransformation(baselineApplication, originalApplication, transformationTemplate, null, null, null, false);
     }
 
     /**
@@ -87,9 +87,10 @@ public abstract class Assert {
      * @param debug if true, runs Butterfly in debug mode
      * @param version the version the application should be upgraded to. This option only makes sense if the transformation template to be used is also an upgrade template.
      *                If not, it is ignored. If it is, but this option is not specified, then the application will be upgraded all the way to the latest version possible
+     * @param xmlSemanticComparison if true, compare XML files semantically, ignoring indentation, comments and formatting differences, as opposed to a binary comparison. Notice though that, if the XML file is not well formed, a binary comparison will be done regardless of {@code xmlSemanticComparison}.
      * @return a {@link TransformationResult} object, which can be used to assert in details this transformation generated the expected result and metrics
      */
-    public static TransformationResult assertTransformation(File baselineApplication, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate, Boolean verbose, Boolean debug, String version) {
+    public static TransformationResult assertTransformation(File baselineApplication, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate, Boolean verbose, Boolean debug, String version, boolean xmlSemanticComparison) {
         if (baselineApplication == null || !baselineApplication.exists() || !baselineApplication.isDirectory()) {
             throw new IllegalArgumentException("Baseline application file is null, does not exist or is not a directory: " + (baselineApplication == null ? "null" : baselineApplication.getAbsolutePath()));
         }
@@ -147,7 +148,7 @@ public abstract class Assert {
         }
 
         File sampleAppTransformed = run.getTransformationResult().getTransformedApplicationDir();
-        assertTransformation(baselineApplication, sampleAppTransformed);
+        assertTransformation(baselineApplication, sampleAppTransformed, xmlSemanticComparison);
 
         return run.getTransformationResult();
     }
@@ -160,6 +161,18 @@ public abstract class Assert {
      * @param transformedApplication a folder containing the automatically transformed application, to be compared against the baseline application
      */
     public static void assertTransformation(File baselineApplication, File transformedApplication) {
+        assertTransformation(baselineApplication, transformedApplication, false);
+    }
+
+    /**
+     * Compares the generated transformed application, whose code is supposed to be in {@code transformedApplication},
+     * with a baseline application {@code baselineApplication}, failing the assertion if their content differ.
+     *
+     * @param baselineApplication a folder containing a baseline manually transformed application, to be compared against the generated transformed application
+     * @param transformedApplication a folder containing the automatically transformed application, to be compared against the baseline application
+     * @param xmlSemanticComparison if true, compare XML files semantically, ignoring indentation, comments and formatting differences, as opposed to a binary comparison. Notice though that, if the XML file is not well formed, a binary comparison will be done regardless of {@code xmlSemanticComparison}.
+     */
+    public static void assertTransformation(File baselineApplication, File transformedApplication, boolean xmlSemanticComparison) {
         if (baselineApplication == null || !baselineApplication.exists() || !baselineApplication.isDirectory()) throw new IllegalArgumentException("Specified expected file is null, does not exist or is not a directory");
         if (transformedApplication == null || !transformedApplication.exists() || !transformedApplication.isDirectory()) throw new IllegalArgumentException("Specified actual file is null, does not exist, or is not a directory");
 
@@ -169,8 +182,8 @@ public abstract class Assert {
 
         assertEqualFolderStructure(baselineApplication, baselineApplication, transformedApplication);
         try {
-            assertEqualFolderContent(baselineApplication, baselineApplication, transformedApplication);
-        } catch (IOException | ParserConfigurationException | SAXException e) {
+            assertEqualFolderContent(baselineApplication, baselineApplication, transformedApplication, xmlSemanticComparison);
+        } catch (IOException e) {
             throw new AssertionError(e);
         }
     }
@@ -364,14 +377,14 @@ public abstract class Assert {
      * This method assumes the expected and actual folders are structurally identical, meaning, they have same number
      * of files and folders and they are named the same
      */
-    private static void assertEqualFolderContent(File baselineApplication, File expected, File actual) throws IOException, ParserConfigurationException, SAXException {
+    private static void assertEqualFolderContent(File baselineApplication, File expected, File actual, boolean xmlSemanticComparison) throws IOException {
         for (File expectedFile : expected.listFiles()) {
             File actualFile = new File(actual, expectedFile.getName());
             if (expectedFile.isDirectory()) {
-                assertEqualFolderContent(baselineApplication, expectedFile, actualFile);
+                assertEqualFolderContent(baselineApplication, expectedFile, actualFile, xmlSemanticComparison);
             } else {
                 boolean equal;
-                if (expectedFile.getName().endsWith(".xml")) {
+                if (xmlSemanticComparison && expectedFile.getName().endsWith(".xml")) {
                     equal = xmlEqual(expectedFile, actualFile);
                 } else {
                     equal = Files.equal(expectedFile, actualFile);
@@ -408,7 +421,7 @@ public abstract class Assert {
             XMLUnit.setIgnoreWhitespace(true);
 
             return XMLUnit.compareXML(file1Xml, file2Xml).similar();
-        } catch (SAXException | IOException e) {
+        } catch (Exception e) {
             if (file1parsed ^ file2parsed) {
                 // This means only one file couldn't be parsed, which means they are not equal
                 return false;

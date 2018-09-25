@@ -24,7 +24,7 @@ public class JavaEEToSpringBootIT {
         File sampleApp = new File("../../tests/sample-apps/echo");
         File sampleAppTransformedBaseline = new File("../../tests/transformed-baseline/echo-JavaEEToSpringBoot");
 
-        TransformationResult transformationResult = assertTransformation(sampleAppTransformedBaseline, sampleApp, JavaEEToSpringBoot.class);
+        TransformationResult transformationResult = assertTransformation(sampleAppTransformedBaseline, sampleApp, JavaEEToSpringBoot.class, false, false, null, true);
 
         assertTrue(transformationResult.isSuccessful());
 // FIXME

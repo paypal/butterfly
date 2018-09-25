@@ -18,7 +18,7 @@ public class SpringBootUpgradeIT {
         File sampleApp = new File("../../tests/transformed-baseline/echo-JavaEEToSpringBoot");
         File sampleAppTransformedBaseline = new File("../../tests/transformed-baseline/echo-SpringBoot-1.5.7");
 
-        assertTransformation(sampleAppTransformedBaseline, sampleApp, SpringBootUpgrade_1_5_6_to_1_5_7.class);
+        assertTransformation(sampleAppTransformedBaseline, sampleApp, SpringBootUpgrade_1_5_6_to_1_5_7.class, false, false, null, true);
     }
 
 }

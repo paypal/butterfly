@@ -83,7 +83,7 @@ public class ButterflyIT {
 
     @Test
     public void sampleAppRunTest() throws IOException {
-        assertTransformation(sampleAppTransformedBaseline, sampleApp, JavaEEToSpringBoot.class);
+        assertTransformation(sampleAppTransformedBaseline, sampleApp, JavaEEToSpringBoot.class, false, false, null, true);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class ButterflyIT {
         ButterflyCliRun run = ButterflyCliApp.run(sampleAppCopy.getAbsolutePath(), "-f", "-t", JavaEEToSpringBoot.class.getName());
 
         assertEquals(run.getExitStatus(), 0);
-        assertTransformation(sampleAppTransformedBaseline, sampleAppCopy);
+        assertTransformation(sampleAppTransformedBaseline, sampleAppCopy, true);
     }
 
 //    @Test(dependsOnMethods = "sampleAppRunTest")
