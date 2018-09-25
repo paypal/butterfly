@@ -105,4 +105,18 @@ public class AssertTest {
         assertAbort(TEST_RESOURCES, JavaEEToSpringBoot.class, true, true, null, "This application does not have a root pom.xml file");
     }
 
+    @Test
+    public void semanticXmlComparisonTest() {
+        File expected = new File(TEST_RESOURCES, "/app1");
+        File actual = new File(TEST_RESOURCES, "/app11");
+        assertTransformation(expected, actual, true);
+    }
+
+    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "File content is not equal: /dir1/pom.xml")
+    public void binaryXmlComparisonTest() {
+        File expected = new File(TEST_RESOURCES, "/app1");
+        File actual = new File(TEST_RESOURCES, "/app11");
+        assertTransformation(expected, actual, false);
+    }
+
 }
