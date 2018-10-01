@@ -32,6 +32,7 @@ abstract class AbstractPomCopyDependencies<T extends AbstractPomCopyDependencies
 
     private Set<String> filter = new HashSet<>();
     private Set<String> filterAttributes = new HashSet<>();
+    private Set<String> filterByGroupId = new HashSet<>();
     private Map<String, String> replacements = new HashMap<>();
 
     protected AbstractPomCopyDependencies(String description) {
@@ -66,6 +67,12 @@ abstract class AbstractPomCopyDependencies<T extends AbstractPomCopyDependencies
     public T filterAttribute(String attributeName) {
         checkForBlankString("Attribute name", attributeName);
         filterAttributes.add(attributeName);
+        return (T) this;
+    }
+
+    public T filterByGroupId(String groupId) {
+        checkForBlankString("Group id", groupId);
+        filterByGroupId.add(groupId);
         return (T) this;
     }
 
@@ -120,6 +127,7 @@ abstract class AbstractPomCopyDependencies<T extends AbstractPomCopyDependencies
                 List<Dependency> modifiedDependenciesList = dependencies.stream()
                         .filter(d -> !filter.contains(getDependencyString(d)))
                         .filter(d -> !modelToDependencies.contains(d))
+                        .filter(d -> !filterByGroupId.contains(d.getGroupId()))
                         .map(d -> replacements.containsKey(getDependencyString(d)) ? getDependencyModel(replacements.get(getDependencyString(d))) : d)
                         .collect(Collectors.toList());
 

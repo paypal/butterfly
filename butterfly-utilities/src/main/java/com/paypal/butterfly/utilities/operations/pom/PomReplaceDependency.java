@@ -9,6 +9,8 @@ import org.apache.maven.model.Model;
 
 /**
  * Replaces a dependency by another one in a POM file.
+ * If no new scope is defined, the scope set in the replacement dependency
+ * will be the same used in the dependency to be replaced.
  *
  * @author facarvalho
  */
@@ -142,20 +144,22 @@ public class PomReplaceDependency extends AbstractArtifactPomOperation<PomReplac
         TOExecutionResult result = null;
         String details;
 
-        Dependency dependency = getDependency(model, groupId, artifactId);
-        if (dependency != null) {
-            model.removeDependency(dependency);
+        Dependency oldDependency = getDependency(model, groupId, artifactId);
+        if (oldDependency != null) {
+            model.removeDependency(oldDependency);
 
-            dependency = new Dependency();
-            dependency.setGroupId(newGroupId);
-            dependency.setArtifactId(newArtifactId);
+            Dependency newDependency = new Dependency();
+            newDependency.setGroupId(newGroupId);
+            newDependency.setArtifactId(newArtifactId);
             if (newVersion != null) {
-                dependency.setVersion(newVersion);
+                newDependency.setVersion(newVersion);
             }
             if (newScope != null) {
-                dependency.setScope(newScope);
+                newDependency.setScope(newScope);
+            } else {
+                newDependency.setScope(oldDependency.getScope());
             }
-            model.addDependency(dependency);
+            model.addDependency(newDependency);
 
             details = String.format("Dependency %s:%s has been replaced by %s:%s in POM file %s", groupId, artifactId, newGroupId, newArtifactId, relativePomFile);
             result = TOExecutionResult.success(this, details);
