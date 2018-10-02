@@ -1,4 +1,4 @@
-package com.paypal.butterfly.utilities.operations.xml;
+package com.paypal.butterfly.utilities.xml;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,46 +16,59 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import com.paypal.butterfly.extensions.api.SingleCondition;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
+import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 /**
  * Retrieves data from an XML file by using XPath expressions.
- * If no element, nor attribute, is found,
- * {@link com.paypal.butterfly.extensions.api.TUExecutionResult.Type#NULL} is returned.
- * If the xpath expression won't compile, an error is returned.
+ * If no element is found, an empty string is returned 
+ * if the return data type is {@link XPathConstants.STRING}; 
+ * if the return data type is {@link XPathConstants.NODESET},
+ * an empty node list is returned.
+ * If the XPath expression won't compile, an error is returned.
  * <br>
  * If the file is not a well formed XML file, an error is returned.
  *
  * @author spetratos
  */
-public class XPathRetrieve extends SingleCondition<XPathRetrieve> {
+public class XmlXPathRetrieve extends TransformationUtility<XmlXPathRetrieve> {
     private String xpathExpressionString;
     private XPathExpression xpathExpression;
     private QName returnDataType;
 
-    private static final String DESCRIPTION = "Retriveve the XML XPath query %s if it exists in XML file %s";
+    private static final String DESCRIPTION = "Retrieve the XML data based on the given XPath query %s and XML file %s";
 
     /**
-     * Checks if a particular xpath exists in an XML file and returns it in string format
+     * Retrieves data from an XML file by using XPath expressions.
+     * If no element is found, an empty string is returned 
+     * if the return data type is {@link XPathConstants.STRING}; 
+     * if the return data type is {@link XPathConstants.NODESET},
+     * an empty node list is returned.
+     * If the XPath expression won't compile, an error is returned.
+     */
+    public XmlXPathRetrieve() {
+    }
+
+    /**
+     * Checks if a particular XPath exists in an XML file and returns it in string format
      * <br>
-     * If the xpath expression won't compile, an error is returned.
+     * If the XPath expression won't compile, an error is returned.
      * <br>
      * If the file is not a well formed XML file, an error is returned.
      *
      * @param xpathExpressionString a string that compiles into a {@link javax.xml.xpath.XPathExpression}
      */
-    public XPathRetrieve(String xpathExpressionString) {
+    public XmlXPathRetrieve(String xpathExpressionString) {
         setXPathExpression(xpathExpressionString, XPathConstants.STRING);
     }
 
     /**
-     * Checks if a particular xpath exists in an XML file and returns it in the selected type
+     * Checks if a particular XPath exists in an XML file and returns it in the selected type
      * <br>
-     * If the xpath expression won't compile, an error is returned.
+     * If the XPath expression won't compile, an error is returned.
      * <br>
      * If the file is not a well formed XML file, an error is returned.
      *
@@ -63,7 +76,7 @@ public class XPathRetrieve extends SingleCondition<XPathRetrieve> {
      * 
      * @param returnDataType the XPath return type {@link XPathConstants}
      */
-    public XPathRetrieve(String xpathExpressionString, QName returnDataType) {
+    public XmlXPathRetrieve(String xpathExpressionString, QName returnDataType) {
         setXPathExpression(xpathExpressionString, returnDataType);
     }
 
@@ -76,7 +89,21 @@ public class XPathRetrieve extends SingleCondition<XPathRetrieve> {
      *
      * @return this utility instance
      */
-    public XPathRetrieve setXPathExpression(String xpathExpressionString, QName returnDataType) {
+    public XmlXPathRetrieve setXPathExpression(String xpathExpressionString) {
+        setXPathExpression(xpathExpressionString, returnDataType);
+        return this;
+    }
+
+    /**
+     * The {@link XPathExpression} to be used to retrieve the data from XML file.
+     * 
+     * @param xpathExpressionString a string that compiles into a {@link javax.xml.xpath.XPathExpression}
+     * 
+     * @param returnDataType The desired return type of the data retrieved
+     *
+     * @return this utility instance
+     */
+    public XmlXPathRetrieve setXPathExpression(String xpathExpressionString, QName returnDataType) {
         checkForBlankString("XPath Expression", xpathExpressionString);
         this.xpathExpression = checkXPathCompile(xpathExpressionString);
         if (returnDataType == null || !isReturnTypeValid(returnDataType)) {
