@@ -37,7 +37,7 @@ public class XPathRetrieve extends SingleCondition<XPathRetrieve> {
     private XPathExpression xpathExpression;
     private QName returnDataType;
 
-    private static final String DESCRIPTION = "Retriveve the XML XPath query %s if it exists in XML file %s";
+    private static final String DESCRIPTION = "Retrieve the XML data based on the given XPath query %s and XML file %s";
 
     /**
      * Checks if a particular xpath exists in an XML file and returns it in string format
