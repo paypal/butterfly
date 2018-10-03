@@ -24,8 +24,10 @@ import com.paypal.butterfly.extensions.api.exception.TransformationUtilityExcept
 
 /**
  * Retrieves data from an XML file by using XPath expressions.
- * If no element, nor attribute, is found,
- * {@link com.paypal.butterfly.extensions.api.TUExecutionResult.Type#NULL} is returned.
+ * If no element is found, an empty string is returned 
+ * if the return data type is {@link XPathConstants.STRING}; 
+ * if the return data type is {@link XPathConstants.NODESET},
+ * an empty node list is returned.
  * If the xpath expression won't compile, an error is returned.
  * <br>
  * If the file is not a well formed XML file, an error is returned.
