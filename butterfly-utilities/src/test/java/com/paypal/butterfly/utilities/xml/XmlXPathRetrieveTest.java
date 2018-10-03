@@ -108,6 +108,7 @@ public class XmlXPathRetrieveTest extends TransformationUtilityTestHelper {
         TUExecutionResult executionResult = xmlXPathElement.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TUExecutionResult.Type.VALUE);
         assertNotNull(executionResult.getValue());
+        assertEquals(executionResult.getValue(), "");
         assertEquals(xmlXPathElement.getDescription(), "Retrieve the XML data based on the given XPath query " + XPATH_EXPRESSION +  " and XML file foo.xml");
     }
 
