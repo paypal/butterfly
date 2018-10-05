@@ -232,7 +232,7 @@ class TransformationEngine {
         boolean result = false;
 
         for (File file : files) {
-            condition = utility.newConditionInstance(transformedAppFolder, file);
+            condition = utility.newConditionInstance(file);
 
             PerformResult innerPerformResult = condition.perform(transformedAppFolder, transformationContext);
             processUtilityExecutionResult(condition, innerPerformResult, transformationContext);
@@ -274,7 +274,7 @@ class TransformationEngine {
         int warnings = 0;
 
         for (File file : files) {
-            condition = utility.newConditionInstance(transformedAppFolder, file);
+            condition = utility.newConditionInstance(file);
 
             PerformResult innerPerformResult = condition.perform(transformedAppFolder, transformationContext);
 

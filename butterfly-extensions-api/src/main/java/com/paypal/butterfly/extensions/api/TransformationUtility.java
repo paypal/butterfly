@@ -517,6 +517,23 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
     }
 
     /**
+     * This is a package private way to let Butterfly internally set the
+     * absolute file this TU is supposed to execute against.
+     * It is used for example by {@link MultipleConditions#newConditionInstance(File)}
+     *
+     * @param file the absolute file this TU is supposed to execute against
+     * @return this transformation utility instance
+     */
+    T absolute(File file) {
+        if (file == null) {
+            String exceptionMessage = String.format("Absolute file for %s is null", name);
+            throw new TransformationUtilityException(exceptionMessage);
+        }
+        absoluteFile = file;
+        return (T) this;
+    }
+
+    /**
      * There are two ways to specify the file, or folder, the transformation
      * utility is suppose to perform against. The default and most commons one is
      * by setting the relative path to it, which is done usually via the constructor
