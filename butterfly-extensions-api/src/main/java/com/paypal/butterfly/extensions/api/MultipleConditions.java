@@ -206,13 +206,12 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
      * object, but setting the file it should perform against based
      * on the input parameters
      *
-     * @param transformedAppFolder the transformed application folder
      * @param file the actual file to be performed against
      * @return the new utility condition created based on this instance
      */
-    public UtilityCondition newConditionInstance(File transformedAppFolder, File file) {
+    public UtilityCondition newConditionInstance(File file) {
         UtilityCondition condition = (UtilityCondition) conditionTemplate.copy();
-        condition.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
+        condition.absolute(file);
         condition.setSaveResult(false);
 
         conditionInstanceCounter++;

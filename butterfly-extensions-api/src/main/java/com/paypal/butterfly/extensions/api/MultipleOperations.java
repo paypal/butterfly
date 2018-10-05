@@ -176,7 +176,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
      */
     public MultipleOperations setOperationTemplate(TransformationOperation templateOperation) {
         templateOperation.relative(null);
-        templateOperation.absolute(null);
+        templateOperation.absolute((String) null);
         this.templateOperation = templateOperation;
         return this;
     }

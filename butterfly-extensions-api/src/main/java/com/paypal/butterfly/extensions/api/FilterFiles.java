@@ -145,13 +145,12 @@ public class FilterFiles extends TransformationUtility<FilterFiles> {
      * object, but setting the file it should perform against based
      * on the input parameters
      *
-     * @param transformedAppFolder the transformed application folder
      * @param file the actual file to be performed against
      * @return this transformation utility instance
      */
-    public SingleCondition newConditionInstance(File transformedAppFolder, File file) {
+    public SingleCondition newConditionInstance(File file) {
         SingleCondition condition = (SingleCondition) conditionTemplate.copy();
-        condition.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
+        condition.absolute(file);
         condition.setSaveResult(false);
 
         conditionInstanceCounter++;
