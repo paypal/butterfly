@@ -36,8 +36,8 @@ public class FileExists extends SingleCondition<FileExists> {
         boolean exists = false;
 
         try {
-            File pomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
-            exists = pomFile.exists();
+            File file = getAbsoluteFile(transformedAppFolder, transformationContext);
+            exists = file.exists();
         } catch (TransformationUtilityException e) {
             return TUExecutionResult.warning(this, e, exists);
         }

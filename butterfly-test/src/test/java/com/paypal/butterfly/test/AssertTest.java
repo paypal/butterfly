@@ -2,8 +2,11 @@ package com.paypal.butterfly.test;
 
 import static com.paypal.butterfly.test.Assert.assertAbort;
 import static com.paypal.butterfly.test.Assert.assertTransformation;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.io.File;
+import java.util.Iterator;
 
 import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;
 import org.testng.annotations.BeforeClass;
@@ -12,6 +15,9 @@ import org.testng.annotations.Test;
 public class AssertTest {
     
     private static final File TEST_RESOURCES = new File("test-resources");
+
+    // Error message header
+    private static final String EMH = "Baseline and transformed applications don't match, as detailed below:\n\n";
 
     @BeforeClass
     public void beforeClass() {
@@ -30,70 +36,70 @@ public class AssertTest {
         assertTransformation(expected, actual);
     }
 
-    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "File content is not equal: /file1.txt")
+    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = EMH + "Different file content:\n\t/file1.txt\n")
     public void rootDifferentFileContentTest() {
         File expected = new File(TEST_RESOURCES, "/app1");
         File actual = new File(TEST_RESOURCES, "/app8");
         assertTransformation(expected, actual);
     }
 
-    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "File missing: /file1.txt")
+    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = EMH + "Missing in transformed application:\n\t/file1.txt\n")
     public void rootMissingFileTest() {
         File expected = new File(TEST_RESOURCES, "/app1");
         File actual = new File(TEST_RESOURCES, "/app10");
         assertTransformation(expected, actual);
     }
 
-    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "Unexpected file found: /extra_file.txt")
+    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = EMH + "Unexpectedly found in transformed application:\n\t/extra_file.txt\n")
     public void rootExtraFileTest() {
         File expected = new File(TEST_RESOURCES, "/app1");
         File actual = new File(TEST_RESOURCES, "/app9");
         assertTransformation(expected, actual);
     }
 
-    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "Folder missing: /dir3")
+    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = EMH + "Missing in transformed application:\n\t/dir3 <dir>\n")
     public void rootMissingFolderTest() {
         File expected = new File(TEST_RESOURCES, "/app1");
         File actual = new File(TEST_RESOURCES, "/app7");
         assertTransformation(expected, actual);
     }
 
-    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "Unexpected folder found: /dir3")
+    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = EMH + "Unexpectedly found in transformed application:\n\t/dir3 <dir>\n")
     public void rootExtraFolderTest() {
         File expected = new File(TEST_RESOURCES, "/app7");
         File actual = new File(TEST_RESOURCES, "/app1");
         assertTransformation(expected, actual);
     }
 
-    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "File content is not equal: /dir1/dir2/file2.txt")
+    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = EMH + "Different file content:\n\t/dir1/dir2/file2.txt\n")
     public void nonRootDifferentFileContentTest() {
         File expected = new File(TEST_RESOURCES, "/app1");
         File actual = new File(TEST_RESOURCES, "/app5");
         assertTransformation(expected, actual);
     }
 
-    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "File missing: /dir3/file3.txt")
+    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = EMH + "Missing in transformed application:\n\t/dir3/file3.txt\n")
     public void nonRootMissingFileTest() {
         File expected = new File(TEST_RESOURCES, "/app1");
         File actual = new File(TEST_RESOURCES, "/app3");
         assertTransformation(expected, actual);
     }
 
-    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "Unexpected file found: /dir3/file3.txt")
+    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = EMH + "Unexpectedly found in transformed application:\n\t/dir3/file3.txt\n")
     public void nonRootExtraFileTest() {
         File expected = new File(TEST_RESOURCES, "/app3");
         File actual = new File(TEST_RESOURCES, "/app1");
         assertTransformation(expected, actual);
     }
 
-    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "Folder missing: /dir1/dir2")
+    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = EMH + "Missing in transformed application:\n\t/dir1/dir2 <dir>\n")
     public void nonRootMissingFolderTest() {
         File expected = new File(TEST_RESOURCES, "/app1");
         File actual = new File(TEST_RESOURCES, "/app6");
         assertTransformation(expected, actual);
     }
 
-    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "Unexpected folder found: /dir1/dir2")
+    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = EMH + "Unexpectedly found in transformed application:\n\t/dir1/dir2 <dir>\n")
     public void nonRootExtraFolderTest() {
         File expected = new File(TEST_RESOURCES, "/app6");
         File actual = new File(TEST_RESOURCES, "/app1");
@@ -112,11 +118,45 @@ public class AssertTest {
         assertTransformation(expected, actual, true);
     }
 
-    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "File content is not equal: /dir1/pom.xml")
+    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = EMH + "Different file content:\n\t/dir1/pom.xml\n")
     public void binaryXmlComparisonTest() {
         File expected = new File(TEST_RESOURCES, "/app1");
         File actual = new File(TEST_RESOURCES, "/app11");
         assertTransformation(expected, actual, false);
+    }
+
+    @Test
+    public void multipleTest() {
+        final String EXPECTED_EXCEPTION_MESSAGE = EMH +
+                "Missing in transformed application:\n" +
+                    "\t/dir1/dir13 <dir>\n" +
+                    "\t/dir1/pom.xml\n" +
+                    "\t/dir7 <dir>\n" +
+                    "\t/dir8 <dir>\n" +
+                    "\t/dir9 <dir>\n" +
+                    "\t/file1.txt\n" +
+                    "\t/file2.txt\n" +
+                "\nUnexpectedly found in transformed application:\n" +
+                    "\t/dir1/dir2/dir3 <dir>\n" +
+                    "\t/dir1/dir2/dir5 <dir>\n" +
+                    "\t/dir3/file5.txt\n" +
+                    "\t/dir3/file7.txt\n" +
+                    "\t/foo.txt\n" +
+                    "\t/pom.xml\n" +
+                "\nDifferent file content:\n" +
+                    "\t/dir3/file3.txt\n" +
+                    "\t/dir3/fileb.txt\n" +
+                    "\t/dir3/filec.txt\n";
+
+        File expected = new File(TEST_RESOURCES, "/app12");
+        File actual = new File(TEST_RESOURCES, "/app13");
+
+        try {
+            assertTransformation(expected, actual, false);
+            fail("Expected exception was not thrown");
+        } catch (AssertionError e) {
+            assertEquals(e.getMessage(), EXPECTED_EXCEPTION_MESSAGE);
+        }
     }
 
 }
