@@ -23,6 +23,9 @@ class FoldersComparison {
     private static DocumentBuilder builder;
     private static ParserConfigurationException xmlParserConfigurationException;
 
+    // Maximum number of lines to be printed in the results in case of failed comparison
+    private static final int MAX_LINES = 10;
+
     static {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
@@ -67,23 +70,22 @@ class FoldersComparison {
     private static void fail(TreeSet<String> missing, TreeSet<String> unexpected, TreeSet<String> different) {
         StringBuilder failureMessage = new StringBuilder("Baseline and transformed applications don't match, as detailed below:\n");
 
-        if(!missing.isEmpty()) {
-            failureMessage.append("\nMissing in transformed application:\n");
-            Iterator<String> i = missing.iterator();
-            while (i.hasNext()) failureMessage.append("\t" + i.next() + "\n");
-        }
-        if(!unexpected.isEmpty()) {
-            failureMessage.append("\nUnexpectedly found in transformed application:\n");
-            Iterator<String> i = unexpected.iterator();
-            while (i.hasNext()) failureMessage.append("\t" + i.next() + "\n");
-        }
-        if(!different.isEmpty()) {
-            failureMessage.append("\nDifferent file content:\n");
-            Iterator<String> i = different.iterator();
-            while (i.hasNext()) failureMessage.append("\t" + i.next() + "\n");
-        }
+        printResult(missing, "Missing in transformed application", failureMessage);
+        printResult(unexpected, "Unexpectedly found in transformed application", failureMessage);
+        printResult(different, "Different file content", failureMessage);
 
         throw new AssertionError(failureMessage.toString());
+    }
+
+    private static void printResult(TreeSet<String> entries, String header, StringBuilder failureMessage) {
+        if(!entries.isEmpty()) {
+            failureMessage.append("\n" + header + " (" + entries.size() + "):\n");
+            Iterator<String> i = entries.iterator();
+            int c = MAX_LINES;
+            for (; i.hasNext() && c > 0; c--) failureMessage.append("\t" + i.next() + "\n");
+            int more = (entries.size() - MAX_LINES);
+            if (more > 0) failureMessage.append("\t(More " + more + ")\n");
+        }
     }
 
     /*
@@ -109,7 +111,7 @@ class FoldersComparison {
 
         String fileRelativePath;
         for (File expectedFile : expectedFiles) {
-            fileRelativePath = getRelativePath(expectedFile, expectedDir);
+            fileRelativePath = getRelativePath(expectedDir, expectedFile);
             if (expectedFile.isDirectory()) {
                 expectedDirectories.add(fileRelativePath);
             } else {
@@ -120,16 +122,16 @@ class FoldersComparison {
         File[] actualFiles = actualDir.listFiles();
 
         for (File actualFile : actualFiles) {
-            fileRelativePath = getRelativePath(actualFile, actualDir);
+            fileRelativePath = getRelativePath(actualDir, actualFile);
             if (actualFile.isDirectory()) {
                 if (!expectedDirectories.contains(fileRelativePath)) {
-                    unexpected.add(getRelativePath(expectedDir, baselineApplicationDir) + fileRelativePath + " <dir>");
+                    unexpected.add(getRelativePath(baselineApplicationDir, expectedDir) + fileRelativePath + " <dir>");
                 } else {
                     expectedDirectories.remove(fileRelativePath);
                 }
             } else {
                 if (!expectedNonDirectories.contains(fileRelativePath)) {
-                    unexpected.add(getRelativePath(expectedDir, baselineApplicationDir) + fileRelativePath);
+                    unexpected.add(getRelativePath(baselineApplicationDir, expectedDir) + fileRelativePath);
                 } else {
                     expectedNonDirectories.remove(fileRelativePath);
                 }
@@ -138,11 +140,11 @@ class FoldersComparison {
 
         if(!expectedDirectories.isEmpty()) {
             Iterator<String> i = expectedDirectories.iterator();
-            while (i.hasNext()) missing.add(getRelativePath(expectedDir, baselineApplicationDir) + i.next() + " <dir>");
+            while (i.hasNext()) missing.add(getRelativePath(baselineApplicationDir, expectedDir) + i.next() + " <dir>");
         }
         if(!expectedNonDirectories.isEmpty()) {
             Iterator<String> i = expectedNonDirectories.iterator();
-            while (i.hasNext()) missing.add(getRelativePath(expectedDir, baselineApplicationDir) + i.next());
+            while (i.hasNext()) missing.add(getRelativePath(baselineApplicationDir, expectedDir) + i.next());
         }
 
         // If code reach this point, it means expected and actual have same structure,
@@ -156,18 +158,18 @@ class FoldersComparison {
      * Given a file and a supposed parent, return the relative path from
      * the parent file to the child file
      */
-    private static String getRelativePath(File file, File parent) {
-        String filePath = file.getAbsolutePath();
-        String parentPath = parent.getAbsolutePath();
+    private static String getRelativePath(File potentialParent, File potentialChild) {
+        String parentPath = potentialParent.getAbsolutePath();
+        String childPath = potentialChild.getAbsolutePath();
 
-        if (filePath.equals(parentPath)) {
+        if (childPath.equals(parentPath)) {
             return "";
         }
-        if (filePath.equals(parentPath) || !filePath.startsWith(parentPath + File.separatorChar)) {
-            throw new IllegalArgumentException("File " + file + " is not a direct nor indirect child of " + parent);
+        if (childPath.equals(parentPath) || !childPath.startsWith(parentPath + File.separatorChar)) {
+            throw new IllegalArgumentException("File " + potentialChild + " is not a direct nor indirect child of " + potentialParent);
         }
 
-        return filePath.substring(parentPath.length(), filePath.length());
+        return childPath.substring(parentPath.length(), childPath.length());
     }
 
     /*
@@ -188,7 +190,7 @@ class FoldersComparison {
                     equal = Files.equal(expectedFile, actualFile);
                 }
                 if(!equal) {
-                    different.add(getRelativePath(expectedFile, baselineApplication));
+                    different.add(getRelativePath(baselineApplication, expectedFile));
                 }
             }
         }
