@@ -151,11 +151,9 @@ class ButterflyFacadeImpl implements ButterflyFacade {
             return template;
         } catch (InstantiationException e) {
             String exceptionMessage = "Template class " + templateClass + " could not be instantiated. Run Butterfly in debug mode, double check if its extension has been properly registered, and also double check if it complies with Butterfly extensions API";
-            logger.error(exceptionMessage, e);
             throw new InternalException(exceptionMessage, e);
         } catch (IllegalAccessException e) {
             String exceptionMessage = "Template class " + templateClass + " could not be accessed";
-            logger.error(exceptionMessage, e);
             throw new InternalException(exceptionMessage, e);
         }
     }

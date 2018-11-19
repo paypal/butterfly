@@ -18,15 +18,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class LogbackLogConfigurator extends LogConfigurator {
 
-    private static final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+    private LoggerContext loggerContext;
 
     private boolean verboseMode = false;
+
+    private void setLoggerContext() {
+        if (loggerContext == null) {
+            loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        }
+    }
 
     @Override
     public void setLoggerLevel(String logger, org.slf4j.event.Level level) {
         if(level == null) {
             throw new IllegalArgumentException("level argument cannot be null");
         }
+        setLoggerContext();
         loggerContext.getLogger(logger).setLevel(getLogbackLogLevel(level));
     }
 
@@ -35,6 +42,7 @@ public class LogbackLogConfigurator extends LogConfigurator {
         if(level == null) {
             throw new IllegalArgumentException("level argument cannot be null");
         }
+        setLoggerContext();
         loggerContext.getLogger(logger).setLevel(getLogbackLogLevel(level));
     }
 

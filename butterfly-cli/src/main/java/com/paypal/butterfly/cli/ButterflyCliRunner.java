@@ -37,14 +37,17 @@ public class ButterflyCliRunner extends ButterflyCliOption {
     @Autowired
     private ButterflyFacade butterflyFacade;
 
+    private LogFileDefiner logFileDefiner;
+
     private static final Logger logger = LoggerFactory.getLogger(ButterflyCliRunner.class);
 
-    public ButterflyCliRun run() throws IOException {
+    ButterflyCliRun run(File butterflyHome, String butterflyBanner, LogFileDefiner logFileDefiner) throws IOException {
         ButterflyCliRun run = new ButterflyCliRun();
         Configuration configuration;
         run.setButterflyVersion(butterflyFacade.getButterflyVersion());
+        this.logFileDefiner = logFileDefiner;
 
-        logger.info(ButterflyCliApp.getBanner());
+        logger.info(butterflyBanner);
 
         if (optionSet == null || optionSet.has(CLI_OPTION_HELP) || (!optionSet.hasOptions() && optionSet.nonOptionArguments() == null)){
             logger.info("");
@@ -64,7 +67,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
         if (optionSet.has(CLI_OPTION_DEBUG)) {
             logConfigurator.setDebugMode(true);
             logger.info("Debug mode is ON");
-            logger.info("Butterfly home: {}", ButterflyCliApp.getButterflyHome());
+            logger.info("Butterfly home: {}", butterflyHome);
             logger.info("JAVA_HOME: {}", System.getenv("JAVA_HOME"));
             logger.info("java.version: {}", System.getProperty("java.version"));
             logger.info("java.runtime.version: {}", System.getProperty("java.runtime.version"));
@@ -172,7 +175,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
                 transformationResult = butterflyFacade.transform(applicationFolder, templateClass, configuration);
             }
 
-            run.setLogFile(LogFileDefiner.getLogFile());
+            run.setLogFile(logFileDefiner.getLogFile());
 
             if (transformationResult.isSuccessful()) {
                 logger.info("");
@@ -180,7 +183,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
                 logger.info("Application has been transformed successfully!");
                 logger.info("----------------------------------------------");
                 logger.info("Transformed application folder: {}", transformationResult.getTransformedApplicationDir());
-                logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
+                logger.info("Check log file for details: {}", logFileDefiner.getLogFile().getAbsolutePath());
 
                 if (transformationResult.hasManualInstructions()) {
                     logger.info("");
@@ -215,7 +218,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
         logger.error("*** Transformation has been aborted due to:");
         logger.error("*** {}", abortMessage);
         logger.info("--------------------------------------------------------------------------------------------");
-        logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
+        logger.info("Check log file for details: {}", logFileDefiner.getLogFile().getAbsolutePath());
 
         run.setErrorMessage("Transformation has been aborted due to: " + abortMessage);
         run.setExceptionMessage(abortMessage);
