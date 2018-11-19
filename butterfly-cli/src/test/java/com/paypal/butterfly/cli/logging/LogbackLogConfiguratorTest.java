@@ -20,7 +20,7 @@ public class LogbackLogConfiguratorTest extends PowerMockTestCase {
     private LogbackLogConfigurator logbackVerboseConfigurator;
 
     @Mock
-    private static final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+    private final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
     @Test
     public void testVerboseOn() {

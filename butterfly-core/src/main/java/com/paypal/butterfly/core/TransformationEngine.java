@@ -38,7 +38,7 @@ class TransformationEngine {
     private static final Logger logger = LoggerFactory.getLogger(TransformationEngine.class);
 
     // This is used to create a timestamp to be applied as suffix in the transformed application folder
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
     private static final String ORDER_FORMAT = "%s.%d";
 
@@ -548,9 +548,9 @@ class TransformationEngine {
                 if(!configuration.getOutputFolder().exists()) {
                     throw new IllegalArgumentException("Invalid output folder (" + configuration.getOutputFolder() + ")");
                 }
-                transformedAppFolder = new File(configuration.getOutputFolder().getAbsolutePath() + File.separator + transformedAppFolderName);
+                transformedAppFolder = new File(configuration.getOutputFolder(), transformedAppFolderName);
             } else {
-                transformedAppFolder = new File(originalAppParent.getAbsolutePath() + File.separator + transformedAppFolderName);
+                transformedAppFolder = new File(originalAppParent, transformedAppFolderName);
             }
         }
 
@@ -575,6 +575,10 @@ class TransformationEngine {
                 logger.debug("Baseline application folder is prepared");
             }
         } else {
+            if (transformedAppFolder.exists()) {
+                String exceptionMessage = String.format("Transformed application folder (%s) could not be created because it already exists", transformedAppFolder);
+                throw new InternalException(exceptionMessage);
+            }
             boolean bDirCreated = transformedAppFolder.mkdir();
             if(bDirCreated){
                 if (!transformationRequest.isBlank()) {
@@ -590,9 +594,7 @@ class TransformationEngine {
                 }
             } else {
                 String exceptionMessage = String.format("Transformed application folder (%s) could not be created", transformedAppFolder);
-                InternalException ie  = new InternalException(exceptionMessage);
-                logger.error(exceptionMessage, ie);
-                throw ie;
+                throw new InternalException(exceptionMessage);
             }
         }
 
