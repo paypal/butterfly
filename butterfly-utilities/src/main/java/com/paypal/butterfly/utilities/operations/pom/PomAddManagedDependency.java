@@ -10,6 +10,8 @@ import com.paypal.butterfly.extensions.api.operations.AddElement;
 
 /**
  * Adds a new managed dependency to a POM file.
+ * If the POM file already has the specified managed dependency, the operation will return an error.
+ * That behavior can be changed though, see {@link AddElement} for further details.
  *
  * @author facarvalho
  */

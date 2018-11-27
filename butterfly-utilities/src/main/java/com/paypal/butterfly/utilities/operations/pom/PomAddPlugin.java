@@ -11,6 +11,8 @@ import java.util.Objects;
 
 /**
  * Adds a new plugin to a POM file.
+ * If the POM file already has the specified plugin, the operation will return an error.
+ * That behavior can be changed though, see {@link AddElement} for further details.
  *
  * @author facarvalho
  */

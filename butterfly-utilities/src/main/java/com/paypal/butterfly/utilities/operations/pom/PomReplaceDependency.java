@@ -11,6 +11,8 @@ import org.apache.maven.model.Model;
  * Replaces a dependency by another one in a POM file.
  * If no new scope is defined, the scope set in the replacement dependency
  * will be the same used in the dependency to be replaced.
+ * If the POM file does not have the specified dependency to be replaced, the operation will return an error.
+ * That behavior can be changed though, see {@link ChangeOrRemoveElement} for further details.
  *
  * @author facarvalho
  */

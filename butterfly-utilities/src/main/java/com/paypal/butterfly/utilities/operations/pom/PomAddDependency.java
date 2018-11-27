@@ -8,6 +8,8 @@ import org.apache.maven.model.Model;
 
 /**
  * Adds a new dependency to a POM file.
+ * If the POM file already has the specified dependency, the operation will return an error.
+ * That behavior can be changed though, see {@link AddElement} for further details.
  *
  * @author facarvalho
  */
