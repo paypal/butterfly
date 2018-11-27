@@ -8,6 +8,8 @@ import org.apache.maven.model.Model;
 
 /**
  * Removes a managed dependency entry from a POM file.
+ * If the POM file does not have the specified managed dependency, the operation will return an error.
+ * That behavior can be changed though, see {@link ChangeOrRemoveElement} for further details.
  *
  * @author facarvalho
  */

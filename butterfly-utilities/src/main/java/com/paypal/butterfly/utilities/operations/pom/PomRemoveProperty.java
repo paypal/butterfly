@@ -7,6 +7,8 @@ import org.apache.maven.model.Model;
 
 /**
  * Removes a property entry from a POM file.
+ * If the POM file does not have the specified property, the operation will return an error.
+ * That behavior can be changed though, see {@link ChangeOrRemoveElement} for further details.
  *
  * @author facarvalho
  */

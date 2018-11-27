@@ -1,22 +1,25 @@
 package com.paypal.butterfly.utilities.operations.pom;
 
-import com.paypal.butterfly.extensions.api.TOExecutionResult;
-import com.paypal.butterfly.extensions.api.TransformationContext;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
-import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
-import com.paypal.butterfly.utilities.operations.pom.stax.StartElementEventCondition;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import java.io.File;
+import java.io.IOException;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
-import java.io.File;
-import java.io.IOException;
+
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.TransformationContext;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
+import com.paypal.butterfly.utilities.operations.pom.stax.StartElementEventCondition;
 
 /**
  * Changes the parent's version in a Maven POM file.
- * If the artifact doesn't have a parent, this operation will result in error
+ * If the POM file does not have a parent, the operation will return an error.
+ * That behavior can be changed though, see {@link ChangeOrRemoveElement} for further details.
  *
  * @author facarvalho
  */
@@ -26,7 +29,7 @@ public class PomChangeParentVersion extends AbstractStaxPomOperation<PomChangePa
 
     private String version = null;
 
-    private IfNotPresent ifNotPresent = ChangeOrRemoveElement.IfNotPresent.Fail;
+    private IfNotPresent ifNotPresent = IfNotPresent.Fail;
 
     public PomChangeParentVersion() {
     }

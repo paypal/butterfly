@@ -58,7 +58,7 @@ public class PomRemovePropertyTest extends TransformationUtilityTestHelper {
 
         assertNotChangedFile("pom.xml");
 
-        // Asserting that the default resut type is ERROR, in case a property is not present
+        // Asserting that the default result type is ERROR, in case a property is not present
         assertEquals(new PomRemoveProperty("zoo").relative("pom.xml").execution(transformedAppFolder, transformationContext).getType(), TOExecutionResult.Type.ERROR);
     }
 
