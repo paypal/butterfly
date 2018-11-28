@@ -16,6 +16,10 @@
         <encoding>UTF-8</encoding>
     </properties>
 
+    <modules>
+        <module>module1</module>
+    </modules>
+
     <dependencies>
         <dependency>
             <groupId>xmlunit</groupId>
