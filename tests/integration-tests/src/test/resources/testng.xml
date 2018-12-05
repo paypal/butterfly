@@ -1,0 +1,7 @@
+<suite name="Test-method Suite" parallel="methods" thread-count="4" >
+    <test name="Test-method test" group-by-instances="true">
+        <classes>
+            <class name="com.paypal.butterfly.integrationtests.StaticRemovalIT" />
+        </classes>
+    </test>
+</suite>
