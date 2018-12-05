@@ -10,6 +10,7 @@ import com.paypal.butterfly.utilities.operations.file.DeleteFile;
 import com.paypal.butterfly.utilities.operations.pom.*;
 import com.paypal.butterfly.utilities.operations.text.InsertText;
 import com.paypal.butterfly.utilities.operations.text.ReplaceText;
+import com.paypal.butterfly.utilities.pom.PomGetPackaging;
 
 import java.net.URL;
 
@@ -23,6 +24,11 @@ import java.net.URL;
 public class JavaEEToSpringBoot extends TransformationTemplate {
 
     public JavaEEToSpringBoot() {
+
+       final String model = add(new PomModel("junit","junit", "4.12"));
+       final String junitPackaging = add(new PomGetPackaging(model));
+
+
 
         // Checking first it the app has a root pom.xml file,
         // and aborting if not
