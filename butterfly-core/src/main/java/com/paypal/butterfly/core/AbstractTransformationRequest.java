@@ -3,6 +3,7 @@ package com.paypal.butterfly.core;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,8 @@ abstract class AbstractTransformationRequest implements TransformationRequest {
     // This has to be added as an instance variable, as opposed to relying on the constant directly only,
     // because otherwise it won't be persisted (for example, as JSON in CouchDB or a file)
     private final String butterflyVersion = BUTTERFLY_VERSION;
+
+    private String id;
 
     private final long timestamp;
     private final String dateTime;
@@ -59,6 +62,9 @@ abstract class AbstractTransformationRequest implements TransformationRequest {
         Date date = new Date();
         timestamp = date.getTime();
         dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+
+        String uId = UUID.randomUUID().toString();
+        this.id = uId;
 
         this.application = application;
         this.configuration = configuration;
@@ -132,6 +138,9 @@ abstract class AbstractTransformationRequest implements TransformationRequest {
     public boolean isBlank() {
         return blank;
     }
+
+    @Override
+    public String getId() { return id; }
 
     File getBaselineApplicationDir() {
         return baselineApplicationDir;

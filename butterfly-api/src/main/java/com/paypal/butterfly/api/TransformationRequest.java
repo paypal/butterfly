@@ -9,6 +9,13 @@ package com.paypal.butterfly.api;
 public interface TransformationRequest {
 
     /**
+     * Returns the unique identifier for the transformation
+     *
+     * @return Unique ID
+     */
+    String getId();
+
+    /**
      * Returns Butterfly version
      *
      * @return Butterfly version
