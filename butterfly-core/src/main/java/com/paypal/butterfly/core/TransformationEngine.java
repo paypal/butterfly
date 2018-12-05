@@ -542,7 +542,7 @@ class TransformationEngine {
                 originalAppParent = new File(System.getProperty("user.dir"));
             }
 
-            String transformedAppFolderName = application.getFolder().getName() + "-transformed-" + simpleDateFormat.format(new Date());
+            String transformedAppFolderName = application.getFolder().getName() + "-transformed-" + simpleDateFormat.format(new Date()) + "-" + transformationRequest.getId();
 
             if(configuration.getOutputFolder() != null) {
                 if(!configuration.getOutputFolder().exists()) {
