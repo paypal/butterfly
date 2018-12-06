@@ -20,25 +20,16 @@ import com.google.common.io.Files;
  */
 class FoldersComparison {
 
-    private static DocumentBuilder builder;
-    private static ParserConfigurationException xmlParserConfigurationException;
-
     // Maximum number of lines to be printed in the results in case of failed comparison
     private static final int MAX_LINES = 10;
 
-    static {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    private static final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
+    static {
         factory.setNamespaceAware(true);
         factory.setCoalescing(true);
         factory.setIgnoringElementContentWhitespace(true);
         factory.setIgnoringComments(true);
-
-        try {
-            builder = factory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            xmlParserConfigurationException = e;
-        }
     }
 
     /**
@@ -200,14 +191,12 @@ class FoldersComparison {
      * Returns true only if both XML files have same content
      */
     private static boolean xmlEqual(File expectedFile, File actualFile) throws IOException {
-        if (xmlParserConfigurationException != null) {
-            throw new IllegalStateException("XML parser could not be configured", xmlParserConfigurationException);
-        }
 
         boolean file1parsed = false;
         boolean file2parsed = false;
 
         try {
+            DocumentBuilder builder = factory.newDocumentBuilder();
             Document file1Xml = builder.parse(expectedFile);
             file1parsed = true;
             Document file2Xml = builder.parse(actualFile);
@@ -221,6 +210,8 @@ class FoldersComparison {
             XMLUnit.setIgnoreWhitespace(true);
 
             return XMLUnit.compareXML(file1Xml, file2Xml).similar();
+        } catch (ParserConfigurationException e) {
+            throw new IllegalStateException("XML parser could not be configured", e);
         } catch (Exception e) {
             if (file1parsed ^ file2parsed) {
                 // This means only one file couldn't be parsed, which means they are not equal
