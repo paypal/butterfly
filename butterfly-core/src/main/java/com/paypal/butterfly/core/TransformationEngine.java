@@ -12,6 +12,7 @@ import com.paypal.butterfly.extensions.api.utilities.Abort;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -75,6 +76,8 @@ class TransformationEngine {
         // Throws an ApplicationValidationException if validation fails
         validator.preTransformation(transformationRequest);
 
+        MDC.put("uid",transformationRequest.getId());
+
         if(logger.isDebugEnabled()) {
             logger.debug("Requested transformationRequest: {}", transformationRequest);
         }
@@ -93,6 +96,7 @@ class TransformationEngine {
         } else {
             transformationListeners.forEach(l -> l.postTransformationAbort(transformationRequest, transformationResult));
         }
+        MDC.remove("uid");
 
         return transformationResult;
     }
