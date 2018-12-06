@@ -18,7 +18,7 @@ import static org.testng.Assert.assertEquals;
 public class PomChangePackagingTest extends TransformationUtilityTestHelper {
 
     @Test
-    public void miscTest() throws CloneNotSupportedException {
+    public void miscTest() {
         PomChangePackaging pomChangePackaging = new PomChangePackaging().setPackagingType("war").relative("pom.xml");
 
         assertEquals(pomChangePackaging.getPackagingType(), "war");
