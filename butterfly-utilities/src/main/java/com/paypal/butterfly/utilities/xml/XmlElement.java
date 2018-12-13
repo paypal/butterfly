@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 /**
  * This transformation utility is deprecated.
- * Please use {@link XmlXPathElement} instead.
+ * Please use {@link XmlXPathRetrieve} instead.
  *
  * @author facarvalho
  */

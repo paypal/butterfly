@@ -26,8 +26,8 @@ import com.paypal.butterfly.extensions.api.exception.TransformationUtilityExcept
 /**
  * Retrieves data from an XML file by using XPath expressions. If no element is
  * found, an empty string is returned if the return data type is
- * {@link XPathConstants.STRING}; if the return data type is
- * {@link XPathConstants.NODESET}, an empty node list is returned. If the XPath
+ * {@link XPathConstants#STRING}; if the return data type is
+ * {@link XPathConstants#NODESET}, an empty node list is returned. If the XPath
  * expression won't compile, an error is returned. <br>
  * If the file is not a well formed XML file, an error is returned.
  *
@@ -44,8 +44,8 @@ public class XmlXPathRetrieve extends TransformationUtility<XmlXPathRetrieve> {
     /**
      * Retrieves data from an XML file by using XPath expressions. If no element is
      * found, an empty string is returned if the return data type is
-     * {@link XPathConstants.STRING}; if the return data type is
-     * {@link XPathConstants.NODESET}, an empty node list is returned.<br>
+     * {@link XPathConstants#STRING}; if the return data type is
+     * {@link XPathConstants#NODESET}, an empty node list is returned.<br>
      * If the XPath expression won't compile, an error is returned.
      */
     public XmlXPathRetrieve() {
@@ -54,8 +54,8 @@ public class XmlXPathRetrieve extends TransformationUtility<XmlXPathRetrieve> {
     /**
      * Retrieves data from an XML file by using XPath expressions. If no element is
      * found, an empty string is returned if the return data type is
-     * {@link XPathConstants.STRING}; if the return data type is
-     * {@link XPathConstants.NODESET}, an empty node list is returned.<br>
+     * {@link XPathConstants#STRING}; if the return data type is
+     * {@link XPathConstants#NODESET}, an empty node list is returned.<br>
      * If the XPath expression won't compile, an error is returned. <br>
      * If the file is not a well formed XML file, an error is returned.
      *
@@ -70,8 +70,8 @@ public class XmlXPathRetrieve extends TransformationUtility<XmlXPathRetrieve> {
     /**
      * Retrieves data from an XML file by using XPath expressions. If no element is
      * found, an empty string is returned if the return data type is
-     * {@link XPathConstants.STRING}; if the return data type is
-     * {@link XPathConstants.NODESET}, an empty node list is returned.<br>
+     * {@link XPathConstants#STRING}; if the return data type is
+     * {@link XPathConstants#NODESET}, an empty node list is returned.<br>
      * If the XPath expression won't compile, an error is returned. <br>
      * If the XPath expression won't compile, an error is returned. <br>
      * If the file is not a well formed XML file, an error is returned.
@@ -94,7 +94,7 @@ public class XmlXPathRetrieve extends TransformationUtility<XmlXPathRetrieve> {
      *            a string that compiles into a
      *            {@link javax.xml.xpath.XPathExpression}
      * 
-     * @param returnDataType
+     * @param xpathExpressionString
      *            The desired return type of the data retrieved
      *
      * @return this utility instance
