@@ -5,6 +5,7 @@ import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -15,10 +16,15 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Download a Maven artifact, model it and place it in transformation context.
- * The Maven artifact is specified by its group id, artifact id and version.
+ * Load a Maven artifact, model it and place it in transformation context.
+ * There are two ways to specify the Maven artifact:
+ * <ol>
+ *     <li>By its coordinates (group id, artifact id and version)</li>
+ *     <li>As a file, specified via regular {@link #relative(String)}, {@link #absolute(String)} or {@link #absolute(String, String)} methods</li>
+ * </ol>
+ * If Maven artifact is set with both options, the Maven artifact coordinates will be used, and the file will be ignored.
  *
- * @author vkuncham, radkrish
+ * @author vkuncham, radkrish, facarvalho
  */
 public class PomModel extends TransformationUtility<PomModel> {
 
@@ -184,30 +190,29 @@ public class PomModel extends TransformationUtility<PomModel> {
 
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-        Model model = null;
+        Model model;
         try {
-            model = fetchModelFromRemote();
-            if (model == null)
+            URL mavenArtifactUrl;
+            if (StringUtils.isNotBlank(groupId) && StringUtils.isNotBlank(artifactId) && StringUtils.isNotBlank(version)) {
+                mavenArtifactUrl = new URL(String.format("%s/%s/%s/%s/%s-%s.pom", repoURI, groupId, artifactId, version, artifactId, version));
+            } else if (wasFileExplicitlySet()) {
+                File localPomFile = getAbsoluteFile(transformedAppFolder, transformationContext);
+                mavenArtifactUrl = localPomFile.toURI().toURL();
+            } else {
+                return TUExecutionResult.error(this, new TransformationUtilityException("Maven coordinates are missing and local file was not set"));
+            }
+            try (BufferedInputStream inputStream = new BufferedInputStream(mavenArtifactUrl.openStream())) {
+                model = new MavenXpp3Reader().read(inputStream);
+            }
+
+            if (model == null) {
                 return TUExecutionResult.error(this, new TransformationUtilityException("Returned maven model is null"));
+            }
         } catch (IOException | XmlPullParserException e) {
             return TUExecutionResult.error(this, new TransformationUtilityException("The specified file could not be found or read and parsed as valid Maven pom file", e));
         }
         return TUExecutionResult.value(this, model);
     }
 
-    /**
-     * method to do remote fetch from maven repo URI
-     *
-     * @return Model
-     */
-    private Model fetchModelFromRemote() throws IOException, XmlPullParserException {
-        MavenXpp3Reader reader = new MavenXpp3Reader();
-        Model model = null;
-
-        try (BufferedInputStream inputStream = new BufferedInputStream(new URL(getRepoURI() + "/" + getGroupId() + "/" + getArtifactId() + "/" + getVersion() + "/" + getArtifactId() + "-" + getVersion() + ".pom").openStream())) {
-            model = reader.read(inputStream);
-        }
-        return model;
-    }
 }
 

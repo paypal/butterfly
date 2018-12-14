@@ -1,9 +1,8 @@
 package com.paypal.butterfly.utilities.pom;
 
+import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
-
-import com.paypal.butterfly.extensions.api.TUExecutionResult;
 
 /**
  * Retrieve the Maven coordinates (group id, artifact id and version) of the parent of specified Maven artifact.
@@ -11,8 +10,8 @@ import com.paypal.butterfly.extensions.api.TUExecutionResult;
  * If given Maven artifact does not have a parent, it results in {@link com.paypal.butterfly.extensions.api.TUExecutionResult.Type#NULL}
  * There are two ways to specify the Maven artifact:
  * <ol>
+ *     <li>As a context attribute, containing the Maven {@link Model} object</li>
  *     <li>As a file, specified via regular {@link #relative(String)}, {@link #absolute(String)} or {@link #absolute(String, String)} methods</li>
- * <li>As a context attribute, containing the Maven {@link Model} object</li>
  * </ol>
  * If Maven artifact is set with both options, the Maven model will be used, and the file will be ignored.
  *

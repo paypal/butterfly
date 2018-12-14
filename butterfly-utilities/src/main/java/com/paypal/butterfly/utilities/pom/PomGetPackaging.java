@@ -1,15 +1,14 @@
 package com.paypal.butterfly.utilities.pom;
 
-import org.apache.maven.model.Model;
-
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
+import org.apache.maven.model.Model;
 
 /**
  * Retrieve the packaging of specified Maven artifact.
  * There are two ways to specify the Maven artifact:
  * <ol>
+ *     <li>As a context attribute, containing the Maven {@link Model} object</li>
  *     <li>As a file, specified via regular {@link #relative(String)}, {@link #absolute(String)} or {@link #absolute(String, String)} methods</li>
- * <li>As a context attribute, containing the Maven {@link org.apache.maven.model.Model} object</li>
  * </ol>
  * If Maven artifact is set with both options, the Maven model will be used, and the file will be ignored.
  *
