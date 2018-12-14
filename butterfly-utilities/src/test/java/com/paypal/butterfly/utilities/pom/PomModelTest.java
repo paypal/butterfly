@@ -5,7 +5,10 @@ import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionExc
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
 import org.apache.maven.model.Model;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -20,6 +23,10 @@ public class PomModelTest extends TransformationUtilityTestHelper {
     @Test
     public void descriptionTest() {
         PomModel pomModel = new PomModel().setGroupId("junit").setArtifactId("junit").setVersion("4.12");
+        assertEquals(pomModel.getGroupId(), "junit");
+        assertEquals(pomModel.getArtifactId(), "junit");
+        assertEquals(pomModel.getVersion(), "4.12");
+        assertEquals(pomModel.getRepoURI(), "https://repo1.maven.org/maven2");
         assertEquals(pomModel.getDescription(), "Retrieve the parent pom and load it in to Model Object");
     }
 
@@ -126,6 +133,32 @@ public class PomModelTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TUExecutionResult.Type.ERROR);
         assertEquals(executionResult.getException().getClass(), TransformationUtilityException.class);
         assertEquals(executionResult.getException().getMessage(), "The specified file could not be found or read and parsed as valid Maven pom file");
+    }
+
+    @Test
+    public void fetchModelFromLocalTest() throws IOException, XmlPullParserException {
+        Model originalPomModel = getOriginalPomModel("pom.xml");
+
+        PomModel pomModel = new PomModel().relative("pom.xml");
+        TUExecutionResult executionResult = pomModel.execution(transformedAppFolder, transformationContext);
+        assertEquals(executionResult.getType(), TUExecutionResult.Type.VALUE);
+        Model model = (Model) executionResult.getValue();
+
+        assertEquals(originalPomModel.getGroupId(), model.getGroupId());
+        assertEquals(originalPomModel.getArtifactId(), model.getArtifactId());
+        assertEquals(originalPomModel.getVersion(), model.getVersion());
+        assertEquals(originalPomModel.getPackaging(), model.getPackaging());
+        assertEquals(originalPomModel.getName(), model.getName());
+        assertEquals(originalPomModel.getDescription(), model.getDescription());
+    }
+
+    @Test
+    public void noCoordinatesNoFileExceptionTest() {
+        PomModel pomModel = new PomModel().setGroupId("junit").setArtifactId("junit");
+        TUExecutionResult executionResult = pomModel.execution(transformedAppFolder, transformationContext);
+        assertEquals(executionResult.getType(), TUExecutionResult.Type.ERROR);
+        assertEquals(executionResult.getException().getClass(), TransformationUtilityException.class);
+        assertEquals(executionResult.getException().getMessage(), "Maven coordinates are missing and local file was not set");
     }
 
 }
