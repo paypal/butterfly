@@ -75,9 +75,9 @@ public class PomModel extends TransformationUtility<PomModel> {
     }
 
     /**
-     * Sets the groupId, artifactId & version from artifactInfo.
+     * Sets the groupId, artifactId and version from artifactInfo
      *
-     * @param artifactInfo
+     * @param artifactInfo groupId, artifactId and version separated by colons
      * @return this transformation utility
      */
     public PomModel setArtifact(String artifactInfo) {
@@ -114,7 +114,7 @@ public class PomModel extends TransformationUtility<PomModel> {
     /**
      * Sets the artifactId
      *
-     * @param artifactId
+     * @param artifactId Maven artifact id
      * @return this transformation utility
      */
     public PomModel setArtifactId(String artifactId) {
@@ -133,7 +133,7 @@ public class PomModel extends TransformationUtility<PomModel> {
     /**
      * Sets the version
      *
-     * @param version
+     * @param version Maven artifact version
      * @return this transformation utility
      */
     public PomModel setVersion(String version) {
@@ -152,7 +152,7 @@ public class PomModel extends TransformationUtility<PomModel> {
     /**
      * Sets the repoURI
      *
-     * @param repoURI
+     * @param repoURI Maven repository URI
      * @return this transformation utility
      */
     public PomModel setRepoURI(String repoURI) {

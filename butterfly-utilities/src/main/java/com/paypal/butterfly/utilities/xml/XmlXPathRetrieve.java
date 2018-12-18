@@ -93,9 +93,6 @@ public class XmlXPathRetrieve extends TransformationUtility<XmlXPathRetrieve> {
      * @param xpathExpressionString
      *            a string that compiles into a
      *            {@link javax.xml.xpath.XPathExpression}
-     * 
-     * @param xpathExpressionString
-     *            The desired return type of the data retrieved
      *
      * @return this utility instance
      */
