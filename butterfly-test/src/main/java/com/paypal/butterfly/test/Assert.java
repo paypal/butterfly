@@ -23,19 +23,6 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
  */
 public abstract class Assert {
 
-    private static final Logger logger = LoggerFactory.getLogger(Assert.class);
-
-    private static File transformedApps;
-    private static Throwable transformedAppsThrowable;
-
-    static {
-        try {
-            transformedApps = Files.createTempDir();
-        } catch (Throwable t) {
-            transformedAppsThrowable = t;
-        }
-    }
-
     /**
      * Transforms {@code originalApplication} using {@code transformationTemplate} and compares the generated transformed application
      * with a baseline application {@code baselineApplication}, failing the assertion if their content differ.
@@ -76,15 +63,8 @@ public abstract class Assert {
         if (originalApplication == null || !originalApplication.exists() || !originalApplication.isDirectory()) {
             throw new IllegalArgumentException("Original application file is null, does not exist or is not a directory: " + (originalApplication == null ? "null" : originalApplication.getAbsolutePath()));
         }
-        if (!transformedApps.exists() || !transformedApps.isDirectory()) {
-            if (transformedAppsThrowable != null) {
-                throw new IllegalStateException("Temporary transformation directory could not be created", transformedAppsThrowable);
-            } else if (!transformedApps.canWrite()) {
-                throw new IllegalStateException("Temporary transformation directory could not be created, no permission to write at: " + transformedApps.getAbsolutePath());
-            } else {
-                throw new IllegalStateException("Temporary transformation directory could not be created: " + transformedApps.getAbsolutePath());
-            }
-        }
+
+        File transformedApps = Files.createTempDir();
 
         ButterflyCliRun run;
         try {
@@ -106,7 +86,7 @@ public abstract class Assert {
             String[] arguments = new String[argumentsList.size()];
             arguments = argumentsList.toArray(arguments);
 
-            run = ButterflyCliApp.run(arguments);
+            run = new ButterflyCliApp().run(arguments);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -155,6 +135,8 @@ public abstract class Assert {
         if (baselineApplication == null || !baselineApplication.exists() || !baselineApplication.isDirectory()) throw new IllegalArgumentException("Specified expected file is null, does not exist or is not a directory");
         if (transformedApplication == null || !transformedApplication.exists() || !transformedApplication.isDirectory()) throw new IllegalArgumentException("Specified actual file is null, does not exist, or is not a directory");
 
+        Logger logger = LoggerFactory.getLogger(Assert.class);
+
         logger.info("Comparing the following folders:");
         logger.info("Baseline application: {}", baselineApplication.getAbsolutePath());
         logger.info("Transformed application: {}", transformedApplication.getAbsolutePath());
@@ -198,15 +180,8 @@ public abstract class Assert {
         if (originalApplication == null || !originalApplication.exists() || !originalApplication.isDirectory()) {
             throw new IllegalArgumentException("Original application file is null, does not exist or is not a directory: " + (originalApplication == null ? "null" : originalApplication.getAbsolutePath()));
         }
-        if (!transformedApps.exists() || !transformedApps.isDirectory()) {
-            if (transformedAppsThrowable != null) {
-                throw new IllegalStateException("Temporary transformation directory could not be created", transformedAppsThrowable);
-            } else if (!transformedApps.canWrite()) {
-                throw new IllegalStateException("Temporary transformation directory could not be created, no permission to write at: " + transformedApps.getAbsolutePath());
-            } else {
-                throw new IllegalStateException("Temporary transformation directory could not be created: " + transformedApps.getAbsolutePath());
-            }
-        }
+
+        File transformedApps = Files.createTempDir();
 
         ButterflyCliRun run;
         try {
@@ -228,7 +203,7 @@ public abstract class Assert {
             String[] arguments = new String[argumentsList.size()];
             arguments = argumentsList.toArray(arguments);
 
-            run = ButterflyCliApp.run(arguments);
+            run = new ButterflyCliApp().run(arguments);
         } catch (IOException e) {
             throw new AssertionError(e);
         }

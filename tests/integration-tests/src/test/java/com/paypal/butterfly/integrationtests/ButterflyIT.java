@@ -29,7 +29,7 @@ public class ButterflyIT {
     @Test
     public void cliConsoleTest() throws IOException, URISyntaxException {
         // First run to flush out logback log statements
-        assertEquals(ButterflyCliApp.run().getExitStatus(), 0);
+        assertEquals(new ButterflyCliApp().run().getExitStatus(), 0);
 
         PrintStream systemOut = System.out;
 
@@ -37,9 +37,9 @@ public class ButterflyIT {
         PrintStream helpStream = new PrintStream(helpOut);
         System.setOut(helpStream);
 
-        assertEquals(ButterflyCliApp.run().getExitStatus(), 0);
-        assertEquals(ButterflyCliApp.run("-h").getExitStatus(), 0);
-        assertEquals(ButterflyCliApp.run("-?").getExitStatus(), 0);
+        assertEquals(new ButterflyCliApp().run().getExitStatus(), 0);
+        assertEquals(new ButterflyCliApp().run("-h").getExitStatus(), 0);
+        assertEquals(new ButterflyCliApp().run("-?").getExitStatus(), 0);
 
         helpStream.close();
 
@@ -54,7 +54,7 @@ public class ButterflyIT {
         PrintStream listStream = new PrintStream(listOut);
         System.setOut(listStream);
 
-        assertEquals(ButterflyCliApp.run("-l").getExitStatus(), 0);
+        assertEquals(new ButterflyCliApp().run("-l").getExitStatus(), 0);
 
         listStream.close();
         System.setOut(systemOut);
@@ -91,7 +91,7 @@ public class ButterflyIT {
         File sampleAppCopy = Files.createTempDir();
         FileUtils.copyDirectory(sampleApp, sampleAppCopy);
 
-        ButterflyCliRun run = ButterflyCliApp.run(sampleAppCopy.getAbsolutePath(), "-f", "-t", JavaEEToSpringBoot.class.getName());
+        ButterflyCliRun run = new ButterflyCliApp().run(sampleAppCopy.getAbsolutePath(), "-f", "-t", JavaEEToSpringBoot.class.getName());
 
         assertEquals(run.getExitStatus(), 0);
         assertTransformation(sampleAppTransformedBaseline, sampleAppCopy, true);
@@ -114,7 +114,7 @@ public class ButterflyIT {
         File appDir = new File(this.getClass().getResource("/test-app-1").toURI());
         File outDir = Files.createTempDir();
 
-        ButterflyCliRun run = ButterflyCliApp.run(appDir.getAbsolutePath(), "-o", outDir.getAbsolutePath(), "-t", JavaEEToSpringBoot.class.getName());
+        ButterflyCliRun run = new ButterflyCliApp().run(appDir.getAbsolutePath(), "-o", outDir.getAbsolutePath(), "-t", JavaEEToSpringBoot.class.getName());
         assertEquals(run.getExitStatus(), 1);
 
         String exceptionMessage = String.format("This application has pending manual instructions. Perform manual instructions at the following file first, then remove it, and run Butterfly again: %s/BUTTERFLY_MANUAL_INSTRUCTIONS.md", appDir.getAbsolutePath());
