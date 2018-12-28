@@ -10,7 +10,7 @@ import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
  *
  * @author facarvalho, mmcrockett
  */
-public class TemplateMetaData {
+class TemplateMetaData {
 
     private transient ExtensionMetaData extensionMetaData;
     private String name;
@@ -45,35 +45,35 @@ public class TemplateMetaData {
         return templateMetaData;
     }
 
-    public ExtensionMetaData getExtensionMetaData() {
+    ExtensionMetaData getExtensionMetaData() {
         return extensionMetaData;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public String getClassName() {
+    String getClassName() {
         return className;
     }
 
-    public TemplateType getTemplateType() {
+    TemplateType getTemplateType() {
         return templateType;
     }
 
-    public String getDescription() {
+    String getDescription() {
         return description;
     }
 
-    public String getUpgradeFromVersion() {
+    String getUpgradeFromVersion() {
         return upgradeFromVersion;
     }
 
-    public String getUpgradeToVersion() {
+    String getUpgradeToVersion() {
         return upgradeToVersion;
     }
 
-    public int getShortcut() {
+    int getShortcut() {
         return shortcut;
     }
 

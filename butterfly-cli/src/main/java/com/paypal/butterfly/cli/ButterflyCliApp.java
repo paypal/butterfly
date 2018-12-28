@@ -29,7 +29,7 @@ import joptsimple.OptionException;
  * @author facarvalho
  */
 @SpringBootApplication
-public class ButterflyCliApp extends ButterflyCliOption {
+class ButterflyCliApp extends ButterflyCliOption {
 
     private File butterflyHome;
     private String banner;
@@ -44,7 +44,7 @@ public class ButterflyCliApp extends ButterflyCliOption {
         System.exit(exitStatus);
     }
 
-    public ButterflyCliRun run(String... arguments) throws IOException {
+    ButterflyCliRun run(String... arguments) throws IOException {
         setButterflyHome();
 
         logFileDefiner = new LogFileDefiner();

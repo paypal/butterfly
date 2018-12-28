@@ -29,7 +29,7 @@ import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
  * @author facarvalho
  */
 @Component
-public class ButterflyCliRunner extends ButterflyCliOption {
+class ButterflyCliRunner extends ButterflyCliOption {
 
     @Autowired
     private LogConfigurator logConfigurator;

@@ -16,7 +16,7 @@ import com.paypal.butterfly.api.TransformationResult;
  *
  * @author facarvalho
  */
-public class ButterflyCliRun {
+class ButterflyCliRun {
 
     private String butterflyVersion;
     private String[] inputArguments;
@@ -59,35 +59,35 @@ public class ButterflyCliRun {
         extensions.add(extensionMetaData);
     }
 
-    public int getExitStatus() {
+    int getExitStatus() {
         return exitStatus;
     }
 
-    public String getButterflyVersion() {
+    String getButterflyVersion() {
         return butterflyVersion;
     }
 
-    public String[] getInputArguments() {
+    String[] getInputArguments() {
         return Arrays.copyOf(inputArguments, inputArguments.length);
     }
 
-    public File getLogFile() {
+    File getLogFile() {
         return logFile;
     }
 
-    public String getErrorMessage() {
+    String getErrorMessage() {
         return errorMessage;
     }
 
-    public String getExceptionMessage() {
+    String getExceptionMessage() {
         return exceptionMessage;
     }
 
-    public TransformationResult getTransformationResult() {
+    TransformationResult getTransformationResult() {
         return transformationResult;
     }
 
-    public List<ExtensionMetaData> getExtensions() {
+    List<ExtensionMetaData> getExtensions() {
         return Collections.unmodifiableList(extensions);
     }
 

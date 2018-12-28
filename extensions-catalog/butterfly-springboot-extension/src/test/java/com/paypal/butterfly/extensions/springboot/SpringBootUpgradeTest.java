@@ -2,6 +2,7 @@ package com.paypal.butterfly.extensions.springboot;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class SpringBootUpgradeTest {
         assertEquals(us_1_5_6_to_1_5_7.getExtensionClass(), ButterflySpringBootExtension.class);
         assertEquals(us_1_5_6_to_1_5_7.getDescription(), "Upgrade Spring Boot application from version 1.5.6 to version 1.5.7");
         assertEquals(us_1_5_6_to_1_5_7.getName(), "ButterflySpringBootExtension:SpringBootUpgrade_1_5_6_to_1_5_7");
+        assertNull(us_1_5_6_to_1_5_7.getNextStep());
 
         List<TransformationUtility> utilities = us_1_5_6_to_1_5_7.getUtilities();
 

@@ -6,18 +6,25 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
 import java.io.File;
-import java.util.Iterator;
 
+import com.paypal.butterfly.api.ButterflyFacade;
 import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class AssertTest {
-    
+@ContextConfiguration(classes = ButterflyTestConfig.class)
+public class AssertTest extends AbstractTestNGSpringContextTests {
+
     private static final File TEST_RESOURCES = new File("test-resources");
 
     // Error message header
     private static final String EMH = "Baseline and transformed applications don't match, as detailed below:\n\n";
+
+    @Autowired
+    private ButterflyFacade facade;
 
     @BeforeClass
     public void beforeClass() {
@@ -108,7 +115,7 @@ public class AssertTest {
 
     @Test
     public void assertAbortTest() {
-        assertAbort(TEST_RESOURCES, JavaEEToSpringBoot.class, true, true, null, "This application does not have a root pom.xml file");
+        assertAbort(facade, TEST_RESOURCES, JavaEEToSpringBoot.class, null, "This application does not have a root pom.xml file");
     }
 
     @Test

@@ -1,30 +1,44 @@
 package com.paypal.butterfly.extensions.springboot;
 
-import static com.paypal.butterfly.test.Assert.*;
-import static org.testng.Assert.*;
+import com.paypal.butterfly.api.ButterflyFacade;
+import com.paypal.butterfly.api.TransformationMetrics;
+import com.paypal.butterfly.api.TransformationResult;
+import com.paypal.butterfly.api.TransformationStatistics;
+import com.paypal.butterfly.test.ButterflyTestConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.List;
 
-import org.testng.annotations.Test;
-
-import com.paypal.butterfly.api.TransformationResult;
-import com.paypal.butterfly.api.TransformationMetrics;
-import com.paypal.butterfly.api.TransformationStatistics;
+import static com.paypal.butterfly.test.Assert.*;
+import static org.testng.Assert.*;
 
 /**
  * Integration tests for {@link JavaEEToSpringBoot}
  *
  * @author facarvalho
  */
-public class JavaEEToSpringBootIT {
+@ContextConfiguration(classes = ButterflyTestConfig.class)
+public class JavaEEToSpringBootIT extends AbstractTestNGSpringContextTests {
+
+    @Autowired
+    private ButterflyFacade facade;
+
+    @BeforeClass
+    public void setDebug() {
+        System.setProperty("butterfly.test.debug", "true");
+    }
 
     @Test
     public void sampleAppRunTest() {
         File sampleApp = new File("../../tests/sample-apps/echo");
         File sampleAppTransformedBaseline = new File("../../tests/transformed-baseline/echo-JavaEEToSpringBoot");
 
-        TransformationResult transformationResult = assertTransformation(sampleAppTransformedBaseline, sampleApp, JavaEEToSpringBoot.class, false, false, null, true);
+        TransformationResult transformationResult = assertTransformation(facade, sampleAppTransformedBaseline, sampleApp, JavaEEToSpringBoot.class, null, true);
 
         assertTrue(transformationResult.isSuccessful());
 // FIXME
