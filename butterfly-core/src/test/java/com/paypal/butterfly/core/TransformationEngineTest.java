@@ -222,6 +222,16 @@ public class TransformationEngineTest extends TestHelper {
 
         AbortDetails abortDetails = transformationResult.getAbortDetails();
 
+        assertTrue(abortDetails.toString().startsWith("{\n" +
+                "  \"templateName\": \"ButterflySpringBootExtension:JavaEEToSpringBoot\",\n" +
+                "  \"templateClassName\": \"com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot\",\n" +
+                "  \"utilityName\": \"ButterflySpringBootExtension:JavaEEToSpringBoot-2-Abort\",\n" +
+                "  \"utilityClassName\": \"com.paypal.butterfly.extensions.api.utilities.Abort\",\n" +
+                "  \"abortMessage\": \"This application does not have a root pom.xml file\",\n" +
+                "  \"exceptionClassName\": \"com.paypal.butterfly.extensions.api.exception.TransformationUtilityException\",\n" +
+                "  \"exceptionMessage\": \"Abort transformation utility has been executed\",\n" +
+                "  \"exceptionStackTrace\": \"com.paypal.butterfly.extensions.api.exception.TransformationUtilityException: Abort transformation utility has been executed"));
+
         assertEquals(abortDetails.getTemplateName(), ButterflySpringBootExtension.class.getSimpleName() + ":" + JavaEEToSpringBoot.class.getSimpleName());
         assertEquals(abortDetails.getTemplateClassName(), JavaEEToSpringBoot.class.getName());
         assertEquals(abortDetails.getUtilityName(), "ButterflySpringBootExtension:JavaEEToSpringBoot-2-Abort");

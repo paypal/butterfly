@@ -1,15 +1,12 @@
 package com.paypal.butterfly.cli.logging;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import com.paypal.butterfly.cli.ButterflyCliApp;
-
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.spi.PropertyDefiner;
 import ch.qos.logback.core.status.Status;
-import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Application name Logback property definer

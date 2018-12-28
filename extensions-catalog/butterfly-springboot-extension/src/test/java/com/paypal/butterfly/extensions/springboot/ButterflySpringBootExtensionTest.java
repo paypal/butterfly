@@ -1,10 +1,8 @@
 package com.paypal.butterfly.extensions.springboot;
 
-import static org.testng.Assert.*;
-
 import org.testng.annotations.Test;
 
-import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
+import static org.testng.Assert.*;
 
 /**
  * Unit tests for {@link ButterflySpringBootExtension}
@@ -14,7 +12,7 @@ import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException
 public class ButterflySpringBootExtensionTest {
 
     @Test
-    public void test() throws TemplateResolutionException {
+    public void test() {
         ButterflySpringBootExtension butterflySpringBootExtension = new ButterflySpringBootExtension();
 
         assertEquals(butterflySpringBootExtension.getDescription(), "Butterfly Spring Boot extension");

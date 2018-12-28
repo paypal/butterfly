@@ -2,8 +2,13 @@ apply plugin: 'java-library'
 
 dependencies {
     api project(':butterfly-api')
-    implementation project(':butterfly-cli')
-    implementation lib.xmlunit
+    api lib.spring_context,
+        lib.spring_test
+    implementation project(':butterfly-core')
+    implementation lib.guava,
+                   lib.xmlunit,
+                   lib.logback
+
     testImplementation project(':extensions-catalog:butterfly-springboot-extension')
     testImplementation(lib.testng) {
         exclude(module: 'aopalliance')

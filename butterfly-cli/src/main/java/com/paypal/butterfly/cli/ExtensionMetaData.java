@@ -13,7 +13,7 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
  *
  * @author facarvalho, mmcrockett
  */
-public class ExtensionMetaData {
+class ExtensionMetaData {
 
     private String name;
     private String description;
@@ -46,15 +46,15 @@ public class ExtensionMetaData {
         return templateMetaData;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public String getDescription() {
+    String getDescription() {
         return description;
     }
 
-    public String getVersion() {
+    String getVersion() {
         return version;
     }
 
@@ -64,7 +64,7 @@ public class ExtensionMetaData {
      *
      * @return an unmodifiable list of all transformation template metadata
      */
-    public List<TemplateMetaData> getTemplates() {
+    List<TemplateMetaData> getTemplates() {
         return Collections.unmodifiableList(templates);
     }
 

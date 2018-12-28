@@ -1,8 +1,9 @@
 package com.paypal.butterfly.core;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.paypal.butterfly.api.AbortDetails;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
  * POJO describing a transformation abort.
@@ -19,6 +20,8 @@ class AbortDetailsImpl implements AbortDetails {
     private String exceptionClassName;
     private String exceptionMessage;
     private String exceptionStackTrace;
+
+    private static Gson gson;
 
     AbortDetailsImpl(Exception ex, String abortMessage, String templateName, String templateClassName, String utilityName, String utilityClassName) {
         if (ex == null) {
@@ -76,6 +79,14 @@ class AbortDetailsImpl implements AbortDetails {
     @Override
     public String getExceptionStackTrace() {
         return exceptionStackTrace;
+    }
+
+    @Override
+    public String toString() {
+        if (gson == null) {
+            gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
+        }
+        return gson.toJson(this);
     }
 
 }

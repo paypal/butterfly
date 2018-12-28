@@ -83,7 +83,7 @@ abstract class ButterflyCliOption {
         optionParser.accepts(CLI_OPTION_MODIFY_ORIGINAL_FOLDER, "Transforms the application in the same folder as the original content. Options (-o) or (-z) are ignored if (-f) is specified");
     }
 
-    public static void setOptionSet(String... args) {
+    static void setOptionSet(String... args) {
         optionSet = optionParser.parse(args);
     }
 
