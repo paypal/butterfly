@@ -33,7 +33,6 @@ class ButterflyCliApp extends ButterflyCliOption {
 
     private File butterflyHome;
     private String banner;
-    private LogFileDefiner logFileDefiner;
 
     private Logger logger;
 
@@ -47,8 +46,7 @@ class ButterflyCliApp extends ButterflyCliOption {
     ButterflyCliRun run(String... arguments) throws IOException {
         setButterflyHome();
 
-        logFileDefiner = new LogFileDefiner();
-        logFileDefiner.setButterflyHome(butterflyHome);
+        LogFileDefiner.setButterflyHome(butterflyHome);
 
         setEnvironment(arguments);
 
@@ -60,7 +58,7 @@ class ButterflyCliApp extends ButterflyCliOption {
         setBanner(butterflyFacade);
 
         ButterflyCliRunner butterflyCliRunner = applicationContext.getBean(ButterflyCliRunner.class);
-        ButterflyCliRun run = butterflyCliRunner.run(butterflyHome, banner, logFileDefiner);
+        ButterflyCliRun run = butterflyCliRunner.run(butterflyHome, banner);
         run.setInputArguments(arguments);
 
         if (optionSet != null && optionSet.has(CLI_OPTION_RESULT_FILE)) {
@@ -85,7 +83,7 @@ class ButterflyCliApp extends ButterflyCliOption {
                 setOptionSet(arguments);
                 File applicationFolder = getApplicationFolder();
                 boolean debug = optionSet.has(CLI_OPTION_DEBUG);
-                logFileDefiner.setLogFileName(applicationFolder, debug);
+                LogFileDefiner.setLogFileName(applicationFolder, debug);
             } catch (OptionException e) {
                 Logger logger = LoggerFactory.getLogger(ButterflyCliApp.class);
                 logger.info("Butterfly application transformation tool");

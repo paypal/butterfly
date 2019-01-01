@@ -17,19 +17,18 @@ public class LogFileDefiner implements PropertyDefiner {
 
     private static final String LOG_FILE_NAME_SYNTAX = "%s_%s.log";
     private static final String DEBUG_LOG_FILE_NAME_SYNTAX = "%s_%s_debug.log";
+    private static final String DEFAULT_LOG_FILE_NAME = String.format(LOG_FILE_NAME_SYNTAX, "butterfly", new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()));
 
-    private final String DEFAULT_LOG_FILE_NAME = String.format(LOG_FILE_NAME_SYNTAX, "butterfly", new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()));
+    private static String logFileName = DEFAULT_LOG_FILE_NAME;
+    private static boolean customLogFileNameSet = false;
+    private static File butterflyHome;
+    private static File logFile;
 
-    private String logFileName = DEFAULT_LOG_FILE_NAME;
-    private boolean customLogFileNameSet = false;
-    private File butterflyHome;
-    private File logFile;
-
-    public void setButterflyHome(File butterflyHome) {
-        this.butterflyHome = butterflyHome;
+    public static void setButterflyHome(File butterflyHome) {
+        LogFileDefiner.butterflyHome = butterflyHome;
     }
 
-    public void setLogFileName(File applicationFolder, boolean debug) {
+    public static void setLogFileName(File applicationFolder, boolean debug) {
         if (!customLogFileNameSet && applicationFolder != null) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
             logFileName = String.format((debug ? DEBUG_LOG_FILE_NAME_SYNTAX : LOG_FILE_NAME_SYNTAX), applicationFolder.getName(), simpleDateFormat.format(new Date()));
@@ -37,11 +36,11 @@ public class LogFileDefiner implements PropertyDefiner {
         }
     }
 
-    private void setLogFile() {
+    private static void setLogFile() {
         logFile = new File(butterflyHome, "logs" + File.separator + logFileName);
     }
 
-    public File getLogFile() {
+    public static File getLogFile() {
         if (logFile == null) {
             setLogFile();
         }

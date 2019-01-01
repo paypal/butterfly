@@ -1,0 +1,40 @@
+{
+  "butterflyVersion": "TEST",
+  "inputArguments": [
+    "-l",
+    "-r",
+    "out/result-list.json"
+  ],
+  "exitStatus": 0,
+  "logFile": null,
+  "errorMessage": null,
+  "exceptionMessage": null,
+  "transformationResult": null,
+  "extensions": [
+    {
+      "name": "com.test.SampleExtension",
+      "description": "SampleExtension for tests purposes",
+      "version": "2.0.0",
+      "templates": [
+        {
+          "name": "SampleExtension:DummyTransformationTemplate",
+          "className": "com.test.DummyTransformationTemplate",
+          "templateType": "TransformationTemplate",
+          "description": "DummyTransformationTemplate for tests purposes",
+          "upgradeFromVersion": null,
+          "upgradeToVersion": null,
+          "shortcut": 1
+        },
+        {
+          "name": "SampleExtension:SampleTransformationTemplate",
+          "className": "com.test.SampleTransformationTemplate",
+          "templateType": "TransformationTemplate",
+          "description": "SampleTransformationTemplate for tests purposes",
+          "upgradeFromVersion": null,
+          "upgradeToVersion": null,
+          "shortcut": 2
+        }
+      ]
+    }
+  ]
+}
