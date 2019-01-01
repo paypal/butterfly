@@ -37,15 +37,12 @@ class ButterflyCliRunner extends ButterflyCliOption {
     @Autowired
     private ButterflyFacade butterflyFacade;
 
-    private LogFileDefiner logFileDefiner;
-
     private static final Logger logger = LoggerFactory.getLogger(ButterflyCliRunner.class);
 
-    ButterflyCliRun run(File butterflyHome, String butterflyBanner, LogFileDefiner logFileDefiner) throws IOException {
+    ButterflyCliRun run(File butterflyHome, String butterflyBanner) throws IOException {
         ButterflyCliRun run = new ButterflyCliRun();
         Configuration configuration;
         run.setButterflyVersion(butterflyFacade.getButterflyVersion());
-        this.logFileDefiner = logFileDefiner;
 
         logger.info(butterflyBanner);
 
@@ -175,7 +172,7 @@ class ButterflyCliRunner extends ButterflyCliOption {
                 transformationResult = butterflyFacade.transform(applicationFolder, templateClass, configuration);
             }
 
-            run.setLogFile(logFileDefiner.getLogFile());
+            run.setLogFile(LogFileDefiner.getLogFile());
 
             if (transformationResult.isSuccessful()) {
                 logger.info("");
@@ -183,7 +180,7 @@ class ButterflyCliRunner extends ButterflyCliOption {
                 logger.info("Application has been transformed successfully!");
                 logger.info("----------------------------------------------");
                 logger.info("Transformed application folder: {}", transformationResult.getTransformedApplicationDir());
-                logger.info("Check log file for details: {}", logFileDefiner.getLogFile().getAbsolutePath());
+                logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
 
                 if (transformationResult.hasManualInstructions()) {
                     logger.info("");
@@ -218,7 +215,7 @@ class ButterflyCliRunner extends ButterflyCliOption {
         logger.error("*** Transformation has been aborted due to:");
         logger.error("*** {}", abortMessage);
         logger.info("--------------------------------------------------------------------------------------------");
-        logger.info("Check log file for details: {}", logFileDefiner.getLogFile().getAbsolutePath());
+        logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
 
         run.setErrorMessage("Transformation has been aborted due to: " + abortMessage);
         run.setExceptionMessage(abortMessage);

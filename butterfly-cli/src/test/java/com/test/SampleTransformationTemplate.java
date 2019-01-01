@@ -15,7 +15,7 @@ public class SampleTransformationTemplate extends TransformationTemplate {
 
     @Override
     public String getDescription() {
-        return null;
+        return "SampleTransformationTemplate for tests purposes";
     }
 
     @Override

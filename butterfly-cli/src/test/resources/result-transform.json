@@ -1,0 +1,86 @@
+{
+  "butterflyVersion": "TEST",
+  "inputArguments": [
+    "%l",
+    "-r",
+    "out/result-transform.json"
+  ],
+  "exitStatus": 0,
+  "logFile": "%a",
+  "errorMessage": null,
+  "exceptionMessage": null,
+  "transformationResult": {
+    "id": "%b",
+    "transformationRequest": {
+      "butterflyVersion": "TEST",
+      "id": "%c",
+      "timestamp": %d,
+      "dateTime": "%e",
+      "application": {
+        "folder": "%l"
+      },
+      "configuration": {
+        "outputFolder": null,
+        "zipOutput": false,
+        "modifyOriginalFolder": false
+      },
+      "extensionName": "com.test.SampleExtension",
+      "extensionVersion": "2.0.0",
+      "templateName": "SampleExtension:SampleTransformationTemplate",
+      "templateClassName": "com.test.SampleTransformationTemplate",
+      "upgradeStep": false,
+      "blank": false
+    },
+    "userId": "%m",
+    "timestamp": %f,
+    "dateTime": "%g",
+    "applicationType": null,
+    "applicationName": null,
+    "successful": true,
+    "transformedApplicationDir": "%h",
+    "upgradeStepsCount": 0,
+    "hasManualInstructions": false,
+    "manualInstructionsTotal": 0,
+    "manualInstructionsDir": null,
+    "manualInstructionsFile": null,
+    "transformationMetrics": [
+      {
+        "templateName": "SampleExtension:SampleTransformationTemplate",
+        "templateClassName": "com.test.SampleTransformationTemplate",
+        "dateTime": "%i",
+        "timestamp": %j,
+        "fromVersion": null,
+        "toVersion": null,
+        "hasManualInstructions": false,
+        "successful": true,
+        "statistics": {
+          "utilitiesCount": 0,
+          "operationsCount": 0,
+          "performResults": {
+            "errorCount": 0,
+            "executionResultCount": 0,
+            "skippedConditionCount": 0,
+            "skippedDependencyCount": 0
+          },
+          "executionResults": {
+            "utilities": {
+              "nullCount": 0,
+              "valueCount": 0,
+              "warningCount": 0,
+              "errorCount": 0
+            },
+            "operations": {
+              "noOpCount": 0,
+              "successCount": 0,
+              "warningCount": 0,
+              "errorCount": 0
+            }
+          },
+          "manualInstructionsCount": 0
+        }
+      }
+    ],
+    "abortDetails": null
+  },
+  "extensions": []
+}

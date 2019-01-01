@@ -3,6 +3,7 @@ apply plugin: 'application'
 mainClassName = 'com.paypal.butterfly.cli.ButterflyCliApp'
 
 dependencies {
+
     compile project(':butterfly-api')
     compile project(':butterfly-extensions-api')
     runtime project(':butterfly-core')
@@ -28,6 +29,10 @@ jar {
                 'Implementation-Name': name,
                 'Implementation-Vendor': 'PayPal'
     }
+}
+
+test {
+    forkEvery = 1
 }
 
 test.useTestNG()

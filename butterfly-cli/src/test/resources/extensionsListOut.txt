@@ -1,6 +1,6 @@
 Butterfly application transformation tool (version TEST)
 See registered extensions below (shortcut in parenthesis)
 
-- com.paypal.butterfly.extensions.springboot.ButterflySpringBootExtension: Butterfly Spring Boot extension (version 1.0.0)
-	 (1) - [TT] 	 com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot 	 Java EE to Spring Boot transformation template
-	 (2) - [US] 	 com.paypal.butterfly.extensions.springboot.SpringBootUpgrade_1_5_6_to_1_5_7 	 Upgrade Spring Boot application from version 1.5.6 to version 1.5.7
+- com.test.SampleExtension: SampleExtension for tests purposes (version 2.0.0)
+	 (1) - [TT] 	 SampleExtension:DummyTransformationTemplate 	 DummyTransformationTemplate for tests purposes
+	 (2) - [TT] 	 SampleExtension:SampleTransformationTemplate 	 SampleTransformationTemplate for tests purposes

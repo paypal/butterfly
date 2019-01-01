@@ -17,17 +17,17 @@ public class SampleExtension extends Extension {
 
     @Override
     public String getDescription() {
-        return null;
+        return "SampleExtension for tests purposes";
     }
 
     @Override
     public String getVersion() {
-        return null;
+        return "2.0.0";
     }
 
     @Override
     public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) {
-        return null;
+        return SampleTransformationTemplate.class;
     }
 
 }

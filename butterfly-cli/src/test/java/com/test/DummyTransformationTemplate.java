@@ -10,12 +10,12 @@ public class DummyTransformationTemplate extends TransformationTemplate {
 
     @Override
     public Class<? extends Extension> getExtensionClass() {
-        return null;
+        return SampleExtension.class;
     }
 
     @Override
     public String getDescription() {
-        return null;
+        return "DummyTransformationTemplate for tests purposes";
     }
 
     @Override
