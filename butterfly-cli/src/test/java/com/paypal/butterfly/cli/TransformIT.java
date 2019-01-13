@@ -1,10 +1,15 @@
 package com.paypal.butterfly.cli;
 
+import com.test.BlankTemplate;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Test;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +64,22 @@ public class TransformIT {
         consoleOutputTest(run, transformOut);
         logFileTest(run);
         jsonResultTest(run);
+    }
+
+    @Test(dependsOnMethods = "transformTest")
+    public void transformSameFolderBlankTemplateTest() throws IOException, URISyntaxException {
+        File sampleApp = new File(this.getClass().getResource("/sample_app").toURI());
+
+        File sampleAppCopy = Files.createTempDirectory("butterfly-blank-test-app", new FileAttribute[]{}).toFile();
+        FileUtils.copyDirectory(sampleApp, sampleAppCopy);
+
+        File testFile = new File(this.getClass().getResource("/butterfly.properties").toURI());
+        ButterflyCliRun run = new ButterflyCliApp().run(sampleAppCopy.getAbsolutePath(), "-f", "-t", BlankTemplate.class.getName());
+
+        assertEquals(run.getExitStatus(), 0);
+        assertEquals(sampleAppCopy.listFiles().length, 1);
+        assertEquals(sampleAppCopy.listFiles()[0].getName(), testFile.getName());
+        assertTrue(FileUtils.contentEquals(sampleAppCopy.listFiles()[0], testFile));
     }
 
     private void consoleOutputTest(ButterflyCliRun run, File transformOut) throws URISyntaxException, IOException {

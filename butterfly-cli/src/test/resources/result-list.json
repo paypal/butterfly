@@ -17,22 +17,31 @@
       "version": "2.0.0",
       "templates": [
         {
-          "name": "SampleExtension:DummyTransformationTemplate",
-          "className": "com.test.DummyTransformationTemplate",
+          "name": "SampleExtension:DummyTemplate",
+          "className": "com.test.DummyTemplate",
           "templateType": "TransformationTemplate",
-          "description": "DummyTransformationTemplate for tests purposes",
+          "description": "DummyTemplate for tests purposes",
           "upgradeFromVersion": null,
           "upgradeToVersion": null,
           "shortcut": 1
         },
         {
-          "name": "SampleExtension:SampleTransformationTemplate",
-          "className": "com.test.SampleTransformationTemplate",
+          "name": "SampleExtension:SampleTemplate",
+          "className": "com.test.SampleTemplate",
           "templateType": "TransformationTemplate",
-          "description": "SampleTransformationTemplate for tests purposes",
+          "description": "SampleTemplate for tests purposes",
           "upgradeFromVersion": null,
           "upgradeToVersion": null,
           "shortcut": 2
+        },
+        {
+          "name": "SampleExtension:BlankTemplate",
+          "className": "com.test.BlankTemplate",
+          "templateType": "TransformationTemplate",
+          "description": "BlankTemplate for tests purposes",
+          "upgradeFromVersion": null,
+          "upgradeToVersion": null,
+          "shortcut": 3
         }
       ]
     }

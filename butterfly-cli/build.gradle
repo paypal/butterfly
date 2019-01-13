@@ -13,6 +13,7 @@ dependencies {
     compile (lib.spring_boot_starter) {
         exclude(module: 'commons-logging')
     }
+    testCompile project(':butterfly-utilities')
     testCompile(lib.testng) {
         exclude(module: 'aopalliance')
         exclude(module: 'guava')

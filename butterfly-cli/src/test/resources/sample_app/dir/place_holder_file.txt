@@ -1,0 +1,1 @@
+Do NOT delete this file. It is used just as a place holder for this sample application folder, for tests purposes.
