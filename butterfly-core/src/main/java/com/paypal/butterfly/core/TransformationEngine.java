@@ -566,6 +566,9 @@ class TransformationEngine {
             if (transformationRequest.isBlank()) {
                 try {
                     FileUtils.copyDirectory(application.getFolder(), baselineAppFolder);
+                    for (File file : application.getFolder().listFiles()) {
+                        FileUtils.forceDelete(file);
+                    }
                 } catch (IOException e) {
                     String exceptionMessage = String.format(
                             "An exception occurred when preparing the baseline application folder (%s). Check also if the original application folder (%s) is valid",

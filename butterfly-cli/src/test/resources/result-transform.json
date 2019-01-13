@@ -26,8 +26,8 @@
       },
       "extensionName": "com.test.SampleExtension",
       "extensionVersion": "2.0.0",
-      "templateName": "SampleExtension:SampleTransformationTemplate",
-      "templateClassName": "com.test.SampleTransformationTemplate",
+      "templateName": "SampleExtension:SampleTemplate",
+      "templateClassName": "com.test.SampleTemplate",
       "upgradeStep": false,
       "blank": false
     },
@@ -45,8 +45,8 @@
     "manualInstructionsFile": null,
     "transformationMetrics": [
       {
-        "templateName": "SampleExtension:SampleTransformationTemplate",
-        "templateClassName": "com.test.SampleTransformationTemplate",
+        "templateName": "SampleExtension:SampleTemplate",
+        "templateClassName": "com.test.SampleTemplate",
         "dateTime": "%i",
         "timestamp": %j,
         "fromVersion": null,

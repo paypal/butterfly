@@ -6,7 +6,7 @@ import com.paypal.butterfly.extensions.api.TransformationTemplate;
 /**
  * @author facarvalho
  */
-public class SampleTransformationTemplate extends TransformationTemplate {
+public class DummyTemplate extends TransformationTemplate {
 
     @Override
     public Class<? extends Extension> getExtensionClass() {
@@ -15,7 +15,7 @@ public class SampleTransformationTemplate extends TransformationTemplate {
 
     @Override
     public String getDescription() {
-        return "SampleTransformationTemplate for tests purposes";
+        return "DummyTemplate for tests purposes";
     }
 
     @Override
@@ -27,5 +27,4 @@ public class SampleTransformationTemplate extends TransformationTemplate {
     public String getApplicationName() {
         return null;
     }
-
 }

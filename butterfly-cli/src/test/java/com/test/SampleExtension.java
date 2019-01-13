@@ -11,8 +11,9 @@ import java.io.File;
 public class SampleExtension extends Extension {
 
     public SampleExtension() {
-        add(DummyTransformationTemplate.class);
-        add(SampleTransformationTemplate.class);
+        add(DummyTemplate.class);
+        add(SampleTemplate.class);
+        add(BlankTemplate.class);
     }
 
     @Override
@@ -27,7 +28,7 @@ public class SampleExtension extends Extension {
 
     @Override
     public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) {
-        return SampleTransformationTemplate.class;
+        return SampleTemplate.class;
     }
 
 }

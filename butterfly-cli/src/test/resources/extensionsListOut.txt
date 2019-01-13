@@ -2,5 +2,6 @@ Butterfly application transformation tool (version TEST)
 See registered extensions below (shortcut in parenthesis)
 
 - com.test.SampleExtension: SampleExtension for tests purposes (version 2.0.0)
-	 (1) - [TT] 	 SampleExtension:DummyTransformationTemplate 	 DummyTransformationTemplate for tests purposes
-	 (2) - [TT] 	 SampleExtension:SampleTransformationTemplate 	 SampleTransformationTemplate for tests purposes
+	 (1) - [TT] 	 SampleExtension:DummyTemplate 	 DummyTemplate for tests purposes
+	 (2) - [TT] 	 SampleExtension:SampleTemplate 	 SampleTemplate for tests purposes
+	 (3) - [TT] 	 SampleExtension:BlankTemplate 	 BlankTemplate for tests purposes
