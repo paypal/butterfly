@@ -567,6 +567,7 @@ class TransformationEngine {
                 try {
                     FileUtils.copyDirectory(application.getFolder(), baselineAppFolder);
                     for (File file : application.getFolder().listFiles()) {
+                        if (file.getName().equals(".git")) continue;
                         FileUtils.forceDelete(file);
                     }
                 } catch (IOException e) {
