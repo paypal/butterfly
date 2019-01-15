@@ -1,7 +1,6 @@
 package com.paypal.butterfly.test;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -53,8 +52,42 @@ class FoldersComparison {
             throw new AssertionError(e);
         }
 
-        if (!missing.isEmpty() || !unexpected.isEmpty() || !different.isEmpty()) {
+        if (missing.isEmpty() && unexpected.isEmpty() && different.size() == 1) {
+            failSingleDifferentFile(expected, actual, different.pollFirst());
+        } else if (!missing.isEmpty() || !unexpected.isEmpty() || !different.isEmpty()) {
             fail(missing, unexpected, different);
+        }
+    }
+
+    private static void failSingleDifferentFile(File expected, File actual, String differentContentFilePath) {
+        try (
+            BufferedReader expectedReader = new BufferedReader(new FileReader(new File(expected, differentContentFilePath)));
+            BufferedReader actualReader = new BufferedReader(new FileReader(new File(actual, differentContentFilePath)));
+        ) {
+            int line = 1;
+            int column = 1;
+            int eb;
+            int ab;
+            while ((eb = expectedReader.read()) == (ab = actualReader.read())) {
+                if (eb == -1) {
+                    throw new IllegalStateException("File " + differentContentFilePath + " unexpectedly has same content!");
+                }
+                if (((char) eb) == '\n') {
+                    line++;
+                    column = 1;
+                } else {
+                    column++;
+                }
+            }
+
+            String failureMessage = "Baseline and transformed applications don't match, the contents of one file differ, as detailed below:\n" +
+                    "\n\tFile: \t\t" + differentContentFilePath +
+                    "\n\tAt: \t\tline " + line + ", column " + column +
+                    "\n\tExpected: \t'" + (char) eb + "'" +
+                    "\n\tFound: \t\t'" + (char) ab + "'";
+            throw new AssertionError(failureMessage);
+        } catch (IOException e) {
+            throw new IllegalStateException("IO error when comparing file " + differentContentFilePath, e);
         }
     }
 
