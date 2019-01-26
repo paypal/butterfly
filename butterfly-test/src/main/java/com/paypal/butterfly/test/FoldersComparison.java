@@ -55,7 +55,7 @@ class FoldersComparison {
         if (missing.isEmpty() && unexpected.isEmpty() && different.size() == 1) {
             failSingleDifferentFile(expected, actual, different.pollFirst());
         } else if (!missing.isEmpty() || !unexpected.isEmpty() || !different.isEmpty()) {
-            fail(missing, unexpected, different);
+            fail(expected, actual, missing, unexpected, different);
         }
     }
 
@@ -81,18 +81,25 @@ class FoldersComparison {
             }
 
             String failureMessage = "Baseline and transformed applications don't match, the contents of one file differ, as detailed below:\n" +
-                    "\n\tFile: \t\t" + differentContentFilePath +
+                    "\n\tBaseline application:    " + expected.getAbsolutePath() +
+                    "\n\tTransformed application: " + actual.getAbsolutePath() +
+                    "\n\n\n\tFile: \t\t" + differentContentFilePath +
                     "\n\tAt: \t\tline " + line + ", column " + column +
                     "\n\tExpected: \t'" + (char) eb + "'" +
                     "\n\tFound: \t\t'" + (char) ab + "'";
+
             throw new AssertionError(failureMessage);
         } catch (IOException e) {
             throw new IllegalStateException("IO error when comparing file " + differentContentFilePath, e);
         }
     }
 
-    private static void fail(TreeSet<String> missing, TreeSet<String> unexpected, TreeSet<String> different) {
-        StringBuilder failureMessage = new StringBuilder("Baseline and transformed applications don't match, as detailed below:\n");
+    private static void fail(File expected, File actual, TreeSet<String> missing, TreeSet<String> unexpected, TreeSet<String> different) {
+        StringBuilder failureMessage = new StringBuilder();
+
+        failureMessage.append("Baseline and transformed applications don't match, as detailed below:\n\n");
+        failureMessage.append("\tBaseline application:    " + expected.getAbsolutePath() + "\n");
+        failureMessage.append("\tTransformed application: " + actual.getAbsolutePath() + "\n\n");
 
         printResult(missing, "Missing in transformed application", failureMessage);
         printResult(unexpected, "Unexpectedly found in transformed application", failureMessage);
@@ -103,12 +110,12 @@ class FoldersComparison {
 
     private static void printResult(TreeSet<String> entries, String header, StringBuilder failureMessage) {
         if(!entries.isEmpty()) {
-            failureMessage.append("\n" + header + " (" + entries.size() + "):\n");
+            failureMessage.append("\n\t" + header + " (" + entries.size() + "):\n");
             Iterator<String> i = entries.iterator();
             int c = MAX_LINES;
-            for (; i.hasNext() && c > 0; c--) failureMessage.append("\t" + i.next() + "\n");
+            for (; i.hasNext() && c > 0; c--) failureMessage.append("\t\t" + i.next() + "\n");
             int more = (entries.size() - MAX_LINES);
-            if (more > 0) failureMessage.append("\t(More " + more + ")\n");
+            if (more > 0) failureMessage.append("\t\t(More " + more + ")\n");
         }
     }
 

@@ -152,13 +152,13 @@ public abstract class Assert {
         if (baselineApplication == null || !baselineApplication.exists() || !baselineApplication.isDirectory()) throw new IllegalArgumentException("Specified expected file is null, does not exist or is not a directory");
         if (transformedApplication == null || !transformedApplication.exists() || !transformedApplication.isDirectory()) throw new IllegalArgumentException("Specified actual file is null, does not exist, or is not a directory");
 
-        Logger logger = LoggerFactory.getLogger(Assert.class);
-
-        logger.info("Comparing the following folders:");
-        logger.info("Baseline application: {}", baselineApplication.getAbsolutePath());
-        logger.info("Transformed application: {}", transformedApplication.getAbsolutePath());
+        System.out.println("\nComparing the following folders:");
+        System.out.println("Baseline application: " + baselineApplication.getAbsolutePath());
+        System.out.println("Transformed application: " + transformedApplication.getAbsolutePath());
 
         FoldersComparison.assertEquals(baselineApplication, transformedApplication, xmlSemanticComparison);
+
+        System.out.println("Folders match, test succeeded");
     }
 
     /**
