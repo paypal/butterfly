@@ -1,13 +1,5 @@
 package com.paypal.butterfly.test;
 
-import static com.paypal.butterfly.test.Assert.assertAbort;
-import static com.paypal.butterfly.test.Assert.assertTransformation;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
-
-import java.io.File;
-
 import com.paypal.butterfly.api.ButterflyFacade;
 import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +7,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.File;
+
+import static com.paypal.butterfly.test.Assert.assertAbort;
+import static com.paypal.butterfly.test.Assert.assertTransformation;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 @ContextConfiguration(classes = ButterflyTestConfig.class)
 public class AssertTest extends AbstractTestNGSpringContextTests {
