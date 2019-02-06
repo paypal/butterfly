@@ -105,7 +105,7 @@ public abstract class Assert {
         }
 
         TransformationResult transformationResult;
-        if (transformationTemplate.isAssignableFrom(UpgradeStep.class)) {
+        if (UpgradeStep.class.isAssignableFrom(transformationTemplate)) {
             UpgradePath upgradePath = getUpgradePath(transformationTemplate, version);
             transformationResult = facade.transform(originalApplication, upgradePath, configuration);
         } else {
