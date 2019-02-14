@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.io.File;
+import java.util.List;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -43,10 +44,11 @@ public class ButterflyFacadeImplTest extends PowerMockTestCase {
 
     @Test
     public void testGetRegisteredExtension() {
-        when(extensionRegistry.getExtension()).thenReturn(extensionRegistry_test.getExtension());
-        Extension extension = butterflyFacadeImpl.getRegisteredExtension();
-        Assert.assertNotNull(extension);
-        Assert.assertTrue(extension instanceof ButterflySpringBootExtension);
+        when(extensionRegistry.getExtensions()).thenReturn(extensionRegistry_test.getExtensions());
+        List<Extension> extensions = butterflyFacadeImpl.getExtensions();
+        Assert.assertNotNull(extensions);
+        Assert.assertEquals(extensions.size(), 1);
+        Assert.assertTrue(extensions.get(0) instanceof ButterflySpringBootExtension);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "Template class name cannot be blank")

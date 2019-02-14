@@ -24,9 +24,9 @@
         "zipOutput": false,
         "modifyOriginalFolder": false
       },
-      "extensionName": "com.test.SampleExtension",
+      "extensionName": "com.test.SampleExtension1",
       "extensionVersion": "2.0.0",
-      "templateName": "SampleExtension:SampleTemplate",
+      "templateName": "SampleExtension1:SampleTemplate",
       "templateClassName": "com.test.SampleTemplate",
       "upgradeStep": false,
       "blank": false
@@ -45,7 +45,7 @@
     "manualInstructionsFile": null,
     "transformationMetrics": [
       {
-        "templateName": "SampleExtension:SampleTemplate",
+        "templateName": "SampleExtension1:SampleTemplate",
         "templateClassName": "com.test.SampleTemplate",
         "dateTime": "%i",
         "timestamp": %j,

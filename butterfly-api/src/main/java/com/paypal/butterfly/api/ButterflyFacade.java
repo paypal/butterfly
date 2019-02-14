@@ -1,6 +1,7 @@
 package com.paypal.butterfly.api;
 
 import java.io.File;
+import java.util.List;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
@@ -23,27 +24,27 @@ public interface ButterflyFacade {
     String getButterflyVersion();
 
     /**
-     * Returns the registered extension, or null, if none has been registered.
-     * If multiple extensions have been registered, throw an {@link IllegalStateException}.
+     * Returns an unmodifiable list of all registered extensions
      *
-     * @throws IllegalStateException if multiple extensions have been registered
-     * @return the registered extension
+     * @return an unmodifiable list of all registered extensions
      */
-    Extension getRegisteredExtension();
+    List<Extension> getExtensions();
 
     /**
      * Butterfly might be able to automatically identify the type of application
      * and which transformation template to be applied to it. This automatic
-     * transformation template resolution is delegated to the registered
-     * Extension class. Based on the application folder, and its content, the
+     * transformation template resolution is performed by each registered
+     * Extension class. Based on the application folder, and its content, each
      * registered extension might decide which transformation template should be used
-     * to transform it. Only one can be chosen. If no template applies, or if no or multiple
-     * extensions have been registered, a {@link TemplateResolutionException} is
+     * to transform it. Only one can be chosen. If no template applies,
+     * if more than one applies (from different extensions), or if no
+     * extension has been registered, a {@link TemplateResolutionException} is
      * thrown explaining the reason why no template could be chosen.
      *
      * @param applicationFolder the folder where the code of the application to be transformed is
      * @return the chosen transformation template
-     * @throws TemplateResolutionException if no template applies or if no or multiple extension have been registered
+     * @throws TemplateResolutionException if no template could be resolved, more than one was resolved
+     * (from different extensions), or if no extension has been registered
      */
     Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException;
 

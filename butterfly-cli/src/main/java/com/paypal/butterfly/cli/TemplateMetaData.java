@@ -3,6 +3,8 @@ package com.paypal.butterfly.cli;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 
+import java.util.Objects;
+
 /**
  * This is just a POJO that represents a Template of a Butterfly extension.
  * Its purpose is to facilitate serializing
@@ -75,6 +77,22 @@ class TemplateMetaData {
 
     int getShortcut() {
         return shortcut;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof TemplateMetaData)) return false;
+
+        TemplateMetaData templateMetaData = (TemplateMetaData) obj;
+        if (!Objects.equals(templateMetaData.name, this.name)) return false;
+        if (!Objects.equals(templateMetaData.className, this.className)) return false;
+        if (!Objects.equals(templateMetaData.templateType, this.templateType)) return false;
+        if (!Objects.equals(templateMetaData.description, this.description)) return false;
+        if (!Objects.equals(templateMetaData.upgradeFromVersion, this.upgradeFromVersion)) return false;
+        if (!Objects.equals(templateMetaData.upgradeToVersion, this.upgradeToVersion)) return false;
+
+        return templateMetaData.shortcut == this.shortcut;
     }
 
 }

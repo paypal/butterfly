@@ -3,6 +3,8 @@ package com.paypal.butterfly.cli;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
@@ -20,6 +22,8 @@ class ExtensionMetaData {
     private String version;
     private List<TemplateMetaData> templates = new ArrayList<>();
 
+    private static transient AtomicInteger shortcut = new AtomicInteger(1);
+
     private ExtensionMetaData() {
     }
 
@@ -29,11 +33,9 @@ class ExtensionMetaData {
         extensionMetaData.description = extension.getDescription();
         extensionMetaData.version = extension.getVersion();
 
-        int shortcut = 1;
         for(Object templateObj : extension.getTemplateClasses().toArray()) {
             Class<? extends TransformationTemplate> template = (Class<? extends TransformationTemplate>) templateObj;
-            extensionMetaData.addTemplate(template, shortcut);
-            shortcut++;
+            extensionMetaData.addTemplate(template, shortcut.getAndIncrement());
         }
 
         return extensionMetaData;
@@ -66,6 +68,19 @@ class ExtensionMetaData {
      */
     List<TemplateMetaData> getTemplates() {
         return Collections.unmodifiableList(templates);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof ExtensionMetaData)) return false;
+
+        ExtensionMetaData extensionMetaData = (ExtensionMetaData) obj;
+        if (!Objects.equals(extensionMetaData.name, this.name)) return false;
+        if (!Objects.equals(extensionMetaData.description, this.description)) return false;
+        if (!Objects.equals(extensionMetaData.version, this.version)) return false;
+
+        return Objects.equals(extensionMetaData.templates, this.templates);
     }
 
 }

@@ -149,10 +149,10 @@ subprojects {
 
     jacocoTestCoverageVerification {
         violationRules {
-            rule { element = 'PACKAGE'; limit { minimum = 0.65 }; includes = ['com.paypal.butterfly.cli'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.28 }; includes = ['com.paypal.butterfly.cli'] }
             rule { element = 'PACKAGE'; limit { minimum = 0.71 }; includes = ['com.paypal.butterfly.cli.logging'] }
-            rule { element = 'PACKAGE'; limit { minimum = 0.50 }; includes = ['com.paypal.butterfly.core*'] }
-            rule { element = 'PACKAGE'; limit { minimum = 0.56 }; includes = ['com.paypal.butterfly.extensions.api'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.41 }; includes = ['com.paypal.butterfly.core*'] }
+            rule { element = 'PACKAGE'; limit { minimum = 0.54 }; includes = ['com.paypal.butterfly.extensions.api'] }
             rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.extensions.api*'] }
             rule { element = 'PACKAGE'; limit { minimum = 1.00 }; includes = ['com.paypal.butterfly.extensions.springboot*'] }
             rule { element = 'PACKAGE'; limit { minimum = 0.00 }; includes = ['com.paypal.butterfly.persist*'] }
