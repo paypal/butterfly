@@ -62,17 +62,19 @@ public abstract class Extension<E> {
     }
 
     /**
-     * Butterfly might be able to automatically identify, based on the application
-     * content, the most applicable transformation template to transform it.
-     * If no template applies to the application content, a {@link TemplateResolutionException}
-     * is thrown explaining the reason why no template could be chosen.
+     * Butterfly might be able to automatically identify the type of application
+     * and which transformation template to be applied to it. This automatic
+     * transformation template resolution is actually performed by each registered
+     * Extension class. Based on the application folder, and its content, each
+     * registered extension might decide which transformation template should be used
+     * to transform it. Only one or none can be chosen. If no one applies, null is
+     * returned.
      *
      * @param applicationFolder the folder where the code of the application to be transformed is
-     * @return the chosen transformation template
-     * @throws TemplateResolutionException if no template applies
+     * @return the chosen transformation template class, or null, if no one applies
      */
-    public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException {
-        throw new TemplateResolutionException("No transformation template could be resolved");
+    public  Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) {
+        return null;
     }
 
     /**

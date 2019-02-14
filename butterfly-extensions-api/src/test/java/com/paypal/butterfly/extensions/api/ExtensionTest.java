@@ -48,7 +48,7 @@ public class ExtensionTest {
     }
 
     @Test
-    public void automaticResolutionTest() throws URISyntaxException, TemplateResolutionException {
+    public void automaticResolutionTest() throws URISyntaxException {
         File appFolder = new File(getClass().getResource("/test-app").toURI());
 
         Extension extension = new Extension() {
@@ -58,7 +58,7 @@ public class ExtensionTest {
             public String getVersion() {return null;}
 
             @Override
-            public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException {
+            public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) {
                 return (Class<? extends TransformationTemplate>) getTemplateClasses().get(0);
             }
         };
@@ -67,10 +67,10 @@ public class ExtensionTest {
         assertEquals(extension.automaticResolution(appFolder), SampleTransformationTemplate2.class);
     }
 
-    @Test(expectedExceptions = TemplateResolutionException.class, expectedExceptionsMessageRegExp = "No transformation template could be resolved")
-    public void notSupportedAutomaticResolutionTest() throws URISyntaxException, TemplateResolutionException {
+    @Test
+    public void notSupportedAutomaticResolutionTest() throws URISyntaxException {
         File appFolder = new File(getClass().getResource("/test-app").toURI());
-        new SampleExtension().automaticResolution(appFolder);
+        assertNull(new SampleExtension().automaticResolution(appFolder));
     }
 
     @Test

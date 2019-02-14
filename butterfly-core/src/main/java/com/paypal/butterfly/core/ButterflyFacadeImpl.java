@@ -1,6 +1,9 @@
 package com.paypal.butterfly.core;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -42,28 +45,34 @@ class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public Extension getRegisteredExtension() {
-        return extensionRegistry.getExtension();
+    public List<Extension> getExtensions() {
+        return extensionRegistry.getExtensions();
     }
 
     @Override
     public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException {
-        try {
-            Extension extension = extensionRegistry.getExtension();
-            if (extension == null) {
-                throw new TemplateResolutionException("No Butterfly extension has been registered");
-            }
-            Class<? extends TransformationTemplate> chosenTemplate = extension.automaticResolution(applicationFolder);
-
-            // Extension.automaticResolution must never return null. But still, just in case,
-            // checking here if it does, and then throwing the exception, honoring the Extension and ButterflyFacade contract
-            if (chosenTemplate == null) {
-                throw new TemplateResolutionException("No transformation template could be chosen");
-            }
-            return chosenTemplate;
-        } catch (IllegalStateException e) {
-            throw new TemplateResolutionException("Multiple Butterfly extensions have been registered", e);
+        if (extensionRegistry.getExtensions().isEmpty()) {
+            throw new TemplateResolutionException("No Butterfly extension has been registered");
         }
+
+        Set<Class<? extends TransformationTemplate>> resolvedTemplates = new HashSet<>();
+        Class<? extends TransformationTemplate> t;
+
+        for (Extension extension : extensionRegistry.getExtensions()) {
+            t = extension.automaticResolution(applicationFolder);
+            if (t != null) {
+                resolvedTemplates.add(t);
+            }
+        }
+
+        if (resolvedTemplates.size() == 0) {
+            throw new TemplateResolutionException("No transformation template could be resolved");
+        }
+        if (resolvedTemplates.size() == 1) {
+            return (Class<? extends TransformationTemplate>) resolvedTemplates.toArray()[0];
+        }
+
+        throw new TemplateResolutionException("More than one transformation template was resolved, they are: " + resolvedTemplates);
     }
 
     @Override

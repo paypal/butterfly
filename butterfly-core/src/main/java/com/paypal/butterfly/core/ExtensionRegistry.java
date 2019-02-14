@@ -8,6 +8,7 @@ import org.reflections.util.ClasspathHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.net.URL;
 import java.util.*;
@@ -71,7 +72,7 @@ class ExtensionRegistry {
         final Collection<URL> systemPropertyURLs = ClasspathHelper.forJavaClassPath();
         final Collection<URL> classLoaderURLs = ClasspathHelper.forClassLoader();
 
-        Set<URL> classpathURLs = new HashSet<URL>();
+        Set<URL> classpathURLs = new HashSet<>();
 
         copyValidClasspathEntries(systemPropertyURLs, classpathURLs);
         copyValidClasspathEntries(classLoaderURLs, classpathURLs);
@@ -79,7 +80,9 @@ class ExtensionRegistry {
         logger.debug("Classpath URLs to be scanned: " + classpathURLs);
 
         Reflections reflections = new Reflections(classpathURLs, new SubTypesScanner());
-        Set<Class<? extends Extension>> extensionClasses = reflections.getSubTypesOf(Extension.class);
+
+        TreeSet<Class<? extends Extension>> extensionClasses = new TreeSet<>(Comparator.comparing(c -> c.getName()));
+        extensionClasses.addAll(reflections.getSubTypesOf(Extension.class));
 
         return extensionClasses;
     }
@@ -103,38 +106,16 @@ class ExtensionRegistry {
         this.extensions = Collections.unmodifiableList(_extensions);
     }
 
-    // TODO
-    // Making it private while only one registered extension is supported
-    // Make it public if there is a need to support multiple extensions registration
     /**
-     * Returns an immutable set of all registered extensions
+     * Returns an immutable list with all registered extensions
      *
-     * @return an immutable set of all registered extensions
+     * @return an immutable list with all registered extensions
      */
-    private List<Extension> getExtensions() {
+    List<Extension> getExtensions() {
         if(extensions == null) {
             setExtensions();
         }
-        return extensions;
-    }
-
-    // TODO
-    // Remove this method if there is a need to support multiple extensions registration
-    /**
-     * Get the registered extension. If no extension has been registered, return null.
-     * If multiple extensions have been registered, throw an {@link IllegalStateException}
-     *
-     * @throws IllegalStateException if multiple extensions have been registered
-     * @return the registered extension
-     */
-    Extension getExtension() {
-        int numberOfExtensions = getExtensions().size();
-        if (numberOfExtensions > 1) {
-            throw new IllegalStateException("More than one Butterfly extension have been registered");
-        } else if (numberOfExtensions == 0) {
-            return null;
-        }
-        return (Extension) getExtensions().toArray()[0];
+        return Collections.unmodifiableList(extensions);
     }
 
 }

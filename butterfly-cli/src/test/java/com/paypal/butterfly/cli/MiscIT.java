@@ -1,5 +1,7 @@
 package com.paypal.butterfly.cli;
 
+import com.test.SampleExtension1;
+import com.test.SampleExtension2;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Test;
 
@@ -85,13 +87,12 @@ public class MiscIT {
         assertEquals(run.getButterflyVersion(), "TEST");
         assertNull(run.getErrorMessage());
         assertNull(run.getExceptionMessage());
-        assertEquals(run.getExtensions().size(), 1);
-        assertEquals(run.getExtensions().get(0).getName(), "com.test.SampleExtension");
+        assertEquals(run.getExtensions().size(), 2);
         assertNull(run.getLogFile());
 
         // Ensuring console output is as expected
         File listBaselineOut = new File(this.getClass().getResource("/extensionsListOut.txt").toURI());
-        assertTrue(FileUtils.contentEquals(listBaselineOut, listOut), "Generated extensions list (saved at the following temp file) differs from test baseline: " + listOut);
+        assertTrue(FileUtils.contentEquals(listBaselineOut, listOut), "Generated extensions list differs from test baseline\nTest baseline: " + listBaselineOut + "\nGenerated result: " + listOut + "\n");
 
         // Ensuring result JSON file is as expected
         jsonResultTest(run);

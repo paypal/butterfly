@@ -8,17 +8,16 @@ import java.io.File;
 /**
  * @author facarvalho
  */
-public class SampleExtension extends Extension {
+public class SampleExtension1 extends Extension {
 
-    public SampleExtension() {
-        add(DummyTemplate.class);
+    public SampleExtension1() {
         add(SampleTemplate.class);
         add(BlankTemplate.class);
     }
 
     @Override
     public String getDescription() {
-        return "SampleExtension for tests purposes";
+        return "SampleExtension1 for tests purposes";
     }
 
     @Override

@@ -34,6 +34,7 @@ Notice that all these removed methods were already marked as deprecated in the l
 |`com.paypal.butterfly.extensions.api.metrics.AbortDetails.getExceptionClass()`|`com.paypal.butterfly.api.AbortDetails.getExceptionClassName()`||YES|
 |`com.paypal.butterfly.facade.Configuration.Configuration()`|`com.paypal.butterfly.api.ButterflyFacade.newConfiguration()`|`Configuration` class has been converted to an interface. The factory method in the facade should be used instead to get a new configuration object|YES|
 |`com.paypal.butterfly.facade.Configuration.Configuration(File, boolean)`|`com.paypal.butterfly.api.ButterflyFacade.newConfiguration()`|`Configuration` class has been converted to an interface. The factory method in the facade should be used instead to get a new configuration object|YES|
+|`com.paypal.butterfly.facade.api.ButterflyFacade.getRegisteredExtension()`|`com.paypal.butterfly.facade.api.ButterflyFacade.getExtensions()`|Butterfly 3 supports multiple extensions. With this change, a list of extensions is returned, instead of just one|YES|
 
 ### Methods whose signature didn't change, but documented result did
 
@@ -42,6 +43,7 @@ This section list methods that had their signature preserved, in terms of return
 | Method | What changed |
 |---|---|
 |`com.paypal.butterfly.extensions.api.Extension.getRootPomFile(File)`|Instead of returning `null` it now throws `IOException`, if pom file does not exist, or any error happens when trying to read it. Also it throws `XmlPullParserException` if any error happens when trying to parse the pom file.|
+|`com.paypal.butterfly.extensions.api.Extension.automaticResolution(File)`|If no transformation template can be resolved, instead of throwing an exception, `null` is returned.|
 
 ### CLI changes
 

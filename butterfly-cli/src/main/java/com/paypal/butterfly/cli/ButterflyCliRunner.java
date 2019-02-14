@@ -73,11 +73,17 @@ class ButterflyCliRunner extends ButterflyCliOption {
 
         if (optionSet.has(CLI_OPTION_LIST_EXTENSIONS)) {
             try {
-                ExtensionMetaData extensionMetaData = getExtensionsMetaData(butterflyFacade);
-                if (extensionMetaData != null) {
-                    run.addExtensionMetaData(extensionMetaData);
+                if (butterflyFacade.getExtensions().isEmpty()) {
+                    logger.info("There are no registered extensions");
+                } else {
+                    logger.info("See registered extensions below (shortcut in parenthesis)");
+                    for (Extension e : butterflyFacade.getExtensions()) {
+                        ExtensionMetaData extensionMetaData = ExtensionMetaData.newExtensionMetaData(e);
+                        run.addExtensionMetaData(extensionMetaData);
+                        printExtensionMetaData(extensionMetaData);
+                    }
                 }
-                printExtensionMetaData(extensionMetaData);
+
                 run.setExitStatus(0);
                 return run;
             } catch (Throwable e) {
@@ -146,8 +152,8 @@ class ButterflyCliRunner extends ButterflyCliOption {
 
         // Setting extensions log level to DEBUG
         if(optionSet.has(CLI_OPTION_DEBUG)) {
-            Extension extension = butterflyFacade.getRegisteredExtension();
-            if (extension != null) {
+            List<Extension> registeredExtensions = butterflyFacade.getExtensions();
+            for(Extension extension : registeredExtensions) {
                 logger.info("Setting DEBUG log level for extension {}", extension.getClass().getName());
                 logConfigurator.setLoggerLevel(extension.getClass().getPackage().getName(), Level.DEBUG);
             }
@@ -223,41 +229,29 @@ class ButterflyCliRunner extends ButterflyCliOption {
     }
 
     private Class<? extends TransformationTemplate> getTemplateClass(int shortcut) {
-        Extension extension = butterflyFacade.getRegisteredExtension();
+        List<Extension> registeredExtensions = butterflyFacade.getExtensions();
 
-        if(extension == null) {
+        if(registeredExtensions.size() == 0) {
             logger.info("There are no registered extensions");
             return null;
         }
 
         int shortcutCount = 1;
-        for(Object templateObj : extension.getTemplateClasses().toArray()) {
-            if (shortcutCount == shortcut) {
-                return (Class<? extends TransformationTemplate>) templateObj;
+        for(Extension extension : registeredExtensions) {
+            for (Object templateObj : extension.getTemplateClasses()) {
+                if (shortcutCount == shortcut) {
+                    return (Class<? extends TransformationTemplate>) templateObj;
+                }
+                shortcutCount++;
             }
-            shortcutCount++;
         }
 
         return null;
     }
 
-    private ExtensionMetaData getExtensionsMetaData(ButterflyFacade butterflyFacade) throws IllegalAccessException, InstantiationException {
-        Extension extension = butterflyFacade.getRegisteredExtension();
-        if(extension == null) {
-            return null;
-        }
-        return ExtensionMetaData.newExtensionMetaData(extension);
-    }
-
     private void printExtensionMetaData(ExtensionMetaData extensionMetaData) {
-        if(extensionMetaData == null) {
-            logger.info("There are no registered extensions");
-            return;
-        }
-
         String version = (StringUtils.isEmpty(extensionMetaData.getVersion()) ? "" : String.format("(version %s)", extensionMetaData.getVersion()));
 
-        logger.info("See registered extensions below (shortcut in parenthesis)");
         logger.info("");
         logger.info("- {}: {} {}", extensionMetaData.getName(), extensionMetaData.getDescription(), version);
         extensionMetaData.getTemplates().forEach(t -> logger.info("\t ({}) - [{}] \t {} \t {}", t.getShortcut(), t.getTemplateType().getInitials(), t.getName(), t.getDescription()));

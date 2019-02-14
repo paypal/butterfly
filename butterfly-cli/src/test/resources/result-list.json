@@ -12,33 +12,40 @@
   "transformationResult": null,
   "extensions": [
     {
-      "name": "com.test.SampleExtension",
-      "description": "SampleExtension for tests purposes",
+      "name": "com.test.SampleExtension1",
+      "description": "SampleExtension1 for tests purposes",
       "version": "2.0.0",
       "templates": [
         {
-          "name": "SampleExtension:DummyTemplate",
-          "className": "com.test.DummyTemplate",
-          "templateType": "TransformationTemplate",
-          "description": "DummyTemplate for tests purposes",
-          "upgradeFromVersion": null,
-          "upgradeToVersion": null,
-          "shortcut": 1
-        },
-        {
-          "name": "SampleExtension:SampleTemplate",
+          "name": "SampleExtension1:SampleTemplate",
           "className": "com.test.SampleTemplate",
           "templateType": "TransformationTemplate",
           "description": "SampleTemplate for tests purposes",
           "upgradeFromVersion": null,
           "upgradeToVersion": null,
-          "shortcut": 2
+          "shortcut": 1
         },
         {
-          "name": "SampleExtension:BlankTemplate",
+          "name": "SampleExtension1:BlankTemplate",
           "className": "com.test.BlankTemplate",
           "templateType": "TransformationTemplate",
           "description": "BlankTemplate for tests purposes",
+          "upgradeFromVersion": null,
+          "upgradeToVersion": null,
+          "shortcut": 2
+        }
+      ]
+    },
+    {
+      "name": "com.test.SampleExtension2",
+      "description": "SampleExtension2 for tests purposes",
+      "version": "1.5.0",
+      "templates": [
+        {
+          "name": "SampleExtension2:DummyTemplate",
+          "className": "com.test.DummyTemplate",
+          "templateType": "TransformationTemplate",
+          "description": "DummyTemplate for tests purposes",
           "upgradeFromVersion": null,
           "upgradeToVersion": null,
           "shortcut": 3
