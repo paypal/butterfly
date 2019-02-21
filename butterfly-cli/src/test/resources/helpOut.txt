@@ -20,6 +20,21 @@ Option                           Description
                                    application is placed under a new folder    
                                    whose name is same as original folder, plus 
                                    "-transformed-yyyyMMddHHmmssSSS" suffix     
+-p <inline properties>           Transformation specific properties, used to   
+                                   determine if certain operations should be   
+                                   skipped or not, or how certain aspects of   
+                                   the transformation should be executed. Use  
+                                   it followed by a list of key value pairs    
+                                   separated by semi-colons (example `-p       
+                                   prop1=value1;prop2=value2`). If both options
+                                   (-p) and (-q) are set, (-q) is ignored.     
+-q <File: properties file>       Transformation specific properties, used to   
+                                   determine if certain operations should be   
+                                   skipped or not, or how certain aspects of   
+                                   the transformation should be executed. Use  
+                                   it pointing to a '.properties' file. If both
+                                   options (-p) and (-q) are set, (-q) is      
+                                   ignored.                                    
 -r <File: result file>           Creates a result file in JSON format          
                                    containing details, not about the           
                                    transformation itself, but about the CLI    
@@ -74,6 +89,21 @@ Option                           Description
                                    application is placed under a new folder    
                                    whose name is same as original folder, plus 
                                    "-transformed-yyyyMMddHHmmssSSS" suffix     
+-p <inline properties>           Transformation specific properties, used to   
+                                   determine if certain operations should be   
+                                   skipped or not, or how certain aspects of   
+                                   the transformation should be executed. Use  
+                                   it followed by a list of key value pairs    
+                                   separated by semi-colons (example `-p       
+                                   prop1=value1;prop2=value2`). If both options
+                                   (-p) and (-q) are set, (-q) is ignored.     
+-q <File: properties file>       Transformation specific properties, used to   
+                                   determine if certain operations should be   
+                                   skipped or not, or how certain aspects of   
+                                   the transformation should be executed. Use  
+                                   it pointing to a '.properties' file. If both
+                                   options (-p) and (-q) are set, (-q) is      
+                                   ignored.                                    
 -r <File: result file>           Creates a result file in JSON format          
                                    containing details, not about the           
                                    transformation itself, but about the CLI    
@@ -128,6 +158,21 @@ Option                           Description
                                    application is placed under a new folder    
                                    whose name is same as original folder, plus 
                                    "-transformed-yyyyMMddHHmmssSSS" suffix     
+-p <inline properties>           Transformation specific properties, used to   
+                                   determine if certain operations should be   
+                                   skipped or not, or how certain aspects of   
+                                   the transformation should be executed. Use  
+                                   it followed by a list of key value pairs    
+                                   separated by semi-colons (example `-p       
+                                   prop1=value1;prop2=value2`). If both options
+                                   (-p) and (-q) are set, (-q) is ignored.     
+-q <File: properties file>       Transformation specific properties, used to   
+                                   determine if certain operations should be   
+                                   skipped or not, or how certain aspects of   
+                                   the transformation should be executed. Use  
+                                   it pointing to a '.properties' file. If both
+                                   options (-p) and (-q) are set, (-q) is      
+                                   ignored.                                    
 -r <File: result file>           Creates a result file in JSON format          
                                    containing details, not about the           
                                    transformation itself, but about the CLI    

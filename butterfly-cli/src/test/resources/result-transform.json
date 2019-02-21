@@ -20,6 +20,7 @@
         "folder": "%l"
       },
       "configuration": {
+        "properties": null,
         "outputFolder": null,
         "zipOutput": false,
         "modifyOriginalFolder": false

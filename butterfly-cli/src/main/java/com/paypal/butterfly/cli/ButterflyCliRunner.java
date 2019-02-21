@@ -1,8 +1,11 @@
 package com.paypal.butterfly.cli;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +42,7 @@ class ButterflyCliRunner extends ButterflyCliOption {
 
     private static final Logger logger = LoggerFactory.getLogger(ButterflyCliRunner.class);
 
-    ButterflyCliRun run(File butterflyHome, String butterflyBanner) throws IOException {
+    ButterflyCliRun run(File butterflyHome, String butterflyBanner) {
         ButterflyCliRun run = new ButterflyCliRun();
         Configuration configuration;
         run.setButterflyVersion(butterflyFacade.getButterflyVersion());
@@ -51,9 +54,14 @@ class ButterflyCliRunner extends ButterflyCliOption {
             logger.info("Usage:\t butterfly [options] [application folder]");
             logger.info("");
             logger.info("The following options are available:\n");
-            optionParser.printHelpOn(System.out);
-            run.setExitStatus(0);
-            return run;
+            try {
+                optionParser.printHelpOn(System.out);
+                run.setExitStatus(0);
+                return run;
+            } catch (IOException e) {
+                registerError(run, "An error occurred when printing help", e);
+                return run;
+            }
         }
 
         if (optionSet.has(CLI_OPTION_VERBOSE)) {
@@ -142,12 +150,31 @@ class ButterflyCliRunner extends ButterflyCliOption {
             logger.info("-z option has been set, transformed application will be placed into a zip file");
         }
 
+        // Setting transformation specific properties
+        Properties properties = new Properties();
+        try {
+            if (optionSet.has(CLI_OPTION_INLINE_PROPERTIES)) {
+                String inlineProperties = (String) optionSet.valueOf(CLI_OPTION_INLINE_PROPERTIES);
+                try (StringReader stringReader = new StringReader(inlineProperties.replace(';', '\n'))) {
+                    properties.load(stringReader);
+                }
+            } else if (optionSet.has(CLI_OPTION_PROPERTIES_FILE)) {
+                File propertiesFile = (File) optionSet.valueOf(CLI_OPTION_PROPERTIES_FILE);
+                try (FileInputStream fileInputStream = new FileInputStream(propertiesFile)) {
+                    properties.load(fileInputStream);
+                }
+            }
+        } catch (Exception e) {
+            registerError(run, "Error when reading or parsing the specified properties", e);
+            return run;
+        }
+
         if (optionSet.has(CLI_OPTION_MODIFY_ORIGINAL_FOLDER)) {
-            configuration = butterflyFacade.newConfiguration();
+            configuration = butterflyFacade.newConfiguration(properties);
         } else if (transformedApplicationFolder == null) {
-            configuration = butterflyFacade.newConfiguration(createZip);
+            configuration = butterflyFacade.newConfiguration(properties, createZip);
         } else {
-            configuration = butterflyFacade.newConfiguration(transformedApplicationFolder, createZip);
+            configuration = butterflyFacade.newConfiguration(properties, transformedApplicationFolder, createZip);
         }
 
         // Setting extensions log level to DEBUG

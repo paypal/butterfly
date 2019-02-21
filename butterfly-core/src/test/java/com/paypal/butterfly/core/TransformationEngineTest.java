@@ -52,7 +52,7 @@ public class TransformationEngineTest extends TestHelper {
     @Test
     public void basicTest() {
         Application application = new ApplicationImpl(transformedAppFolder);
-        Configuration configuration = new ConfigurationImpl();
+        Configuration configuration = new ConfigurationImpl(null);
 
         TransformationTemplate transformationTemplate = getNewTestTransformationTemplate();
         transformationTemplate.add(getNewTestTransformationUtility());
@@ -102,7 +102,7 @@ public class TransformationEngineTest extends TestHelper {
         System.out.printf("Transformed sample app folder: %s\n", transformedAppFolder.getAbsolutePath());
 
         Application application = new ApplicationImpl(transformedAppFolder);
-        Configuration configuration = new ConfigurationImpl();
+        Configuration configuration = new ConfigurationImpl(null);
 
         TransformationTemplate transformationTemplate = new JavaEEToSpringBoot();
         AbstractTransformationRequest transformation = new TemplateTransformationRequest(application, transformationTemplate, configuration);
@@ -143,7 +143,7 @@ public class TransformationEngineTest extends TestHelper {
         File appFolder = new File("./out/test/resources/echo-transformed");
 
         Application application = new ApplicationImpl(appFolder);
-        Configuration configuration = new ConfigurationImpl();
+        Configuration configuration = new ConfigurationImpl(null);
 
         UpgradePath upgradePath = new UpgradePath(SpringBootUpgrade_1_5_6_to_1_5_7.class);
         AbstractTransformationRequest transformation = new UpgradePathTransformationRequest(application, upgradePath, configuration);
@@ -186,7 +186,7 @@ public class TransformationEngineTest extends TestHelper {
         System.out.printf("Transformed sample app folder: %s\n", transformedAppFolder.getAbsolutePath());
 
         Application application = new ApplicationImpl(transformedAppFolder);
-        Configuration configuration = new ConfigurationImpl();
+        Configuration configuration = new ConfigurationImpl(null);
 
         TransformationTemplate transformationTemplate = new JavaEEToSpringBoot();
         AbstractTransformationRequest transformation = new TemplateTransformationRequest(application, transformationTemplate, configuration);
@@ -252,7 +252,7 @@ public class TransformationEngineTest extends TestHelper {
         System.out.printf("Transformed sample app folder: %s\n", transformedAppFolder.getAbsolutePath());
 
         Application application = new ApplicationImpl(transformedAppFolder);
-        Configuration configuration = new ConfigurationImpl();
+        Configuration configuration = new ConfigurationImpl(null);
 
         TransformationTemplate transformationTemplate = new JavaEEToSpringBoot();
         AbstractTransformationRequest transformation = new TemplateTransformationRequest(application, transformationTemplate, configuration);
