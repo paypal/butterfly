@@ -32,14 +32,14 @@ public class ButterflyIT extends AbstractTestNGSpringContextTests {
 
     @Test
     public void sampleAppRunTest() {
-        assertTransformation(facade, sampleAppTransformedBaseline, sampleApp, JavaEEToSpringBoot.class, null, true);
+        assertTransformation(facade, sampleAppTransformedBaseline, sampleApp, JavaEEToSpringBoot.class, null, null, true);
     }
 
     // FIXME Probably it would be better if this exception is taken care of by Butterfly core (and packaged to the transformation result object), as opposed to carry forward this exception
     @Test(expectedExceptions = {ApplicationValidationException.class}, expectedExceptionsMessageRegExp = "This application has pending manual instructions\\. Perform manual instructions at the following file first, then remove it, and run Butterfly again: (.*)/BUTTERFLY_MANUAL_INSTRUCTIONS\\.md")
     public void pendingManualChangesTest() throws URISyntaxException {
         File appDir = new File(this.getClass().getResource("/test-app-1").toURI());
-        assertTransformation(facade, sampleAppTransformedBaseline, appDir, JavaEEToSpringBoot.class, null, true);
+        assertTransformation(facade, sampleAppTransformedBaseline, appDir, JavaEEToSpringBoot.class, null, null, true);
     }
 
 }

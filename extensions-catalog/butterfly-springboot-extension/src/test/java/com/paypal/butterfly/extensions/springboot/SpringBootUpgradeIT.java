@@ -8,6 +8,7 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.util.Properties;
 
 import static com.paypal.butterfly.test.Assert.assertTransformation;
 
@@ -27,7 +28,10 @@ public class SpringBootUpgradeIT extends AbstractTestNGSpringContextTests {
         File sampleApp = new File("../../tests/transformed-baseline/echo-JavaEEToSpringBoot");
         File sampleAppTransformedBaseline = new File("../../tests/transformed-baseline/echo-SpringBoot-1.5.7");
 
-        assertTransformation(facade, sampleAppTransformedBaseline, sampleApp, SpringBootUpgrade_1_5_6_to_1_5_7.class, null, true);
+        Properties properties = new Properties();
+        properties.put("appName", "chuck norris");
+
+        assertTransformation(facade, sampleAppTransformedBaseline, sampleApp, SpringBootUpgrade_1_5_6_to_1_5_7.class, null, properties, true);
     }
 
 }

@@ -38,7 +38,7 @@ public class JavaEEToSpringBootIT extends AbstractTestNGSpringContextTests {
         File sampleApp = new File("../../tests/sample-apps/echo");
         File sampleAppTransformedBaseline = new File("../../tests/transformed-baseline/echo-JavaEEToSpringBoot");
 
-        TransformationResult transformationResult = assertTransformation(facade, sampleAppTransformedBaseline, sampleApp, JavaEEToSpringBoot.class, null, true);
+        TransformationResult transformationResult = assertTransformation(facade, sampleAppTransformedBaseline, sampleApp, JavaEEToSpringBoot.class, null, null, true);
 
         assertTrue(transformationResult.isSuccessful());
 // FIXME

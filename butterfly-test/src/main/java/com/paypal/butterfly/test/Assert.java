@@ -9,13 +9,13 @@ import com.paypal.butterfly.api.TransformationResult;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileAttribute;
+import java.util.Properties;
 
 /**
  * Assert class to test Butterfly transformations,
@@ -55,7 +55,7 @@ public abstract class Assert {
      * @return a {@link TransformationResult} object, which can be used to assert in details this transformation generated the expected result and metrics
      */
     public static TransformationResult assertTransformation(ButterflyFacade facade, File  baselineApplication, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate) {
-        return assertTransformation(facade, baselineApplication, originalApplication, transformationTemplate, null, false);
+        return assertTransformation(facade, baselineApplication, originalApplication, transformationTemplate, null, null, false);
     }
 
     /**
@@ -71,10 +71,18 @@ public abstract class Assert {
      * @param transformationTemplate the transformation template used to transform the original application
      * @param version the version the application should be upgraded to. This option only makes sense if the transformation template to be used is also an upgrade template.
      *                If not, it is ignored. If it is, but this option is not specified, then the application will be upgraded all the way to the latest version possible
+     * @param properties a properties object specifying details about the transformation itself.
+     *                   These properties help to specialize the
+     *                   transformation, for example, determining if certain operations should
+     *                   be skipped or not, or how certain aspects of the transformation should
+     *                   be executed. The set of possible properties is defined by the used transformation
+     *                   extension and template, read the documentation offered by the extension
+     *                   for further details. The properties values are defined by the user requesting the transformation.
+     *                   Properties are optional, so, if not desired, this parameter can be set to null.
      * @param xmlSemanticComparison if true, compare XML files semantically, ignoring indentation, comments and formatting differences, as opposed to a binary comparison. Notice though that, if the XML file is not well formed, a binary comparison will be done regardless of {@code xmlSemanticComparison}.
      * @return a {@link TransformationResult} object, which can be used to assert in details this transformation generated the expected result and metrics
      */
-    public static TransformationResult assertTransformation(ButterflyFacade facade, File  baselineApplication, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate, String version, boolean xmlSemanticComparison) {
+    public static TransformationResult assertTransformation(ButterflyFacade facade, File  baselineApplication, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate, String version, Properties properties, boolean xmlSemanticComparison) {
         if (baselineApplication == null || !baselineApplication.exists() || !baselineApplication.isDirectory()) {
             throw new IllegalArgumentException("Baseline application file is null, does not exist or is not a directory: " + (baselineApplication == null ? "null" : baselineApplication.getAbsolutePath()));
         }
@@ -82,7 +90,7 @@ public abstract class Assert {
             throw new IllegalArgumentException("Original application file is null, does not exist or is not a directory: " + (originalApplication == null ? "null" : originalApplication.getAbsolutePath()));
         }
 
-        TransformationResult transformationResult = transform(facade, originalApplication, transformationTemplate, version);
+        TransformationResult transformationResult = transform(facade, originalApplication, transformationTemplate, version, properties);
 
         if (!transformationResult.isSuccessful()) {
             AbortDetails abortDetails = transformationResult.getAbortDetails();
@@ -96,10 +104,10 @@ public abstract class Assert {
     }
 
     // Transforms an application (placing it in a temporary folder) and returns the transformation result
-    private static TransformationResult transform(ButterflyFacade facade, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate, String version) {
+    private static TransformationResult transform(ButterflyFacade facade, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate, String version, Properties properties) {
         Configuration configuration;
         try {
-            configuration = facade.newConfiguration(Files.createTempDirectory("butterfly-test", new FileAttribute[]{}).toFile(), false);
+            configuration = facade.newConfiguration(properties, Files.createTempDirectory("butterfly-test", new FileAttribute[]{}).toFile(), false);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -175,7 +183,7 @@ public abstract class Assert {
      * @return a {@link TransformationResult} object, which can be used to assert in details this transformation generated the expected result, metrics and abort details.
      */
     public static TransformationResult assertAbort(ButterflyFacade facade, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate, String expectedAbortMessage) {
-        return assertAbort(facade, originalApplication, transformationTemplate, null, expectedAbortMessage);
+        return assertAbort(facade, originalApplication, transformationTemplate, null, null, expectedAbortMessage);
     }
 
     /**
@@ -190,15 +198,23 @@ public abstract class Assert {
      * @param transformationTemplate the transformation template used to transform the original application
      * @param version the version the application should be upgraded to. This option only makes sense if the transformation template to be used is also an upgrade template.
      *                If not, it is ignored. If it is, but this option is not specified, then the application will be upgraded all the way to the latest version possible
+     * @param properties a properties object specifying details about the transformation itself.
+     *                   These properties help to specialize the
+     *                   transformation, for example, determining if certain operations should
+     *                   be skipped or not, or how certain aspects of the transformation should
+     *                   be executed. The set of possible properties is defined by the used transformation
+     *                   extension and template, read the documentation offered by the extension
+     *                   for further details. The properties values are defined by the user requesting the transformation.
+     *                   Properties are optional, so, if not desired, this parameter can be set to null.
      * @param expectedAbortMessage the expected abort message, to be compared against the actual
      * @return a {@link TransformationResult} object, which can be used to assert in details this transformation generated the expected result, metrics and abort details.
      */
-    public static TransformationResult assertAbort(ButterflyFacade facade, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate, String version, String expectedAbortMessage) {
+    public static TransformationResult assertAbort(ButterflyFacade facade, File originalApplication, Class<? extends TransformationTemplate> transformationTemplate, String version, Properties properties, String expectedAbortMessage) {
         if (originalApplication == null || !originalApplication.exists() || !originalApplication.isDirectory()) {
             throw new IllegalArgumentException("Original application file is null, does not exist or is not a directory: " + (originalApplication == null ? "null" : originalApplication.getAbsolutePath()));
         }
 
-        TransformationResult transformationResult = transform(facade, originalApplication, transformationTemplate, version);
+        TransformationResult transformationResult = transform(facade, originalApplication, transformationTemplate, version, properties);
 
         if (!transformationResult.isSuccessful()) {
             String actualAbortMessage = transformationResult.getAbortDetails().getAbortMessage();

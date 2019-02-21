@@ -76,7 +76,7 @@ class TransformationEngine {
         validator.preTransformation(transformationRequest);
 
         if(logger.isDebugEnabled()) {
-            logger.debug("Requested transformationRequest: {}", transformationRequest);
+            logger.debug("Requested transformation: {}", transformationRequest);
         }
         logger.info("Extension name:\t\t\t\t\t{}", transformationRequest.getExtensionName());
         logger.info("Extension version:\t\t\t\t{}", transformationRequest.getExtensionVersion());

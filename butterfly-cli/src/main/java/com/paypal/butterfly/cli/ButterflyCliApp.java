@@ -1,10 +1,13 @@
 package com.paypal.butterfly.cli;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import com.paypal.butterfly.api.ButterflyFacade;
+import com.paypal.butterfly.cli.logging.LogFileDefiner;
+import joptsimple.OptionException;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,15 +16,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import com.paypal.butterfly.api.ButterflyFacade;
-import com.paypal.butterfly.cli.logging.LogFileDefiner;
-
-import joptsimple.OptionException;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
 
 /**
  * Butterfly CLI Spring Boot entry point
@@ -37,13 +35,13 @@ class ButterflyCliApp extends ButterflyCliOption {
     private Logger logger;
 
     @SuppressWarnings("PMD.DoNotCallSystemExit")
-    public static void main(String... arguments) throws IOException {
+    public static void main(String... arguments) {
         ButterflyCliApp butterflyCliApp = new ButterflyCliApp();
         int exitStatus = butterflyCliApp.run(arguments).getExitStatus();
         System.exit(exitStatus);
     }
 
-    ButterflyCliRun run(String... arguments) throws IOException {
+    ButterflyCliRun run(String... arguments) {
         setButterflyHome();
 
         LogFileDefiner.setButterflyHome(butterflyHome);

@@ -2,6 +2,7 @@ package com.paypal.butterfly.api;
 
 import java.io.File;
 import java.util.List;
+import java.util.Properties;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
@@ -56,9 +57,17 @@ public interface ButterflyFacade {
      * Notice that calling this method will result in {@link Configuration#isModifyOriginalFolder()}
      * to return {@code true}.
      *
+     * @param properties a properties object specifying details about the transformation itself.
+     *                   These properties help to specialize the
+     *                   transformation, for example, determining if certain operations should
+     *                   be skipped or not, or how certain aspects of the transformation should
+     *                   be executed. The set of possible properties is defined by the used transformation
+     *                   extension and template, read the documentation offered by the extension
+     *                   for further details. The properties values are defined by the user requesting the transformation.
+     *                   Properties are optional, so, if not desired, this parameter can be set to null.
      * @return a brand new {@link Configuration} object
      */
-    Configuration newConfiguration();
+    Configuration newConfiguration(Properties properties);
 
     /**
      * Creates and returns a new {@link Configuration} object
@@ -71,10 +80,18 @@ public interface ButterflyFacade {
      * Notice that calling this method will result in {@link Configuration#isModifyOriginalFolder()}
      * to return {@code false}.
      *
+     * @param properties a properties object specifying details about the transformation itself.
+     *                   These properties help to specialize the
+     *                   transformation, for example, determining if certain operations should
+     *                   be skipped or not, or how certain aspects of the transformation should
+     *                   be executed. The set of possible properties is defined by the used transformation
+     *                   extension and template, read the documentation offered by the extension
+     *                   for further details. The properties values are defined by the user requesting the transformation.
+     *                   Properties are optional, so, if not desired, this parameter can be set to null.
      * @param zipOutput if true, the transformed application folder will be compressed into a zip file
      * @return a brand new {@link Configuration} object
      */
-    Configuration newConfiguration(boolean zipOutput);
+    Configuration newConfiguration(Properties properties, boolean zipOutput);
 
     /**
      * Creates and returns a new {@link Configuration} object
@@ -84,13 +101,21 @@ public interface ButterflyFacade {
      * Notice that calling this method will result in {@link Configuration#isModifyOriginalFolder()}
      * to return {@code false}.
      *
+     * @param properties a properties object specifying details about the transformation itself.
+     *                   These properties help to specialize the
+     *                   transformation, for example, determining if certain operations should
+     *                   be skipped or not, or how certain aspects of the transformation should
+     *                   be executed. The set of possible properties is defined by the used transformation
+     *                   extension and template, read the documentation offered by the extension
+     *                   for further details. The properties values are defined by the user requesting the transformation.
+     *                   Properties are optional, so, if not desired, this parameter can be set to null.
      * @param outputFolder the output folder where the transformed application is
      *                     supposed to be placed
      * @param zipOutput if true, the transformed application folder will be compressed into a zip file
      * @return a brand new {@link Configuration} object
      * @throws IllegalArgumentException if {@code outputFolder} is null, does not exist, or is not a directory
      */
-    Configuration newConfiguration(File outputFolder, boolean zipOutput);
+    Configuration newConfiguration(Properties properties, File outputFolder, boolean zipOutput);
 
     /**
      * Transform an application
@@ -103,8 +128,8 @@ public interface ButterflyFacade {
     TransformationResult transform(File applicationFolder, String templateClassName) throws ButterflyException;
 
     /**
-     * Transform an application, and also accept an additional
-     * parameter with configuration
+     * Transform an application, and also accepts an additional
+     * parameter with configuration. See {@link Configuration} for further information.
      *
      * @param applicationFolder application folder
      * @param templateClassName transformation template class name
@@ -124,8 +149,8 @@ public interface ButterflyFacade {
     TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass);
 
     /**
-     * Transform an application, and also accept an additional
-     * parameter with configuration
+     * Transform an application, and also accepts an additional
+     * parameter with configuration. See {@link Configuration} for further information.
      *
      * @param applicationFolder application folder
      * @param templateClass transformation template class
@@ -144,8 +169,8 @@ public interface ButterflyFacade {
     TransformationResult transform(File applicationFolder, UpgradePath upgradePath);
 
     /**
-     * Transform an application based on an upgrade path, and also accept an additional
-     * parameter with configuration
+     * Transform an application based on an upgrade path, and also accepts an additional
+     * parameter with configuration. See {@link Configuration} for further information.
      *
      * @param applicationFolder application folder
      * @param upgradePath upgrade path object used to upgrade this application
