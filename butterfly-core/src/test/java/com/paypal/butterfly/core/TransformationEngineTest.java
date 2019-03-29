@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.mockito.InjectMocks;
@@ -102,7 +103,11 @@ public class TransformationEngineTest extends TestHelper {
         System.out.printf("Transformed sample app folder: %s\n", transformedAppFolder.getAbsolutePath());
 
         Application application = new ApplicationImpl(transformedAppFolder);
-        Configuration configuration = new ConfigurationImpl(null);
+
+        Properties properties = new Properties();
+        properties.put("changeReadme", "true");
+        properties.put("validate", "false");
+        Configuration configuration = new ConfigurationImpl(properties);
 
         TransformationTemplate transformationTemplate = new JavaEEToSpringBoot();
         AbstractTransformationRequest transformation = new TemplateTransformationRequest(application, transformationTemplate, configuration);
@@ -127,7 +132,7 @@ public class TransformationEngineTest extends TestHelper {
 
         TransformationStatistics statistics = metrics.getStatistics();
         assertEquals(statistics.getPerformResultErrorCount(), 0);
-        assertEquals(statistics.getPerformResultSkippedConditionCount(), 1);
+        assertEquals(statistics.getPerformResultSkippedConditionCount(), 2);
         assertEquals(statistics.getPerformResultSkippedDependencyCount(), 0);
         assertEquals(statistics.getTUExecutionResultWarningCount(), 0);
         assertEquals(statistics.getTUExecutionResultErrorCount(), 0);

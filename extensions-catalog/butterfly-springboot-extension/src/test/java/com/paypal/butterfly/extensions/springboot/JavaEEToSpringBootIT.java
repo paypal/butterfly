@@ -13,6 +13,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.List;
+import java.util.Properties;
 
 import static com.paypal.butterfly.test.Assert.*;
 import static org.testng.Assert.*;
@@ -38,7 +39,11 @@ public class JavaEEToSpringBootIT extends AbstractTestNGSpringContextTests {
         File sampleApp = new File("../../tests/sample-apps/echo");
         File sampleAppTransformedBaseline = new File("../../tests/transformed-baseline/echo-JavaEEToSpringBoot");
 
-        TransformationResult transformationResult = assertTransformation(facade, sampleAppTransformedBaseline, sampleApp, JavaEEToSpringBoot.class, null, null, true);
+        Properties properties = new Properties();
+        properties.put("changeReadme", "true");
+        properties.put("validate", "false");
+
+        TransformationResult transformationResult = assertTransformation(facade, sampleAppTransformedBaseline, sampleApp, JavaEEToSpringBoot.class, null, properties, true);
 
         assertTrue(transformationResult.isSuccessful());
 // FIXME
@@ -66,7 +71,7 @@ public class JavaEEToSpringBootIT extends AbstractTestNGSpringContextTests {
 
         TransformationStatistics statistics = transformationMetrics.getStatistics();
 
-        assertEquals(statistics.getPerformResultSkippedConditionCount(), 1);
+        assertEquals(statistics.getPerformResultSkippedConditionCount(), 2);
         assertEquals(statistics.getPerformResultSkippedDependencyCount(), 0);
         assertEquals(statistics.getManualInstructionsCount(), 0);
     }
