@@ -132,7 +132,7 @@ class ConfigurationImpl implements Configuration {
 
     @Override
     public String toString() {
-        return String.format("{ outputFolder: %s , zipOutput: %s, modifyOriginalFolder: %s}", outputFolder, zipOutput, modifyOriginalFolder);
+        return String.format("{ properties: %s, outputFolder: %s, zipOutput: %s, modifyOriginalFolder: %s}", properties, outputFolder, zipOutput, modifyOriginalFolder);
     }
 
     @Override

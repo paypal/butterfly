@@ -67,6 +67,8 @@ public interface ButterflyFacade {
      *                   Properties are optional, so, if not desired, this parameter can be set to null.
      * @return a brand new {@link Configuration} object
      */
+
+    // TODO Validate properties names and throw IAEx if any is invalid (do the same to other 2 methods)
     Configuration newConfiguration(Properties properties);
 
     /**

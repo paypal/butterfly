@@ -7,6 +7,11 @@ import org.springframework.stereotype.Component;
 import com.paypal.butterfly.extensions.api.exception.ApplicationValidationException;
 import com.paypal.butterfly.api.TransformationRequest;
 
+/**
+ * Execute checks against application source code before allowing transformation to begin
+ *
+ * @author facarvalho
+ */
 @Component
 class TransformationValidatorImpl implements TransformationValidator {
 
@@ -14,6 +19,9 @@ class TransformationValidatorImpl implements TransformationValidator {
         checkPendingManualInstruction(transformationRequest);
     }
 
+    /*
+     * Check if this application has pending post-transformation manual instructions to be completed
+     */
     private void checkPendingManualInstruction(TransformationRequest transformationRequest) throws ApplicationValidationException {
         File applicationFolder = transformationRequest.getApplication().getFolder();
         File[] matchingFiles = applicationFolder.listFiles(filePath -> filePath.getName().equals(ManualInstructionsHandler.MANUAL_INSTRUCTIONS_MAIN_FILE));
