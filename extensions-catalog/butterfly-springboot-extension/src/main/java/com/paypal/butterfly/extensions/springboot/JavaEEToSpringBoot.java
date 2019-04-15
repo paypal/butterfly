@@ -3,8 +3,10 @@ package com.paypal.butterfly.extensions.springboot;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.TransformationUtilityGroup;
 import com.paypal.butterfly.extensions.api.utilities.Abort;
 import com.paypal.butterfly.utilities.conditions.FileExists;
+import com.paypal.butterfly.utilities.maven.MavenGoal;
 import com.paypal.butterfly.utilities.operations.file.ApplyFile;
 import com.paypal.butterfly.utilities.operations.file.DeleteFile;
 import com.paypal.butterfly.utilities.operations.pom.*;
@@ -12,6 +14,7 @@ import com.paypal.butterfly.utilities.operations.text.InsertText;
 import com.paypal.butterfly.utilities.operations.text.ReplaceText;
 
 import java.net.URL;
+import java.util.Properties;
 
 /**
  * Sample transformation template to migrate the sample-app
@@ -53,11 +56,16 @@ public class JavaEEToSpringBoot extends TransformationTemplate {
         URL javaFileUrl = this.getClass().getResource("/Application.java");
         add(new ApplyFile(javaFileUrl).relative("/src/main/java/com/sample/app"));
 
-        // Changing README.md
-        add(new ReplaceText("(Spring framework)", "Spring Boot framework").relative("README.md"));
-        add(new ReplaceText("(Just deploy its war file to a Servlet container and start it.)", "There are two ways to start the application:").relative("README.md"));
+        // Changing README.md (this optional, by default it won't happen, property changeReadme has to be true)
+        TransformationUtilityGroup g = new TransformationUtilityGroup().executeIf("$changeReadme");
+        add(g);
+        g.add(new ReplaceText("(Spring framework)", "Spring Boot framework").relative("README.md"));
+        g.add(new ReplaceText("(Just deploy its war file to a Servlet container and start it.)", "There are two ways to start the application:").relative("README.md"));
         URL textToBeInserted = getClass().getResource("/README_piece_of_text.txt");
-        add(new InsertText(textToBeInserted, "(There are two ways to start the application:)").relative("README.md"));
+        g.add(new InsertText(textToBeInserted, "(There are two ways to start the application:)").relative("README.md"));
+
+        // Executing Maven validate (this optional, by default it won't happen, property validate has to be true)
+        add(new MavenGoal("validate").relative("pom.xml").abortOnFailure("Maven pom validation after code migration has failed").executeIf("$validate"));
     }
 
     @Override

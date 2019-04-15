@@ -3,6 +3,7 @@ package com.paypal.butterfly.core;
 import java.io.File;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -76,23 +77,23 @@ class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public Configuration newConfiguration() {
-        return new ConfigurationImpl();
+    public Configuration newConfiguration(Properties properties) {
+        return new ConfigurationImpl(properties);
     }
 
     @Override
-    public Configuration newConfiguration(boolean zipOutput) {
-        return new ConfigurationImpl(zipOutput);
+    public Configuration newConfiguration(Properties properties, boolean zipOutput) {
+        return new ConfigurationImpl(properties, zipOutput);
     }
 
     @Override
-    public Configuration newConfiguration(File outputFolder, boolean zipOutput) {
-        return new ConfigurationImpl(outputFolder, zipOutput);
+    public Configuration newConfiguration(Properties properties, File outputFolder, boolean zipOutput) {
+        return new ConfigurationImpl(properties, outputFolder, zipOutput);
     }
 
     @Override
     public TransformationResult transform(File applicationFolder, String templateClassName) throws ButterflyException {
-        return transform(applicationFolder, templateClassName, new ConfigurationImpl());
+        return transform(applicationFolder, templateClassName, new ConfigurationImpl(null));
     }
 
     @Override
@@ -111,7 +112,7 @@ class ButterflyFacadeImpl implements ButterflyFacade {
 
     @Override
     public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) {
-        return transform(applicationFolder, templateClass, new ConfigurationImpl());
+        return transform(applicationFolder, templateClass, new ConfigurationImpl(null));
     }
 
     @Override
@@ -125,7 +126,7 @@ class ButterflyFacadeImpl implements ButterflyFacade {
 
     @Override
     public TransformationResult transform(File applicationFolder, UpgradePath upgradePath) {
-        return transform(applicationFolder, upgradePath, new ConfigurationImpl());
+        return transform(applicationFolder, upgradePath, new ConfigurationImpl(null));
     }
 
     @Override

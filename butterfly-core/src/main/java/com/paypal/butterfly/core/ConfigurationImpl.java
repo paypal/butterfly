@@ -1,6 +1,11 @@
 package com.paypal.butterfly.core;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -14,9 +19,12 @@ import com.paypal.butterfly.api.Configuration;
 class ConfigurationImpl implements Configuration {
 
     // See the setters for information about each property
+    private Properties properties = null;
     private File outputFolder = null;
     private boolean zipOutput = false;
     private boolean modifyOriginalFolder = true;
+
+    private static final Pattern propertyNameRegex = Pattern.compile("^[a-zA-Z\\._-]*$");
 
     /**
      * Creates and returns a new {@link Configuration} object
@@ -26,9 +34,33 @@ class ConfigurationImpl implements Configuration {
      * Notice that calling this method will result in {@link Configuration#isModifyOriginalFolder()}
      * to return {@code true}.
      *
+     * @param properties a properties object specifying details about the transformation itself.
+     *                   These properties help to specialize the
+     *                   transformation, for example, determining if certain operations should
+     *                   be skipped or not, or how certain aspects of the transformation should
+     *                   be executed. The set of possible properties is defined by the used transformation
+     *                   extension and template, read the documentation offered by the extension
+     *                   for further details. The properties values are defined by the user requesting the transformation.
+     *                   Properties are optional, so, if not desired, this parameter can be set to null.
      * @return a brand new {@link Configuration} object
+     * @throws IllegalArgumentException if properties object is invalid. Properties name must
+     *                   be non blank and only contain alphabetical characters, dots, underscore or hyphen. Properties
+     *                   object must be Strings and cannot be null.
      */
-    ConfigurationImpl() {
+    ConfigurationImpl(Properties properties) {
+        if (properties != null && properties.size() > 0) {
+
+            // Validating properties object
+            List<String> invalidProperties = properties.entrySet().stream()
+                    .filter(e -> !propertyNameRegex.matcher((String) e.getKey()).matches() || !(e.getValue() instanceof String))
+                    .map(e -> (String) e.getKey())
+                    .collect(Collectors.toList());
+            if (!invalidProperties.isEmpty()) {
+                throw new IllegalArgumentException("The following properties are invalid: " + invalidProperties);
+            }
+
+            this.properties = properties;
+        }
     }
 
     /**
@@ -42,10 +74,19 @@ class ConfigurationImpl implements Configuration {
      * Notice that calling this method will result in {@link Configuration#isModifyOriginalFolder()}
      * to return {@code false}.
      *
+     * @param properties a properties object specifying details about the transformation itself.
+     *                   These properties help to specialize the
+     *                   transformation, for example, determining if certain operations should
+     *                   be skipped or not, or how certain aspects of the transformation should
+     *                   be executed. The set of possible properties is defined by the used transformation
+     *                   extension and template, read the documentation offered by the extension
+     *                   for further details. The properties values are defined by the user requesting the transformation.
+     *                   Properties are optional, so, if not desired, this parameter can be set to null.
      * @param zipOutput if true, the transformed application folder will be compressed into a zip file
      * @return a brand new {@link Configuration} object
      */
-    ConfigurationImpl(boolean zipOutput) {
+    ConfigurationImpl(Properties properties, boolean zipOutput) {
+        this(properties);
         this.zipOutput = zipOutput;
         modifyOriginalFolder = false;
     }
@@ -58,13 +99,22 @@ class ConfigurationImpl implements Configuration {
      * Notice that calling this method will result in {@link Configuration#isModifyOriginalFolder()}
      * to return {@code false}.
      *
+     * @param properties a properties object specifying details about the transformation itself.
+     *                   These properties help to specialize the
+     *                   transformation, for example, determining if certain operations should
+     *                   be skipped or not, or how certain aspects of the transformation should
+     *                   be executed. The set of possible properties is defined by the used transformation
+     *                   extension and template, read the documentation offered by the extension
+     *                   for further details. The properties values are defined by the user requesting the transformation.
+     *                   Properties are optional, so, if not desired, this parameter can be set to null.
      * @param outputFolder the output folder where the transformed application is
      *                     supposed to be placed
      * @param zipOutput if true, the transformed application folder will be compressed into a zip file
      * @return a brand new {@link Configuration} object
      * @throws IllegalArgumentException if {@code outputFolder} is null, does not exist, or is not a directory
      */
-    ConfigurationImpl(File outputFolder, boolean zipOutput) {
+    ConfigurationImpl(Properties properties, File outputFolder, boolean zipOutput) {
+        this(properties);
         if(outputFolder == null) {
             throw new IllegalArgumentException(String.format("Output folder object cannot be null"));
         }
@@ -77,6 +127,11 @@ class ConfigurationImpl implements Configuration {
         this.outputFolder = outputFolder;
         this.zipOutput = zipOutput;
         modifyOriginalFolder = false;
+    }
+
+    @Override
+    public Properties getProperties() {
+        return properties;
     }
 
     @Override
@@ -96,7 +151,7 @@ class ConfigurationImpl implements Configuration {
 
     @Override
     public String toString() {
-        return String.format("{ outputFolder: %s , zipOutput: %s, modifyOriginalFolder: %s}", outputFolder, zipOutput, modifyOriginalFolder);
+        return String.format("{ properties: %s, outputFolder: %s, zipOutput: %s, modifyOriginalFolder: %s}", properties, outputFolder, zipOutput, modifyOriginalFolder);
     }
 
     @Override

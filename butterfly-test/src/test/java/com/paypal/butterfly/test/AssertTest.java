@@ -122,7 +122,7 @@ public class AssertTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void assertAbortTest() {
-        assertAbort(facade, TEST_RESOURCES, JavaEEToSpringBoot.class, null, "This application does not have a root pom.xml file");
+        assertAbort(facade, TEST_RESOURCES, JavaEEToSpringBoot.class, null, null, "This application does not have a root pom.xml file");
     }
 
     @Test

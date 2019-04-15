@@ -1,7 +1,5 @@
 package com.paypal.butterfly.cli;
 
-import com.test.SampleExtension1;
-import com.test.SampleExtension2;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Test;
 
@@ -10,8 +8,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.testng.Assert.*;
 
@@ -63,7 +59,7 @@ public class MiscIT {
 
         // Ensuring console output is as expected
         File helpBaselineOut = new File(this.getClass().getResource("/helpOut.txt").toURI());
-        assertTrue(FileUtils.contentEquals(helpBaselineOut, helpOut), "Generated help (saved at the following temp file) differs from test baseline: " + helpOut);
+        assertTrue(FileUtils.contentEquals(helpBaselineOut, helpOut), "Generated help differs from test baseline\nTest baseline: " + helpBaselineOut + "\nGenerated result: " + helpOut + "\n");
     }
 
     @Test(dependsOnMethods = "helpTest")

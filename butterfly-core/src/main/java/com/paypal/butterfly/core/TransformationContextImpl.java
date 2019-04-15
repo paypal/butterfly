@@ -203,4 +203,10 @@ class TransformationContextImpl implements TransformationContext {
         return abortDetails;
     }
 
+    void setProperties(Properties properties) {
+        if (properties != null && !properties.isEmpty()) {
+            properties.entrySet().forEach(p -> attributes.put("$" + p.getKey(), p.getValue()));
+        }
+    }
+
 }

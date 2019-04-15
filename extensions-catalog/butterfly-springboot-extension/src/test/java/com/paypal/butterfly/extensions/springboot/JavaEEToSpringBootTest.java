@@ -28,7 +28,7 @@ public class JavaEEToSpringBootTest {
 
         assertNotNull(utilities);
         assertEquals(javaEEToSpringBoot.getChildren(), utilities);
-        assertEquals(utilities.size(), 18);
+        assertEquals(utilities.size(), 17);
     }
 
 }

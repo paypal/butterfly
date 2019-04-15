@@ -76,7 +76,7 @@ class TransformationEngine {
         validator.preTransformation(transformationRequest);
 
         if(logger.isDebugEnabled()) {
-            logger.debug("Requested transformationRequest: {}", transformationRequest);
+            logger.debug("Requested transformation: {}", transformationRequest);
         }
         logger.info("Extension name:\t\t\t\t\t{}", transformationRequest.getExtensionName());
         logger.info("Extension version:\t\t\t\t{}", transformationRequest.getExtensionVersion());
@@ -194,8 +194,11 @@ class TransformationEngine {
      */
     private TransformationContextImpl performUtilities(TransformationTemplate template, List<TransformationUtility> utilities, File transformedAppFolder, TransformationContextImpl previousTransformationContext, TransformationRequest transformationRequest) throws InternalTransformationException {
         int operationsExecutionOrder = 1;
+
         TransformationContextImpl transformationContext = TransformationContextImpl.getTransformationContext(previousTransformationContext);
         transformationContext.setTransformationTemplate(template);
+        transformationContext.setProperties(transformationRequest.getConfiguration().getProperties());
+
         if (template.isBlank()) {
             File baseline = ((AbstractTransformationRequest) transformationRequest).getBaselineApplicationDir();
             if (baseline == null || !baseline.exists() || !baseline.isDirectory()) {
