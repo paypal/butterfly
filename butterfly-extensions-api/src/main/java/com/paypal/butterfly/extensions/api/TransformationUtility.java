@@ -637,7 +637,9 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
         // Checking for UNLESS condition
         if(unlessConditionAttributeName != null) {
             Object conditionResult = transformationContext.get(unlessConditionAttributeName);
-            if (conditionResult != null && conditionResult instanceof Boolean && ((Boolean) conditionResult).booleanValue()) {
+            if (conditionResult != null &&
+                    ((conditionResult instanceof Boolean && ((Boolean) conditionResult).booleanValue()) || (conditionResult instanceof String && conditionResult.equals("true")))) {
+
                 String details = String.format("%s was skipped due to failing 'unless' condition: %s", getName(), unlessConditionAttributeName);
                 hasBeenPerformed.set(true);
                 return PerformResult.skippedCondition(this, details);
