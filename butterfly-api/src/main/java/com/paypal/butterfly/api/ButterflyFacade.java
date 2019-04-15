@@ -1,14 +1,14 @@
 package com.paypal.butterfly.api;
 
-import java.io.File;
-import java.util.List;
-import java.util.Properties;
-
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
+
+import java.io.File;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Butterfly façade
@@ -66,9 +66,10 @@ public interface ButterflyFacade {
      *                   for further details. The properties values are defined by the user requesting the transformation.
      *                   Properties are optional, so, if not desired, this parameter can be set to null.
      * @return a brand new {@link Configuration} object
+     * @throws IllegalArgumentException if properties object is invalid. Properties name must
+     *                   be non blank and only contain alphabetical characters, dots, underscore or hyphen. Properties
+     *                   object must be Strings and cannot be null.
      */
-
-    // TODO Validate properties names and throw IAEx if any is invalid (do the same to other 2 methods)
     Configuration newConfiguration(Properties properties);
 
     /**
@@ -92,6 +93,9 @@ public interface ButterflyFacade {
      *                   Properties are optional, so, if not desired, this parameter can be set to null.
      * @param zipOutput if true, the transformed application folder will be compressed into a zip file
      * @return a brand new {@link Configuration} object
+     * @throws IllegalArgumentException if properties object is invalid. Properties name must
+     *                   be non blank and only contain alphabetical characters, dots, underscore or hyphen. Properties
+     *                   object must be Strings and cannot be null.
      */
     Configuration newConfiguration(Properties properties, boolean zipOutput);
 
@@ -116,6 +120,9 @@ public interface ButterflyFacade {
      * @param zipOutput if true, the transformed application folder will be compressed into a zip file
      * @return a brand new {@link Configuration} object
      * @throws IllegalArgumentException if {@code outputFolder} is null, does not exist, or is not a directory
+     * @throws IllegalArgumentException if properties object is invalid. Properties name must
+     *                   be non blank and only contain alphabetical characters, dots, underscore or hyphen. Properties
+     *                   object must be Strings and cannot be null.
      */
     Configuration newConfiguration(Properties properties, File outputFolder, boolean zipOutput);
 

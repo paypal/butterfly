@@ -1,7 +1,11 @@
 package com.paypal.butterfly.core;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -20,6 +24,8 @@ class ConfigurationImpl implements Configuration {
     private boolean zipOutput = false;
     private boolean modifyOriginalFolder = true;
 
+    private static final Pattern propertyNameRegex = Pattern.compile("^[a-zA-Z\\._-]*$");
+
     /**
      * Creates and returns a new {@link Configuration} object
      * set to apply the transformation against the original application folder
@@ -37,9 +43,22 @@ class ConfigurationImpl implements Configuration {
      *                   for further details. The properties values are defined by the user requesting the transformation.
      *                   Properties are optional, so, if not desired, this parameter can be set to null.
      * @return a brand new {@link Configuration} object
+     * @throws IllegalArgumentException if properties object is invalid. Properties name must
+     *                   be non blank and only contain alphabetical characters, dots, underscore or hyphen. Properties
+     *                   object must be Strings and cannot be null.
      */
     ConfigurationImpl(Properties properties) {
         if (properties != null && properties.size() > 0) {
+
+            // Validating properties object
+            List<String> invalidProperties = properties.entrySet().stream()
+                    .filter(e -> !propertyNameRegex.matcher((String) e.getKey()).matches() || !(e.getValue() instanceof String))
+                    .map(e -> (String) e.getKey())
+                    .collect(Collectors.toList());
+            if (!invalidProperties.isEmpty()) {
+                throw new IllegalArgumentException("The following properties are invalid: " + invalidProperties);
+            }
+
             this.properties = properties;
         }
     }

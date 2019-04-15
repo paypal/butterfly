@@ -13,7 +13,8 @@ import java.util.Properties;
 public interface Configuration {
 
     /**
-     * Return the folder where the transformed application is supposed to be placed
+     * Returns the folder where the transformed application is supposed to be placed,
+     * or null, if no custom folder has been specified
      *
      * @return the folder where the transformed application is supposed to be placed
      */
@@ -34,7 +35,7 @@ public interface Configuration {
     boolean isModifyOriginalFolder();
 
     /**
-     * Return a properties object specifying details about the transformation itself.
+     * Returns a properties object specifying details about the transformation itself.
      * These properties help to specialize the transformation, for example,
      * determining if certain operations should be skipped or not,
      * or how certain aspects of the transformation should be executed.
