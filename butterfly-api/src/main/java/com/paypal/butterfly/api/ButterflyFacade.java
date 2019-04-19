@@ -2,9 +2,8 @@ package com.paypal.butterfly.api;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 
 import java.io.File;
 import java.util.List;
@@ -127,29 +126,8 @@ public interface ButterflyFacade {
     Configuration newConfiguration(Properties properties, File outputFolder, boolean zipOutput);
 
     /**
-     * Transform an application
-     *
-     * @param applicationFolder application folder
-     * @param templateClassName transformation template class name
-     * @return the transformation result object
-     * @throws ButterflyException if the template class could not be found
-     */
-    TransformationResult transform(File applicationFolder, String templateClassName) throws ButterflyException;
-
-    /**
-     * Transform an application, and also accepts an additional
-     * parameter with configuration. See {@link Configuration} for further information.
-     *
-     * @param applicationFolder application folder
-     * @param templateClassName transformation template class name
-     * @param configuration Butterfly configuration object
-     * @return the transformation result object
-     * @throws ButterflyException if the template class could not be found
-     */
-    TransformationResult transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException;
-
-    /**
-     * Transform an application
+     * Transforms an application. If <code>templateClass</code> is a {@link UpgradeStep},
+     * application will be upgraded to the latest version.
      *
      * @param applicationFolder application folder
      * @param templateClass transformation template class
@@ -158,34 +136,18 @@ public interface ButterflyFacade {
     TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass);
 
     /**
-     * Transform an application, and also accepts an additional
+     * Transforms an application, and also accepts an additional
      * parameter with configuration. See {@link Configuration} for further information.
+     * If <code>templateClass</code> is a {@link UpgradeStep}, application will be upgraded according to <code>version</code>.
      *
      * @param applicationFolder application folder
      * @param templateClass transformation template class
+     * @param version the target upgrade version. If this parameter is null or blank, application will be upgraded to the latest version.
+     *                If <code>templateClass</code> is not a {@link UpgradeStep}, this parameter is ignored.
      * @param configuration Butterfly configuration object
+     * @throws IllegalArgumentException if <code>templateClass</code> is a {@link UpgradeStep} and <code>version</code> is not empty and an unknown version
      * @return the transformation result object
      */
-    TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration);
-
-    /**
-     * Upgrade an application based on an upgrade path
-     *
-     * @param applicationFolder application folder
-     * @param upgradePath upgrade path object used to upgrade this application
-     * @return the transformation result object
-     */
-    TransformationResult transform(File applicationFolder, UpgradePath upgradePath);
-
-    /**
-     * Transform an application based on an upgrade path, and also accepts an additional
-     * parameter with configuration. See {@link Configuration} for further information.
-     *
-     * @param applicationFolder application folder
-     * @param upgradePath upgrade path object used to upgrade this application
-     * @param configuration Butterfly configuration object
-     * @return the transformation result object
-     */
-    TransformationResult transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration);
+    TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, String version, Configuration configuration);
 
 }

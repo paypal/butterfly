@@ -1,14 +1,13 @@
 package com.paypal.butterfly.core;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-
+import com.paypal.butterfly.api.*;
+import com.paypal.butterfly.api.exception.TransformationException;
+import com.paypal.butterfly.extensions.api.*;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import com.paypal.butterfly.extensions.api.utilities.Abort;
+import com.paypal.butterfly.extensions.api.utilities.ManualInstruction;
+import com.paypal.butterfly.extensions.api.utilities.ManualInstructionRecord;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.paypal.butterfly.extensions.api.*;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
-import com.paypal.butterfly.extensions.api.utilities.ManualInstruction;
-import com.paypal.butterfly.extensions.api.utilities.ManualInstructionRecord;
-import com.paypal.butterfly.api.*;
-import com.paypal.butterfly.api.exception.TransformationException;
-import com.paypal.butterfly.api.TransformationMetrics;
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The transformation engine in charge of

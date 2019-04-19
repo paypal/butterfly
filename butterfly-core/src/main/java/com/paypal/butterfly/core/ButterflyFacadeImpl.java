@@ -1,23 +1,20 @@
 package com.paypal.butterfly.core;
 
-import java.io.File;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
+import com.paypal.butterfly.api.*;
+import com.paypal.butterfly.extensions.api.Extension;
+import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.paypal.butterfly.api.*;
-import com.paypal.butterfly.extensions.api.Extension;
-import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.exception.ButterflyException;
-import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
+import java.io.File;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Butterfly Façade implementation
@@ -92,49 +89,36 @@ class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public TransformationResult transform(File applicationFolder, String templateClassName) throws ButterflyException {
-        return transform(applicationFolder, templateClassName, new ConfigurationImpl(null));
-    }
-
-    @Override
-    public TransformationResult transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException {
-        if(StringUtils.isBlank(templateClassName)) {
-            throw new IllegalArgumentException("Template class name cannot be blank");
-        }
-        try {
-            Class<TransformationTemplate> templateClass = (Class<TransformationTemplate>) Class.forName(templateClassName);
-            return transform(applicationFolder, templateClass, configuration);
-        } catch (ClassNotFoundException e) {
-            String exceptionMessage = "Template class " + templateClassName + " not found, double check if its extension has been properly registered";
-            throw new ButterflyException(exceptionMessage, e);
-        }
-    }
-
-    @Override
     public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) {
-        return transform(applicationFolder, templateClass, new ConfigurationImpl(null));
+        return transform(applicationFolder, templateClass, null, new ConfigurationImpl(null));
     }
 
     @Override
-    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) {
+    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, String version, Configuration configuration) {
         TransformationTemplate template = getTemplate(templateClass);
         Application application = new ApplicationImpl(applicationFolder);
-        TransformationRequest transformationRequest = new TemplateTransformationRequest(application, template, configuration);
+        TransformationRequest transformationRequest;
+
+        if (template instanceof UpgradeStep) {
+            UpgradePath upgradePath = getUpgradePath(templateClass, version);
+            transformationRequest = new UpgradePathTransformationRequest(application, upgradePath, configuration);
+        } else {
+            transformationRequest = new TemplateTransformationRequest(application, template, configuration);
+        }
 
         return transform(transformationRequest);
     }
 
-    @Override
-    public TransformationResult transform(File applicationFolder, UpgradePath upgradePath) {
-        return transform(applicationFolder, upgradePath, new ConfigurationImpl(null));
-    }
+    private UpgradePath getUpgradePath(Class<? extends TransformationTemplate> transformationTemplate, String version) {
+        Class<? extends UpgradeStep> upgradeStep = (Class<? extends UpgradeStep>) transformationTemplate;
+        UpgradePath upgradePath;
+        if (version != null && !version.trim().equals("")) {
+            upgradePath = new UpgradePath(upgradeStep, version);
+        } else {
+            upgradePath = new UpgradePath(upgradeStep);
+        }
 
-    @Override
-    public TransformationResult transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) {
-        Application application = new ApplicationImpl(applicationFolder);
-        TransformationRequest transformationRequest = new UpgradePathTransformationRequest(application, upgradePath, configuration);
-
-        return transform(transformationRequest);
+        return upgradePath;
     }
 
     private TransformationResult transform(TransformationRequest transformationRequest) {

@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.api.Application;
 import com.paypal.butterfly.api.Configuration;
 
@@ -14,7 +13,7 @@ import java.io.IOException;
 
 /**
  * Represents an specific transformation, made of an
- * {@link com.paypal.butterfly.extensions.api.upgrade.UpgradePath},
+ * {@link UpgradePath},
  * to be applied against a specific application
  *
  * @author facarvalho

@@ -3,8 +3,6 @@ package com.paypal.butterfly.core;
 import com.paypal.butterfly.api.Configuration;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.exception.ButterflyException;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.springboot.ButterflySpringBootExtension;
 import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;
 import com.paypal.butterfly.extensions.springboot.SpringBootUpgrade_1_5_6_to_1_5_7;
@@ -52,31 +50,15 @@ public class ButterflyFacadeImplTest extends PowerMockTestCase {
         assertTrue(extensions.get(0) instanceof ButterflySpringBootExtension);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "Template class name cannot be blank")
-    public void testTransformWithTemplateClassAsEmptyString() throws ButterflyException {
-        butterflyFacadeImpl.transform(applicationFolder, "");
-    }
-
-    @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "Template class name cannot be blank")
-    public void testTransformWithTemplateAsNull() throws ButterflyException {
-        butterflyFacadeImpl.transform(applicationFolder, (String) null);
-    }
-
-
-    @Test(expectedExceptions = ButterflyException.class, expectedExceptionsMessageRegExp = "Template class TestTemplate not found, double check if its extension has been properly registered")
-    public void testTransformWithInValidTemplate() throws ButterflyException {
-        butterflyFacadeImpl.transform(applicationFolder, "TestTemplate");
-    }
-
     @Test
-    public void testTransformWithValidTemplate() throws ButterflyException {
-        butterflyFacadeImpl.transform(applicationFolder, JavaEEToSpringBoot.class.getName());
+    public void testTransformWithValidTemplate() {
+        butterflyFacadeImpl.transform(applicationFolder, JavaEEToSpringBoot.class);
         verify(transformationEngine, times(1)).perform((TemplateTransformationRequest) anyObject());
     }
 
     @Test(expectedExceptions = InternalException.class, expectedExceptionsMessageRegExp = "Template class class com.paypal.butterfly.extensions.api.TransformationTemplate could not be instantiated.*")
-    public void testTransformWithAbstractTemplate() throws ButterflyException {
-        butterflyFacadeImpl.transform(applicationFolder, TransformationTemplate.class.getName());
+    public void testTransformWithAbstractTemplate() {
+        butterflyFacadeImpl.transform(applicationFolder, TransformationTemplate.class);
     }
 
     @Test
@@ -85,21 +67,19 @@ public class ButterflyFacadeImplTest extends PowerMockTestCase {
         verify(transformationEngine, times(1)).perform((TemplateTransformationRequest) anyObject());
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "Invalid application folder testTransformation1")
-    public void testTransformWithValidUpgradePathInvalidAppFolder() {
-        UpgradePath upgradePath = new UpgradePath(SpringBootUpgrade_1_5_6_to_1_5_7.class);
-        butterflyFacadeImpl.transform(new File("testTransformation1"), upgradePath);
+    @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "Template class cannot be null")
+    public void testTransformWithNullTemplateClass() {
+        butterflyFacadeImpl.transform(applicationFolder, null);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "Upgrade path cannot be null")
-    public void testTransformWithInValidUpgradePath() {
-        butterflyFacadeImpl.transform(applicationFolder, (UpgradePath) null);
+    @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "Invalid application folder testTransformation1")
+    public void testTransformWithValidUpgradePathInvalidAppFolder() {
+        butterflyFacadeImpl.transform(new File("testTransformation1"), SpringBootUpgrade_1_5_6_to_1_5_7.class);
     }
 
     @Test
     public void testTransformWithValidUpgradePath() {
-        UpgradePath upgradePath = new UpgradePath(SpringBootUpgrade_1_5_6_to_1_5_7.class);
-        butterflyFacadeImpl.transform(applicationFolder, upgradePath);
+        butterflyFacadeImpl.transform(applicationFolder, SpringBootUpgrade_1_5_6_to_1_5_7.class);
         verify(transformationEngine, times(1)).perform((UpgradePathTransformationRequest) anyObject());
     }
 
