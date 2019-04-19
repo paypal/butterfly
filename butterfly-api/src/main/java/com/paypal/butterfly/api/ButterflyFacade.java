@@ -8,6 +8,7 @@ import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Butterfly façade
@@ -126,19 +127,19 @@ public interface ButterflyFacade {
     Configuration newConfiguration(Properties properties, File outputFolder, boolean zipOutput);
 
     /**
-     * Transforms an application. If <code>templateClass</code> is a {@link UpgradeStep},
-     * application will be upgraded to the latest version.
+     * Transforms an application in an asynchronous and non-blocking manner.
+     * If <code>templateClass</code> is a {@link UpgradeStep}, application will be upgraded to the latest version.
      *
      * @param applicationFolder application folder
      * @param templateClass transformation template class
      * @return the transformation result object
      */
-    TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass);
+    CompletableFuture<TransformationResult> transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass);
 
     /**
-     * Transforms an application, and also accepts an additional
-     * parameter with configuration. See {@link Configuration} for further information.
+     * Transforms an application in an asynchronous and non-blocking manner.
      * If <code>templateClass</code> is a {@link UpgradeStep}, application will be upgraded according to <code>version</code>.
+     * It also accepts an additional parameter providing configuration. See {@link Configuration} for further information.
      *
      * @param applicationFolder application folder
      * @param templateClass transformation template class
@@ -148,6 +149,6 @@ public interface ButterflyFacade {
      * @throws IllegalArgumentException if <code>templateClass</code> is a {@link UpgradeStep} and <code>version</code> is not empty and an unknown version
      * @return the transformation result object
      */
-    TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, String version, Configuration configuration);
+    CompletableFuture<TransformationResult> transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, String version, Configuration configuration);
 
 }

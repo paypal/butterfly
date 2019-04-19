@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileAttribute;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Assert class to test Butterfly transformations,
@@ -106,11 +107,10 @@ public abstract class Assert {
         Configuration configuration;
         try {
             configuration = facade.newConfiguration(properties, Files.createTempDirectory("butterfly-test", new FileAttribute[]{}).toFile(), false);
-        } catch (IOException e) {
+            return facade.transform(originalApplication, transformationTemplate, version, configuration).get();
+        } catch (InterruptedException | ExecutionException | IOException e) {
             throw new AssertionError(e);
         }
-
-        return facade.transform(originalApplication, transformationTemplate, version, configuration);
     }
 
     /**
