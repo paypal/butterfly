@@ -1,14 +1,14 @@
 package com.paypal.butterfly.core;
 
-import static org.testng.Assert.*;
-import static org.testng.AssertJUnit.assertNull;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Properties;
-
+import com.google.common.io.Files;
+import com.paypal.butterfly.api.*;
+import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.exception.ApplicationValidationException;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import com.paypal.butterfly.extensions.api.utilities.Abort;
+import com.paypal.butterfly.extensions.springboot.ButterflySpringBootExtension;
+import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;
+import com.paypal.butterfly.extensions.springboot.SpringBootUpgrade_1_5_6_to_1_5_7;
 import org.apache.commons.io.FileUtils;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,21 +18,14 @@ import org.springframework.context.ApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.io.Files;
-import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.exception.ApplicationValidationException;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
-import com.paypal.butterfly.extensions.api.utilities.Abort;
-import com.paypal.butterfly.extensions.springboot.ButterflySpringBootExtension;
-import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;
-import com.paypal.butterfly.extensions.springboot.SpringBootUpgrade_1_5_6_to_1_5_7;
-import com.paypal.butterfly.api.Application;
-import com.paypal.butterfly.api.Configuration;
-import com.paypal.butterfly.api.TransformationResult;
-import com.paypal.butterfly.api.AbortDetails;
-import com.paypal.butterfly.api.TransformationMetrics;
-import com.paypal.butterfly.api.TransformationStatistics;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Properties;
+
+import static org.testng.Assert.*;
+import static org.testng.AssertJUnit.assertNull;
 
 public class TransformationEngineTest extends TestHelper {
 

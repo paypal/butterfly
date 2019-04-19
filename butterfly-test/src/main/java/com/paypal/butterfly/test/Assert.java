@@ -7,8 +7,6 @@ import com.paypal.butterfly.api.ButterflyFacade;
 import com.paypal.butterfly.api.Configuration;
 import com.paypal.butterfly.api.TransformationResult;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -112,29 +110,7 @@ public abstract class Assert {
             throw new AssertionError(e);
         }
 
-        TransformationResult transformationResult;
-        if (UpgradeStep.class.isAssignableFrom(transformationTemplate)) {
-            UpgradePath upgradePath = getUpgradePath(transformationTemplate, version);
-            transformationResult = facade.transform(originalApplication, upgradePath, configuration);
-        } else {
-            transformationResult = facade.transform(originalApplication, transformationTemplate, configuration);
-        }
-        return transformationResult;
-    }
-
-    // TODO Move this to ButterflyFacade class and make UpgradePath class package-private
-    // Given a transformation template class (known to extends UpgradeStep) and a version String (which can be blank),
-    // returns a new UpgradePath object
-    private static UpgradePath getUpgradePath(Class<? extends TransformationTemplate> transformationTemplate, String version) {
-        Class<? extends UpgradeStep> upgradeStep = (Class<? extends UpgradeStep>) transformationTemplate;
-        UpgradePath upgradePath;
-        if (version != null && !version.trim().equals("")) {
-            upgradePath = new UpgradePath(upgradeStep, version);
-        } else {
-            upgradePath = new UpgradePath(upgradeStep);
-        }
-
-        return upgradePath;
+        return facade.transform(originalApplication, transformationTemplate, version, configuration);
     }
 
     /**

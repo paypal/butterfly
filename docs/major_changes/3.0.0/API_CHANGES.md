@@ -21,6 +21,7 @@ Notice that all these removed classes and interfaces were already marked as depr
 | Class or interface | Replacement | Notes | TO BE DEPRECATED |
 |---|---|---|---|
 |`com.paypal.butterfly.utilities.xml.XmlElement`|`com.paypal.butterfly.utilities.xml.XmlXPathElement`|||
+|`com.paypal.butterfly.extensions.api.upgrade.UpgradePath`|`None`|This class has been removed from the API in favor of simplicity. Users can request upgrade transformations by using regular transform methods under `ButterflyFacade`|YES|
 
 ### Removed methods
 
