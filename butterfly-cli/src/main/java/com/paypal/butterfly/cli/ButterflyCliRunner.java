@@ -197,10 +197,10 @@ class ButterflyCliRunner extends ButterflyCliOption {
                 String originalVersion = firstStepClass.newInstance().getCurrentVersion();
 
                 logger.info("Performing upgrade from version {} to version {} (it might take a few seconds)", originalVersion, upgradeVersion);
-                transformationResult = butterflyFacade.transform(applicationFolder, firstStepClass, upgradeVersion, configuration);
+                transformationResult = butterflyFacade.transform(applicationFolder, firstStepClass, upgradeVersion, configuration).get();
             } else {
                 logger.info("Performing transformation (it might take a few seconds)");
-                transformationResult = butterflyFacade.transform(applicationFolder, templateClass, null, configuration);
+                transformationResult = butterflyFacade.transform(applicationFolder, templateClass, null, configuration).get();
             }
 
             run.setLogFile(LogFileDefiner.getLogFile());

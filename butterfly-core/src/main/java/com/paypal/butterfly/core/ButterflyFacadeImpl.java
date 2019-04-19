@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Butterfly Façade implementation
@@ -89,12 +90,12 @@ class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) {
+    public CompletableFuture<TransformationResult> transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) {
         return transform(applicationFolder, templateClass, null, new ConfigurationImpl(null));
     }
 
     @Override
-    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, String version, Configuration configuration) {
+    public CompletableFuture<TransformationResult> transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, String version, Configuration configuration) {
         TransformationTemplate template = getTemplate(templateClass);
         Application application = new ApplicationImpl(applicationFolder);
         TransformationRequest transformationRequest;
@@ -121,7 +122,7 @@ class ButterflyFacadeImpl implements ButterflyFacade {
         return upgradePath;
     }
 
-    private TransformationResult transform(TransformationRequest transformationRequest) {
+    private CompletableFuture<TransformationResult> transform(TransformationRequest transformationRequest) {
         Configuration configuration = transformationRequest.getConfiguration();
         if (logger.isDebugEnabled()) {
             logger.debug("Transformation request configuration: {}", configuration);
@@ -133,7 +134,8 @@ class ButterflyFacadeImpl implements ButterflyFacade {
             compressionHandler.compress(transformationResult);
         }
 
-        return transformationResult;
+        // TODO This obviously is synchronous and blocking for now. It needs to be changed once transformation engine is parallelized.
+        return CompletableFuture.completedFuture(transformationResult);
     }
 
     private TransformationTemplate getTemplate(Class<? extends TransformationTemplate> templateClass) {
