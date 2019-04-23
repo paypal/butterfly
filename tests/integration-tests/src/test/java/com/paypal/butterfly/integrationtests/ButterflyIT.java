@@ -13,6 +13,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 import static com.paypal.butterfly.test.Assert.assertTransformation;
 
@@ -40,7 +41,7 @@ public class ButterflyIT extends AbstractTestNGSpringContextTests {
     }
 
     // FIXME Probably it would be better if this exception is taken care of by Butterfly core (and packaged to the transformation result object), as opposed to carry forward this exception
-    @Test(expectedExceptions = {ApplicationValidationException.class}, expectedExceptionsMessageRegExp = "This application has pending manual instructions\\. Perform manual instructions at the following file first, then remove it, and run Butterfly again: (.*)/BUTTERFLY_MANUAL_INSTRUCTIONS\\.md")
+    @Test(expectedExceptions = {AssertionError.class}, expectedExceptionsMessageRegExp = "java\\.util\\.concurrent\\.ExecutionException: com\\.paypal\\.butterfly\\.extensions\\.api\\.exception\\.ApplicationValidationException: This application has pending manual instructions\\. Perform manual instructions at the following file first, then remove it, and run Butterfly again: (.*)/BUTTERFLY_MANUAL_INSTRUCTIONS\\.md")
     public void pendingManualChangesTest() throws URISyntaxException {
         File appDir = new File(this.getClass().getResource("/test-app-1").toURI());
         assertTransformation(facade, sampleAppTransformedBaseline, appDir, JavaEEToSpringBoot.class, null, null, true);

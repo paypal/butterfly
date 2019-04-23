@@ -108,7 +108,9 @@ public abstract class Assert {
         try {
             configuration = facade.newConfiguration(properties, Files.createTempDirectory("butterfly-test", new FileAttribute[]{}).toFile(), false);
             return facade.transform(originalApplication, transformationTemplate, version, configuration).get();
-        } catch (InterruptedException | ExecutionException | IOException e) {
+        } catch (InterruptedException | IOException e) {
+            throw new AssertionError(e);
+        } catch (ExecutionException e) {
             throw new AssertionError(e);
         }
     }
