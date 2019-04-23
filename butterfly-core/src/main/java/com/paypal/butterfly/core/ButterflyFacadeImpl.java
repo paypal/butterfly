@@ -128,14 +128,13 @@ class ButterflyFacadeImpl implements ButterflyFacade {
             logger.debug("Transformation request configuration: {}", configuration);
         }
 
-        TransformationResult transformationResult = transformationEngine.perform(transformationRequest);
+        CompletableFuture<TransformationResult> transformationResult = transformationEngine.perform(transformationRequest);
 
         if(!configuration.isModifyOriginalFolder() && configuration.isZipOutput()){
-            compressionHandler.compress(transformationResult);
+            transformationResult.thenAcceptAsync(compressionHandler::compress);
         }
 
-        // TODO This obviously is synchronous and blocking for now. It needs to be changed once transformation engine is parallelized.
-        return CompletableFuture.completedFuture(transformationResult);
+        return transformationResult;
     }
 
     private TransformationTemplate getTemplate(Class<? extends TransformationTemplate> templateClass) {
