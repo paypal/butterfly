@@ -1,0 +1,48 @@
+
+plugins {
+    id "io.swagger.core.v3.swagger-gradle-plugin" version "2.0.8"
+    id 'org.hidetake.swagger.generator' version '2.18.1'
+    id 'com.palantir.docker' version '0.22.1'
+}
+
+apply plugin: 'java-library'
+apply plugin: 'com.palantir.docker'
+
+dependencies {
+    implementation lib.jaxrs,
+                   lib.jackson,
+                   lib.jackson_databind,
+                   lib.bean_validation,
+                   lib.swagger_annotations
+    swaggerUI 'org.webjars:swagger-ui:3.10.0'
+}
+
+// Generate OpenAPI YAML file from JAX-RS
+resolve.dependsOn build
+
+resolve {
+    outputFileName = 'butterfly-openapi'
+    outputFormat = 'YAML'
+    classpath = sourceSets.main.runtimeClasspath
+    resourcePackages = ['com.paypal.butterfly.rest']
+    outputPath = 'build/api'
+}
+
+// Generate OpenAPI documentation from YAML file
+swaggerSources {
+    butterfly {
+        inputFile = file("${buildDir}/api/butterfly-openapi.yaml")
+    }
+}
+
+// Build Docker image from OpenAPI documentation
+tasks.findByName('dockerPrepare').mustRunAfter 'resolve'
+dockerPrepare.dependsOn resolve, generateSwaggerUI
+
+def dr = docker_repo
+
+docker {
+    name "${dr}butterfly-rest-doc:${getCommitProjectVersion(project.version)}"
+    copySpec.from("build/swagger-ui-butterfly").into("doc")
+    buildArgs([BUILD_VERSION: "${project.version}", COMMIT: "${getGitHash()}"])
+}
