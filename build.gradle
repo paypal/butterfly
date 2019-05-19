@@ -1,7 +1,8 @@
 
 plugins {
-    id 'com.gradle.build-scan' version '1.14'
+    id 'com.gradle.build-scan' version '2.1' 
 }
+
 description = "Butterfly - Application transformation tool"
 
 allprojects {
