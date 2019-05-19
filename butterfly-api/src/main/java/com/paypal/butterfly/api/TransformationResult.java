@@ -26,9 +26,9 @@ public interface TransformationResult {
     TransformationRequest getTransformationRequest();
 
     /**
-     * Returns the OS id of the user who performed the transformation
+     * Returns the id of the user who requested the transformation
      *
-     * @return the OS id of the user who performed the transformation
+     * @return the id of the user who requested the transformation
      */
     String getUserId();
 
