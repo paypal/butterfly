@@ -17,6 +17,10 @@ install:
   - mvn install
 
 after_script:
+  # Installing codacy-analysis-cli
+  - (cd /tmp && curl -L https://github.com/codacy/codacy-analysis-cli/archive/master.tar.gz | tar xvz && cd codacy-analysis-cli-* && sudo make install)
+  # Running codacy-analysis-cli
+  - codacy-analysis-cli analyse --directory $PWD --project-token d9b53d33f33d49acbdc2d007220c157b --allow-network --codacy-api-base-url "https://enterprise.dev.codacy.org:16006" --upload
   # Installing Codacy code coverage reporter upload tool
   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then wget https://github.com/codacy/codacy-coverage-reporter/releases/download/1.0.13/codacy-coverage-reporter-1.0.13-assembly.jar -O ccr.jar; fi'
   # Uploading Cobertura report to Codacy
