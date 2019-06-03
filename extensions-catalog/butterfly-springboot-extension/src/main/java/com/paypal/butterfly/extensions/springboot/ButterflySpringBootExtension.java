@@ -1,6 +1,7 @@
 package com.paypal.butterfly.extensions.springboot;
 
 import java.io.File;
+import java.util.Optional;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
@@ -28,9 +29,9 @@ public class ButterflySpringBootExtension extends Extension {
     }
 
     @Override
-    public Class<? extends TransformationTemplate> automaticResolution(File file) {
+    public Optional<Class<? extends TransformationTemplate>> automaticResolution(File file) {
         // TODO
-        return null;
+        return Optional.empty();
     }
 
 }

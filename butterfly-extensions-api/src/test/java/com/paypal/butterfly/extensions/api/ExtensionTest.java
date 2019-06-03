@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 import static org.testng.Assert.*;
 
@@ -48,7 +49,7 @@ public class ExtensionTest {
     }
 
     @Test
-    public void automaticResolutionTest() throws URISyntaxException {
+    public void automaticResolutionTest() throws URISyntaxException, TemplateResolutionException {
         File appFolder = new File(getClass().getResource("/test-app").toURI());
 
         Extension extension = new Extension() {
@@ -58,19 +59,19 @@ public class ExtensionTest {
             public String getVersion() {return null;}
 
             @Override
-            public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) {
-                return (Class<? extends TransformationTemplate>) getTemplateClasses().get(0);
+            public Optional<Class<? extends TransformationTemplate>> automaticResolution(File applicationFolder) {
+                return Optional.of((Class<? extends TransformationTemplate>) getTemplateClasses().get(0));
             }
         };
         extension.add(SampleTransformationTemplate2.class);
 
-        assertEquals(extension.automaticResolution(appFolder), SampleTransformationTemplate2.class);
+        assertEquals(extension.automaticResolution(appFolder).get(), SampleTransformationTemplate2.class);
     }
 
     @Test
-    public void notSupportedAutomaticResolutionTest() throws URISyntaxException {
+    public void notSupportedAutomaticResolutionTest() throws URISyntaxException, TemplateResolutionException {
         File appFolder = new File(getClass().getResource("/test-app").toURI());
-        assertNull(new SampleExtension().automaticResolution(appFolder));
+        assertFalse(new SampleExtension().automaticResolution(appFolder).isPresent());
     }
 
     @Test

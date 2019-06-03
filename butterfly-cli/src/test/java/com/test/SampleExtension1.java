@@ -4,6 +4,7 @@ import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 
 import java.io.File;
+import java.util.Optional;
 
 /**
  * @author facarvalho
@@ -26,8 +27,8 @@ public class SampleExtension1 extends Extension {
     }
 
     @Override
-    public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) {
-        return SampleTemplate.class;
+    public Optional<Class<? extends TransformationTemplate>> automaticResolution(File applicationFolder) {
+        return Optional.of(SampleTemplate.class);
     }
 
 }

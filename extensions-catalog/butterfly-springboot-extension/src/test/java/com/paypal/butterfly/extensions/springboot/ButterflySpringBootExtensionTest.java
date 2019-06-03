@@ -17,7 +17,7 @@ public class ButterflySpringBootExtensionTest {
 
         assertEquals(butterflySpringBootExtension.getDescription(), "Butterfly Spring Boot extension");
         assertEquals(butterflySpringBootExtension.getVersion(), "1.0.0");
-        assertNull(butterflySpringBootExtension.automaticResolution(null));
+        assertFalse(butterflySpringBootExtension.automaticResolution(null).isPresent());
         assertNotNull(butterflySpringBootExtension.getTemplateClasses());
         assertEquals(butterflySpringBootExtension.getTemplateClasses().size(), 2);
         assertTrue(butterflySpringBootExtension.getTemplateClasses().contains(JavaEEToSpringBoot.class));

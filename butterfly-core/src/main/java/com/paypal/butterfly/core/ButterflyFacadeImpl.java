@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -49,29 +46,38 @@ class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException {
+    public Optional<Class<? extends TransformationTemplate>> automaticResolution(File applicationFolder) throws TemplateResolutionException {
         if (extensionRegistry.getExtensions().isEmpty()) {
             throw new TemplateResolutionException("No Butterfly extension has been registered");
         }
 
         Set<Class<? extends TransformationTemplate>> resolvedTemplates = new HashSet<>();
-        Class<? extends TransformationTemplate> t;
+        Optional<Class<? extends TransformationTemplate>> t;
+        Map<String, TemplateResolutionException> extensionsResolutionExceptions = new HashMap();
 
         for (Extension extension : extensionRegistry.getExtensions()) {
-            t = extension.automaticResolution(applicationFolder);
-            if (t != null) {
-                resolvedTemplates.add(t);
+            try {
+                t = extension.automaticResolution(applicationFolder);
+                if (t.isPresent()) {
+                    resolvedTemplates.add(t.get());
+                }
+            } catch (TemplateResolutionException e) {
+                extensionsResolutionExceptions.put(extension.getClass().getName(), e);
             }
         }
 
-        if (resolvedTemplates.size() == 0) {
-            throw new TemplateResolutionException("No transformation template could be resolved");
-        }
         if (resolvedTemplates.size() == 1) {
-            return (Class<? extends TransformationTemplate>) resolvedTemplates.toArray()[0];
+            return Optional.of((Class<? extends TransformationTemplate>) resolvedTemplates.toArray()[0]);
         }
-
-        throw new TemplateResolutionException("More than one transformation template was resolved, they are: " + resolvedTemplates);
+        if (resolvedTemplates.size() > 1) {
+            throw new TemplateResolutionException("More than one transformation template was resolved, they are: " + resolvedTemplates);
+        }
+        if (extensionsResolutionExceptions.size() == 1) {
+            throw (TemplateResolutionException) extensionsResolutionExceptions.values().toArray()[0];
+        } else if (extensionsResolutionExceptions.size() > 1) {
+            throw new TemplateResolutionException("No transformation template could be resolved. However, more than one extension recognized the application type, but considered them invalid. See the following map, whose key is an extension class, and value is the reason why application failed validation: " + extensionsResolutionExceptions);
+        }
+        return Optional.empty();
     }
 
     @Override

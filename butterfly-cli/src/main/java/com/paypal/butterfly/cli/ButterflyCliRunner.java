@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -132,11 +133,12 @@ class ButterflyCliRunner extends ButterflyCliOption {
             logger.info("Transformation template associated with shortcut {}: {}", shortcut, templateClass.getName());
         } else {
             try {
-                templateClass = butterflyFacade.automaticResolution(applicationFolder);
-                if (templateClass == null) {
+                Optional<Class<? extends TransformationTemplate>> resolution = butterflyFacade.automaticResolution(applicationFolder);
+                if (!resolution.isPresent()) {
                     registerError(run, "No transformation template could be resolved for this application. Specify it explicitly using option -t or -s.");
                     return run;
                 }
+                templateClass = resolution.get();
                 logger.info("Transformation template automatically resolved");
             } catch (TemplateResolutionException e) {
                 registerError(run, e.getMessage());
