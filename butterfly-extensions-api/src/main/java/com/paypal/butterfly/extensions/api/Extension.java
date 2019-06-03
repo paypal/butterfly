@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A Butterfly third-party extension. It provides custom
@@ -67,14 +68,24 @@ public abstract class Extension<E> {
      * transformation template resolution is actually performed by each registered
      * Extension class. Based on the application folder, and its content, each
      * registered extension might decide which transformation template should be used
-     * to transform it. Only one or none can be chosen. If no one applies, null is
-     * returned.
+     * to transform it. These are the possible resolution results:
+     * <ol>
+     *     <li>Empty optional is returned: if application type is not recognized as a known and supported type by the extension</li>
+     *     <li>An optional with {@link TransformationTemplate} class is returned: if application type is recognized and application is valid</li>
+     *     <li>A {@link TemplateResolutionException} exception is thrown: if the application type is recognized as a known and supported type
+     *     (based on most of its folders and files structure and content), however, the extension identifies it as invalid for specific reasons,
+     *     (for missing a required file for example, having an invalid property version, etc). Call {@link TemplateResolutionException#getMessage()} for details.
+     * </ol>
+     * <br>
+     * Notice the difference between "not recognized" and "invalid" can be vague and arbitrary.
+     * It is entirely up to the extension to define its own criteria and communicate it with the application owners.
      *
      * @param applicationFolder the folder where the code of the application to be transformed is
-     * @return the chosen transformation template class, or null, if no one applies
+     * @return see above
+     * @throws TemplateResolutionException see above
      */
-    public  Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) {
-        return null;
+    public Optional<Class<? extends TransformationTemplate>> automaticResolution(File applicationFolder) throws TemplateResolutionException {
+        return Optional.empty();
     }
 
     /**
