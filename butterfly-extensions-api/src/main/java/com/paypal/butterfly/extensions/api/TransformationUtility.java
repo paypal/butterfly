@@ -927,11 +927,10 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
 
     /**
      * When set, this TU will only execute if this transformation context
-     * attribute is existent and true. In other words, it will execute if
-     * not null and, if of Boolean type, true
+     * attribute is existent and its value is set to true (as String or Boolean).
      *
      * @param conditionAttributeName the name of the transformation context attribute which
-     *                               holds a boolean value used to evaluate if this
+     *                               holds a Boolean or String value used to evaluate if this
      *                               utility should be executed or not
      * @return this transformation utility instance
      */
@@ -969,11 +968,10 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
 
     /**
      * When set, this TU will execute, unless this transformation context
-     * attribute is existent and true. In other words, it will execute, unless if
-     * not null and, if of Boolean type, true
+     * attribute is existent and its value is set to true (as String or Boolean).
      *
      * @param conditionAttributeName the name of the transformation context attribute which
-     *                               holds a boolean value used to evaluate if this
+     *                               holds a Boolean or String value used to evaluate if this
      *                               utility should be executed or not
      * @return this transformation utility instance
      */
