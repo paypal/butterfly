@@ -252,6 +252,7 @@ ext.lib = [
         annotations: "com.google.code.findbugs:annotations:3.0.0",
         commons_io: "commons-io:commons-io:2.5",
         commons_lang3: "org.apache.commons:commons-lang3:3.7",
+        commons_collections4: "org.apache.commons:commons-collections4:4.0",
         guava: "com.google.guava:guava:15.0",
         jopt_simple: "net.sf.jopt-simple:jopt-simple:5.0.2",
         plexus_utils: "org.codehaus.plexus:plexus-utils:3.1.0",
@@ -268,5 +269,9 @@ ext.lib = [
         mockito_all: "org.mockito:mockito-all:1.10.19",
         powermock_module_testng: "org.powermock:powermock-module-testng:1.6.5",
         powermock_api_mockito: "org.powermock:powermock-api-mockito:1.6.5",
+
+        // Jersey
+        jersey_core: "org.glassfish.jersey.core:jersey-client:2.26",
+        jersey_inject: "org.glassfish.jersey.inject:jersey-hk2:2.26",
 
 ]
