@@ -1,0 +1,23 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation project(':butterfly-api')
+    implementation lib.annotation_api,
+            lib.spring_context,
+            lib.annotations,
+            lib.jaxrs,
+            lib.gson,
+            lib.jersey_core,
+            lib.jersey_inject,
+            lib.commons_collections4
+    implementation(lib.spring_boot_starter) {
+        exclude(module: 'commons-logging')
+    }
+    testImplementation(lib.testng) {
+        exclude(module: 'aopalliance')
+        exclude(module: 'guava')
+    }
+}
+
+test.useTestNG()
+
