@@ -8,6 +8,7 @@ def api = [
         'com.paypal.butterfly:butterfly-utilities',
         'com.paypal.butterfly:butterfly-persist-couchdb',
         'com.paypal.butterfly:butterfly-persist-file',
+        'com.paypal.butterfly:butterfly-slack',
         'com.paypal.butterfly:butterfly-test',
 ]
 
