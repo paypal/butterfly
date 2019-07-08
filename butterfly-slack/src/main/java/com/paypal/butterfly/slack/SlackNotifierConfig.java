@@ -6,6 +6,7 @@ import com.paypal.butterfly.api.TransformationListener;
 import com.paypal.butterfly.api.TransformationRequest;
 import com.paypal.butterfly.api.TransformationResult;
 import org.apache.commons.collections4.map.LRUMap;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -18,10 +19,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -54,18 +52,14 @@ public class SlackNotifierConfig {
                         logger.error("Unable to locate Slack authentication token to send notifications");
                         return;
                     }
-                    Path postSuccessPath = new File(this.getClass().getResource("/postSuccess.json").toURI()).toPath();
-                    Path postAbortPath = new File(this.getClass().getResource("/postAbort.json").toURI()).toPath();
-                    postSuccessJson = new String(Files.readAllBytes(postSuccessPath));
-                    postAbortJson = new String(Files.readAllBytes(postAbortPath));
+                    postAbortJson = IOUtils.toString(this.getClass().getResourceAsStream("/postAbort.json"), StandardCharsets.UTF_8);
+                    postSuccessJson = IOUtils.toString(this.getClass().getResourceAsStream("/postSuccess.json"), StandardCharsets.UTF_8);
                     Client client = ClientBuilder.newClient();
                     slackTarget = client.target("https://www.slack.com/api/");
                     slackEmailCache = Collections.synchronizedMap(new LRUMap(1000));
                     active = true;
                 } catch (IOException e) {
                     logger.error("Unable to read the Slack message template file from the path", e);
-                } catch (URISyntaxException e) {
-                    logger.error("Unable to read path of the Slack message template file", e);
                 }
             }
 
