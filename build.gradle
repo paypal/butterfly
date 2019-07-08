@@ -11,7 +11,7 @@ allprojects {
     apply plugin: "jacoco"
 
     group = 'com.paypal.butterfly'
-    version = '3.0.0-M10'
+    version = '3.0.0-M11-SNAPSHOT'
 
     repositories {
         mavenLocal()
