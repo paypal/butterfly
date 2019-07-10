@@ -19,6 +19,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
@@ -33,6 +34,7 @@ import java.util.Properties;
 @Configuration
 public class SlackNotifierConfig {
     private static final Logger logger = LoggerFactory.getLogger(SlackNotifierConfig.class);
+
     @Bean
     public TransformationListener slackNotification() {
         return new TransformationListener() {
@@ -52,8 +54,11 @@ public class SlackNotifierConfig {
                         logger.error("Unable to locate Slack authentication token to send notifications");
                         return;
                     }
-                    postAbortJson = IOUtils.toString(this.getClass().getResourceAsStream("/postAbort.json"), StandardCharsets.UTF_8);
-                    postSuccessJson = IOUtils.toString(this.getClass().getResourceAsStream("/postSuccess.json"), StandardCharsets.UTF_8);
+                    try (InputStream successStream = this.getClass().getResourceAsStream("/postSuccess.json");
+                         InputStream abortStream = this.getClass().getResourceAsStream("/postAbort.json")) {
+                        postSuccessJson = IOUtils.toString(successStream, StandardCharsets.UTF_8);
+                        postAbortJson = IOUtils.toString(abortStream, StandardCharsets.UTF_8);
+                    }
                     Client client = ClientBuilder.newClient();
                     slackTarget = client.target("https://www.slack.com/api/");
                     slackEmailCache = Collections.synchronizedMap(new LRUMap(1000));
@@ -82,7 +87,7 @@ public class SlackNotifierConfig {
                 String detailsLink = properties.getProperty("slack.detailsLink");
                 String contactLink = properties.getProperty("slack.contactLink");
                 String usersNotificationProperty = properties.getProperty("usersNotification");
-                if (usersNotificationProperty == null){
+                if (usersNotificationProperty == null) {
                     logger.info("No Slack users have been selected for transformation notifications");
                 } else {
                     if (detailsLink == null) {
@@ -94,7 +99,7 @@ public class SlackNotifierConfig {
                     String[] slackUserEmails = usersNotificationProperty.split(",");
                     for (String email : slackUserEmails) {
                         try {
-                            if (!slackEmailCache.containsKey(email)){
+                            if (!slackEmailCache.containsKey(email)) {
                                 String slackUserId = getSlackUserId(slackAuthenticationToken, email);
                                 slackEmailCache.put(email, slackUserId);
                             }
@@ -109,20 +114,20 @@ public class SlackNotifierConfig {
             /**
              * GET slack user IDs from PayPal email using the users.lookupByEmail web api call
              */
-            private String getSlackUserId(String token, String email) throws ProcessingException{
-                    String slackUserId;
-                    JsonObject slackResponse = new JsonParser().parse(slackTarget
-                            .path("users.lookupByEmail")
-                            .queryParam("email", email)
-                            .request(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + token)
-                            .get(String.class)).getAsJsonObject();
-                    if (slackResponse.get("ok").getAsBoolean()) {
-                        slackUserId = slackResponse.getAsJsonObject("user").get("id").getAsString();
-                    } else {
-                        throw new RuntimeException("An error happened when retrieving Slack user id: " + slackResponse.get("error").getAsString());
-                    }
-                    return slackUserId;
+            private String getSlackUserId(String token, String email) throws ProcessingException {
+                String slackUserId;
+                JsonObject slackResponse = new JsonParser().parse(slackTarget
+                        .path("users.lookupByEmail")
+                        .queryParam("email", email)
+                        .request(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
+                        .get(String.class)).getAsJsonObject();
+                if (slackResponse.get("ok").getAsBoolean()) {
+                    slackUserId = slackResponse.getAsJsonObject("user").get("id").getAsString();
+                } else {
+                    throw new RuntimeException("An error happened when retrieving Slack user id: " + slackResponse.get("error").getAsString());
+                }
+                return slackUserId;
             }
 
             /**
@@ -131,14 +136,14 @@ public class SlackNotifierConfig {
             private void postSlackMessage(String token, String jsonFileString, String email, String detailsLink, String contactLink) throws ProcessingException {
                 String jsonFileStringFormat = String.format(jsonFileString, slackEmailCache.get(email), detailsLink, contactLink);
                 JsonObject slackResponse = new JsonParser().parse(slackTarget
-                            .path("chat.postMessage")
-                            .request(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + token)
-                            .header("Content-type", "application/json")
-                            .post(Entity.entity(jsonFileStringFormat, MediaType.APPLICATION_JSON), String.class))
-                            .getAsJsonObject();
+                        .path("chat.postMessage")
+                        .request(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
+                        .header("Content-type", "application/json")
+                        .post(Entity.entity(jsonFileStringFormat, MediaType.APPLICATION_JSON), String.class))
+                        .getAsJsonObject();
                 if (slackResponse != null && !slackResponse.get("ok").getAsBoolean()) {
-                    if (slackResponse.get("error").getAsString().equals("channel_not_found")){
+                    if (slackResponse.get("error").getAsString().equals("channel_not_found")) {
                         slackEmailCache.remove(email);
                         logger.warn("The Slack user id in the cache is invalid");
                     } else {
