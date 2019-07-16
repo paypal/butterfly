@@ -33,7 +33,7 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
     @Test
     public void pluginRemovedTest() throws IOException, XmlPullParserException {
         Model pomModelBeforeChange = getOriginalPomModel("pom.xml");
-        assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 1);
+        assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 3);
         assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getGroupId(), "org.codehaus.mojo");
         assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getArtifactId(), "cobertura-maven-plugin");
 
@@ -42,7 +42,7 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
         Model pomModelAfterChange = getTransformedPomModel("pom.xml");
-        assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 0);
+        assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 2);
     }
 
     @Test
