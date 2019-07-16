@@ -2,13 +2,14 @@ package com.paypal.butterfly.api;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Butterfly façade
@@ -37,17 +38,24 @@ public interface ButterflyFacade {
      * transformation template resolution is performed by each registered
      * Extension class. Based on the application folder, and its content, each
      * registered extension might decide which transformation template should be used
-     * to transform it. Only one can be chosen. If no template applies,
-     * if more than one applies (from different extensions), or if no
-     * extension has been registered, a {@link TemplateResolutionException} is
-     * thrown explaining the reason why no template could be chosen.
+     * to transform it. Only one can be chosen. These are the possible resolution results:
+     * <ol>
+     *     <li>Empty optional is returned: if no transformation template is resolved (unless if extension(s) evaluated the application as invalid,
+     *     then an {@link TemplateResolutionException} is thrown, as explained below in details)</li>
+     *     <li>An optional with {@link TransformationTemplate} class is returned: if only one transformation template is resolved</li>
+     *     <li>A {@link TemplateResolutionException} exception is thrown: if one of the following cases is true (call {@link TemplateResolutionException#getMessage()} for details):
+     *     <ol>
+     *         <li>If there are no extensions registered</li>
+     *         <li>Multiple transformation templates are resolved</li>
+     *         <li>If no transformation template is resolved, but one or more extensions recognized the application type, but determined it to be invalid for transformation</li>
+     *     </ol>
+     * </ol>
      *
      * @param applicationFolder the folder where the code of the application to be transformed is
-     * @return the chosen transformation template
-     * @throws TemplateResolutionException if no template could be resolved, more than one was resolved
-     * (from different extensions), or if no extension has been registered
+     * @return see above
+     * @throws TemplateResolutionException see above
      */
-    Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException;
+    Optional<Class<? extends TransformationTemplate>> automaticResolution(File applicationFolder) throws TemplateResolutionException;
 
     /**
      * Creates and returns a new {@link Configuration} object
@@ -127,65 +135,28 @@ public interface ButterflyFacade {
     Configuration newConfiguration(Properties properties, File outputFolder, boolean zipOutput);
 
     /**
-     * Transform an application
-     *
-     * @param applicationFolder application folder
-     * @param templateClassName transformation template class name
-     * @return the transformation result object
-     * @throws ButterflyException if the template class could not be found
-     */
-    TransformationResult transform(File applicationFolder, String templateClassName) throws ButterflyException;
-
-    /**
-     * Transform an application, and also accepts an additional
-     * parameter with configuration. See {@link Configuration} for further information.
-     *
-     * @param applicationFolder application folder
-     * @param templateClassName transformation template class name
-     * @param configuration Butterfly configuration object
-     * @return the transformation result object
-     * @throws ButterflyException if the template class could not be found
-     */
-    TransformationResult transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException;
-
-    /**
-     * Transform an application
+     * Transforms an application in an asynchronous and non-blocking manner.
+     * If <code>templateClass</code> is a {@link UpgradeStep}, application will be upgraded to the latest version.
      *
      * @param applicationFolder application folder
      * @param templateClass transformation template class
      * @return the transformation result object
      */
-    TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass);
+    CompletableFuture<TransformationResult> transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass);
 
     /**
-     * Transform an application, and also accepts an additional
-     * parameter with configuration. See {@link Configuration} for further information.
+     * Transforms an application in an asynchronous and non-blocking manner.
+     * If <code>templateClass</code> is a {@link UpgradeStep}, application will be upgraded according to <code>version</code>.
+     * It also accepts an additional parameter providing configuration. See {@link Configuration} for further information.
      *
      * @param applicationFolder application folder
      * @param templateClass transformation template class
+     * @param version the target upgrade version. If this parameter is null or blank, application will be upgraded to the latest version.
+     *                If <code>templateClass</code> is not a {@link UpgradeStep}, this parameter is ignored.
      * @param configuration Butterfly configuration object
+     * @throws IllegalArgumentException if <code>templateClass</code> is a {@link UpgradeStep} and <code>version</code> is not empty and an unknown version
      * @return the transformation result object
      */
-    TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration);
-
-    /**
-     * Upgrade an application based on an upgrade path
-     *
-     * @param applicationFolder application folder
-     * @param upgradePath upgrade path object used to upgrade this application
-     * @return the transformation result object
-     */
-    TransformationResult transform(File applicationFolder, UpgradePath upgradePath);
-
-    /**
-     * Transform an application based on an upgrade path, and also accepts an additional
-     * parameter with configuration. See {@link Configuration} for further information.
-     *
-     * @param applicationFolder application folder
-     * @param upgradePath upgrade path object used to upgrade this application
-     * @param configuration Butterfly configuration object
-     * @return the transformation result object
-     */
-    TransformationResult transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration);
+    CompletableFuture<TransformationResult> transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, String version, Configuration configuration);
 
 }

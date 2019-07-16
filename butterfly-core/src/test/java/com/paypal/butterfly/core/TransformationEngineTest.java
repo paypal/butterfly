@@ -1,14 +1,14 @@
 package com.paypal.butterfly.core;
 
-import static org.testng.Assert.*;
-import static org.testng.AssertJUnit.assertNull;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Properties;
-
+import com.google.common.io.Files;
+import com.paypal.butterfly.api.*;
+import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.exception.ApplicationValidationException;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
+import com.paypal.butterfly.extensions.api.utilities.Abort;
+import com.paypal.butterfly.extensions.springboot.ButterflySpringBootExtension;
+import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;
+import com.paypal.butterfly.extensions.springboot.SpringBootUpgrade_1_5_6_to_1_5_7;
 import org.apache.commons.io.FileUtils;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,21 +18,15 @@ import org.springframework.context.ApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.io.Files;
-import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.exception.ApplicationValidationException;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
-import com.paypal.butterfly.extensions.api.utilities.Abort;
-import com.paypal.butterfly.extensions.springboot.ButterflySpringBootExtension;
-import com.paypal.butterfly.extensions.springboot.JavaEEToSpringBoot;
-import com.paypal.butterfly.extensions.springboot.SpringBootUpgrade_1_5_6_to_1_5_7;
-import com.paypal.butterfly.api.Application;
-import com.paypal.butterfly.api.Configuration;
-import com.paypal.butterfly.api.TransformationResult;
-import com.paypal.butterfly.api.AbortDetails;
-import com.paypal.butterfly.api.TransformationMetrics;
-import com.paypal.butterfly.api.TransformationStatistics;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+
+import static org.testng.Assert.*;
+import static org.testng.AssertJUnit.assertNull;
 
 public class TransformationEngineTest extends TestHelper {
 
@@ -51,7 +45,7 @@ public class TransformationEngineTest extends TestHelper {
     }
 
     @Test
-    public void basicTest() {
+    public void basicTest() throws ExecutionException, InterruptedException {
         Application application = new ApplicationImpl(transformedAppFolder);
         Configuration configuration = new ConfigurationImpl(null);
 
@@ -59,7 +53,7 @@ public class TransformationEngineTest extends TestHelper {
         transformationTemplate.add(getNewTestTransformationUtility());
         AbstractTransformationRequest transformation = new TemplateTransformationRequest(application, transformationTemplate, configuration);
 
-        TransformationResult transformationResult = transformationEngine.perform(transformation);
+        TransformationResult transformationResult = transformationEngine.perform(transformation).get();
 
         assertNotNull(transformationResult);
         assertTrue(transformationResult.isSuccessful());
@@ -95,7 +89,7 @@ public class TransformationEngineTest extends TestHelper {
     }
 
     @Test
-    public void javaEEToSpringBootTest() throws IOException {
+    public void javaEEToSpringBootTest() throws IOException, ExecutionException, InterruptedException {
         File appFolder = new File("../tests/sample-apps/echo");
         File transformedAppFolder = new File("./out/test/resources/echo-transformed");
         FileUtils.deleteDirectory(transformedAppFolder);
@@ -112,7 +106,7 @@ public class TransformationEngineTest extends TestHelper {
         TransformationTemplate transformationTemplate = new JavaEEToSpringBoot();
         AbstractTransformationRequest transformation = new TemplateTransformationRequest(application, transformationTemplate, configuration);
 
-        TransformationResult transformationResult = transformationEngine.perform(transformation);
+        TransformationResult transformationResult = transformationEngine.perform(transformation).get();
 
         assertNotNull(transformationResult);
         assertTrue(transformationResult.isSuccessful());
@@ -142,7 +136,7 @@ public class TransformationEngineTest extends TestHelper {
     }
 
     @Test(dependsOnMethods = "javaEEToSpringBootTest")
-    public void springBootUpgradeTest() {
+    public void springBootUpgradeTest() throws ExecutionException, InterruptedException {
 
         // The application to be modified is the result of javaEEToSpringBootTest
         File appFolder = new File("./out/test/resources/echo-transformed");
@@ -153,7 +147,7 @@ public class TransformationEngineTest extends TestHelper {
         UpgradePath upgradePath = new UpgradePath(SpringBootUpgrade_1_5_6_to_1_5_7.class);
         AbstractTransformationRequest transformation = new UpgradePathTransformationRequest(application, upgradePath, configuration);
 
-        TransformationResult transformationResult = transformationEngine.perform(transformation);
+        TransformationResult transformationResult = transformationEngine.perform(transformation).get();
 
         assertNotNull(transformationResult);
         assertTrue(transformationResult.isSuccessful());
@@ -183,7 +177,7 @@ public class TransformationEngineTest extends TestHelper {
     }
 
     @Test
-    public void abortTest() throws IOException, URISyntaxException {
+    public void abortTest() throws IOException, URISyntaxException, ExecutionException, InterruptedException {
         File appFolder = new File(getClass().getResource("/test-app-2").toURI());
 
         File transformedAppFolder = Files.createTempDir();
@@ -196,7 +190,7 @@ public class TransformationEngineTest extends TestHelper {
         TransformationTemplate transformationTemplate = new JavaEEToSpringBoot();
         AbstractTransformationRequest transformation = new TemplateTransformationRequest(application, transformationTemplate, configuration);
 
-        TransformationResult transformationResult = transformationEngine.perform(transformation);
+        TransformationResult transformationResult = transformationEngine.perform(transformation).get();
 
         assertNotNull(transformationResult);
         assertFalse(transformationResult.isSuccessful());
@@ -249,7 +243,7 @@ public class TransformationEngineTest extends TestHelper {
     }
 
     @Test
-    public void pendingManualChangesTest() throws IOException, URISyntaxException {
+    public void pendingManualChangesTest() throws IOException, URISyntaxException, InterruptedException {
         File appFolder = new File(getClass().getResource("/test-app-3").toURI());
 
         File transformedAppFolder = Files.createTempDir();
@@ -263,11 +257,13 @@ public class TransformationEngineTest extends TestHelper {
         AbstractTransformationRequest transformation = new TemplateTransformationRequest(application, transformationTemplate, configuration);
 
         try {
-            transformationEngine.perform(transformation);
+            transformationEngine.perform(transformation).get();
             fail("An ApplicationValidationException was supposed to be thrown (since application had a pending manual instruction) but was not");
-        } catch (ApplicationValidationException e) {
+        } catch (ExecutionException executionException) {
+            Throwable cause = executionException.getCause();
+            assertTrue(cause instanceof ApplicationValidationException);
             String exceptionMessage = String.format("This application has pending manual instructions. Perform manual instructions at the following file first, then remove it, and run Butterfly again: %s/%s", transformedAppFolder.getAbsolutePath(), ManualInstructionsHandler.MANUAL_INSTRUCTIONS_MAIN_FILE);
-            assertEquals(e.getMessage(), exceptionMessage);
+            assertEquals(cause.getMessage(), exceptionMessage);
         }
     }
 

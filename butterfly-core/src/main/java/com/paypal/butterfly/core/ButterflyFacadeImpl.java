@@ -1,23 +1,18 @@
 package com.paypal.butterfly.core;
 
-import java.io.File;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
+import com.paypal.butterfly.api.*;
+import com.paypal.butterfly.extensions.api.Extension;
+import com.paypal.butterfly.extensions.api.TransformationTemplate;
+import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.paypal.butterfly.api.*;
-import com.paypal.butterfly.extensions.api.Extension;
-import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.exception.ButterflyException;
-import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Butterfly Façade implementation
@@ -51,29 +46,38 @@ class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException {
+    public Optional<Class<? extends TransformationTemplate>> automaticResolution(File applicationFolder) throws TemplateResolutionException {
         if (extensionRegistry.getExtensions().isEmpty()) {
             throw new TemplateResolutionException("No Butterfly extension has been registered");
         }
 
         Set<Class<? extends TransformationTemplate>> resolvedTemplates = new HashSet<>();
-        Class<? extends TransformationTemplate> t;
+        Optional<Class<? extends TransformationTemplate>> t;
+        Map<String, TemplateResolutionException> extensionsResolutionExceptions = new HashMap();
 
         for (Extension extension : extensionRegistry.getExtensions()) {
-            t = extension.automaticResolution(applicationFolder);
-            if (t != null) {
-                resolvedTemplates.add(t);
+            try {
+                t = extension.automaticResolution(applicationFolder);
+                if (t.isPresent()) {
+                    resolvedTemplates.add(t.get());
+                }
+            } catch (TemplateResolutionException e) {
+                extensionsResolutionExceptions.put(extension.getClass().getName(), e);
             }
         }
 
-        if (resolvedTemplates.size() == 0) {
-            throw new TemplateResolutionException("No transformation template could be resolved");
-        }
         if (resolvedTemplates.size() == 1) {
-            return (Class<? extends TransformationTemplate>) resolvedTemplates.toArray()[0];
+            return Optional.of((Class<? extends TransformationTemplate>) resolvedTemplates.toArray()[0]);
         }
-
-        throw new TemplateResolutionException("More than one transformation template was resolved, they are: " + resolvedTemplates);
+        if (resolvedTemplates.size() > 1) {
+            throw new TemplateResolutionException("More than one transformation template was resolved, they are: " + resolvedTemplates);
+        }
+        if (extensionsResolutionExceptions.size() == 1) {
+            throw (TemplateResolutionException) extensionsResolutionExceptions.values().toArray()[0];
+        } else if (extensionsResolutionExceptions.size() > 1) {
+            throw new TemplateResolutionException("No transformation template could be resolved. However, more than one extension recognized the application type, but considered them invalid. See the following map, whose key is an extension class, and value is the reason why application failed validation: " + extensionsResolutionExceptions);
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -92,61 +96,48 @@ class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public TransformationResult transform(File applicationFolder, String templateClassName) throws ButterflyException {
-        return transform(applicationFolder, templateClassName, new ConfigurationImpl(null));
+    public CompletableFuture<TransformationResult> transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) {
+        return transform(applicationFolder, templateClass, null, new ConfigurationImpl(null));
     }
 
     @Override
-    public TransformationResult transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException {
-        if(StringUtils.isBlank(templateClassName)) {
-            throw new IllegalArgumentException("Template class name cannot be blank");
-        }
-        try {
-            Class<TransformationTemplate> templateClass = (Class<TransformationTemplate>) Class.forName(templateClassName);
-            return transform(applicationFolder, templateClass, configuration);
-        } catch (ClassNotFoundException e) {
-            String exceptionMessage = "Template class " + templateClassName + " not found, double check if its extension has been properly registered";
-            throw new ButterflyException(exceptionMessage, e);
-        }
-    }
-
-    @Override
-    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) {
-        return transform(applicationFolder, templateClass, new ConfigurationImpl(null));
-    }
-
-    @Override
-    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) {
+    public CompletableFuture<TransformationResult> transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, String version, Configuration configuration) {
         TransformationTemplate template = getTemplate(templateClass);
         Application application = new ApplicationImpl(applicationFolder);
-        TransformationRequest transformationRequest = new TemplateTransformationRequest(application, template, configuration);
+        TransformationRequest transformationRequest;
+
+        if (template instanceof UpgradeStep) {
+            UpgradePath upgradePath = getUpgradePath(templateClass, version);
+            transformationRequest = new UpgradePathTransformationRequest(application, upgradePath, configuration);
+        } else {
+            transformationRequest = new TemplateTransformationRequest(application, template, configuration);
+        }
 
         return transform(transformationRequest);
     }
 
-    @Override
-    public TransformationResult transform(File applicationFolder, UpgradePath upgradePath) {
-        return transform(applicationFolder, upgradePath, new ConfigurationImpl(null));
+    private UpgradePath getUpgradePath(Class<? extends TransformationTemplate> transformationTemplate, String version) {
+        Class<? extends UpgradeStep> upgradeStep = (Class<? extends UpgradeStep>) transformationTemplate;
+        UpgradePath upgradePath;
+        if (version != null && !version.trim().equals("")) {
+            upgradePath = new UpgradePath(upgradeStep, version);
+        } else {
+            upgradePath = new UpgradePath(upgradeStep);
+        }
+
+        return upgradePath;
     }
 
-    @Override
-    public TransformationResult transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) {
-        Application application = new ApplicationImpl(applicationFolder);
-        TransformationRequest transformationRequest = new UpgradePathTransformationRequest(application, upgradePath, configuration);
-
-        return transform(transformationRequest);
-    }
-
-    private TransformationResult transform(TransformationRequest transformationRequest) {
+    private CompletableFuture<TransformationResult> transform(TransformationRequest transformationRequest) {
         Configuration configuration = transformationRequest.getConfiguration();
         if (logger.isDebugEnabled()) {
             logger.debug("Transformation request configuration: {}", configuration);
         }
 
-        TransformationResult transformationResult = transformationEngine.perform(transformationRequest);
+        CompletableFuture<TransformationResult> transformationResult = transformationEngine.perform(transformationRequest);
 
         if(!configuration.isModifyOriginalFolder() && configuration.isZipOutput()){
-            compressionHandler.compress(transformationResult);
+            transformationResult.thenAcceptAsync(compressionHandler::compress);
         }
 
         return transformationResult;

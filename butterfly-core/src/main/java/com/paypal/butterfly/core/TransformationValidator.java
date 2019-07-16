@@ -10,6 +10,6 @@ import com.paypal.butterfly.api.TransformationRequest;
  */
 public interface TransformationValidator {
 
-    void preTransformation(TransformationRequest transformationRequest) throws ApplicationValidationException ;
+    void preTransformation(TransformationRequest transformationRequest) throws ApplicationValidationException;
 
 }

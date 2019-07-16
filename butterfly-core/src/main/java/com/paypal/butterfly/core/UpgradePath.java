@@ -1,7 +1,8 @@
-package com.paypal.butterfly.extensions.api.upgrade;
+package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.exception.ButterflyRuntimeException;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author facarvalho
  */
-public final class UpgradePath {
+final class UpgradePath {
 
     private static final Logger logger = LoggerFactory.getLogger(UpgradeStep.class);
 
@@ -36,12 +37,12 @@ public final class UpgradePath {
     // "from" and "to"
     private String description;
 
-    public UpgradePath(Class<? extends UpgradeStep> firstStepClass) {
+    UpgradePath(Class<? extends UpgradeStep> firstStepClass) {
         this(firstStepClass, null);
     }
 
     @SuppressWarnings("PMD.AvoidReassigningParameters")
-    public UpgradePath(Class<? extends UpgradeStep> firstStepClass, String upgradeVersion) {
+    UpgradePath(Class<? extends UpgradeStep> firstStepClass, String upgradeVersion) {
         if (firstStepClass == null) {
             throw new IllegalArgumentException("First step class cannot be null");
         }
@@ -102,7 +103,7 @@ public final class UpgradePath {
      * @return the original version to upgrade the application from
      * in this upgrade path
      */
-    public String getOriginalVersion() {
+    String getOriginalVersion() {
         return firstStep.getCurrentVersion();
     }
 
@@ -113,7 +114,7 @@ public final class UpgradePath {
      * @return the target version to upgrade the application to
      * in this upgrade path
      */
-    public String getUpgradeVersion() {
+    String getUpgradeVersion() {
         return upgradeVersion;
     }
 
@@ -124,11 +125,11 @@ public final class UpgradePath {
      * @return the {@link Extension} class associated
      * with this upgrade path
      */
-    public Class<? extends Extension> getExtension() {
+    Class<? extends Extension> getExtension() {
         return firstStep.getExtensionClass();
     }
 
-    public String getDescription() {
+    String getDescription() {
         return description;
     }
 
@@ -138,7 +139,7 @@ public final class UpgradePath {
      *
      * @return if there is a next upgrade step to be executed
      */
-    public boolean hasNext() {
+    boolean hasNext() {
         return nextStep != null;
     }
 
@@ -149,7 +150,7 @@ public final class UpgradePath {
      *
      * @return the next {@link UpgradeStep} to be executed
      */
-    public UpgradeStep next() {
+    UpgradeStep next() {
         if (!hasNext()) {
             return null;
         }
@@ -169,7 +170,7 @@ public final class UpgradePath {
      * @return the name of the upgrade template to be performed
      * as the first step in this upgrade path
      */
-    public String getFirstStepTemplateName() {
+    String getFirstStepTemplateName() {
         return firstStep.getName();
     }
 
@@ -180,7 +181,7 @@ public final class UpgradePath {
      * @return the class name of the upgrade template to be performed
      * as the first step in this upgrade path
      */
-    public String getFirstStepTemplateClassName() {
+    String getFirstStepTemplateClassName() {
         return firstStep.getClass().getName();
     }
 

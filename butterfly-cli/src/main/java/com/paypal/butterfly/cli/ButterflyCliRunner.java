@@ -1,19 +1,5 @@
 package com.paypal.butterfly.cli;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
-import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
 import com.paypal.butterfly.api.ButterflyFacade;
 import com.paypal.butterfly.api.Configuration;
 import com.paypal.butterfly.api.TransformationResult;
@@ -23,8 +9,21 @@ import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyRuntimeException;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
 
 /**
  * Butterfly CLI runner
@@ -134,11 +133,12 @@ class ButterflyCliRunner extends ButterflyCliOption {
             logger.info("Transformation template associated with shortcut {}: {}", shortcut, templateClass.getName());
         } else {
             try {
-                templateClass = butterflyFacade.automaticResolution(applicationFolder);
-                if (templateClass == null) {
+                Optional<Class<? extends TransformationTemplate>> resolution = butterflyFacade.automaticResolution(applicationFolder);
+                if (!resolution.isPresent()) {
                     registerError(run, "No transformation template could be resolved for this application. Specify it explicitly using option -t or -s.");
                     return run;
                 }
+                templateClass = resolution.get();
                 logger.info("Transformation template automatically resolved");
             } catch (TemplateResolutionException e) {
                 registerError(run, e.getMessage());
@@ -196,13 +196,13 @@ class ButterflyCliRunner extends ButterflyCliOption {
             if (UpgradeStep.class.isAssignableFrom(templateClass)) {
                 Class<? extends UpgradeStep> firstStepClass = (Class<? extends UpgradeStep>) templateClass;
                 String upgradeVersion = (String) optionSet.valueOf(CLI_OPTION_UPGRADE_VERSION);
-                UpgradePath upgradePath = new UpgradePath(firstStepClass, upgradeVersion);
+                String originalVersion = firstStepClass.newInstance().getCurrentVersion();
 
-                logger.info("Performing upgrade from version {} to version {} (it might take a few seconds)", upgradePath.getOriginalVersion(), upgradePath.getUpgradeVersion());
-                transformationResult = butterflyFacade.transform(applicationFolder, upgradePath, configuration);
+                logger.info("Performing upgrade from version {} to version {} (it might take a few seconds)", originalVersion, upgradeVersion);
+                transformationResult = butterflyFacade.transform(applicationFolder, firstStepClass, upgradeVersion, configuration).get();
             } else {
                 logger.info("Performing transformation (it might take a few seconds)");
-                transformationResult = butterflyFacade.transform(applicationFolder, templateClass, configuration);
+                transformationResult = butterflyFacade.transform(applicationFolder, templateClass, null, configuration).get();
             }
 
             run.setLogFile(LogFileDefiner.getLogFile());

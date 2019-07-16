@@ -7,8 +7,6 @@ import com.paypal.butterfly.api.ButterflyFacade;
 import com.paypal.butterfly.api.Configuration;
 import com.paypal.butterfly.api.TransformationResult;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -16,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileAttribute;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Assert class to test Butterfly transformations,
@@ -108,33 +107,12 @@ public abstract class Assert {
         Configuration configuration;
         try {
             configuration = facade.newConfiguration(properties, Files.createTempDirectory("butterfly-test", new FileAttribute[]{}).toFile(), false);
-        } catch (IOException e) {
+            return facade.transform(originalApplication, transformationTemplate, version, configuration).get();
+        } catch (InterruptedException | IOException e) {
+            throw new AssertionError(e);
+        } catch (ExecutionException e) {
             throw new AssertionError(e);
         }
-
-        TransformationResult transformationResult;
-        if (UpgradeStep.class.isAssignableFrom(transformationTemplate)) {
-            UpgradePath upgradePath = getUpgradePath(transformationTemplate, version);
-            transformationResult = facade.transform(originalApplication, upgradePath, configuration);
-        } else {
-            transformationResult = facade.transform(originalApplication, transformationTemplate, configuration);
-        }
-        return transformationResult;
-    }
-
-    // TODO Move this to ButterflyFacade class and make UpgradePath class package-private
-    // Given a transformation template class (known to extends UpgradeStep) and a version String (which can be blank),
-    // returns a new UpgradePath object
-    private static UpgradePath getUpgradePath(Class<? extends TransformationTemplate> transformationTemplate, String version) {
-        Class<? extends UpgradeStep> upgradeStep = (Class<? extends UpgradeStep>) transformationTemplate;
-        UpgradePath upgradePath;
-        if (version != null && !version.trim().equals("")) {
-            upgradePath = new UpgradePath(upgradeStep, version);
-        } else {
-            upgradePath = new UpgradePath(upgradeStep);
-        }
-
-        return upgradePath;
     }
 
     /**
