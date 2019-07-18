@@ -19,7 +19,7 @@ import java.util.Map;
  * to have default values, or be managed by applicable.
  * <br>
  * If the plugin to be changed doesn't actually exist, it will result
- * in error
+ * in error. The default behavior can be changed. See {@link ChangeOrRemoveElement} for further details.
  * <br>
  * Important: no check will be done here for possible reasons to break
  * the build, like the lack of version when the plugin is not managed
@@ -99,7 +99,7 @@ public class PomChangePlugin extends AbstractArtifactPomOperation<PomChangePlugi
         Map<String, PluginExecution> executionMap = new LinkedHashMap<>();
         for (PluginExecution exec : executions) {
             if (executionMap.containsKey(exec.getId())) {
-                throw new IllegalStateException("You cannot have two plugin executions with the same " +
+                throw new IllegalArgumentException("You cannot have two plugin executions with the same " +
                         "(or missing) <id/> elements.\nOffending execution\n\nId: '" + exec.getId()
                         + "'\nPlugin: '" + this.groupId + ":" + this.artifactId + "'\n\n");
             }
