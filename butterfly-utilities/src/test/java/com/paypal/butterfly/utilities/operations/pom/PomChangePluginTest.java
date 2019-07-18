@@ -91,7 +91,7 @@ public class PomChangePluginTest extends TransformationUtilityTestHelper {
         assertEquals(getPluginAfterChange(uut).getExecutions().get(0).getPhase(), pluginExecution.getPhase());
     }
 
-    @Test (expectedExceptions = IllegalStateException.class)
+    @Test (expectedExceptions = IllegalArgumentException.class)
     public void addExecutionTestShouldThrowErrorWhenSameIdForMoreThanOneExecution() throws IOException, XmlPullParserException {
         final PluginExecution pluginExecution = new PluginExecutionBuilder().setId("test").setPhase("build").addGoal("clean build").build();
         final PluginExecution pluginExecution2 = new PluginExecutionBuilder().setId("test").setPhase("install").addGoal("clean install").build();
