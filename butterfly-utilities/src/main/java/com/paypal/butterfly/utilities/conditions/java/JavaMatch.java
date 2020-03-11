@@ -1,6 +1,6 @@
 package com.paypal.butterfly.utilities.conditions.java;
 
-import com.github.javaparser.JavaParser;
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.paypal.butterfly.extensions.api.SingleCondition;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
@@ -131,7 +131,7 @@ public class JavaMatch extends SingleCondition<JavaMatch> {
 
         try {
             fileInputStream = new FileInputStream(javaClassFile);
-            CompilationUnit compilationUnit = JavaParser.parse(fileInputStream);
+            CompilationUnit compilationUnit = StaticJavaParser.parse(fileInputStream);
 
             if (javaClassFile.getName().equals("package-info.java")) {
                 return TUExecutionResult.warning(this, new TransformationUtilityException("Skipping execution for " + javaClassFile.getAbsolutePath() + ". This is a package-info.java file."), this.packageInfo);
