@@ -1,7 +1,7 @@
 package com.paypal.butterfly.utilities.conditions.java;
 
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
@@ -24,7 +24,7 @@ public class AnnotatedWithTest {
     @BeforeClass
     public void beforeClass() throws ParseException {
         InputStream resourceAsStream = this.getClass().getResourceAsStream("/test-app/src/main/java/com/testapp/Application.java");
-        compilationUnit = JavaParser.parse(resourceAsStream);
+        compilationUnit = StaticJavaParser.parse(resourceAsStream);
     }
 
     @Test

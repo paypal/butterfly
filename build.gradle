@@ -241,7 +241,7 @@ ext.lib = [
         woodstox_core: "com.fasterxml.woodstox:woodstox-core:5.0.3",
         xmlunit: "xmlunit:xmlunit:1.5",
         yamlbeans: "com.esotericsoftware.yamlbeans:yamlbeans:1.08",
-        javaparser_core: "com.github.javaparser:javaparser-core:3.6.9",
+        javaparser_core: "com.github.javaparser:javaparser-core:3.15.14",
         jackson: "com.fasterxml.jackson.core:jackson-annotations:2.9.8",
         jackson_databind: "com.fasterxml.jackson.core:jackson-databind:2.9.8",
 
