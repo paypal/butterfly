@@ -8,7 +8,7 @@ cache:
   - $HOME/.gradle
 
 jdk:
-  - oraclejdk8
+  - openjdk8
 
 branches:
   only:
