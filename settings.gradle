@@ -2,7 +2,6 @@ rootProject.name = 'butterfly'
 
 include 'butterfly-bom'
 include 'butterfly-api'
-include 'butterfly-rest-api'
 include 'butterfly-extensions-api'
 include 'butterfly-utilities'
 include 'butterfly-core'

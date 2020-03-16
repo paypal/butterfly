@@ -1,9 +1,0 @@
-#
-# This ignore file is removing everything in the root of this project from Docker build context, since none of those
-# files should be explicitly added to the Docker image.
-#
-# Notice though that the only exception is the build/docs folder. However, it is also being ignored here because that
-# might not be available (if a build hasn't happened yet) and, for that reason, that folder is added explicitly using
-# Gradle Docker plugin.
-
-*
