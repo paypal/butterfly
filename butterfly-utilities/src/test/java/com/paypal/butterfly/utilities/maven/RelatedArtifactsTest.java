@@ -64,7 +64,7 @@ public class RelatedArtifactsTest extends TransformationUtilityTestHelper {
         Assert.assertEquals(relatedArtifacts.getDescription(), "Identifies all pom files whose parent is com.test:bar-parent:1.0, directly or indirectly");
         Assert.assertNotNull(executionResult.getException());
         Assert.assertEquals(executionResult.getException().getClass(), TransformationUtilityException.class);
-        Assert.assertEquals(executionResult.getException().getMessage(), "Error when trying to create Maven pom file model, double check if this file has a valid Maven structure: " + file.getAbsolutePath());
+        Assert.assertEquals(executionResult.getException().getMessage(), "An exception happened when trying to create Maven pom file model, double check if this file has a valid Maven structure: " + file.getAbsolutePath());
     }
 
 }

@@ -58,7 +58,7 @@ public class PomRemovePropertyTest extends TransformationUtilityTestHelper {
 
         assertNotChangedFile("pom.xml");
 
-        // Asserting that the default resut type is ERROR, in case a property is not present
+        // Asserting that the default result type is ERROR, in case a property is not present
         assertEquals(new PomRemoveProperty("zoo").relative("pom.xml").execution(transformedAppFolder, transformationContext).getType(), TOExecutionResult.Type.ERROR);
     }
 
@@ -96,7 +96,7 @@ public class PomRemovePropertyTest extends TransformationUtilityTestHelper {
         TOExecutionResult executionResult = pomRemoveProperty.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
-        assertEquals(executionResult.getException().getMessage(), "Pom file could not be modified");
+        assertEquals(executionResult.getException().getMessage(), "POM file could not be modified");
         assertEquals(executionResult.getException().getCause().getClass(), FileNotFoundException.class);
         assertEquals(executionResult.getException().getCause().getMessage(), new File(transformedAppFolder, "non_existent_file.xml").getAbsolutePath() + " (No such file or directory)");
     }

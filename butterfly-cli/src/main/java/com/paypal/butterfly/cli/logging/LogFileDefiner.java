@@ -3,7 +3,6 @@ package com.paypal.butterfly.cli.logging;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.spi.PropertyDefiner;
 import ch.qos.logback.core.status.Status;
-import com.paypal.butterfly.cli.ButterflyCliApp;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -22,7 +21,12 @@ public class LogFileDefiner implements PropertyDefiner {
 
     private static String logFileName = DEFAULT_LOG_FILE_NAME;
     private static boolean customLogFileNameSet = false;
+    private static File butterflyHome;
     private static File logFile;
+
+    public static void setButterflyHome(File butterflyHome) {
+        LogFileDefiner.butterflyHome = butterflyHome;
+    }
 
     public static void setLogFileName(File applicationFolder, boolean debug) {
         if (!customLogFileNameSet && applicationFolder != null) {
@@ -33,7 +37,7 @@ public class LogFileDefiner implements PropertyDefiner {
     }
 
     private static void setLogFile() {
-        logFile = new File(ButterflyCliApp.getButterflyHome(), "logs" + File.separator + logFileName);
+        logFile = new File(butterflyHome, "logs" + File.separator + logFileName);
     }
 
     public static File getLogFile() {

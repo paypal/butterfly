@@ -12,8 +12,8 @@ import org.apache.maven.model.Model;
  * It also allows removing specific configuration, letting them
  * to have default values, or be managed when applicable.
  * <br>
- * If the dependency to be changed doesn't actually exist, it will result
- * in error
+ * If the POM file does not have the specified dependency, the operation will return an error.
+ * That behavior can be changed though, see {@link ChangeOrRemoveElement} for further details.
  * <br>
  * Important: no check will be done here for possible reasons to break
  * the build, like the lack of version when the dependency is not managed
@@ -29,7 +29,7 @@ public class PomChangeDependency extends AbstractArtifactPomOperation<PomChangeD
     private String version;
     private String scope;
     private String type;
-    private boolean optional;
+    private Boolean optional;
 
     // Removable properties, letting them to have default values, or be managed when applicable.
     private boolean removeVersion = false;
@@ -133,7 +133,7 @@ public class PomChangeDependency extends AbstractArtifactPomOperation<PomChangeD
         return type;
     }
 
-    public boolean isOptional() {
+    public Boolean isOptional() {
         return optional;
     }
 
@@ -169,7 +169,7 @@ public class PomChangeDependency extends AbstractArtifactPomOperation<PomChangeD
             if (removeVersion) dependency.setVersion(null); else if (version != null) dependency.setVersion(version);
             if (removeScope) dependency.setScope(null); else if (scope != null) dependency.setScope(scope);
             if (removeType) dependency.setType(null); else if (type != null) dependency.setType(type);
-            if (removeOptional) dependency.setOptional(null); else dependency.setOptional(optional);
+            if (removeOptional) dependency.setOptional(null); else if (optional != null) dependency.setOptional(optional);
 
             model.addDependency(dependency);
 

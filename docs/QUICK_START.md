@@ -8,7 +8,7 @@ Follow the steps below.
 ### 1- Installing Butterfly
 
 * Install Butterfly following [this document](https://paypal.github.io/butterfly/Installing-Butterfly).
-* Following the same document, install [sample-extension-1.0.0.jar](https://paypal.github.io/butterfly/jar/sample-extension-1.0.0.jar) Butterfly extension, which will be used to transform the sample app.
+* Following the same document, install [butterfly-springboot-extension-3.0.0.jar](https://paypal.github.io/butterfly/jar/butterfly-springboot-extension-3.0.0.jar) Butterfly extension, which will be used to transform the sample app.
 
 ### 2- The sample application
 
@@ -113,10 +113,10 @@ Follow the steps below.
  [18:11:36.992] [INFO] 	10	 - Dependency org.springframework.boot:spring-boot-starter-web has been added to POM file /pom.xml
  [18:11:36.993] [INFO] 	11	 - Dependency com.paypal.springboot:resteasy-spring-boot-starter:2.3.3-RELEASE has been added to POM file /pom.xml
  [18:11:37.001] [INFO] 	12	 - Folder '/src/main/webapp' has been removed
- [18:11:37.002] [INFO] 	13	 - File 'file:/Users/fabio/dev/butterfly/butterfly/tests/sample-extension/target/classes/Application.java' has been downloaded at /src/main/java/com/sample/app
+ [18:11:37.002] [INFO] 	13	 - File 'file:/Users/fabio/dev/butterfly/butterfly/tests/butterfly-springboot-extension/target/classes/Application.java' has been downloaded at /src/main/java/com/sample/app
  [18:11:37.004] [INFO] 	14	 - File README.md has had 1 line(s) where text replacement was applied based on regular expression '(Spring framework)'
  [18:11:37.005] [INFO] 	15	 - File README.md has had 1 line(s) where text replacement was applied based on regular expression '(Just deploy its war file to a Servlet container and start it.)'
- [18:11:37.006] [INFO] 	16	 - Text has been inserted from file:/Users/fabio/dev/butterfly/butterfly/tests/sample-extension/target/classes/README_piece_of_text.txt to README.md after 1 line(s) that matches regular expression '(There are two ways to start the application:)'
+ [18:11:37.006] [INFO] 	16	 - Text has been inserted from file:/Users/fabio/dev/butterfly/butterfly/tests/butterfly-springboot-extension/target/classes/README_piece_of_text.txt to README.md after 1 line(s) that matches regular expression '(There are two ways to start the application:)'
  [18:11:37.006] [INFO] Transformation has been completed
  ```
 

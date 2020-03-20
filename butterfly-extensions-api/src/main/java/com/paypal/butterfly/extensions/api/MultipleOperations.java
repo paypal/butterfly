@@ -1,14 +1,15 @@
 package com.paypal.butterfly.extensions.api;
 
-import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
-import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 /**
  * Transformation utility to perform multiple transformation operations. Multiple transformation operations
@@ -175,14 +176,14 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
      */
     public MultipleOperations setOperationTemplate(TransformationOperation templateOperation) {
         templateOperation.relative(null);
-        templateOperation.absolute(null);
+        templateOperation.absolute((String) null);
         this.templateOperation = templateOperation;
         return this;
     }
 
     @Override
     public MultipleOperations setName(String name) {
-        templateOperation.setName(String.format("%s-%s-TEMPLATE_OPERATION", name, templateOperation.getClass().getSimpleName()));
+        templateOperation.setName(String.format("%s-%s-TEMPLATE_OPERATION", name, templateOperation.getSimpleClassName()));
         return super.setName(name);
     }
 
@@ -203,7 +204,7 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, templateOperation.getClass().getSimpleName());
+        return String.format(DESCRIPTION, templateOperation.getSimpleClassName());
     }
 
     public void setPropertySetter() {
@@ -243,10 +244,10 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
                 multipleFiles = false;
             } else {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Multiple operation %s has NO file to perform against, it will result in ZERO transformation operations", getName());
+                    logger.debug("Multiple operation {} has NO file to perform against, it will result in ZERO transformation operations", getName());
                 }
                 operations = new ArrayList<TransformationUtility>();
-                String message = String.format("Multiple operation %s resulted in 0 operations based on %s", getName(), templateOperation.getClass().getSimpleName());
+                String message = String.format("Multiple operation %s resulted in 0 operations based on %s", getName(), templateOperation.getSimpleClassName());
                 return TUExecutionResult.value(this, getChildren()).setDetails(message);
             }
         }
@@ -276,48 +277,80 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
         }
 
         TransformationOperation operation;
-        operations = new ArrayList<TransformationUtility>();
+        operations = new ArrayList<>();
         int order = 1;
         try {
             for(File file : allFiles) {
                 if (!multipleConfigurations) {
-                    operation = createClone(order, transformedAppFolder, file);
+                    operation = createClone(order, transformedAppFolder, file, transformationContext);
                     operations.add(operation);
                     order++;
                 } else {
                     Object[] propertyValuesArray = propertyValues.toArray();
                     for (Object propertyValue : propertyValuesArray) {
-                        operation = createClone(order, transformedAppFolder, file);
+                        operation = createClone(order, transformedAppFolder, file, transformationContext);
                         propertySetter.invoke(operation, propertyValue);
                         operations.add(operation);
                         order++;
                     }
                 }
             }
-        } catch (CloneNotSupportedException e) {
-            TransformationUtilityException tue = new TransformationUtilityException("The template transformation operation is not cloneable", e);
-            return TUExecutionResult.error(this, tue);
         } catch (InvocationTargetException | IllegalAccessException e) {
             String exceptionMessage = String.format("It was not possible to set property %s, in object of type %s, during multiple operation multiple configuration setting pre-execution", propertyName, templateOperation.getClass().getName());
+            TransformationUtilityException tue = new TransformationUtilityException(exceptionMessage, e);
+            return TUExecutionResult.error(this, tue);
+        } catch (IllegalStateException e) {
+            String exceptionMessage = String.format("Illegal file set to multiple operations");
             TransformationUtilityException tue = new TransformationUtilityException(exceptionMessage, e);
             return TUExecutionResult.error(this, tue);
         }
 
         String message = null;
         if(logger.isDebugEnabled()) {
-            message = String.format("Multiple operation %s resulted in %d operations based on %s", getName(), operations.size(), templateOperation.getClass().getSimpleName());
+            message = String.format("Multiple operation %s resulted in %d operations based on %s", getName(), operations.size(), templateOperation.getSimpleClassName());
         }
         return TUExecutionResult.value(this, getChildren()).setDetails(message);
     }
 
-    private TransformationOperation createClone(int order, File transformedAppFolder, File file) throws CloneNotSupportedException {
+    private TransformationOperation createClone(int order, File transformedAppFolder, File targetFile, TransformationContext transformationContext) {
         TransformationOperation operation = (TransformationOperation) templateOperation.copy();
         operation.setParent(this, order);
-        operation.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
+
+        String relativePath = TransformationUtility.getRelativePath(transformedAppFolder, targetFile);
+        if (targetFile.getAbsolutePath().equals(relativePath)) {
+            // This means the target file path is not within the transformed application folder.
+            // This can only happen if the target file is in the baseline application (in case the
+            // transformation template is blank)
+            if (getTransformationTemplate().isBlank()) {
+                File baselineApplicationFolder = (File) transformationContext.get(TransformationTemplate.BASELINE);
+                relativePath = TransformationUtility.getRelativePath(baselineApplicationFolder, targetFile);
+                if (targetFile.getAbsolutePath().equals(relativePath)) {
+                    throw new IllegalStateException("Illegal attempt to manipulate a file outside of transformed application and baseline application folders");
+                } else {
+                    operation.absolute(TransformationTemplate.BASELINE, relativePath);
+                }
+            } else {
+                throw new IllegalStateException("Illegal attempt to manipulate a file outside of transformed application folder");
+            }
+        } else {
+            operation.relative(relativePath);
+        }
 
         return operation;
     }
 
+    /**
+     * Returns all {@link TransformationOperation} instances generated out of the
+     * transformation operation template.
+     * Those instances though are not accessible during transformation definition time,
+     * neither before this multiple operations is performed.
+     * Actually, the purpose of a multiple operation is exactly to generate
+     * all children transformation operation instances, which get them executed behind the scenes
+     * by the transformation engine.
+     *
+     * @return the generated multiple transformation operation instances, based on the specified
+     * transformation operation template
+     */
     @Override
     public List<TransformationUtility> getChildren() {
         if (operations == null) {

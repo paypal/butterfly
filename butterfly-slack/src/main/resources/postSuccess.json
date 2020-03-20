@@ -1,0 +1,23 @@
+{
+  "channel": "%s",
+  "text": "Your Butterfly transformation concluded successfully",
+  "as_user": true,
+  "attachments": [
+    {
+      "text": "",
+      "color": "#cb42f4",
+      "actions": [
+        {
+          "text": "Transformation Details",
+          "type": "button",
+          "url": "%s"
+        },
+        {
+          "text": "Contact Us",
+          "type": "button",
+          "url": "%s"
+        }
+      ]
+    }
+  ]
+}

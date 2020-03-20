@@ -126,10 +126,10 @@ public class AddProperty extends TransformationOperation<AddProperty> {
         File fileToBeChanged = getAbsoluteFile(transformedAppFolder, transformationContext);
         TOExecutionResult result;
         try {
-            String[] propArray = {propertyName, propertyValue};
-            String propertyKeyValue = "%s = %s";
-            String propertyToBeAdded = String.format(propertyKeyValue, propArray);
-            FileUtils.fileAppend(fileToBeChanged.getAbsolutePath(), EolHelper.findEolDefaultToOs(fileToBeChanged));
+            String propertyToBeAdded = String.format("%s = %s", propertyName, propertyValue);
+            if (fileToBeChanged.length() != 0) {
+                FileUtils.fileAppend(fileToBeChanged.getAbsolutePath(), EolHelper.findEolDefaultToOs(fileToBeChanged));
+            }
             FileUtils.fileAppend(fileToBeChanged.getAbsolutePath(), propertyToBeAdded);
             String details = String.format("Property '%s' has been added and set to '%s' at '%s'", propertyName, propertyValue, getRelativePath());
             result = TOExecutionResult.success(this, details);
@@ -152,9 +152,7 @@ public class AddProperty extends TransformationOperation<AddProperty> {
             File readFile = getOrCreateReadFile(transformedAppFolder, transformationContext);
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(readFile), StandardCharsets.UTF_8));
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileToBeChanged), StandardCharsets.UTF_8));
-            String[] propArray = {propertyName, propertyValue};
-            String propertyKeyValue = "%s = %s";
-            String propertyToBeAdded = String.format(propertyKeyValue, propArray);
+            String propertyToBeAdded = String.format("%s = %s", propertyName, propertyValue);
             String details = replace(reader, writer, "(" + propertyName + ")", propertyToBeAdded);
             result = TOExecutionResult.success(this, details);
         } catch (IOException e) {

@@ -1,12 +1,19 @@
 *.class
-target/
 logs/
 transformed-apps/
+results/
+metrics/
 test-output/
 gen-metrics/
 
 # Package Files #
 *.jar
+
+# Gradle specific #
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
 
 # IDE Files #
 .classpath

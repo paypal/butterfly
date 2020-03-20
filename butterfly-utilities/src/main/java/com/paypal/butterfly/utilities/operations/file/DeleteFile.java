@@ -55,7 +55,7 @@ public class DeleteFile extends TransformationOperation<DeleteFile> {
             return TOExecutionResult.noOp(this, result);
         }
 
-        TOExecutionResult result = null;
+        TOExecutionResult result;
         try {
             boolean isDirectory = fileToBeRemoved.isDirectory();
             FileUtils.forceDelete(fileToBeRemoved);

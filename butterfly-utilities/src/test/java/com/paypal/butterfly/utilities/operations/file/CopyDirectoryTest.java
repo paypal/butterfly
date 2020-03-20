@@ -1,13 +1,11 @@
 package com.paypal.butterfly.utilities.operations.file;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
-import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.net.URL;
 
 import static org.testng.Assert.*;
 

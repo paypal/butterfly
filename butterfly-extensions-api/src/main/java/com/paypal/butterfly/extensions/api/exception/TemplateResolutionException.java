@@ -1,5 +1,7 @@
 package com.paypal.butterfly.extensions.api.exception;
 
+import java.io.File;
+
 /**
  * Thrown by {@link com.paypal.butterfly.extensions.api.Extension#automaticResolution(File)}
  * whenever a transformation template cannot be resolved.
@@ -23,10 +25,10 @@ public class TemplateResolutionException extends ButterflyException {
      * whenever transformation template cannot be resolved
      *
      * @param message explains why a transformation template could not be chosen
-     * @param exception reason why a transformation template could not be chosen
+     * @param throwable reason why a transformation template could not be chosen
      */
-    public TemplateResolutionException(String message, Exception exception) {
-        super(message, exception);
+    public TemplateResolutionException(String message, Throwable throwable) {
+        super(message, throwable);
     }
 
 }

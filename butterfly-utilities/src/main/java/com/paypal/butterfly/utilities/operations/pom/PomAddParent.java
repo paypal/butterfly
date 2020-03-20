@@ -18,8 +18,8 @@ import java.io.IOException;
 
 /**
  * Add a parent artifact in a Maven POM file.
- * By default, if parent is already present, it is overwritten.
- * This behavior though can be changed.
+ * If the POM file already has a parent, it will be overwritten.
+ * That behavior can be changed though, see {@link AddElement} for further details.
  *
  * @author facarvalho
  */

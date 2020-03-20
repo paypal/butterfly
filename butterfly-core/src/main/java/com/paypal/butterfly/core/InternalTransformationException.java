@@ -1,6 +1,6 @@
 package com.paypal.butterfly.core;
 
-import com.paypal.butterfly.facade.exception.TransformationException;
+import com.paypal.butterfly.api.exception.TransformationException;
 
 /**
  * Internal representation of transformation exceptions.
@@ -13,18 +13,22 @@ class InternalTransformationException extends TransformationException {
 
     private TransformationContextImpl transformationContext;
 
+    InternalTransformationException(String exceptionMessage, Throwable throwable) {
+        super(exceptionMessage, throwable);
+    }
+
     InternalTransformationException(String exceptionMessage, TransformationContextImpl transformationContext) {
         super(exceptionMessage);
         this.transformationContext = transformationContext;
     }
 
-    InternalTransformationException(String exceptionMessage, Exception exception, TransformationContextImpl transformationContext) {
-        super(exceptionMessage, exception);
+    InternalTransformationException(String exceptionMessage, Throwable throwable, TransformationContextImpl transformationContext) {
+        super(exceptionMessage, throwable);
         this.transformationContext = transformationContext;
     }
 
-    InternalTransformationException(TransformationException e, TransformationContextImpl transformationContext) {
-        this(e.getMessage(), e, transformationContext);
+    InternalTransformationException(TransformationException transformationException, TransformationContextImpl transformationContext) {
+        this(transformationException.getMessage(), transformationException, transformationContext);
     }
 
     // This method's visibility is intentionally being set to package

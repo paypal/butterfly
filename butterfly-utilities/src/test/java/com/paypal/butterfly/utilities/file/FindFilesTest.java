@@ -1,7 +1,9 @@
 package com.paypal.butterfly.utilities.file;
 
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
+import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -44,10 +46,11 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertNotNull(executionResult.getValue());
 
         List<File> files = (List<File>) executionResult.getValue();
-        Assert.assertEquals(files.size(), 22);
+        Assert.assertEquals(files.size(), 24);
 
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "/pom.xml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "/foo.xml")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "/foo1.xml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/webapp/WEB-INF/web.xml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/resources/copy_of_web.xml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/resources/no_parent_pom.xml")));
@@ -92,10 +95,11 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertNotNull(executionResult.getValue());
 
         List<File> files = (List<File>) executionResult.getValue();
-        Assert.assertEquals(files.size(), 2);
+        Assert.assertEquals(files.size(), 3);
 
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "pom.xml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "foo.xml")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "foo1.xml")));
 
         Assert.assertEquals(findFiles.getNameRegex(), "(.*\\.xml)");
         Assert.assertNull(findFiles.getPathRegex());
@@ -110,7 +114,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
     public void fileNoneFoundTest() {
         FindFiles findFiles =  new FindFiles("(.*\\.txt)", true).relative("");
         TUExecutionResult executionResult = findFiles.execution(transformedAppFolder, transformationContext);
-        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.WARNING);
+        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.VALUE);
         Assert.assertNotNull(executionResult.getValue());
         List<File> files = (List<File>) executionResult.getValue();
         Assert.assertEquals(files.size(), 0);
@@ -150,7 +154,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
     public void filePathRegexNoneFoundTest() {
         FindFiles findFiles =  new FindFiles("(.*Impl\\.java)", "(.*\\/java\\/.*)");
         TUExecutionResult executionResult = findFiles.execution(transformedAppFolder, transformationContext);
-        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.WARNING);
+        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.VALUE);
         Assert.assertNotNull(executionResult.getValue());
         List<File> files = (List<File>) executionResult.getValue();
         Assert.assertEquals(files.size(), 0);
@@ -254,7 +258,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
     public void folderNoneFoundTest() {
         FindFiles findFiles =  new FindFiles("manga", true).setIncludeFiles(false).setIncludeFolders(true);
         TUExecutionResult executionResult = findFiles.execution(transformedAppFolder, transformationContext);
-        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.WARNING);
+        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.VALUE);
         Assert.assertNotNull(executionResult.getValue());
         List<File> files = (List<File>) executionResult.getValue();
         Assert.assertEquals(files.size(), 0);
@@ -269,7 +273,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
     }
 
     @Test
-    public void folderPathRegexTest() {
+    public void folderPathRegexTest1() {
         FindFiles findFiles =  new FindFiles().setPathRegex("(.*\\/resources.*)").setRecursive(true);
         findFiles.setIncludeFiles(false).setIncludeFolders(true);
         TUExecutionResult executionResult = findFiles.execution(transformedAppFolder, transformationContext);
@@ -291,11 +295,33 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
     }
 
     @Test
+    public void folderPathRegexTest2() {
+        final String MAIN_PROJECT = "MAIN_PROJECT";
+        Mockito.when(transformationContext.get(MAIN_PROJECT)).thenReturn(transformedAppFolder);
+        Mockito.when(transformationContext.contains(MAIN_PROJECT)).thenReturn(true);
+        FindFiles findFiles = new FindFiles("searchdriver", "(\\/(Dev|QA|Production|Pre-Production|Sandbox)\\/config\\/com)")
+                .absolute(MAIN_PROJECT, "/src/main/webapp/WEB-INF/configuration")
+                .setIncludeFiles(false)
+                .setIncludeFolders(true);
+        TUExecutionResult executionResult = findFiles.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.VALUE);
+        Assert.assertNotNull(executionResult.getValue());
+
+        List<File> files = (List<File>) executionResult.getValue();
+        Assert.assertEquals(files.size(), 5);
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/webapp/WEB-INF/configuration/Dev/config/com/searchdriver")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/webapp/WEB-INF/configuration/QA/config/com/searchdriver")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/webapp/WEB-INF/configuration/Production/config/com/searchdriver")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/webapp/WEB-INF/configuration/Pre-Production/config/com/searchdriver")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/webapp/WEB-INF/configuration/Sandbox/config/com/searchdriver")));
+    }
+
+    @Test
     public void folderPathRegexNoneFoundTest() {
         FindFiles findFiles =  new FindFiles().setPathRegex("(.*\\/yaba.*)").setRecursive(true);
         findFiles.setIncludeFiles(false).setIncludeFolders(true);
         TUExecutionResult executionResult = findFiles.execution(transformedAppFolder, transformationContext);
-        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.WARNING);
+        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.VALUE);
         Assert.assertNotNull(executionResult.getValue());
         List<File> files = (List<File>) executionResult.getValue();
         Assert.assertEquals(files.size(), 0);
@@ -382,12 +408,13 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertNotNull(executionResult.getValue());
 
         List<File> files = (List<File>) executionResult.getValue();
-        Assert.assertEquals(files.size(), 5);
+        Assert.assertEquals(files.size(), 6);
 
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "src")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "indentTests")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "blah")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "foo.xml")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "foo1.xml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "pom.xml")));
 
         Assert.assertNull(findFiles.getNameRegex());
@@ -407,8 +434,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertNotNull(executionResult.getValue());
 
         List<File> files = (List<File>) executionResult.getValue();
-        Assert.assertEquals(files.size(), 49);
-
+        Assert.assertEquals(files.size(), 82);
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "src")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "blah")));
 
@@ -430,7 +456,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertNotNull(executionResult.getValue());
 
         List<File> files = (List<File>) executionResult.getValue();
-        Assert.assertEquals(files.size(), 12);
+        Assert.assertEquals(files.size(), 14);
 
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/resources/more_yaml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "/src/main/resources/more_yaml/dogs.yaml")));
@@ -454,6 +480,24 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
     public void bothNoneFoundTest() {
         FindFiles findFiles =  new FindFiles("(.*casa.*)", true, true, true).relative("");
         TUExecutionResult executionResult = findFiles.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.VALUE);
+        Assert.assertNotNull(executionResult.getValue());
+        List<File> files = (List<File>) executionResult.getValue();
+        Assert.assertEquals(files.size(), 0);
+        Assert.assertEquals(findFiles.getNameRegex(), "(.*casa.*)");
+        Assert.assertNull(findFiles.getPathRegex());
+        Assert.assertTrue(findFiles.isRecursive());
+        Assert.assertTrue(findFiles.isIncludeFiles());
+        Assert.assertTrue(findFiles.isIncludeFolders());
+        Assert.assertEquals(findFiles.getDescription(), "Find files whose name and/or path match regular expression and are under the root folder and sub-folders");
+        Assert.assertNull(executionResult.getException());
+        Assert.assertEquals(executionResult.getDetails(), "No files have been found");
+    }
+
+    @Test
+    public void bothNoneFoundWarningTest() {
+        FindFiles findFiles =  new FindFiles("(.*casa.*)", true, true, true).relative("").warnIfNoFilesFound();
+        TUExecutionResult executionResult = findFiles.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.WARNING);
         Assert.assertNotNull(executionResult.getValue());
         List<File> files = (List<File>) executionResult.getValue();
@@ -466,6 +510,26 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertEquals(findFiles.getDescription(), "Find files whose name and/or path match regular expression and are under the root folder and sub-folders");
         Assert.assertNull(executionResult.getException());
         Assert.assertEquals(executionResult.getDetails(), "No files have been found");
+    }
+
+    @Test
+    public void bothNoneFoundErrorTest() {
+        FindFiles findFiles =  new FindFiles("(.*casa.*)", true, true, true).relative("").errorIfNoFilesFound();
+        TUExecutionResult executionResult = findFiles.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TUExecutionResult.Type.ERROR);
+        Assert.assertNotNull(executionResult.getValue());
+        List<File> files = (List<File>) executionResult.getValue();
+        Assert.assertEquals(files.size(), 0);
+        Assert.assertEquals(findFiles.getNameRegex(), "(.*casa.*)");
+        Assert.assertNull(findFiles.getPathRegex());
+        Assert.assertTrue(findFiles.isRecursive());
+        Assert.assertTrue(findFiles.isIncludeFiles());
+        Assert.assertTrue(findFiles.isIncludeFolders());
+        Assert.assertEquals(findFiles.getDescription(), "Find files whose name and/or path match regular expression and are under the root folder and sub-folders");
+        Assert.assertNull(executionResult.getDetails());
+        Assert.assertNotNull(executionResult.getException());
+        Assert.assertEquals(executionResult.getException().getClass(), TransformationUtilityException.class);
+        Assert.assertEquals(executionResult.getException().getMessage(), "No files have been found");
     }
 
 }

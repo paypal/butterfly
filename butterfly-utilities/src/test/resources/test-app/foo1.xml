@@ -1,0 +1,23 @@
+<deliverable-settings>
+	<data-sources>
+		<defaultDataSource>
+		</defaultDataSource>		
+
+		<data-source name="DS_test1">
+			<minimum-pool-size>3</minimum-pool-size>
+			<maximum-pool-size>25</maximum-pool-size>
+			<connection-timeout>1</connection-timeout>
+			<config-properties>
+				<property name="connRateThrottle" value="0"/>
+			</config-properties>
+		</data-source>
+		<data-source name="DS_test2">
+			<minimum-pool-size>3</minimum-pool-size>
+			<maximum-pool-size>25</maximum-pool-size>
+			<config-properties>
+				<property name="connRateThrottle" value="0"/>
+			</config-properties>
+		</data-source>
+		
+	</data-sources>
+</deliverable-settings>

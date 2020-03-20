@@ -1,0 +1,39 @@
+apply plugin: 'application'
+
+mainClassName = 'com.paypal.butterfly.cli.ButterflyCliApp'
+
+dependencies {
+
+    compile project(':butterfly-api')
+    compile project(':butterfly-extensions-api')
+    runtime project(':butterfly-core')
+    compile lib.jopt_simple,
+            lib.gson,
+            lib.commons_io
+    compile (lib.spring_boot_starter) {
+        exclude(module: 'commons-logging')
+    }
+    testCompile project(':butterfly-utilities')
+    testCompile(lib.testng) {
+        exclude(module: 'aopalliance')
+        exclude(module: 'guava')
+    }
+    testCompile lib.mockito_all,
+            lib.powermock_module_testng,
+            lib.powermock_api_mockito
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.paypal.butterfly.cli.ButterflyCliApp',
+                'Implementation-Version': version,
+                'Implementation-Name': name,
+                'Implementation-Vendor': 'PayPal'
+    }
+}
+
+test {
+    forkEvery = 1
+}
+
+test.useTestNG()

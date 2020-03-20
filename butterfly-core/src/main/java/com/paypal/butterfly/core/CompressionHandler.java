@@ -1,14 +1,17 @@
 package com.paypal.butterfly.core;
 
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.model.ZipParameters;
-import net.lingala.zip4j.util.Zip4jConstants;
+import java.io.File;
+
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import com.paypal.butterfly.api.TransformationResult;
+
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.util.Zip4jConstants;
 
 /**
  * This bean takes care of compressing the output folder,
@@ -17,13 +20,13 @@ import java.io.File;
  * @author facarvalho, matcurtis
  */
 @Component
-public class CompressionHandler {
+class CompressionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(CompressionHandler.class);
 
-    public void compress(Transformation transformation) {
-        File inputFile = transformation.getTransformedApplicationLocation().getAbsoluteFile();
-        File compressedFile = new File(transformation.getTransformedApplicationLocation().getAbsolutePath() + ".zip");
+    void compress(TransformationResult transformationResult) {
+        File inputFile = transformationResult.getTransformedApplicationDir().getAbsoluteFile();
+        File compressedFile = new File(transformationResult.getTransformedApplicationDir().getAbsolutePath() + ".zip");
 
         logger.info("Compressing transformed application");
 
@@ -35,11 +38,11 @@ public class CompressionHandler {
             parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
 
             zipFile.addFolder(inputFile, parameters);
-            FileUtils.deleteDirectory(transformation.getTransformedApplicationLocation());
+            FileUtils.deleteDirectory(transformationResult.getTransformedApplicationDir());
 
             logger.info("Transformed application has been compressed to {}", compressedFile.getAbsoluteFile());
         } catch (Exception e) {
-            logger.error("Error when compressing transformed application", e);
+            logger.error("An exception happened when compressing transformed application", e);
         }
     }
 

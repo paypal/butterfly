@@ -152,9 +152,16 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
      */
     protected T setName(String name) {
         if(StringUtils.isBlank(name)) {
-            throw new TransformationDefinitionException(name + " cannot be blank");
+            throw new TransformationDefinitionException("Transformation utility name cannot be blank");
         }
+
+        // Refreshing transformation context attribute name
+        if (contextAttributeName == null || contextAttributeName.equals(this.name)) {
+            contextAttributeName = name;
+        }
+
         this.name = name;
+
         return (T) this;
     }
 
@@ -203,7 +210,7 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
         this.order = order;
 
         if(name == null) {
-            setName(String.format(UTILITY_NAME_SYNTAX, parent.getName(), order, ((T) this).getClass().getSimpleName()));
+            setName(String.format(UTILITY_NAME_SYNTAX, parent.getName(), order, ((T) this).getSimpleClassName()));
         }
 
         return (T) this;
@@ -219,14 +226,29 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
     }
 
     /**
-     * Returns the transformation template this utility belongs to
+     * Returns the transformation template this utility belongs to.
+     * It returns null if hasn't been added to a transformation template yet.
      *
      * @return the transformation template this utility belongs to
      */
     public TransformationTemplate getTransformationTemplate() {
         TransformationUtilityParent parent = getParent();
+        if (parent == null) {
+            return null;
+        }
+
         while (!(parent instanceof TransformationTemplate)) {
+            if (!(parent instanceof TransformationUtility)) {
+                // FIXME
+                // This API has to be improved. The fact that only TransformationUtility
+                // can have parent isn't coherent (many other types can also be parents,
+                // but don't have a method to return it).
+                return null;
+            }
             parent = ((TransformationUtility) parent).getParent();
+            if (parent == null) {
+                return null;
+            }
         }
         return (TransformationTemplate) parent;
     }
@@ -321,11 +343,17 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
 
     private void setAbsoluteFile(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
         if(absoluteFileFromContextAttribute != null) {
+            if(!transformationContext.contains(absoluteFileFromContextAttribute)) {
+                String exceptionMessage = String.format("Context attribute %s, which is supposed to define absolute file for %s, does not exist", absoluteFileFromContextAttribute, name);
+                // FIXME a better exception is necessary here for cases when the absolute path transformation context attribute value is null
+                throw new TransformationUtilityException(exceptionMessage);
+            }
+
             absoluteFile = (File) transformationContext.get(absoluteFileFromContextAttribute);
             if(absoluteFile == null) {
                 String exceptionMessage = String.format("Context attribute %s, which is supposed to define absolute file for %s, is null", absoluteFileFromContextAttribute, name);
                 // FIXME a better exception is necessary here for cases when the absolute path transformation context attribute value is null
-                throw  new  TransformationUtilityException(exceptionMessage);
+                throw new TransformationUtilityException(exceptionMessage);
             }
             if(additionalRelativePath != null) {
                 absoluteFile = new File(absoluteFile, additionalRelativePath);
@@ -358,7 +386,7 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
      * Returns a relative path from {@code baselineFile} to {@code targetFile}.
      * The file separator used is specific to the current OS. If the baseline file
      * is not entirely within the path to target file, then the target file
-     * absolute path is returned
+     * absolute path is returned.
      *
      * @param baselineFile the file whose returned relative path should start from.
      *                     It must be aa direct or indirect parent file to {@code targetFile}
@@ -366,7 +394,7 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
      *
      * @return a relative path from {@code baselineFile} to {@code targetFile}
      */
-    public static String getRelativePath(File baselineFile, File targetFile) {
+    protected static String getRelativePath(File baselineFile, File targetFile) {
         String baselineAbsolutePath = baselineFile.getAbsolutePath();
         String targetAbsolutePath = targetFile.getAbsolutePath();
         if (!targetAbsolutePath.startsWith(baselineAbsolutePath)) {
@@ -381,12 +409,27 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
     /**
      * This method allows setting properties in this transformation
      * utility during transformation time, right before its execution.
+     * <br>
+     * The term "property" here refers to Java bean property, which means
+     * an instance variable that has public setter and getter, named according
+     * to the variable name.
+     * <br>
      * This is very useful when the property value is not known during
      * transformation definition. Any attribute stored in the
      * transformation context can be used as the value to be set to the
      * property. In most of the cases the result of a prior
      * transformation utility is used as property value.
-     * Notice that, because this feature relies on reflection, it is not
+     * <br>
+     * If there is no transformation context attribute named {@code contextAttributeName}
+     * at the time this transformation utility is executed, a {@link TransformationUtilityException}
+     * will be thrown.
+     * <br>
+     * However, if such attribute exits, but its value is null, the property will be set as null
+     * and its execution will proceed normally, unless that property is a primitive,
+     * which would result in an error ({@link TransformationUtilityException}) with
+     * {@link IllegalArgumentException}) as root cause.
+     * <br>
+     * Notice that, because this feature relies on reflection, executing it is not
      * cheap, especially because it happens during transformation time.
      * So, use it only when really necessary.
      *
@@ -394,6 +437,11 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
      * @param contextAttributeName the name of the transformation context attribute whose
      *                             value will be set as the property value right before
      *                             execution
+     * @throws TransformationUtilityException if the transformation context does not have an
+     *                                        attribute named {@code contextAttributeName}
+     * @throws TransformationDefinitionException if {@code propertyName} is not
+     *                                           an existent Java bean property
+     *                                           in this transformation utility class
      * @return this transformation utility instance
      */
     public final T set(String propertyName, String contextAttributeName) {
@@ -436,29 +484,29 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
             Map.Entry<String, String> entry = (Map.Entry) itr.next();
             String propertyName = entry.getKey();
             attributeName = latePropertiesAttributes.get(propertyName);
+
+            if(!transformationContext.contains(attributeName)) {
+                String exceptionMessage = String.format("Attempt to set property '%s' for '%s' failed, there is no transformation context attribute named '%s'", propertyName, name, attributeName);
+                throw new TransformationUtilityException(exceptionMessage);
+            }
+
             try {
                 method = latePropertiesSetters.get(propertyName);
                 value = transformationContext.get(attributeName);
 
                 // Numeric values returned from {@link com.paypal.butterfly.utilities.misc.RunScript} might need to be converted,
                 // since Java script and Java data types differ.
-                if ((method.getParameterTypes()[0].getTypeName().equals("int") || method.getParameterTypes()[0].getTypeName().equals("Integer")) && value instanceof Long) {
+                if ((method.getParameterTypes()[0].getTypeName().equals("int") || method.getParameterTypes()[0].getTypeName().equals("java.lang.Integer")) && value instanceof Long) {
                     value = ((Long) value).intValue();
                     logger.debug("Converting value from Long to int. Value came from {} and is being set for property {} in {}", attributeName, propertyName, name);
-                } else if ((method.getParameterTypes()[0].getTypeName().equals("short") || method.getParameterTypes()[0].getTypeName().equals("Short")) && value instanceof Long) {
+                } else if ((method.getParameterTypes()[0].getTypeName().equals("short") || method.getParameterTypes()[0].getTypeName().equals("java.lang.Short")) && value instanceof Long) {
                     value = ((Long) value).shortValue();
                     logger.debug("Converting value from Long to short. Value came from {} and is being set for property {} in {}", attributeName, propertyName, name);
                 }
 
                 method.invoke(this, value);
-            } catch (TransformationDefinitionException e) {
-                String exceptionMessage = String.format("An error happened when setting property %s from context attribute %s in %s", propertyName, attributeName, name);
-                if(value == null) {
-                    logger.warn("Attribute %s is NULL. This problem could be avoided by setting the utility that generated it as a dependency for %s", getName());
-                }
-                throw new TransformationUtilityException(exceptionMessage, e);
             } catch (Exception e) {
-                String exceptionMessage = String.format("An error happened when setting property %s from context attribute %s in %s", propertyName, attributeName, name);
+                String exceptionMessage = String.format("An exception happened when setting property '%s' from context attribute '%s' in '%s'", propertyName, attributeName, name);
                 throw new TransformationUtilityException(exceptionMessage, e);
             }
         }
@@ -466,6 +514,23 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
 
     private String getMethodName(String propertyName) {
         return String.format("set%s%s", propertyName.substring(0, 1).toUpperCase(), propertyName.substring(1));
+    }
+
+    /**
+     * This is a package private way to let Butterfly internally set the
+     * absolute file this TU is supposed to execute against.
+     * It is used for example by {@link MultipleConditions#newConditionInstance(File)}
+     *
+     * @param file the absolute file this TU is supposed to execute against
+     * @return this transformation utility instance
+     */
+    T absolute(File file) {
+        if (file == null) {
+            String exceptionMessage = String.format("Absolute file for %s is null", name);
+            throw new TransformationUtilityException(exceptionMessage);
+        }
+        absoluteFile = file;
+        return (T) this;
     }
 
     /**
@@ -528,7 +593,9 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
 
     /**
      * Performs the transformation utility against
-     * the application to be transformed
+     * the application to be transformed. After this method is called,
+     * regardless of the result, even in case of skipped execution,
+     * {@link #hasBeenPerformed()} has to return true.
      * <br>
      * This is the one called by the transformation
      * engine, and regardless of any customization it
@@ -557,8 +624,12 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
         // Checking for IF condition
         if(ifConditionAttributeName != null) {
             Object conditionResult = transformationContext.get(ifConditionAttributeName);
-            if (conditionResult == null || conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue()) {
+            if (conditionResult == null
+                    || (conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue())
+                    || (conditionResult instanceof String && !conditionResult.equals("true"))) {
+
                 String details = String.format("%s was skipped due to failing 'if' condition: %s", getName(), ifConditionAttributeName);
+                hasBeenPerformed.set(true);
                 return PerformResult.skippedCondition(this, details);
             }
         }
@@ -566,8 +637,11 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
         // Checking for UNLESS condition
         if(unlessConditionAttributeName != null) {
             Object conditionResult = transformationContext.get(unlessConditionAttributeName);
-            if (conditionResult != null && conditionResult instanceof Boolean && ((Boolean) conditionResult).booleanValue()) {
+            if (conditionResult != null &&
+                    ((conditionResult instanceof Boolean && ((Boolean) conditionResult).booleanValue()) || (conditionResult instanceof String && conditionResult.equals("true")))) {
+
                 String details = String.format("%s was skipped due to failing 'unless' condition: %s", getName(), unlessConditionAttributeName);
+                hasBeenPerformed.set(true);
                 return PerformResult.skippedCondition(this, details);
             }
         }
@@ -582,38 +656,47 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
             utilityCondition.absoluteFileFromContextAttribute = this.absoluteFileFromContextAttribute;
             utilityCondition.additionalRelativePath = this.additionalRelativePath;
 
-            TUExecutionResult conditionExecutionResult = (TUExecutionResult) utilityCondition.execution(transformedAppFolder, transformationContext);
-            Object conditionResult = conditionExecutionResult.getValue();
-            if (conditionResult == null || conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue()) {
-                String utilityConditionName = (utilityCondition.getName() == null ? utilityCondition.toString() : utilityCondition.getName());
-                String details = String.format("%s was skipped due to failing UtilityCondition '%s'", getName(), utilityConditionName);
-                return PerformResult.skippedCondition(this, details);
+            Object conditionResult = null;
+            try {
+                TUExecutionResult conditionExecutionResult = (TUExecutionResult) utilityCondition.execution(transformedAppFolder, transformationContext);
+                conditionResult = conditionExecutionResult.getValue();
+            } catch (Exception e) {
+                logger.error("An exception happened when executing utility condition " + utilityCondition.getName(), e);
+            } finally {
+                if (conditionResult == null || conditionResult instanceof Boolean && !((Boolean) conditionResult).booleanValue()) {
+                    String utilityConditionName = (utilityCondition.getName() == null ? utilityCondition.toString() : utilityCondition.getName());
+                    String details = String.format("%s was skipped due to failing UtilityCondition '%s'", getName(), utilityConditionName);
+                    hasBeenPerformed.set(true);
+                    return PerformResult.skippedCondition(this, details);
+                }
             }
         }
 
         // Checking for dependencies
         PerformResult result = (PerformResult) checkDependencies(transformationContext);
         if (result != null) {
+            hasBeenPerformed.set(true);
             return result;
         }
-
-        // Applying properties during transformation time
-        applyPropertiesFromContext(transformationContext);
 
         TransformationUtilityException ex = null;
 
         try {
+            // Applying properties during transformation time
+            applyPropertiesFromContext(transformationContext);
+
             ExecutionResult executionResult = execution(transformedAppFolder, transformationContext);
             result = PerformResult.executionResult(this, executionResult);
         } catch(Exception e) {
             String exceptionMessage = String.format("Utility %s has failed", getName());
             ex = new TransformationUtilityException(exceptionMessage, e);
+            hasBeenPerformed.set(true);
             return PerformResult.error(this, ex);
         } finally {
             // This if and the following below, even though similar, address different execution paths,
             // so they must both be here, do not remove none of them thinking that this is redundant code
             if (result == null && ex == null) {
-                String exceptionMessage = String.format("Utility %s has failed and has not produced any exception detailing the failure. This utility code might be defective, or you might be using a non supported JRE (such as Open JDK 1.7).", getName());
+                String exceptionMessage = String.format("Utility %s has failed but has not produced any exception, check if its code is defective.", getName());
                 ex = new TransformationUtilityException(exceptionMessage);
                 logger.error("", ex);
             }
@@ -621,7 +704,7 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
         }
 
         if (result == null) {
-            String exceptionMessage = String.format("Utility %s has failed and has not produced any exception detailing the failure. This utility code might be defective, since they must never return null.", getName());
+            String exceptionMessage = String.format("Utility %s has failed but has not produced any exception, check if its code is defective.", getName());
             ex = new TransformationUtilityException(exceptionMessage);
             result = PerformResult.error(this, ex);
         }
@@ -631,10 +714,14 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
 
     /**
      * If set to true, abort the whole transformation if validation or execution fails.
-     * If not, just state a warning, aborts the operation execution only.
+     * If not, aborts the transformation utility execution only. This method will also
+     * set the abortion message to {@code null}.
+     * Use {@link #abortOnFailure(String)} instead to set abort on failure to true, but also
+     * set a custom abortion message.
+     * <br>
      * <strong>Notice that abortion here means interrupting the transformation.
      * It does not mean rolling back the changes that have might already been done
-     * by this transformation operation by the time it failed</strong>
+     * by this transformation operation by the time it failed</strong>.
      *
      * @param abort if set to true, abort the whole transformation if validation or execution fails.
      *              If not, just state a warning, aborts the operation execution only
@@ -642,24 +729,23 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
      */
     public final T abortOnFailure(boolean abort) {
         abortOnFailure = abort;
+        abortionMessage = null;
         return (T) this;
     }
 
     /**
-     * If set to true, abort the whole transformation if validation or execution fails.
-     * If not, just state a warning, aborts the operation execution only.
+     * Abort the whole transformation if validation or execution fails.
+     * This method has the same effect as calling {@code abortOnFailure(true)}, but
+     * it also allows setting an abortion message.
      * <strong>Notice that abortion here means interrupting the transformation.
      * It does not mean rolling back the changes that have might already been done
      * by this transformation operation by the time it failed</strong>
      *
-     * @param abort if set to true, abort the whole transformation if validation or execution fails.
-     *              If not, just state a warning, aborts the operation execution only
-     * @param abortionMessage a message to be logged if a fail happens and transformation
-     *                        has to be aborted
+     * @param abortionMessage a message to be logged if transformation has to be aborted
      * @return this transformation utility instance
      */
-    public final T abortOnFailure(boolean abort, String abortionMessage) {
-        abortOnFailure = abort;
+    public final T abortOnFailure(String abortionMessage) {
+        abortOnFailure = true;
         this.abortionMessage = abortionMessage;
         return (T) this;
     }
@@ -681,7 +767,7 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
      * @return true only if this operation aborts the transformation or not in
      * case of an operation failure
      */
-    public final boolean abortOnFailure() {
+    public final boolean isAbortOnFailure() {
         return abortOnFailure;
     }
 
@@ -723,7 +809,8 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
     }
 
     /**
-     * Returns true only if this utility has already been performed
+     * Returns true only if this utility has already been performed, even
+     * if the execution was skipped.
      *
      * @return true only if this utility has already been performed
      */
@@ -740,8 +827,8 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
      * <ol>
      *     <li>If TU B depends on TU A, and if TU A "fails"
      *     but doesn't abort transformation, then TU B would be skipped</li>
-     *     <li>If TU B depends on TU A, then that means TU A is necessarily supposed to be executed first,
-     *     if not, TU B will be skipped</li>
+     *     <li>If TU B depends on TU A, then TU B will be skipped when its times to perform comes
+     *     and TU A has not been performed yet</li>
      * </ol>
      * The term "fails" in this context means the perform result is of one of these types:
      * <ol>
@@ -840,15 +927,17 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
 
     /**
      * When set, this TU will only execute if this transformation context
-     * attribute is existent and true. In other words, it will execute if
-     * not null and, if of Boolean type, true
+     * attribute is existent and its value is set to true (as String or Boolean).
      *
      * @param conditionAttributeName the name of the transformation context attribute which
-     *                               holds a boolean value used to evaluate if this
+     *                               holds a Boolean or String value used to evaluate if this
      *                               utility should be executed or not
      * @return this transformation utility instance
      */
     public final T executeIf(String conditionAttributeName) {
+        if(StringUtils.isBlank(conditionAttributeName)) {
+            throw new TransformationDefinitionException("Condition attribute name cannot be blank");
+        }
         this.ifConditionAttributeName = conditionAttributeName;
         return (T) this;
     }
@@ -870,21 +959,26 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
      * @return this transformation utility instance
      */
     public final T executeIf(UtilityCondition utilityCondition) {
+        if(utilityCondition == null) {
+            throw new TransformationDefinitionException("Utility condition object cannot be null");
+        }
         this.utilityCondition = utilityCondition;
         return (T) this;
     }
 
     /**
      * When set, this TU will execute, unless this transformation context
-     * attribute is existent and true. In other words, it will execute, unless if
-     * not null and, if of Boolean type, true
+     * attribute is existent and its value is set to true (as String or Boolean).
      *
      * @param conditionAttributeName the name of the transformation context attribute which
-     *                               holds a boolean value used to evaluate if this
+     *                               holds a Boolean or String value used to evaluate if this
      *                               utility should be executed or not
      * @return this transformation utility instance
      */
     public final T executeUnless(String conditionAttributeName) {
+        if(StringUtils.isBlank(conditionAttributeName)) {
+            throw new TransformationDefinitionException("Condition attribute name cannot be blank");
+        }
         this.unlessConditionAttributeName = conditionAttributeName;
         return (T) this;
     }
@@ -939,10 +1033,10 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
     }
 
     /**
-     * Return true only if a file has been set explicitly either via {@link #relative(String)} or {@link #absolute(String)}.
+     * Return true only if a file has been set explicitly either via {@link #relative(String)}, {@link #absolute(String)} or {@link #absolute(String, String)}.
      * If set via {@link #relative(String)} it will only return true if set to anything other than "", which would mean the root of the application.
      *
-     * @return true only if a file has been set explicitly either via {@link #relative(String)} or {@link #absolute(String)}
+     * @return true only if a file has been set explicitly either via {@link #relative(String)}, {@link #absolute(String)} or {@link #absolute(String, String)}
      */
     public final boolean wasFileExplicitlySet() {
         return !(StringUtils.isBlank(getRelativePath()) && getAbsoluteFileFromContextAttribute() == null);
@@ -952,7 +1046,6 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
     public String toString() {
         return getDescription();
     }
-
 
     /**
      * Creates and returns a clone object identical to the original object,
@@ -1144,6 +1237,21 @@ public abstract class TransformationUtility<T extends TransformationUtility> imp
         }
 
         return result;
+    }
+
+    /**
+     * Returns the transformation utility class simple name
+     * (see {@link Class#getSimpleName()}), or "AnonymousTransformationUtility"
+     * if that is an anonymous class
+     *
+     * @return the transformation utility class simple name
+     */
+    protected String getSimpleClassName() {
+        if (getClass().isAnonymousClass()) {
+            return "AnonymousTransformationUtility";
+        } else {
+            return getClass().getSimpleName();
+        }
     }
 
 }

@@ -3,6 +3,7 @@ package com.paypal.butterfly.utilities.operations.file;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.operations.AbstractToOperation;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

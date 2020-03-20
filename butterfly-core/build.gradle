@@ -1,0 +1,41 @@
+dependencies {
+    compile project(':butterfly-api')
+    compile project(':butterfly-extensions-api')
+    runtime project(':butterfly-utilities')
+    compile(lib.spring_context) {
+        exclude(module: 'commons-logging')
+    }
+    compile lib.annotation_api,
+            lib.slf4j_api,
+            lib.gson,
+            lib.reflections,
+            lib.commons_io,
+            lib.zip4j,
+            lib.annotations,
+            lib.commons_lang3,
+            lib.plexus_utils
+    testCompile project(':extensions-catalog:butterfly-springboot-extension')
+    testCompile(lib.testng) {
+        exclude(module: 'aopalliance')
+        exclude(module: 'guava')
+    }
+    testCompile lib.mockito_all,
+            lib.powermock_module_testng,
+            lib.powermock_api_mockito
+}
+
+test.useTestNG()
+
+task createProperties(dependsOn: processResources) {
+    doLast {
+        new File("$buildDir/resources/main/butterfly.properties").withWriter { w ->
+            Properties p = new Properties()
+            p['butterfly.version'] = project.version.toString()
+            p.store w, null
+        }
+    }
+}
+
+classes {
+    dependsOn createProperties
+}

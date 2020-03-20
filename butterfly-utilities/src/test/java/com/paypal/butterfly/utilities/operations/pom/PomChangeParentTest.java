@@ -1,16 +1,17 @@
 package com.paypal.butterfly.utilities.operations.pom;
 
-import com.paypal.butterfly.extensions.api.TOExecutionResult;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
-import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
+import java.io.IOException;
+
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
 
 /**
  * Unit test class for {@link PomChangeParent}
@@ -66,7 +67,7 @@ public class PomChangeParentTest extends TransformationUtilityTestHelper {
     }
 
     @Test
-    public void failTest() throws IOException, XmlPullParserException, CloneNotSupportedException {
+    public void failTest() throws IOException, XmlPullParserException {
         Model pomModelBeforeChange = getOriginalPomModel("/src/main/resources/no_parent_pom.xml");
         assertNull(pomModelBeforeChange.getParent());
 

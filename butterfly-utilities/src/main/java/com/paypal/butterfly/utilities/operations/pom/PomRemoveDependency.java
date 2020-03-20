@@ -1,15 +1,18 @@
 package com.paypal.butterfly.utilities.operations.pom;
 
-import com.paypal.butterfly.extensions.api.TOExecutionResult;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
-import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
+import java.util.Objects;
+
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 
-import java.util.Objects;
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.extensions.api.operations.ChangeOrRemoveElement;
 
 /**
  * Removes a dependency entry from a POM file.
+ * If the POM file does not have the specified dependency, the operation will return an error.
+ * That behavior can be changed though, see {@link ChangeOrRemoveElement} for further details.
  *
  * @author facarvalho
  */

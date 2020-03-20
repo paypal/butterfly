@@ -1,0 +1,17 @@
+rootProject.name = 'butterfly'
+
+include 'butterfly-bom'
+include 'butterfly-api'
+include 'butterfly-extensions-api'
+include 'butterfly-utilities'
+include 'butterfly-core'
+include 'butterfly-cli'
+include 'butterfly-cli-package'
+include 'butterfly-persist-couchdb'
+include 'butterfly-persist-file'
+include 'butterfly-test'
+include 'extensions-catalog:butterfly-springboot-extension'
+include 'tests:integration-tests'
+include 'tests'
+include 'butterfly-slack'
+

@@ -1,0 +1,13 @@
+group = 'com.paypal.butterfly.extensions'
+
+dependencies {
+    compile project(':butterfly-utilities')
+    compile project(':butterfly-extensions-api')
+    testCompile project(':butterfly-test')
+    testImplementation(lib.testng) {
+        exclude(module: 'aopalliance')
+        exclude(module: 'guava')
+    }
+}
+
+test.useTestNG()

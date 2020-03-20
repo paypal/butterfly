@@ -80,7 +80,7 @@ class ModelTree {
             model.setPomFile(pomFile);
         } catch (Exception e) {
             ex = e;
-            String exceptionMessage = String.format("Error when trying to create Maven pom file model, double check if this file has a valid Maven structure: %s", pomFile.getAbsolutePath());
+            String exceptionMessage = String.format("An exception happened when trying to create Maven pom file model, double check if this file has a valid Maven structure: %s", pomFile.getAbsolutePath());
             throw new TransformationUtilityException(exceptionMessage, ex);
         } finally {
             if (fileInputStream != null) try {

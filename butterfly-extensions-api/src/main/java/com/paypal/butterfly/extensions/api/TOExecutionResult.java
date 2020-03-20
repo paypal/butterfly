@@ -116,7 +116,7 @@ public class TOExecutionResult extends ExecutionResult<TransformationOperation, 
      * @return the created result object
      */
     public static TOExecutionResult warning(TransformationOperation transformationOperation, Exception exception, String details) {
-        return new TOExecutionResult(transformationOperation, Type.WARNING, exception).setDetails(details);
+        return new TOExecutionResult(transformationOperation, Type.WARNING).addWarning(exception).setDetails(details);
     }
 
     /**

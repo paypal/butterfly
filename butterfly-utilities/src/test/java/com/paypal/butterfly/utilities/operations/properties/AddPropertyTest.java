@@ -3,7 +3,6 @@ package com.paypal.butterfly.utilities.operations.properties;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -19,6 +18,27 @@ import static org.testng.Assert.assertEquals;
  * @author facarvalho
  */
 public class AddPropertyTest extends TransformationUtilityTestHelper {
+
+    @Test
+    public void successAddToEmptyFile() throws IOException {
+        final String relativeFilePath = "/src/main/resources/application-empty.properties";
+        final String testKey = "testkey";
+        final String testValue = "testvalue";
+
+        AddProperty addProperty = new AddProperty().setPropertyName(testKey).setPropertyValue(testValue).relative(relativeFilePath);
+
+        TOExecutionResult executionResult = addProperty.execution(transformedAppFolder, transformationContext);
+        assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+
+        assertChangedFile(relativeFilePath);
+        assertLineCount(relativeFilePath, 1);
+
+        Properties properties = getProperties(relativeFilePath);
+
+        assertEquals(properties.size(), 1);
+        assertEquals(properties.getProperty(testKey), testValue);
+
+    }
 
     @Test
     public void successAddTest() throws IOException {

@@ -33,7 +33,7 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
     @Test
     public void pluginRemovedTest() throws IOException, XmlPullParserException {
         Model pomModelBeforeChange = getOriginalPomModel("pom.xml");
-        assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 1);
+        assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 3);
         assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getGroupId(), "org.codehaus.mojo");
         assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getArtifactId(), "cobertura-maven-plugin");
 
@@ -42,7 +42,7 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
         Model pomModelAfterChange = getTransformedPomModel("pom.xml");
-        assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 0);
+        assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 2);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
         TOExecutionResult executionResult = pomRemovePlugin.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
-        assertEquals(executionResult.getException().getMessage(), "Pom file could not be modified");
+        assertEquals(executionResult.getException().getMessage(), "POM file could not be modified");
         assertEquals(executionResult.getException().getCause().getClass(), FileNotFoundException.class);
         assertEquals(executionResult.getException().getCause().getMessage(), new File(transformedAppFolder, "non_existent_file.xml").getAbsolutePath() + " (No such file or directory)");
     }

@@ -3,6 +3,7 @@ package com.paypal.butterfly.utilities.operations.file;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.operations.AbstractToOperation;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -19,6 +20,7 @@ import java.io.IOException;
  *  <li>If a file <code>source</code> in <code>destinationDirectory</code> exists, it will be overwritten.</li>
  *  <li>If you want to copy a set of specific files from one location to another, use a multiple transformation operation (see {@code TransformationTemplate.addMultiple()}) with {@link CopyFile}.</li>
  *  <li>If you want to copy a directory and its content from one location to another, then use {@link CopyDirectory} instead.</li>
+ *  <li>If source file is actually a directory, an operation results in error.</li>
  * </ol>
  *
  * @see MoveFile
@@ -54,12 +56,17 @@ public class CopyFile extends AbstractToOperation<CopyFile> {
 
         File fileFrom = getAbsoluteFile(transformedAppFolder, transformationContext);
         File fileTo = getFileTo(transformedAppFolder, transformationContext);
-        TOExecutionResult result = null;
+        TOExecutionResult result;
 
         try {
-            String details = String.format("File '%s' has been copied to '%s'", getRelativePath(), getRelativePath(transformedAppFolder, fileTo));
-            FileUtils.copyFileToDirectory(fileFrom, fileTo);
-            result = TOExecutionResult.success(this, details);
+            if (fileFrom.isDirectory()) {
+                IOException ex = new IOException(getRelativePath(transformedAppFolder, fileFrom) + " (Is a directory)");
+                result = TOExecutionResult.error(this, new TransformationOperationException("File could not be copied", ex));
+            } else {
+                String details = String.format("File '%s' has been copied to '%s'", getRelativePath(), getRelativePath(transformedAppFolder, fileTo));
+                FileUtils.copyFileToDirectory(fileFrom, fileTo);
+                result = TOExecutionResult.success(this, details);
+            }
         } catch (IOException e) {
             result = TOExecutionResult.error(this, new TransformationOperationException("File could not be copied", e));
         }

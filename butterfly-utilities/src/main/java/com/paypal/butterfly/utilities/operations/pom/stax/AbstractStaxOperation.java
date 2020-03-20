@@ -141,7 +141,7 @@ public abstract class AbstractStaxOperation<T extends AbstractStaxOperation> ext
             File fileToBeModified = getAbsoluteFile(transformedAppFolder, transformationContext);
             String relativePomFile = getRelativePath(transformedAppFolder, fileToBeModified);
 
-            String message = String.format("An error happened when reading XML file %s", relativePomFile);
+            String message = String.format("An exception happened when reading XML file %s", relativePomFile);
             TransformationOperationException toe = new TransformationOperationException(message, e);
             result = TOExecutionResult.error(this, toe);
         } catch (Exception e) {
