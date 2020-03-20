@@ -1,6 +1,6 @@
 # Release steps
 
-1. Working from a <temp branch> (out of develop) in your fork:
+1. Working from a feature branch (out of develop) in your fork:
    1. Rev up root build.gradle file to the release version
    1. Build and test it
    1. javadoc
@@ -20,8 +20,8 @@
       1. update link in `QUICK_START.md` if zip file name changed
    1. Update release notes
    1. Commit `Releasing x`
-   1. Push from <temp branch> to origin <temp branch> (`git push origin <temp branch>`)
-1. Send and merge PR from origin <temp branch> to upstream develop
+   1. Push from local feature branch to origin feature branch (`git push origin <branch name>`)
+1. Send and merge PR from origin feature branch to upstream develop
 1. Send and merge PR from upstream develop to upstream master
 1. Tag new release from master
    1. Release title should be the version
@@ -42,12 +42,12 @@
    1. Update zip link
    1. Update sha256
    1. Verify brew can update or install new version
-1. Working from a <temp branch> (out of develop) in your fork:
+1. Working from a feature branch (out of develop) in your fork:
    1. Rev up root build.gradle file to the next SNAPSHOT version
    1. Build `butterlfy-parent` and make sure it builds fine
    1. Add new version empty section in release notes
    1. Commit `Preparing for version x`
-   1. Push from <temp branch> to origin <temp branch> (`git push origin <temp branch>`)
-   1. Send and merge PR from origin <temp branch> to upstream develop
+   1. Push from feature branch to origin feature branch (`git push origin <branch name>`)
+   1. Send and merge PR from origin feature branch to upstream develop
 1. Create new milestone
 1. Add issues to new milestone (if any)
