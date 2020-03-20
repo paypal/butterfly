@@ -1,2 +1,2 @@
 install:
-  - mvn -s settings.xml deploy -Possrh
+  - ./gradlew uploadArchives --scan

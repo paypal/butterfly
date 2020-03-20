@@ -1,0 +1,11 @@
+Butterfly application transformation tool (version TEST)
+
+Transformation template automatically resolved
+Performing transformation (it might take a few seconds)
+
+----------------------------------------------
+Application has been transformed successfully!
+----------------------------------------------
+Transformed application folder: %1
+Check log file for details: %2
+

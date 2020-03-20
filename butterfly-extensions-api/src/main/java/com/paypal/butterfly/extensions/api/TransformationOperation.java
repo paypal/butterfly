@@ -54,7 +54,7 @@ public abstract class TransformationOperation<T extends TransformationOperation>
      * Some transformation operations though might need to read the file to be modified
      * as a stream, and modify it by writing to an output stream as that same file
      * is read. Since it is impossible to modify a file at the same time it is being read,
-     * this utility method offers an convenient way to create a temporary read-only
+     * this utility method offers a convenient way to create a temporary read-only
      * copy of the file to be modified. This copy should be used to be read, while the original
      * file can be modified.
      * <br>
@@ -68,11 +68,17 @@ public abstract class TransformationOperation<T extends TransformationOperation>
      * @param transformedAppFolder the folder where the transformed application code is
      * @param transformationContext the transformation context object
      * @return a temporary read-only copy of the file to be modified
-     * @throws IOException if the temporary file could not be created
+     * @throws IOException if the temporary file could not be created, if the specified file is actually a directory, or if it does not exist
      */
     protected final File getOrCreateReadFile(File transformedAppFolder, TransformationContext transformationContext) throws IOException {
         if (readFile == null) {
             File originalFile = getAbsoluteFile(transformedAppFolder, transformationContext);
+            if (!originalFile.exists()) {
+                throw new IOException("Specified file does not exist: " + originalFile.getAbsolutePath());
+            }
+            if (originalFile.isDirectory()) {
+                throw new IOException("Specified file is a directory: " + originalFile.getAbsolutePath());
+            }
             readFile = File.createTempFile(READ_FILE_PREFIX, null);
             FileUtils.copyFile(originalFile, readFile);
             readFile.setReadOnly();
@@ -82,7 +88,7 @@ public abstract class TransformationOperation<T extends TransformationOperation>
     }
 
     @Override
-    public PerformResult perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
+    public final PerformResult perform(File transformedAppFolder, TransformationContext transformationContext) throws TransformationUtilityException {
         PerformResult performResult = super.perform(transformedAppFolder, transformationContext);
         if (readFile != null) {
             readFile.deleteOnExit();

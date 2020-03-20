@@ -8,12 +8,14 @@ import org.apache.maven.model.Model;
 
 /**
  * Removes a managed dependency entry from a POM file.
+ * If the POM file does not have the specified managed dependency, the operation will return an error.
+ * That behavior can be changed though, see {@link ChangeOrRemoveElement} for further details.
  *
  * @author facarvalho
  */
 public class PomRemoveManagedDependency extends AbstractArtifactPomOperation<PomRemoveManagedDependency> implements ChangeOrRemoveElement<PomRemoveManagedDependency> {
 
-    private static final String DESCRIPTION = "Remove managed dependency entry %s:%s from POM file %s";
+    private static final String DESCRIPTION = "Remove managed dependency %s:%s from POM file %s";
 
     private IfNotPresent ifNotPresent = IfNotPresent.Fail;
 

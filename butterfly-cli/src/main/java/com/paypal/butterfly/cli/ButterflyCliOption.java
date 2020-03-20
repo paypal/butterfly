@@ -28,6 +28,8 @@ abstract class ButterflyCliOption {
     protected static final String CLI_OPTION_UPGRADE_VERSION = "u";
     protected static final String CLI_OPTION_RESULT_FILE = "r";
     protected static final String CLI_OPTION_MODIFY_ORIGINAL_FOLDER = "f";
+    protected static final String CLI_OPTION_INLINE_PROPERTIES = "p";
+    protected static final String CLI_OPTION_PROPERTIES_FILE = "q";
 
     protected static final OptionParser optionParser = new OptionParser();
     protected static OptionSet optionSet;
@@ -81,9 +83,21 @@ abstract class ButterflyCliOption {
 
         // Modify original folder option
         optionParser.accepts(CLI_OPTION_MODIFY_ORIGINAL_FOLDER, "Transforms the application in the same folder as the original content. Options (-o) or (-z) are ignored if (-f) is specified");
+
+        // Transformation template inline properties option
+        optionParser.accepts(CLI_OPTION_INLINE_PROPERTIES, "Transformation specific properties, used to determine if certain operations should be skipped or not, or how certain aspects of the transformation should be executed. Use it followed by a list of key value pairs separated by semi-colons (example `-p prop1=value1;prop2=value2`). If both options (-p) and (-q) are set, (-q) is ignored.")
+                .withRequiredArg()
+                .ofType(String.class)
+                .describedAs("inline properties");
+
+        // Transformation template inline properties option
+        optionParser.accepts(CLI_OPTION_PROPERTIES_FILE, "Transformation specific properties, used to determine if certain operations should be skipped or not, or how certain aspects of the transformation should be executed. Use it pointing to a '.properties' file. If both options (-p) and (-q) are set, (-q) is ignored.")
+                .withRequiredArg()
+                .ofType(File.class)
+                .describedAs("properties file");
     }
 
-    public static void setOptionSet(String... args) {
+    static void setOptionSet(String... args) {
         optionSet = optionParser.parse(args);
     }
 

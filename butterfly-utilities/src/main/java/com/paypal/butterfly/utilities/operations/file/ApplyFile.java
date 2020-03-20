@@ -4,6 +4,7 @@ import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,7 +16,9 @@ import java.nio.channels.ReadableByteChannel;
 
 /**
  * Applies a file, whose location is set as a URL,
- * into the transformed application
+ * into the transformed application.
+ * The file is placed at the folder specified using
+ * {@code relative} or {@code absolute} methods.
  *
  * @author facarvalho
  */
@@ -25,12 +28,20 @@ public class ApplyFile extends TransformationOperation<ApplyFile> {
 
     private URL fileUrl;
 
+    /**
+     * Applies a file, whose location is set as a URL,
+     * into the transformed application.
+     * The file is placed at the folder specified using
+     * {@code relative} or {@code absolute} methods.
+     */
     public ApplyFile() {
     }
 
     /**
      * Applies a file, whose location is set as a URL,
-     * into the transformed application
+     * into the transformed application.
+     * The file is placed at the folder specified using
+     * {@code relative} or {@code absolute} methods.
      *
      * @param fileUrl URL string to locate the file to be applied
      */
@@ -44,8 +55,11 @@ public class ApplyFile extends TransformationOperation<ApplyFile> {
     }
 
     /**
+     /**
      * Applies a file, whose location is set as a URL,
-     * into the transformed application
+     * into the transformed application.
+     * The file is placed at the folder specified using
+     * {@code relative} or {@code absolute} methods.
      *
      * @param fileUrl URL to locate the file to be applied
      */
@@ -53,19 +67,34 @@ public class ApplyFile extends TransformationOperation<ApplyFile> {
         setFileUrl(fileUrl);
     }
 
+    /**
+     * Set the URL to locate the file to be applied
+     *
+     * @param fileUrl URL to locate the file to be applied
+     * @return this transformation utility
+     */
     public ApplyFile setFileUrl(URL fileUrl) {
         checkForNull("File URL", fileUrl);
         this.fileUrl = fileUrl;
         return this;
     }
 
+    /**
+     * Returns the URL to locate the file to be applied
+     *
+     * @return the URL to locate the file to be applied
+     */
     public URL getFileUrl() {
         return fileUrl;
     }
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, fileUrl.getFile(), getRelativePath());
+        String fileLocation = getRelativePath();
+        if (StringUtils.isBlank(fileLocation)) {
+            fileLocation = "the root folder";
+        }
+        return String.format(DESCRIPTION, fileUrl.getFile(), fileLocation);
     }
 
     @Override
@@ -87,7 +116,12 @@ public class ApplyFile extends TransformationOperation<ApplyFile> {
             fileOutputStream = new FileOutputStream(fileDescriptor);
             fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
 
-            String details = String.format("File '%s' has been downloaded at %s", fileUrl, getRelativePath(transformedAppFolder, fileDescriptor.getParentFile()));
+            String fileLocation = getRelativePath(transformedAppFolder, fileDescriptor.getParentFile());
+            if (StringUtils.isBlank(fileLocation)) {
+                fileLocation = "the root folder";
+            }
+
+            String details = String.format("File '%s' has been downloaded at %s", fileUrl.getFile(), fileLocation);
             result = TOExecutionResult.success(this, details);
         } catch (IOException e) {
             result = TOExecutionResult.error(this, e);

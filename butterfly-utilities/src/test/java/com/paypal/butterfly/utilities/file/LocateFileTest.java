@@ -25,7 +25,7 @@ public class LocateFileTest extends TransformationUtilityTestHelper {
         File rootFile = (File) executionResult.getValue();
         Assert.assertEquals(rootFile.getAbsolutePath(), transformedAppFolder.getAbsolutePath());
         Assert.assertEquals(locateFile.getParentLevel(), 0);
-        Assert.assertEquals(locateFile.getDescription(), "Locate file root folder");
+        Assert.assertEquals(locateFile.getDescription(), "Locate specified file");
     }
 
     @Test

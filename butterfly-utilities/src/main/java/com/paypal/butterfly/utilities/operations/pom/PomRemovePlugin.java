@@ -10,6 +10,8 @@ import java.util.Objects;
 
 /**
  * Removes a plugin entry from a POM file.
+ * If the POM file does not have the specified plugin, the operation will return an error.
+ * That behavior can be changed though, see {@link ChangeOrRemoveElement} for further details.
  *
  * @author facarvalho
  */

@@ -30,4 +30,12 @@ public interface TransformationContext {
      */
     PerformResult getResult(String utilityName);
 
+    /**
+     * Return true if the transformation context has an attribute whose name is {@code name}
+     *
+     * @param name the transformation context attribute name
+     * @return true if the transformation context has an attribute whose name is {@code name}
+     */
+    boolean contains(String name);
+
 }

@@ -1,6 +1,6 @@
 package com.paypal.butterfly.utilities.java;
 
-import com.github.javaparser.JavaParser;
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.paypal.butterfly.extensions.api.TUExecutionResult;
@@ -50,11 +50,11 @@ public class JavaPackage extends TransformationUtility<JavaPackage> {
 
         try {
             fileInputStream = new FileInputStream(javaClassFile);
-            CompilationUnit compilationUnit = JavaParser.parse(fileInputStream);
+            CompilationUnit compilationUnit = StaticJavaParser.parse(fileInputStream);
             Optional<PackageDeclaration> packageDeclaration = compilationUnit.getPackageDeclaration();
             result = TUExecutionResult.value(this, packageDeclaration.get().getNameAsString());
         } catch (Exception  e) {
-            TransformationUtilityException tue = new TransformationUtilityException("An error happened when trying to read and parse the specified Java file " + getRelativePath(transformedAppFolder, javaClassFile), e);
+            TransformationUtilityException tue = new TransformationUtilityException("An exception happened when trying to read and parse the specified Java file " + getRelativePath(transformedAppFolder, javaClassFile), e);
             result = TUExecutionResult.error(this, tue);
         } finally {
             try {

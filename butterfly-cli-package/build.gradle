@@ -1,0 +1,25 @@
+apply plugin: 'java'
+apply plugin: "maven-publish"
+
+dependencies {
+    compile project(':butterfly-cli')
+}
+
+task buildZip(type: Zip) {
+    from processResources {
+        exclude ('butterfly/butterfly')
+    }
+    from("src/main/resources") {
+        include ('butterfly/butterfly')
+        fileMode = 0755
+    }
+    into('butterfly/lib') {
+        from configurations.runtime
+    }
+}
+
+artifacts {
+    archives buildZip
+}
+
+build.dependsOn buildZip

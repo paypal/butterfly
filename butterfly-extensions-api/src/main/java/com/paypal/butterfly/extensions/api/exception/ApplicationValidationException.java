@@ -5,14 +5,13 @@ package com.paypal.butterfly.extensions.api.exception;
  *
  * @author facarvalho
  */
-// TODO this class is not actually being used anywhere at this moment
 public class ApplicationValidationException extends ButterflyRuntimeException {
 
     public ApplicationValidationException(String exceptionMessage) {
         super(exceptionMessage);
     }
 
-    public ApplicationValidationException(String exceptionMessage, Exception exception) {
-        super(exceptionMessage, exception);
+    public ApplicationValidationException(String exceptionMessage, Throwable throwable) {
+        super(exceptionMessage, throwable);
     }
 }

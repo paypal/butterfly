@@ -23,6 +23,7 @@ import java.io.File;
  */
 public class LocateFile extends TransformationUtility<LocateFile> {
 
+    private static final String DESCRIPTION_RELATIVE_MISSING = "Locate specified file";
     private static final String DESCRIPTION_PARENT_ZERO = "Locate file %s";
     private static final String DESCRIPTION_PARENT = "Locate file %d levels above %s";
 
@@ -85,14 +86,8 @@ public class LocateFile extends TransformationUtility<LocateFile> {
     public String getDescription() {
         String location = getRelativePath();
         if (StringUtils.isBlank(location)) {
-            location = "root folder";
+            return DESCRIPTION_RELATIVE_MISSING;
         }
-
-        // FIXME
-        // An usage like the one below results in a wrong description.
-        // Instead of resulting in something like "Locate file '/foo/bar/init'" it results in "Locate file root folder"
-        //
-        // add(new LocateFile().absolute(APP_PACKAGE_LOCATION, "init");
 
         if (parentLevel == 0) {
             return String.format(DESCRIPTION_PARENT_ZERO, location);

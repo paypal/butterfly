@@ -1,6 +1,7 @@
 package com.paypal.butterfly.utilities.operations.pom;
 
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -8,20 +9,21 @@ import org.testng.annotations.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
 
 /**
- * Unit test for PomRemovePlugin TO
+ * Unit test for {@link PomRemovePluginTest}
  *
  * @author facarvalho
  */
 public class PomRemovePluginTest extends TransformationUtilityTestHelper {
 
     @Test
-    public void miscTest() throws CloneNotSupportedException {
+    public void miscTest() {
         PomRemovePlugin pomRemovePlugin = new PomRemovePlugin("org.apache.maven.plugins", "maven-javadoc-plugin").relative("pom.xml");
 
         assertEquals(pomRemovePlugin.getDescription(), "Remove plugin org.apache.maven.plugins:maven-javadoc-plugin from POM file pom.xml");
@@ -31,7 +33,7 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
     @Test
     public void pluginRemovedTest() throws IOException, XmlPullParserException {
         Model pomModelBeforeChange = getOriginalPomModel("pom.xml");
-        assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 1);
+        assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 3);
         assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getGroupId(), "org.codehaus.mojo");
         assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getArtifactId(), "cobertura-maven-plugin");
 
@@ -40,7 +42,7 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
         Model pomModelAfterChange = getTransformedPomModel("pom.xml");
-        assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 0);
+        assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 2);
     }
 
     @Test
@@ -50,8 +52,6 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
 
         assertNotChangedFile("pom.xml");
-
-        assertNotChangedFile("pom.xml");
     }
 
     @Test
@@ -59,8 +59,6 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
         PomRemovePlugin pomRemovePlugin = new PomRemovePlugin("com.zoo", "zoo").relative("pom.xml").noOpIfNotPresent();
         TOExecutionResult executionResult = pomRemovePlugin.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
-
-        assertNotChangedFile("pom.xml");
 
         assertNotChangedFile("pom.xml");
     }
@@ -79,13 +77,14 @@ public class PomRemovePluginTest extends TransformationUtilityTestHelper {
     }
 
     @Test
-    public void fileDoesNotExistTest() throws IOException {
-        PomRemovePlugin pomRemovePlugin = new PomRemovePlugin("com.foo", "boo").relative("application_zeta.properties");
+    public void fileDoesNotExistTest() {
+        PomRemovePlugin pomRemovePlugin = new PomRemovePlugin("com.foo", "boo").relative("non_existent_file.xml");
         TOExecutionResult executionResult = pomRemovePlugin.execution(transformedAppFolder, transformationContext);
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
-        assertEquals(executionResult.getException().getClass(), FileNotFoundException.class);
-
-        assertNotChangedFile("pom.xml");
+        assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
+        assertEquals(executionResult.getException().getMessage(), "POM file could not be modified");
+        assertEquals(executionResult.getException().getCause().getClass(), FileNotFoundException.class);
+        assertEquals(executionResult.getException().getCause().getMessage(), new File(transformedAppFolder, "non_existent_file.xml").getAbsolutePath() + " (No such file or directory)");
     }
 
 }

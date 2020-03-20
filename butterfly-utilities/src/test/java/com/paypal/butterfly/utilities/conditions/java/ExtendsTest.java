@@ -1,7 +1,7 @@
 package com.paypal.butterfly.utilities.conditions.java;
 
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -70,21 +70,21 @@ public class ExtendsTest {
     public void negateTest() throws ParseException {
         String resourceName = "/test-app/src/main/java/com/testapp/JavaLangSubclass.java";
         InputStream resourceAsStream = this.getClass().getResourceAsStream(resourceName);
-        CompilationUnit compilationUnit = JavaParser.parse(resourceAsStream);
+        CompilationUnit compilationUnit = StaticJavaParser.parse(resourceAsStream);
         Extends extendsObj = new Extends(Throwable.class).setNegate(true);
         Assert.assertFalse(extendsObj.evaluate(compilationUnit));
     }
 
     private void test(String resourceName, Class superClass, boolean expects) throws ParseException {
         InputStream resourceAsStream = this.getClass().getResourceAsStream(resourceName);
-        CompilationUnit compilationUnit = JavaParser.parse(resourceAsStream);
+        CompilationUnit compilationUnit = StaticJavaParser.parse(resourceAsStream);
         Extends extendsObj = new Extends(superClass);
         Assert.assertEquals(extendsObj.evaluate(compilationUnit), expects);
     }
 
     private void test(String resourceName, String superClassName, boolean expects) throws ParseException {
         InputStream resourceAsStream = this.getClass().getResourceAsStream(resourceName);
-        CompilationUnit compilationUnit = JavaParser.parse(resourceAsStream);
+        CompilationUnit compilationUnit = StaticJavaParser.parse(resourceAsStream);
         Extends extendsObj = new Extends(superClassName);
         Assert.assertEquals(extendsObj.evaluate(compilationUnit), expects);
     }

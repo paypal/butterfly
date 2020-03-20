@@ -1,6 +1,70 @@
 
 # Release notes
 
+## 3.0.0
+
+#### Release date
+March 20th, 2020
+
+#### New features and enhancements
+* [342 - Changing POM Plugin feature is not available.](https://github.com/paypal/butterfly/issues/342)
+* [335 - Develop Butterfly Slack integration](https://github.com/paypal/butterfly/issues/335)
+* [318 - Make Butterfly multi-threaded, asynchronous and non-blocking](https://github.com/paypal/butterfly/issues/318)
+* [319 - Make ButterflyFacade API asynchronous and non-blocking](https://github.com/paypal/butterfly/issues/319)
+* [316 - Remove UpgradePath class from APIs and simplify ButterflyFacade](https://github.com/paypal/butterfly/issues/316)
+* [167 - Allow executing Butterfly passing a set of extension specific properties as input parameter](https://github.com/paypal/butterfly/issues/167)
+* [304 - Add support for multiple extensions](https://github.com/paypal/butterfly/issues/304)
+* [196 - Introduce a format based method to refer to files in TUs and TOs](https://github.com/paypal/butterfly/issues/196)
+* [288 - butterfly-test should interface with façade, instead of CLI](https://github.com/paypal/butterfly/issues/288)
+* [220 - Set Application name and type in TransformationResult](https://github.com/paypal/butterfly/issues/220)
+* [299 - Improving butterfly-test folders comparison output](https://github.com/paypal/butterfly/issues/299)
+* [296 - Add diff for single different file in butterfly-test result](https://github.com/paypal/butterfly/issues/296)
+* [261 - Make Butterfly code thread-safe](https://github.com/paypal/butterfly/issues/261)
+* [131 - Add operation to write pom file from given Model object](https://github.com/paypal/butterfly/issues/131)
+* [130 - Modify PomModel TU to also support returning a Model object out of a local pom.xml file (present in the application)](https://github.com/paypal/butterfly/issues/130)
+* [19  - Add TU to build Maven model out of a pom.xml file not present in the application folder](https://github.com/paypal/butterfly/issues/19)
+* [275 - Create TU to retrieve parent of given pom model or file](https://github.com/paypal/butterfly/issues/275)
+* [272 - Create TU to retrieve packaging of given pom model or file](https://github.com/paypal/butterfly/issues/272)
+* [270 - Add operations to add and remove modules from POM files](https://github.com/paypal/butterfly/issues/270)
+* [268 - Add PomAddProperty operation](https://github.com/paypal/butterfly/issues/268)
+* [266 - Develop condition PomJavaMatch to tell if at least one Java class from that module match a given criteria](https://github.com/paypal/butterfly/issues/266)
+* [258 - Improve butterfly-test by listing all different files and folders](https://github.com/paypal/butterfly/issues/258)
+* [254 - Keep original scope when replacing pom dependency](https://github.com/paypal/butterfly/issues/254)
+* [247 - Add a flag to all Assert.assertTransformation methods to XML equals comparison](https://github.com/paypal/butterfly/issues/247)
+* [225 - Add configuration to FindFiles to let user decide between warning, error, or value if no files are found](https://github.com/paypal/butterfly/issues/225)
+* [223 - Add TransformationTemplate.set(String, Object) to add or change context attributes](https://github.com/paypal/butterfly/issues/223)
+* [236 - Add PomCopyDependencies, PomAddManagedDependency and PomCopyManagedDependencies](https://github.com/paypal/butterfly/issues/236)
+* [30  - Metrics JSON objects should contain all fields, even the null ones](https://github.com/paypal/butterfly/issues/30)
+* [155 - Provide extension and list of templates in CLI result json](https://github.com/paypal/butterfly/issues/155)
+* [212 - Create API project butterfly-metrics](https://github.com/paypal/butterfly/issues/212)
+* [211 - Consolidate metrics and result JSON file into a single file](https://github.com/paypal/butterfly/issues/211)
+* [210 - Major Butterfly API refactoring (does NOT include extensions API)](https://github.com/paypal/butterfly/issues/210)
+* [205 - Add operation to copy dependencies from one POM file to another](https://github.com/paypal/butterfly/issues/205)
+* [16  - Add XmlXPathElement and deprecate XmlElement](https://github.com/paypal/butterfly/issues/16)
+* [195 - Add support to blank transformations](https://github.com/paypal/butterfly/issues/195)
+* [198 - Adding support to non-pom file MavenGoal execution](https://github.com/paypal/butterfly/issues/198)
+* [179 - JavaMatch should automatically ignore package-info.java files](https://github.com/paypal/butterfly/issues/179)
+* [177 - Replace Exception parameters by Throwable in every Butterfly exception type and TU/TO response method](https://github.com/paypal/butterfly/issues/177)
+* [173 - Small API changes and improvements](https://github.com/paypal/butterfly/issues/173)
+* [192 - Add "pending manual change" application validation to TE](https://github.com/paypal/butterfly/issues/192)
+* [170 - Replace Cobertura by JaCoCo](https://github.com/paypal/butterfly/issues/170)
+* [188 - Create Butterfly BOM (butterfly-bom)](https://github.com/paypal/butterfly/issues/188)
+* [186 - Add butterfly-test, a test utility project to help extensions development and test quality](https://github.com/paypal/butterfly/issues/186)
+* [75  - Add unit tests to utilities project to make sure at least 85% code coverage P1 quality](https://github.com/paypal/butterfly/issues/75)
+* [12  - Create catalog of extensions sample](https://github.com/paypal/butterfly/issues/12)
+* [164 - Apply Build Scans to Gradle build](https://github.com/paypal/butterfly/issues/164)
+* [163 - Replace Maven by Gradle as building tool](https://github.com/paypal/butterfly/issues/163)
+* [160 - Increase unit test coverage in butterfly-utilities quality](https://github.com/paypal/butterfly/issues/160)
+
+#### Bug fixes
+* [292 - Fixing bug when performing blank template on same folder](https://github.com/paypal/butterfly/issues/292)
+* [290 - Fixing butterfly-cli log file naming and improving CLI integration tests](https://github.com/paypal/butterfly/issues/290)
+* [284 - Fixing butterfly-cli log file naming and improving CLI integration tests](https://github.com/paypal/butterfly/issues/284)
+* [235 - Fix "optional tag" bug in PomChangeDependency](https://github.com/paypal/butterfly/issues/235)
+* [224 - MultipleOperations fails to set target file if not set as relative to the transformed application folder](https://github.com/paypal/butterfly/issues/224)
+* [111 - AddProperty fails if properties file is empty](https://github.com/paypal/butterfly/issues/111)
+* [89 - JavaMatch breaks if Java class file is invalid](https://github.com/paypal/butterfly/issues/89)
+
 ## 2.5.0
 
 #### Release date

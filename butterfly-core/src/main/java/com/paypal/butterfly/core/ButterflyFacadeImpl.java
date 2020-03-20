@@ -1,22 +1,18 @@
 package com.paypal.butterfly.core;
 
-import com.paypal.butterfly.core.exception.InternalException;
+import com.paypal.butterfly.api.*;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.exception.ButterflyException;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
-import com.paypal.butterfly.facade.ButterflyFacade;
-import com.paypal.butterfly.facade.Configuration;
-import com.paypal.butterfly.facade.TransformationResult;
-import com.paypal.butterfly.facade.ButterflyProperties;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
-import org.apache.commons.lang3.StringUtils;
+import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Butterfly Façade implementation
@@ -24,7 +20,7 @@ import java.io.File;
  * @author facarvalho
  */
 @Component
-public class ButterflyFacadeImpl implements ButterflyFacade {
+class ButterflyFacadeImpl implements ButterflyFacade {
 
     private static final String VERSION = ButterflyProperties.getString("butterfly.version");
 
@@ -45,87 +41,103 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
     }
 
     @Override
-    public Extension getRegisteredExtension() {
-        return extensionRegistry.getExtension();
+    public List<Extension> getExtensions() {
+        return extensionRegistry.getExtensions();
     }
 
     @Override
-    public Class<? extends TransformationTemplate> automaticResolution(File applicationFolder) throws TemplateResolutionException {
-        try {
-            Extension extension = extensionRegistry.getExtension();
-            if (extension == null) {
-                throw new TemplateResolutionException("No Butterfly extension has been registered");
+    public Optional<Class<? extends TransformationTemplate>> automaticResolution(File applicationFolder) throws TemplateResolutionException {
+        if (extensionRegistry.getExtensions().isEmpty()) {
+            throw new TemplateResolutionException("No Butterfly extension has been registered");
+        }
+
+        Set<Class<? extends TransformationTemplate>> resolvedTemplates = new HashSet<>();
+        Optional<Class<? extends TransformationTemplate>> t;
+        Map<String, TemplateResolutionException> extensionsResolutionExceptions = new HashMap();
+
+        for (Extension extension : extensionRegistry.getExtensions()) {
+            try {
+                t = extension.automaticResolution(applicationFolder);
+                if (t.isPresent()) {
+                    resolvedTemplates.add(t.get());
+                }
+            } catch (TemplateResolutionException e) {
+                extensionsResolutionExceptions.put(extension.getClass().getName(), e);
             }
-            Class<? extends TransformationTemplate> chosenTemplate = extension.automaticResolution(applicationFolder);
-
-            // Extension.automaticResolution must never return null. But still, just in case,
-            // checking here if it does, and then throwing the exception, honoring the Extension and ButterflyFacade contract
-            if (chosenTemplate == null) {
-                throw new TemplateResolutionException("No transformation template could be chosen");
-            }
-            return chosenTemplate;
-        } catch (IllegalStateException e) {
-            throw new TemplateResolutionException("Multiple Butterfly extensions have been registered", e);
         }
-    }
 
-    @Override
-    public TransformationResult transform(File applicationFolder, String templateClassName) throws ButterflyException {
-        return transform(applicationFolder, templateClassName, new Configuration());
-    }
-
-    @Override
-    public TransformationResult transform(File applicationFolder, String templateClassName, Configuration configuration) throws ButterflyException {
-        if(StringUtils.isBlank(templateClassName)) {
-            throw new IllegalArgumentException("Template class name cannot be blank");
+        if (resolvedTemplates.size() == 1) {
+            return Optional.of((Class<? extends TransformationTemplate>) resolvedTemplates.toArray()[0]);
         }
-        try {
-            Class<TransformationTemplate> templateClass = (Class<TransformationTemplate>) Class.forName(templateClassName);
-            return transform(applicationFolder, templateClass, configuration);
-        } catch (ClassNotFoundException e) {
-            String exceptionMessage = "Template class " + templateClassName + " not found. Run Butterfly in debug mode and double check if its extension has been properly registered";
-            logger.error(exceptionMessage, e);
-            throw new InternalException(exceptionMessage, e);
+        if (resolvedTemplates.size() > 1) {
+            throw new TemplateResolutionException("More than one transformation template was resolved, they are: " + resolvedTemplates);
         }
+        if (extensionsResolutionExceptions.size() == 1) {
+            throw (TemplateResolutionException) extensionsResolutionExceptions.values().toArray()[0];
+        } else if (extensionsResolutionExceptions.size() > 1) {
+            throw new TemplateResolutionException("No transformation template could be resolved. However, more than one extension recognized the application type, but considered them invalid. See the following map, whose key is an extension class, and value is the reason why application failed validation: " + extensionsResolutionExceptions);
+        }
+        return Optional.empty();
     }
 
     @Override
-    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) throws ButterflyException {
-        return transform(applicationFolder, templateClass, new Configuration());
+    public Configuration newConfiguration(Properties properties) {
+        return new ConfigurationImpl(properties);
     }
 
     @Override
-    public TransformationResult transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, Configuration configuration) throws ButterflyException {
+    public Configuration newConfiguration(Properties properties, boolean zipOutput) {
+        return new ConfigurationImpl(properties, zipOutput);
+    }
+
+    @Override
+    public Configuration newConfiguration(Properties properties, File outputFolder, boolean zipOutput) {
+        return new ConfigurationImpl(properties, outputFolder, zipOutput);
+    }
+
+    @Override
+    public CompletableFuture<TransformationResult> transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass) {
+        return transform(applicationFolder, templateClass, null, new ConfigurationImpl(null));
+    }
+
+    @Override
+    public CompletableFuture<TransformationResult> transform(File applicationFolder, Class<? extends TransformationTemplate> templateClass, String version, Configuration configuration) {
         TransformationTemplate template = getTemplate(templateClass);
-        Application application = new Application(applicationFolder);
-        Transformation transformation = new TemplateTransformation(application, template, configuration);
+        Application application = new ApplicationImpl(applicationFolder);
+        TransformationRequest transformationRequest;
 
-        return transform(transformation);
-    }
-
-    @Override
-    public TransformationResult transform(File applicationFolder, UpgradePath upgradePath) throws ButterflyException {
-        return transform(applicationFolder, upgradePath, new Configuration());
-    }
-
-    @Override
-    public TransformationResult transform(File applicationFolder, UpgradePath upgradePath, Configuration configuration) throws ButterflyException {
-        Application application = new Application(applicationFolder);
-        Transformation transformation = new UpgradePathTransformation(application, upgradePath, configuration);
-
-        return transform(transformation);
-    }
-
-    private TransformationResult transform(Transformation transformation) throws ButterflyException {
-        Configuration configuration = transformation.getConfiguration();
-        if (logger.isDebugEnabled()) {
-            logger.debug("Transformation configuration: {}", configuration);
+        if (template instanceof UpgradeStep) {
+            UpgradePath upgradePath = getUpgradePath(templateClass, version);
+            transformationRequest = new UpgradePathTransformationRequest(application, upgradePath, configuration);
+        } else {
+            transformationRequest = new TemplateTransformationRequest(application, template, configuration);
         }
 
-        TransformationResult transformationResult = transformationEngine.perform(transformation);
+        return transform(transformationRequest);
+    }
 
-        if(configuration.isZipOutput()){
-            compressionHandler.compress(transformation);
+    private UpgradePath getUpgradePath(Class<? extends TransformationTemplate> transformationTemplate, String version) {
+        Class<? extends UpgradeStep> upgradeStep = (Class<? extends UpgradeStep>) transformationTemplate;
+        UpgradePath upgradePath;
+        if (version != null && !version.trim().equals("")) {
+            upgradePath = new UpgradePath(upgradeStep, version);
+        } else {
+            upgradePath = new UpgradePath(upgradeStep);
+        }
+
+        return upgradePath;
+    }
+
+    private CompletableFuture<TransformationResult> transform(TransformationRequest transformationRequest) {
+        Configuration configuration = transformationRequest.getConfiguration();
+        if (logger.isDebugEnabled()) {
+            logger.debug("Transformation request configuration: {}", configuration);
+        }
+
+        CompletableFuture<TransformationResult> transformationResult = transformationEngine.perform(transformationRequest);
+
+        if(!configuration.isModifyOriginalFolder() && configuration.isZipOutput()){
+            transformationResult.thenAcceptAsync(compressionHandler::compress);
         }
 
         return transformationResult;
@@ -140,11 +152,9 @@ public class ButterflyFacadeImpl implements ButterflyFacade {
             return template;
         } catch (InstantiationException e) {
             String exceptionMessage = "Template class " + templateClass + " could not be instantiated. Run Butterfly in debug mode, double check if its extension has been properly registered, and also double check if it complies with Butterfly extensions API";
-            logger.error(exceptionMessage, e);
             throw new InternalException(exceptionMessage, e);
         } catch (IllegalAccessException e) {
             String exceptionMessage = "Template class " + templateClass + " could not be accessed";
-            logger.error(exceptionMessage, e);
             throw new InternalException(exceptionMessage, e);
         }
     }

@@ -1,3 +1,7 @@
 <?xml version="1.0"?>
-<foo>
-</foo>
+<beans>
+
+    <jaxrs:server id="wordEchoService" address="/blah" depends-on="modulesInitialization">
+    </jaxrs:server>
+
+</beans>

@@ -131,7 +131,7 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
 
     @Override
     public MultipleConditions setName(String name) {
-        conditionTemplate.setName(String.format("%s-%s-TEMPLATE_CONDITION", name, conditionTemplate.getClass().getSimpleName()));
+        conditionTemplate.setName(String.format("%s-%s-TEMPLATE_CONDITION", name, conditionTemplate.getSimpleClassName()));
         return super.setName(name);
     }
 
@@ -196,7 +196,7 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
 
         String details = null;
         if(logger.isDebugEnabled()) {
-            details = String.format("Multiple condition %s resulted in a maximum of %d evaluations based on %s", getName(), allFiles.size(), conditionTemplate.getClass().getSimpleName());
+            details = String.format("Multiple condition %s resulted in a maximum of %d evaluations based on %s", getName(), allFiles.size(), conditionTemplate.getSimpleClassName());
         }
         return TUExecutionResult.value(this, allFiles).setDetails(details);
     }
@@ -206,13 +206,12 @@ public class MultipleConditions extends UtilityCondition<MultipleConditions> {
      * object, but setting the file it should perform against based
      * on the input parameters
      *
-     * @param transformedAppFolder the transformed application folder
      * @param file the actual file to be performed against
      * @return the new utility condition created based on this instance
      */
-    public UtilityCondition newConditionInstance(File transformedAppFolder, File file) {
+    public UtilityCondition newConditionInstance(File file) {
         UtilityCondition condition = (UtilityCondition) conditionTemplate.copy();
-        condition.relative(TransformationUtility.getRelativePath(transformedAppFolder, file));
+        condition.absolute(file);
         condition.setSaveResult(false);
 
         conditionInstanceCounter++;

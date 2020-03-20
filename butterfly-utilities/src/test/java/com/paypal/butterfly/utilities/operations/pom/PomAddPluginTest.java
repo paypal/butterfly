@@ -11,6 +11,11 @@ import java.io.IOException;
 
 import static org.testng.Assert.*;
 
+/**
+ * Unit test class for {@link PomAddPlugin}
+ *
+ * @author facarvalho
+ */
 public class PomAddPluginTest extends TransformationUtilityTestHelper {
 
     @Test
@@ -25,7 +30,7 @@ public class PomAddPluginTest extends TransformationUtilityTestHelper {
 	@Test
 	public void addPluginWithVersionTest() throws IOException, XmlPullParserException {
 		Model pomModelBeforeChange = getOriginalPomModel("pom.xml");
-		assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 1);
+		assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 3);
 		assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getGroupId(), "org.codehaus.mojo");
 		assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getArtifactId(), "cobertura-maven-plugin");
 
@@ -34,7 +39,7 @@ public class PomAddPluginTest extends TransformationUtilityTestHelper {
 		assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
 		Model pomModelAfterChange = getTransformedPomModel("pom.xml");
-		assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 2);
+		assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 4);
         Plugin plugin = new Plugin();
         plugin.setGroupId("org.apache.maven.plugins");
         plugin.setArtifactId("maven-javadoc-plugin");
@@ -45,7 +50,7 @@ public class PomAddPluginTest extends TransformationUtilityTestHelper {
     @Test
     public void addPluginWithoutVersionTest() throws IOException, XmlPullParserException {
         Model pomModelBeforeChange = getOriginalPomModel("pom.xml");
-        assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 1);
+        assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 3);
         assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getGroupId(), "org.codehaus.mojo");
         assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getArtifactId(), "cobertura-maven-plugin");
 
@@ -54,7 +59,7 @@ public class PomAddPluginTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
 
         Model pomModelAfterChange = getTransformedPomModel("pom.xml");
-        assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 2);
+        assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 4);
         Plugin plugin = new Plugin();
         plugin.setGroupId("org.apache.maven.plugins");
         plugin.setArtifactId("maven-javadoc-plugin");
@@ -65,7 +70,7 @@ public class PomAddPluginTest extends TransformationUtilityTestHelper {
     @Test
     public void defaultIfPresentTest() throws IOException, XmlPullParserException {
         Model pomModelBeforeChange = getOriginalPomModel("pom.xml");
-        assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 1);
+        assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 3);
         assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getGroupId(), "org.codehaus.mojo");
         assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getArtifactId(), "cobertura-maven-plugin");
 
@@ -77,8 +82,8 @@ public class PomAddPluginTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getException().getMessage(), "Plugin org.codehaus.mojo:cobertura-maven-plugin is already present in pom.xml");
 
         Model pomModelAfterChange = getTransformedPomModel("pom.xml");
-        assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 1);
-        assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 1);
+        assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 3);
+        assertEquals(pomModelAfterChange.getBuild().getPlugins().size(), 3);
         assertEquals(pomModelAfterChange.getBuild().getPlugins().get(0).getGroupId(), "org.codehaus.mojo");
         assertEquals(pomModelAfterChange.getBuild().getPlugins().get(0).getArtifactId(), "cobertura-maven-plugin");
 
@@ -88,7 +93,7 @@ public class PomAddPluginTest extends TransformationUtilityTestHelper {
     @Test
     public void failureHandlingTest() throws IOException, XmlPullParserException {
         Model pomModelBeforeChange = getOriginalPomModel("pom.xml");
-        assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 1);
+        assertEquals(pomModelBeforeChange.getBuild().getPlugins().size(), 3);
         assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getGroupId(), "org.codehaus.mojo");
         assertEquals(pomModelBeforeChange.getBuild().getPlugins().get(0).getArtifactId(), "cobertura-maven-plugin");
 

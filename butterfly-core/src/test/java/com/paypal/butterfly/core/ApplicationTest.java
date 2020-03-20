@@ -12,13 +12,12 @@ import java.io.File;
  */
 public class ApplicationTest {
 
-    private Application application = new Application(
-            new File(this.getClass().getClassLoader().getResource("testTransformation").getFile()));
+    private ApplicationImpl application = new ApplicationImpl(new File(this.getClass().getClassLoader().getResource("test-app-2").getFile()));
 
     @Test
     public void testGetFolder() {
         Assert.assertEquals(application.getFolder(),
-                (new File(this.getClass().getClassLoader().getResource("testTransformation").getFile())));
+                (new File(this.getClass().getClassLoader().getResource("test-app-2").getFile())));
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class,
@@ -42,13 +41,13 @@ public class ApplicationTest {
     )
     public void testSetFolderWithNoDirectory() {
         application.setFolder(new File(
-                this.getClass().getClassLoader().getResource("testTransformation/test.properties").getFile()));
+                this.getClass().getClassLoader().getResource("test-app-2/placeHolder.txt").getFile()));
     }
 
     @Test
     public void testToString() {
         Assert.assertEquals(application.toString(),
-                (new File(this.getClass().getClassLoader().getResource("testTransformation").getFile()).getAbsolutePath()));
+                (new File(this.getClass().getClassLoader().getResource("test-app-2").getFile()).getAbsolutePath()));
     }
 
 }

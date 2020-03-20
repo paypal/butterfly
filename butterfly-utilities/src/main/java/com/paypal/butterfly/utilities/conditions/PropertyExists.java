@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
  * Checks if a particular property exists in a property file.
  * The property name can be defined explicitly, via {@link #setPropertyName(String)},
  * or as a regular expression, via {@link #setPropertyNameRegex(String)}.
+ * Returns an error if the file to be evaluated is not a well formed properties file.
  *
  * @author facarvalho
  */
@@ -25,9 +26,23 @@ public class PropertyExists extends SingleCondition<PropertyExists> {
     private String propertyName;
     private String propertyNameRegex;
 
+    /**
+     * Checks if a particular property exists in a property file.
+     * The property name can be defined explicitly, via {@link #setPropertyName(String)},
+     * or as a regular expression, via {@link #setPropertyNameRegex(String)}.
+     * Returns an error if the file to be evaluated is not a well formed properties file.
+     */
     public PropertyExists() {
     }
 
+    /**
+     * Checks if a particular property exists in a property file.
+     * The property name can be defined explicitly, via {@link #setPropertyName(String)},
+     * or as a regular expression, via {@link #setPropertyNameRegex(String)}.
+     * Returns an error if the file to be evaluated is not a well formed properties file.
+     *
+     * @param propertyName the name of the property to be checked
+     */
     public PropertyExists(String propertyName) {
         setPropertyName(propertyName);
     }

@@ -1,18 +1,15 @@
 package com.paypal.butterfly.cli;
 
+import com.paypal.butterfly.api.ButterflyFacade;
+import com.paypal.butterfly.api.Configuration;
+import com.paypal.butterfly.api.TransformationResult;
 import com.paypal.butterfly.cli.logging.LogConfigurator;
 import com.paypal.butterfly.cli.logging.LogFileDefiner;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import com.paypal.butterfly.extensions.api.exception.ButterflyException;
 import com.paypal.butterfly.extensions.api.exception.ButterflyRuntimeException;
 import com.paypal.butterfly.extensions.api.exception.TemplateResolutionException;
-import com.paypal.butterfly.extensions.api.upgrade.UpgradePath;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
-import com.paypal.butterfly.facade.ButterflyFacade;
-import com.paypal.butterfly.facade.ButterflyProperties;
-import com.paypal.butterfly.facade.Configuration;
-import com.paypal.butterfly.facade.TransformationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -21,8 +18,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
 
 /**
  * Butterfly CLI runner
@@ -30,7 +31,7 @@ import java.util.List;
  * @author facarvalho
  */
 @Component
-public class ButterflyCliRunner extends ButterflyCliOption {
+class ButterflyCliRunner extends ButterflyCliOption {
 
     @Autowired
     private LogConfigurator logConfigurator;
@@ -40,21 +41,26 @@ public class ButterflyCliRunner extends ButterflyCliOption {
 
     private static final Logger logger = LoggerFactory.getLogger(ButterflyCliRunner.class);
 
-    public ButterflyCliRun run() throws IOException {
+    ButterflyCliRun run(File butterflyHome, String butterflyBanner) {
         ButterflyCliRun run = new ButterflyCliRun();
-        Configuration configuration = null;
-        run.setButterflyVersion(ButterflyProperties.getString("butterfly.version"));
+        Configuration configuration;
+        run.setButterflyVersion(butterflyFacade.getButterflyVersion());
 
-        logger.info(ButterflyCliApp.getBanner());
+        logger.info(butterflyBanner);
 
         if (optionSet == null || optionSet.has(CLI_OPTION_HELP) || (!optionSet.hasOptions() && optionSet.nonOptionArguments() == null)){
             logger.info("");
             logger.info("Usage:\t butterfly [options] [application folder]");
             logger.info("");
             logger.info("The following options are available:\n");
-            optionParser.printHelpOn(System.out);
-            run.setExitStatus(0);
-            return run;
+            try {
+                optionParser.printHelpOn(System.out);
+                run.setExitStatus(0);
+                return run;
+            } catch (IOException e) {
+                registerError(run, "An error occurred when printing help", e);
+                return run;
+            }
         }
 
         if (optionSet.has(CLI_OPTION_VERBOSE)) {
@@ -65,7 +71,7 @@ public class ButterflyCliRunner extends ButterflyCliOption {
         if (optionSet.has(CLI_OPTION_DEBUG)) {
             logConfigurator.setDebugMode(true);
             logger.info("Debug mode is ON");
-            logger.info("Butterfly home: {}", ButterflyCliApp.getButterflyHome());
+            logger.info("Butterfly home: {}", butterflyHome);
             logger.info("JAVA_HOME: {}", System.getenv("JAVA_HOME"));
             logger.info("java.version: {}", System.getProperty("java.version"));
             logger.info("java.runtime.version: {}", System.getProperty("java.runtime.version"));
@@ -74,11 +80,21 @@ public class ButterflyCliRunner extends ButterflyCliOption {
 
         if (optionSet.has(CLI_OPTION_LIST_EXTENSIONS)) {
             try {
-                printExtensionsList(butterflyFacade);
+                if (butterflyFacade.getExtensions().isEmpty()) {
+                    logger.info("There are no registered extensions");
+                } else {
+                    logger.info("See registered extensions below (shortcut in parenthesis)");
+                    for (Extension e : butterflyFacade.getExtensions()) {
+                        ExtensionMetaData extensionMetaData = ExtensionMetaData.newExtensionMetaData(e);
+                        run.addExtensionMetaData(extensionMetaData);
+                        printExtensionMetaData(extensionMetaData);
+                    }
+                }
+
                 run.setExitStatus(0);
                 return run;
-            } catch (Exception e) {
-                registerError(run, "An error occurred when listing extensions has occurred", e);
+            } catch (Throwable e) {
+                registerError(run, "An error occurred when listing extensions", e);
                 return run;
             }
         }
@@ -97,7 +113,6 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             registerError(run, errorMessage);
             return run;
         }
-        run.setApplication(applicationFolder);
 
         File transformedApplicationFolder = (File) optionSet.valueOf(CLI_OPTION_TRANSFORMED_APP_FOLDER);
 
@@ -118,11 +133,12 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             logger.info("Transformation template associated with shortcut {}: {}", shortcut, templateClass.getName());
         } else {
             try {
-                templateClass = butterflyFacade.automaticResolution(applicationFolder);
-                if (templateClass == null) {
+                Optional<Class<? extends TransformationTemplate>> resolution = butterflyFacade.automaticResolution(applicationFolder);
+                if (!resolution.isPresent()) {
                     registerError(run, "No transformation template could be resolved for this application. Specify it explicitly using option -t or -s.");
                     return run;
                 }
+                templateClass = resolution.get();
                 logger.info("Transformation template automatically resolved");
             } catch (TemplateResolutionException e) {
                 registerError(run, e.getMessage());
@@ -134,159 +150,155 @@ public class ButterflyCliRunner extends ButterflyCliOption {
             logger.info("-z option has been set, transformed application will be placed into a zip file");
         }
 
+        // Setting transformation specific properties
+        Properties properties = new Properties();
+        try {
+            if (optionSet.has(CLI_OPTION_INLINE_PROPERTIES)) {
+                String inlineProperties = (String) optionSet.valueOf(CLI_OPTION_INLINE_PROPERTIES);
+                try (StringReader stringReader = new StringReader(inlineProperties.replace(';', '\n'))) {
+                    properties.load(stringReader);
+                }
+            } else if (optionSet.has(CLI_OPTION_PROPERTIES_FILE)) {
+                File propertiesFile = (File) optionSet.valueOf(CLI_OPTION_PROPERTIES_FILE);
+                try (FileInputStream fileInputStream = new FileInputStream(propertiesFile)) {
+                    properties.load(fileInputStream);
+                }
+            }
+        } catch (Exception e) {
+            registerError(run, "Error when reading or parsing the specified properties", e);
+            return run;
+        }
+
         if (optionSet.has(CLI_OPTION_MODIFY_ORIGINAL_FOLDER)) {
-            configuration = new Configuration();
+            configuration = butterflyFacade.newConfiguration(properties);
+        } else if (transformedApplicationFolder == null) {
+            configuration = butterflyFacade.newConfiguration(properties, createZip);
         } else {
-            configuration = new Configuration(transformedApplicationFolder, createZip);
+            configuration = butterflyFacade.newConfiguration(properties, transformedApplicationFolder, createZip);
         }
 
         // Setting extensions log level to DEBUG
         if(optionSet.has(CLI_OPTION_DEBUG)) {
-            Extension extension = butterflyFacade.getRegisteredExtension();
-            if (extension != null) {
+            List<Extension> registeredExtensions = butterflyFacade.getExtensions();
+            for(Extension extension : registeredExtensions) {
                 logger.info("Setting DEBUG log level for extension {}", extension.getClass().getName());
                 logConfigurator.setLoggerLevel(extension.getClass().getPackage().getName(), Level.DEBUG);
             }
         }
+
+        TransformationResult transformationResult = null;
 
         try {
             if (templateClass == null) {
                 templateClass = (Class<? extends TransformationTemplate>) Class.forName(templateClassName);
             }
 
-            run.setTransformationTemplate(templateClass.getName());
-
-            TransformationResult transformationResult = null;
             if (UpgradeStep.class.isAssignableFrom(templateClass)) {
                 Class<? extends UpgradeStep> firstStepClass = (Class<? extends UpgradeStep>) templateClass;
                 String upgradeVersion = (String) optionSet.valueOf(CLI_OPTION_UPGRADE_VERSION);
-                UpgradePath upgradePath = new UpgradePath(firstStepClass, upgradeVersion);
+                String originalVersion = firstStepClass.newInstance().getCurrentVersion();
 
-                logger.info("Performing upgrade from version {} to version {} (it might take a few seconds)", upgradePath.getOriginalVersion(), upgradePath.getUpgradeVersion());
-                transformationResult = butterflyFacade.transform(applicationFolder, upgradePath, configuration);
+                logger.info("Performing upgrade from version {} to version {} (it might take a few seconds)", originalVersion, upgradeVersion);
+                transformationResult = butterflyFacade.transform(applicationFolder, firstStepClass, upgradeVersion, configuration).get();
             } else {
                 logger.info("Performing transformation (it might take a few seconds)");
-                transformationResult = butterflyFacade.transform(applicationFolder, templateClass, configuration);
+                transformationResult = butterflyFacade.transform(applicationFolder, templateClass, null, configuration).get();
             }
-            logger.info("");
-            logger.info("----------------------------------------------");
-            logger.info("Application has been transformed successfully!");
-            logger.info("----------------------------------------------");
-            logger.info("Transformed application folder: {}", transformationResult.getTransformedApplicationLocation());
-            logger.info("Check log file for details: {}", LogFileDefiner.getLogFile());
 
-            run.setTransformedApplication(transformationResult.getTransformedApplicationLocation());
             run.setLogFile(LogFileDefiner.getLogFile());
 
-            if (transformationResult.hasManualInstructions()) {
+            if (transformationResult.isSuccessful()) {
                 logger.info("");
-                logger.info(" **************************************************************************************");
-                logger.info(" *** THIS APPLICATION REQUIRES POST-TRANSFORMATION MANUAL INSTRUCTIONS");
-                logger.info(" *** Read manual instructions document for further details:");
-                logger.info(" *** {}", transformationResult.getManualInstructionsFile());
-                logger.info(" **************************************************************************************");
+                logger.info("----------------------------------------------");
+                logger.info("Application has been transformed successfully!");
+                logger.info("----------------------------------------------");
+                logger.info("Transformed application folder: {}", transformationResult.getTransformedApplicationDir());
+                logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
 
-                run.setManualInstructionsFile(transformationResult.getManualInstructionsFile());
+                if (transformationResult.hasManualInstructions()) {
+                    logger.info("");
+                    logger.info(" **************************************************************************************");
+                    logger.info(" *** THIS APPLICATION REQUIRES POST-TRANSFORMATION MANUAL INSTRUCTIONS");
+                    logger.info(" *** Read manual instructions document for further details:");
+                    logger.info(" *** {}", transformationResult.getManualInstructionsFile());
+                    logger.info(" **************************************************************************************");
+                }
+                logger.info("");
+            } else {
+                transformationAbort(run, transformationResult.getAbortDetails().getAbortMessage());
             }
-            logger.info("");
-        } catch (ButterflyException | ButterflyRuntimeException e) {
-            logger.info("");
-            logger.info("--------------------------------------------------------------------------------------------");
-            logger.error("*** Transformation has been aborted due to:");
-            logger.error("*** {}", e.getMessage());
-            logger.info("--------------------------------------------------------------------------------------------");
-            logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
-
-            run.setErrorMessage("Transformation has been aborted due to: " + e.getMessage());
-            run.setExceptionMessage(e.getMessage());
-            run.setExitStatus(1);
-            return run;
+        } catch (ButterflyRuntimeException e) {
+            transformationAbort(run, e.getMessage());
         } catch (ClassNotFoundException e) {
             registerError(run, "The specified transformation template class has not been found", e);
-            return run;
         } catch (IllegalArgumentException e) {
             registerError(run, "This transformation request input arguments are invalid", e);
-            return run;
-        } catch (Exception e) {
-            registerError(run, "An unexpected exception happened when processing this transformation request", e);
-            return run;
+        } catch (Throwable e) {
+            registerError(run, "An error happened when processing this transformation request", e);
+        } finally {
+            run.setTransformationResult(transformationResult);
         }
 
         return run;
     }
 
-    private Class<? extends TransformationTemplate> getTemplateClass(int shortcut) {
-        Extension extension = butterflyFacade.getRegisteredExtension();
+    private void transformationAbort(ButterflyCliRun run, String abortMessage) {
+        logger.info("");
+        logger.info("--------------------------------------------------------------------------------------------");
+        logger.error("*** Transformation has been aborted due to:");
+        logger.error("*** {}", abortMessage);
+        logger.info("--------------------------------------------------------------------------------------------");
+        logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
 
-        if(extension == null) {
+        run.setErrorMessage("Transformation has been aborted due to: " + abortMessage);
+        run.setExceptionMessage(abortMessage);
+        run.setExitStatus(1);
+    }
+
+    private Class<? extends TransformationTemplate> getTemplateClass(int shortcut) {
+        List<Extension> registeredExtensions = butterflyFacade.getExtensions();
+
+        if(registeredExtensions.size() == 0) {
             logger.info("There are no registered extensions");
             return null;
         }
 
         int shortcutCount = 1;
-        for(Object templateObj : extension.getTemplateClasses().toArray()) {
-            if (shortcutCount == shortcut) {
-                return (Class<? extends TransformationTemplate>) templateObj;
+        for(Extension extension : registeredExtensions) {
+            for (Object templateObj : extension.getTemplateClasses()) {
+                if (shortcutCount == shortcut) {
+                    return (Class<? extends TransformationTemplate>) templateObj;
+                }
+                shortcutCount++;
             }
-            shortcutCount++;
         }
 
         return null;
     }
 
-    private static void printExtensionsList(ButterflyFacade butterflyFacade) throws IllegalAccessException, InstantiationException {
-        Extension extension = butterflyFacade.getRegisteredExtension();
-        if(extension == null) {
-            logger.info("There are no registered extensions");
-            return;
-        }
-
-        logger.info("See registered extensions below (shortcut in parenthesis)");
-
-        Class<? extends TransformationTemplate> template;
-        int shortcut = 1;
-
-        String version = (StringUtils.isEmpty(extension.getVersion()) ? "" : String.format("(version %s)", extension.getVersion()));
+    private void printExtensionMetaData(ExtensionMetaData extensionMetaData) {
+        String version = (StringUtils.isEmpty(extensionMetaData.getVersion()) ? "" : String.format("(version %s)", extensionMetaData.getVersion()));
 
         logger.info("");
-        logger.info("- {}: {} {}", extension, extension.getDescription(), version);
-        for(Object templateObj : extension.getTemplateClasses().toArray()) {
-            template = (Class<? extends TransformationTemplate>) templateObj;
-            logger.info("\t ({}) - [{}] \t {} \t {}", shortcut++, ExtensionTypeInitial.getFromClass(template), template.getName(), template.newInstance().getDescription());
-
-        }
+        logger.info("- {}: {} {}", extensionMetaData.getName(), extensionMetaData.getDescription(), version);
+        extensionMetaData.getTemplates().forEach(t -> logger.info("\t ({}) - [{}] \t {} \t {}", t.getShortcut(), t.getTemplateType().getInitials(), t.getName(), t.getDescription()));
     }
 
     private void registerError(ButterflyCliRun run, String errorMessage) {
         registerError(run, errorMessage, null);
     }
 
-    private void registerError(ButterflyCliRun run, String errorMessage, Exception exception) {
-        if (exception == null || !logConfigurator.isVerboseMode()) {
+    private void registerError(ButterflyCliRun run, String errorMessage, Throwable throwable) {
+        if (throwable == null || !logConfigurator.isVerboseMode()) {
             logger.error(errorMessage);
         } else {
-            logger.error(errorMessage, exception);
+            logger.error(errorMessage, throwable);
         }
-        if (exception != null) {
-            run.setExceptionMessage(exception.getMessage());
+        if (throwable != null) {
+            run.setExceptionMessage(throwable.getMessage());
         }
         run.setErrorMessage(errorMessage);
         run.setExitStatus(1);
-    }
-
-    private enum ExtensionTypeInitial {
-        TT, US, VC;
-
-        public static ExtensionTypeInitial getFromClass(Class<? extends TransformationTemplate> template) {
-            if(UpgradeStep.class.isAssignableFrom(template)) return US;
-
-            if(TransformationTemplate.class.isAssignableFrom(template)) return TT;
-
-            // TODO
-//            if(Validation.class.isAssignableFrom(template)) return VC;
-
-            throw new IllegalArgumentException("Class " + template.getName() + " is not recognized as an extension type");
-        }
     }
 
 }

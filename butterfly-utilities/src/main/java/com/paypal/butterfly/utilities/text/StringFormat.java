@@ -4,17 +4,15 @@ import com.paypal.butterfly.extensions.api.TUExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationUtility;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
+import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 
 import java.io.File;
 import java.util.Arrays;
 
 /**
- * Registers a new transformation context
- * attribute by applying one or more existent
- * String transformation context attributes to
- * {@link String#format(String, Object...)}.
- * The setting order of attributes will be
- * honored when applying the formatting.
+ * Applies one or more transformation context attributes to a format String, using {@link String#format(String, Object...)}.
+ * The order of attributes will be honored when applying the formatting.
+ * If the String format and the arguments don't match in type or number, an error is returned.
  *
  * @author facarvalho
  */
@@ -23,21 +21,45 @@ public class StringFormat extends TransformationUtility<StringFormat> {
     private static final String DESCRIPTION = "Apply transformation context attributes %s to '%s'";
 
     private String format;
-    private String[] attributeNames;
+    private String[] attributeNames = new String[]{};
 
+    /**
+     * Applies one or more transformation context attributes to a format String, using {@link String#format(String, Object...)}.
+     * The order of attributes will be honored when applying the formatting.
+     * If the String format and the arguments don't match in type or number, an error is returned.
+     */
     public StringFormat() {
     }
 
+    /**
+     * Applies one or more transformation context attributes to a format String, using {@link String#format(String, Object...)}.
+     * The order of attributes will be honored when applying the formatting.
+     * If the String format and the arguments don't match in type or number, an error is returned.
+     *
+     * @param format the String format to be applied
+     */
     public StringFormat(String format) {
         setFormat(format);
     }
 
+    /**
+     * Set the String format to be applied
+     *
+     * @param format the String format to be applied
+     * @return this utility instance
+     */
     public StringFormat setFormat(String format) {
         checkForBlankString("Format", format);
         this.format = format;
         return this;
     }
 
+    /**
+     * Set the name of the transformation context attributes to be applied to the String format
+     *
+     * @param attributeNames the name of the transformation context attributes to be applied to the String format
+     * @return this utility instance
+     */
     public StringFormat setAttributeNames(String... attributeNames) {
         if(attributeNames == null || attributeNames.length == 0) {
             throw new TransformationDefinitionException("Attribute names cannot be null or empty");
@@ -63,14 +85,15 @@ public class StringFormat extends TransformationUtility<StringFormat> {
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
         TUExecutionResult result = null;
 
-        if (attributeNames != null) {
-            String[] attributeValues = new String[attributeNames.length];
-            for (int i = 0; i < attributeNames.length; i++) {
-                attributeValues[i] = (String) transformationContext.get(attributeNames[i]);
-            }
-            result = TUExecutionResult.value(this, String.format(format, attributeValues));
-        } else {
-            result = TUExecutionResult.warning(this, format, "No attributes have been specified");
+        String[] attributeValues = new String[attributeNames.length];
+        for (int i = 0; i < attributeNames.length; i++) {
+            attributeValues[i] = (String) transformationContext.get(attributeNames[i]);
+        }
+
+        try {
+            result = TUExecutionResult.value(this, String.format(format, (Object[]) attributeValues));
+        } catch(RuntimeException e) {
+            result = TUExecutionResult.error(this, new TransformationUtilityException("String format and arguments don't match", e));
         }
 
         return result;

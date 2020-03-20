@@ -69,6 +69,17 @@ public class RunScript extends TransformationUtility<RunScript> {
         return this;
     }
 
+    /**
+     * Adds a new transformation context attribute to be used in the script.
+     * It has to be referred in the script text by its key, which acts as
+     * a placeholder. If the transformation context attribute does not exist,
+     * then {@code null} will be inserted in the script on its place.
+     *
+     * @param key the attribute key name, to be used as placeholder in the script text
+     * @param attributeName the name of the transformation context attribute name whose value
+     *                      should be inserted in the script, replacing the key
+     * @return this utility instance
+     */
     public RunScript addAttribute(String key, String attributeName) {
         checkForBlankString("key", key);
         checkForBlankString("attributeName", attributeName);

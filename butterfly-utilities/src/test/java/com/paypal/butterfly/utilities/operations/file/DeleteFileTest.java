@@ -9,6 +9,11 @@ import java.io.File;
 
 import static org.testng.Assert.*;
 
+/**
+ * Unit test class for {@link DeleteFile}
+ *
+ * @author facarvalho
+ */
 public class DeleteFileTest extends TransformationUtilityTestHelper {
 
     @Test
@@ -43,6 +48,7 @@ public class DeleteFileTest extends TransformationUtilityTestHelper {
         assertEquals(deleteFile.getDescription(), "Delete file null");
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
         assertEquals(executionResult.getException().getMessage(), "No file has been removed because the file path has not been resolved");
+        assertNull(executionResult.getException().getCause());
     }
 
 }

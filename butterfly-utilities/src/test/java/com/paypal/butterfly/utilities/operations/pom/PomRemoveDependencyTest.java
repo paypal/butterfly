@@ -12,12 +12,15 @@ import java.io.IOException;
 
 import static org.testng.Assert.*;
 
+/**
+ * Unit test for {@link PomRemoveDependency}
+ */
 public class PomRemoveDependencyTest extends TransformationUtilityTestHelper {
 
 	private static final String DEPENDENCY_NOT_REMOVED_MSG = "Dependency com.test:not-present has NOT been removed from POM file /pom.xml because it is not present";
 
 	@Test
-	public void miscTest() throws CloneNotSupportedException {
+	public void miscTest() {
 		PomRemoveDependency pomRemoveDependency = new PomRemoveDependency("org.springframework.boot", "spring-boot-dependencies").relative("pom.xml");
 
 		assertEquals(pomRemoveDependency.getDescription(), "Remove dependency org.springframework.boot:spring-boot-dependencies from POM file pom.xml");
@@ -89,7 +92,7 @@ public class PomRemoveDependencyTest extends TransformationUtilityTestHelper {
 	}
 
 	@Test
-	public void getDescriptionTest() throws IOException, XmlPullParserException {
+	public void getDescriptionTest() {
 		PomRemoveDependency uut = new PomRemoveDependency("org.testng", "testng").relative("pom.xml");
 
 		String description = uut.getDescription();
@@ -111,8 +114,7 @@ public class PomRemoveDependencyTest extends TransformationUtilityTestHelper {
 	private void executeAndAssertSuccess(AbstractPomOperation<?> pomOperation) {
 		TOExecutionResult executionResult = pomOperation.execution(transformedAppFolder, transformationContext);
 		assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
-		assertEquals(executionResult.getDetails(),
-				"Dependency org.springframework.boot:spring-boot-dependencies has been removed from POM file /pom.xml");
+		assertEquals(executionResult.getDetails(), "Dependency org.springframework.boot:spring-boot-dependencies has been removed from POM file /pom.xml");
 	}
 
 	private void assertExceptionOccurred(TOExecutionResult executionResult) {

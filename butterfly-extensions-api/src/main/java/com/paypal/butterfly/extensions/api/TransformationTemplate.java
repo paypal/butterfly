@@ -13,11 +13,34 @@ import java.util.*;
  */
 public abstract class TransformationTemplate implements TransformationUtilityList {
 
+    // This is the name of the transformation context attribute that holds a File object pointing to
+    // the baseline application, in case of blank transformations
+    public static final String BASELINE = "BASELINE_APPLICATION_LOCATION";
+
     private List<TransformationUtility> utilityList = new ArrayList<>();
 
     private Set<String> utilityNames = new HashSet<>();
 
-    private String name = getExtensionClass().getSimpleName() + ":" + getClass().getSimpleName();;
+    private String name;
+
+    // Flag stating whether this is a blank transformation or not
+    // Commonly transformations are done by first copying all files and folders the current application has, and then performing a set of ordered operations,
+    // one by one, on top of those files, until the final result is reached.
+    // However, a few times transformations might be so massive that it would make more sense to take a reverse approach, starting from a blank folder,
+    // followed by a set of copies from the original application folder plus eventual operations.
+    // This reverse approach is called "blank transformation".
+    private boolean blank = false;
+
+    public TransformationTemplate() {
+        setName();
+    }
+
+    private void setName() {
+        String extensionPrefix = (getExtensionClass() == null? "NO_EXTENSION" : getExtensionClass().getSimpleName());
+        String templateSuffix = getSimpleClassName();
+
+        name = extensionPrefix + ":" + templateSuffix;
+    }
 
     /**
      * Returns the class of the extension this transformation
@@ -52,17 +75,22 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
     @Override
     public final String add(TransformationUtility utility) {
         if (utility.getParent() != null) {
-            String exceptionMessage = String.format("Invalid attempt to add already registered transformation utility %s to template transformation utility %s", utility.getName(), name);
+            String exceptionMessage = String.format("Invalid attempt to add already registered transformation utility %s to transformation template %s", utility.getName(), name);
             throw new  TransformationDefinitionException(exceptionMessage);
         }
         // TODO
         // Here I should check the TUs inside of utilities groups and multiple operations as well
         if (utility.getName() != null && utilityNames.contains(utility.getName())) {
-            String exceptionMessage = String.format("Invalid attempt to add transformation utility %s to template transformation utility %s. Its name is already registered", utility.getName(), name);
+            String exceptionMessage = String.format("Invalid attempt to add transformation utility %s to transformation template %s. Its name is already registered", utility.getName(), name);
             throw new  TransformationDefinitionException(exceptionMessage);
         }
         if (!utility.isFileSet()) {
-            String exceptionMessage = String.format("Neither absolute, nor relative path, have been set for transformation utility %s", utility.getName());
+            String exceptionMessage;
+            if (utility.getName() == null) {
+                exceptionMessage = "Neither absolute, nor relative path, have been set for this transformation utility";
+            } else {
+                exceptionMessage = String.format("Neither absolute, nor relative path, have been set for transformation utility %s", utility.getName());
+            }
             throw new  TransformationDefinitionException(exceptionMessage);
         }
 
@@ -260,6 +288,46 @@ public abstract class TransformationTemplate implements TransformationUtilityLis
      */
     public String getApplicationName() {
         return null;
+    }
+
+    /**
+     * Returns the transformation template class simple name
+     * (see {@link Class#getSimpleName()}), or "AnonymousTransformationTemplate"
+     * if that is an anonymous class
+     *
+     * @return the transformation template class simple name
+     */
+    protected String getSimpleClassName() {
+        if (getClass().isAnonymousClass()) {
+            return "AnonymousTransformationTemplate";
+        } else {
+            return getClass().getSimpleName();
+        }
+    }
+
+    /**
+     * Sets whether this is a blank transformation template or not.
+     * Commonly transformations are done by first copying all files and folders the current application has, and then performing a set of ordered operations,
+     * one by one, on top of those files, until the final result is reached.
+     * However, a few times transformations might be so massive that it would make more sense to take a reverse approach, starting from a blank folder,
+     * followed by a set of copies from the original application folder plus eventual operations.
+     * This reverse approach is called "blank transformation".
+     * By default transformation templates are not blank. Notice that {@link com.paypal.butterfly.extensions.api.upgrade.UpgradeStep} cannot be blank.
+     *
+     * @param blank whether this is a blank transformation template or not
+     */
+    public void setBlank(boolean blank) {
+        this.blank = blank;
+    }
+
+    /**
+     * Returns true if this is a blank transformation template.
+     * See {@link #setBlank(boolean)}.
+     *
+     * @return true if this is a blank transformation template
+     */
+    public boolean isBlank() {
+        return blank;
     }
 
 }

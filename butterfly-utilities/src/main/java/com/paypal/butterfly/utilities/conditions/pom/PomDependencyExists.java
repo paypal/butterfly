@@ -15,6 +15,7 @@ import java.io.IOException;
 
 /**
  * Checks if a particular Maven dependency exists in a Maven pom file.
+ * Returns an error if the file to be evaluated is not a well formed XML file.
  *
  * @author facarvalho
  */
@@ -30,7 +31,8 @@ public class PomDependencyExists extends SingleCondition<PomDependencyExists> {
     }
 
     /**
-     * Condition to check if a particular Maven dependency exists in a Maven pom files
+     * Condition to check if a particular Maven dependency exists in a Maven pom files.
+     * Returns an error if the file to be evaluated is not a well formed XML file.
      *
      * @param groupId managed dependency group id
      * @param artifactId managed dependency artifact id
@@ -41,7 +43,8 @@ public class PomDependencyExists extends SingleCondition<PomDependencyExists> {
     }
 
     /**
-     * Condition to check if a particular Maven dependency exists in a Maven pom files
+     * Condition to check if a particular Maven dependency exists in a Maven pom files.
+     * Returns an error if the file to be evaluated is not a well formed XML file.
      *
      * @param groupId managed dependency group id
      * @param artifactId managed dependency artifact id
@@ -105,7 +108,7 @@ public class PomDependencyExists extends SingleCondition<PomDependencyExists> {
                     break;
                 }
             }
-        } catch (XmlPullParserException|IOException e) {
+        } catch (XmlPullParserException | IOException e) {
             String pomFileRelative = getRelativePath(transformedAppFolder, file);
             String dependency = String.format("%s:%s%s", groupId, artifactId, (version == null ? "" : ":" + version));
             String details = String.format("Exception happened when checking if POM dependency %s exists in %s", dependency, pomFileRelative);

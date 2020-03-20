@@ -1,7 +1,12 @@
 package com.paypal.butterfly.cli;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import com.paypal.butterfly.api.TransformationResult;
 
 /**
  * This is just a POJO that represents an execution of
@@ -11,118 +16,79 @@ import java.util.Arrays;
  *
  * @author facarvalho
  */
-public class ButterflyCliRun {
+class ButterflyCliRun {
 
     private String butterflyVersion;
-
     private String[] inputArguments;
-
-    private String application;
-
-    private String transformationTemplate;
-
     private int exitStatus;
-
-    private String transformedApplication;
-
-    private String logFile;
-
-    private String manualInstructionsFile;
-
-    // TODO
-    // Metrics are not first class citizen yet
-    // They work as an opt-in feature
-    private String metricsFile;
-
+    private File logFile;
     private String errorMessage;
-
     private String exceptionMessage;
+    private TransformationResult transformationResult;
+    private List<ExtensionMetaData> extensions = new ArrayList<>();
 
-    public void setButterflyVersion(String butterflyVersion) {
+    void setButterflyVersion(String butterflyVersion) {
         this.butterflyVersion = butterflyVersion;
     }
 
-    public void setInputArguments(String[] inputArguments) {
+    void setInputArguments(String[] inputArguments) {
         this.inputArguments = Arrays.copyOf(inputArguments, inputArguments.length);
     }
 
-    public void setApplication(File application) {
-        this.application = application.getAbsolutePath();
-    }
-
-    public void setTransformationTemplate(String transformationTemplate) {
-        this.transformationTemplate = transformationTemplate;
-    }
-
-    public void setExitStatus(int exitStatus) {
+    void setExitStatus(int exitStatus) {
         this.exitStatus = exitStatus;
     }
 
-    public void setTransformedApplication(File transformedApplication) {
-        this.transformedApplication = transformedApplication.getAbsolutePath();
+    void setLogFile(File logFile) {
+        this.logFile = logFile;
     }
 
-    public void setLogFile(File logFile) {
-        this.logFile = logFile.getAbsolutePath();
-    }
-
-    public void setManualInstructionsFile(File manualInstructionsFile) {
-        this.manualInstructionsFile = manualInstructionsFile.getAbsolutePath();
-    }
-
-    public void setMetricsFile(File metricsFile) {
-        this.metricsFile = metricsFile.getAbsolutePath();
-    }
-
-    public void setErrorMessage(String errorMessage) {
+    void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
-    public void setExceptionMessage(String exceptionMessage) {
+    void setExceptionMessage(String exceptionMessage) {
         this.exceptionMessage = exceptionMessage;
     }
 
-    public int getExitStatus() {
+    void setTransformationResult(TransformationResult transformationResult) {
+        this.transformationResult = transformationResult;
+    }
+
+    void addExtensionMetaData(ExtensionMetaData extensionMetaData) {
+        extensions.add(extensionMetaData);
+    }
+
+    int getExitStatus() {
         return exitStatus;
     }
 
-    public String getButterflyVersion() {
+    String getButterflyVersion() {
         return butterflyVersion;
     }
 
-    public String[] getInputArguments() {
+    String[] getInputArguments() {
         return Arrays.copyOf(inputArguments, inputArguments.length);
     }
 
-    public String getApplication() {
-        return application;
-    }
-
-    public String getTransformationTemplate() {
-        return transformationTemplate;
-    }
-
-    public String getTransformedApplication() {
-        return transformedApplication;
-    }
-
-    public String getLogFile() {
+    File getLogFile() {
         return logFile;
     }
 
-    public String getManualInstructionsFile() {
-        return manualInstructionsFile;
-    }
-
-    public String getMetricsFile() {
-        return metricsFile;
-    }
-
-    public String getErrorMessage() {
+    String getErrorMessage() {
         return errorMessage;
     }
 
-    public String getExceptionMessage() {
+    String getExceptionMessage() {
         return exceptionMessage;
     }
+
+    TransformationResult getTransformationResult() {
+        return transformationResult;
+    }
+
+    List<ExtensionMetaData> getExtensions() {
+        return Collections.unmodifiableList(extensions);
+    }
+
 }

@@ -115,7 +115,7 @@ public class PomChangeParentVersionTest extends TransformationUtilityTestHelper 
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertEquals(pomChangeParentVersion.getDescription(), "Change artifact's parent version in POM file /src/main/resources/dogs.yaml");
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
-        assertEquals(executionResult.getException().getMessage(), "An error happened when reading XML file /src/main/resources/dogs.yaml");
+        assertEquals(executionResult.getException().getMessage(), "An exception happened when reading XML file /src/main/resources/dogs.yaml");
         assertNotChangedFile("/src/main/resources/dogs.yaml");
 
         executionResult = pomChangeParentVersion.clone().failIfNotPresent().execution(transformedAppFolder, transformationContext);

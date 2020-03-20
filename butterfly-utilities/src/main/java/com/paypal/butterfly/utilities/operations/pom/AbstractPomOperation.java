@@ -3,6 +3,7 @@ package com.paypal.butterfly.utilities.operations.pom;
 import com.paypal.butterfly.extensions.api.TOExecutionResult;
 import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
@@ -40,8 +41,8 @@ abstract class AbstractPomOperation<T extends AbstractPomOperation> extends Tran
                 MavenXpp3Writer writer = new MavenXpp3Writer();
                 writer.write(fileOutputStream, model);
             }
-        } catch (XmlPullParserException|IOException e) {
-            result = TOExecutionResult.error(this, e);
+        } catch (XmlPullParserException | IOException e) {
+            result = TOExecutionResult.error(this, new TransformationOperationException("POM file could not be modified", e));
         } finally {
             try {
                 if (fileInputStream != null) try {

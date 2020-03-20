@@ -1,11 +1,9 @@
 package com.paypal.butterfly.utilities.operations.xml;
 
-import java.io.IOException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import com.paypal.butterfly.extensions.api.TOExecutionResult;
+import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
+import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
+import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -13,12 +11,11 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
-import com.paypal.butterfly.extensions.api.TOExecutionResult;
-import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
-import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
-import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 
 /**
  * Unit tests for {@link XmlXPathReplace}
@@ -26,6 +23,7 @@ import com.paypal.butterfly.utilities.TransformationUtilityTestHelper;
  * @author mmcrockett
  */
 public class XmlXPathReplaceTest extends TransformationUtilityTestHelper {
+
     @Test
     public void changesTextValueOnMatch() throws IOException, XmlPullParserException {
         String xpath = "/project/artifactId";
@@ -39,7 +37,7 @@ public class XmlXPathReplaceTest extends TransformationUtilityTestHelper {
         Model pomModel = getTransformedPomModel("pom.xml");
         Assert.assertEquals(pomModel.getArtifactId(), replacement);
         Assert.assertEquals(xmlElement.getDescription(),
-                "Replace text of xpath " + xpath + " in XML file pom.xml with " + replacement);
+                "Replace text of XPath " + xpath + " in XML file pom.xml with " + replacement);
     }
 
     @Test
@@ -85,19 +83,42 @@ public class XmlXPathReplaceTest extends TransformationUtilityTestHelper {
         
         Assert.assertTrue(hasNewElement, "New element wasn't found in xml.");
         Assert.assertEquals(xmlElement.getDescription(),
-                "Replace node of xpath " + xpath + " in XML file pom.xml with user supplied XML Element");
+                "Replace node of XPath " + xpath + " in XML file pom.xml with user supplied XML Element");
     }
 
     @Test
-    public void returnsNoopOnNoMatch() {
+    public void removesElementOnMatch1() throws IOException, XmlPullParserException {
+        String xpath = "/project/dependencies/dependency";
+        XmlXPathReplace xmlElement = new XmlXPathReplace(xpath).relative("pom.xml");
+        TOExecutionResult executionResult = xmlElement.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+        Assert.assertNotNull(executionResult.getDetails());
+        assertChangedFile("pom.xml");
+        Model pomModel = getTransformedPomModel("pom.xml");
+        Assert.assertEquals(pomModel.getDependencies().size(), 0);
+        Assert.assertEquals(xmlElement.getDescription(),"Remove every node that matches XPath /project/dependencies/dependency in XML file pom.xml");
+    }
+
+    @Test
+    public void removesElementOnMatch2() throws IOException {
+        String xpath = "//*[name()='jaxrs:server']";
+        XmlXPathReplace xmlElement = new XmlXPathReplace(xpath).relative("foo.xml");
+        TOExecutionResult executionResult = xmlElement.execution(transformedAppFolder, transformationContext);
+        Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.SUCCESS);
+        Assert.assertNotNull(executionResult.getDetails());
+        assertChangedFile("foo.xml");
+    }
+
+    @Test
+    public void returnsNoOpOnNoMatch() {
         XmlXPathReplace xmlElement = new XmlXPathReplace("/project/blahblah", "test").relative("pom.xml");
         TOExecutionResult executionResult = xmlElement.execution(transformedAppFolder, transformationContext);
         Assert.assertEquals(executionResult.getType(), TOExecutionResult.Type.NO_OP);
         Assert.assertNotNull(executionResult.getDetails());
         Assert.assertEquals(executionResult.getDetails(),
-                "File pom.xml has had 0 node(s) where value replacement was applied based on xml xpath expression '/project/blahblah'");
+                "File pom.xml has had 0 node(s) where modification was applied based on xml xpath expression '/project/blahblah'");
         Assert.assertEquals(xmlElement.getDescription(),
-                "Replace text of xpath /project/blahblah in XML file pom.xml with test");
+                "Replace text of XPath /project/blahblah in XML file pom.xml with test");
     }
 
     @Test(expectedExceptions = TransformationDefinitionException.class)
