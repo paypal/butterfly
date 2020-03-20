@@ -4,16 +4,16 @@
    1. Rev up root build.gradle file to the release version
    1. Build and test it
    1. javadoc
-      1. create folder `docs/javadocs/<version>`
+      1. create javadocs folder: `mkdir -p docs/javadocs/<version>/butterfly-utilities; mkdir -p docs/javadocs/<version>/butterfly-extensions-api;`
       1. generate javadocs for **utilities** and **extensions-api** projects: `./gradlew :butterfly-utilities:javadoc :butterfly-extensions-api:javadoc`
-      1. copy generated javadocs files under `docs/javadocs/<version>`
+      1. copy generated javadocs files to javadocs folder: `cp -r butterfly-utilities/build/docs/javadoc/ docs/javadocs/<version>/butterfly-utilities/;cp -r butterfly-extensions-api/build/docs/javadoc/ docs/javadocs/<version>/butterfly-extensions-api/;`
       1. update **THREE** links in `Extension-development-guide.md`, pointing to latest javadoc
       1. commit only javadocs `Adding javadocs for version x`
    1. doc
       1. update zip link (two places in the URL) in `Installing-Butterfly.md`
    1. sample extension
-      1. place `sample-extension` jar under `docs/jar`
-      1. update link in `QUICK_START.md` if jar file name changed
+      1. replace the sample extension jar under `docs/jar`: `rm docs/jar/*; cp extensions-catalog/butterfly-springboot-extension/build/libs/butterfly-springboot-extension-<version>.jar docs/jar/`
+      1. update link in `QUICK_START.md` with new jar file name
    1. sample app (only if changed)
       1. zip `sample-app` folder
       1. place updated zip under `docs/zip`
