@@ -8,7 +8,7 @@ Follow the steps below.
 ### 1- Installing Butterfly
 
 * Install Butterfly following [this document](https://paypal.github.io/butterfly/Installing-Butterfly).
-* Following the same document, install [butterfly-springboot-extension-3.0.0.jar](https://paypal.github.io/butterfly/jar/butterfly-springboot-extension-3.0.0.jar) Butterfly extension, which will be used to transform the sample app.
+* Following the same document, install [butterfly-springboot-extension-3.0.0.jar](https://paypal.github.io/butterfly/jar/butterfly-springboot-extension-3.0.0.jar) Butterfly extension, which will be used to transform the sample application.
 
 ### 2- The sample application
 
@@ -34,7 +34,7 @@ Follow the steps below.
                  ├── applicationContext.xml
                  └── web.xml
  ```
-* Optionally, build, deploy and test it. You can do so by running the command below, deploying the generated `war` file to a Servlet container (like Tomcat for example), and then following the `README.md` file in the app root folder to test it.
+* Optionally, build, deploy and test it. You can do so by running the command below, deploying the generated `war` file to a Servlet container (like Tomcat for example), and then following the `README.md` file in the application root folder to test it.
 
  ```
  mvn package
@@ -42,10 +42,16 @@ Follow the steps below.
 
 ### 3- Running Butterfly
 
-* Now, finally Butterfly will be used to transform the app. Run the command below.
+* Now, finally Butterfly will be used to transform the application. First, lets see which transformation templates are available. Run the command below. You will notice the sample extension you installed has one transformation template to migrate the application from Java WAR format to Spring Boot, and also one upgrade step to upgrade the application to a newer Spring Boot version, once application is migrated to Spring Boot.
  
  ```
- butterfly sample-app
+ butterfly -l
+ ```
+
+* Let's first migrate the application to Spring Boot by running the command below. Notice we are using a shortcut to refer to the migration transformation template (option `-s1`). We know the shortcut number because it was displayed when we listed the installed extensions. If you want to see details as transformation runs, provide option `-v` to run Butterfly in verbose mode, or `-vd` to also display debug log statements.
+ 
+ ```
+ butterfly sample-app -s1
  ```
  
 * Check if you got an output similar to this:
@@ -73,7 +79,7 @@ Follow the steps below.
  Transformed application folder: /Users/fabio/dev/butterfly/butterfly/transformed-apps/sample-app-transformed-20171016175315818
  ```
 
-* Notice also that it differs from the original app, as expected. For example, the whole `webapp` folder has been removed.
+* Notice also that it differs from the original application, as expected. For example, the whole `webapp` folder has been removed.
 
  ```
  sample-app-transformed-20171016175315818
@@ -97,7 +103,7 @@ Follow the steps below.
  ```
  Check log file for details: /Users/fabio/dev/butterfly/butterfly/logs/sample-app_20171016175311736.log
  ```
-* See a description of all changes that were performed to transform the app.
+* See a description of all changes that were performed to transform the application.
 
  ```
  [18:11:36.951] [INFO] Beginning transformation
@@ -127,10 +133,12 @@ Follow the steps below.
  ```
  mvn package spring-boot:run
  ```
-* To test it, do as you did before (follow its README file), since the app functionality remains the same.
+* To test it, do as you did before (follow its README file), since the application functionality remains the same.
 
 ### 5- What is next?
 
-Butterfly has a variaty of very helpful running modes. Read [Running Butterfly](https://paypal.github.io/butterfly/Running-Butterfly) for further information.
+You could now try upgrading the sample application to a newer Spring Boot version, using shortcut 2 against the migrated application folder.
+
+Also, Butterfly has a variety of very helpful running modes. Read [Running Butterfly](https://paypal.github.io/butterfly/Running-Butterfly) for further information.
 
 If you are interested in developing your own Butterfly extension, then read [Extension development guide](https://paypal.github.io/butterfly/Extension-development-guide).
