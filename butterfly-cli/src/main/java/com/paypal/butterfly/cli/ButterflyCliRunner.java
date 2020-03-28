@@ -198,7 +198,8 @@ class ButterflyCliRunner extends ButterflyCliOption {
                 String upgradeVersion = (String) optionSet.valueOf(CLI_OPTION_UPGRADE_VERSION);
                 String originalVersion = firstStepClass.newInstance().getCurrentVersion();
 
-                logger.info("Performing upgrade from version {} to version {} (it might take a few seconds)", originalVersion, upgradeVersion);
+                logger.info("Performing upgrade from version {} to version {} (it might take a few seconds)",
+                        originalVersion, Optional.ofNullable(upgradeVersion).orElse("LATEST"));
                 transformationResult = butterflyFacade.transform(applicationFolder, firstStepClass, upgradeVersion, configuration).get();
             } else {
                 logger.info("Performing transformation (it might take a few seconds)");
