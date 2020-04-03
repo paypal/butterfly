@@ -12,7 +12,8 @@ jdk:
 
 branches:
   only:
-  - butterfly_3
+  - develop
+  - master
 
 install:
   - ./gradlew build jacocoRootReport jacocoTestCoverageVerification --scan
