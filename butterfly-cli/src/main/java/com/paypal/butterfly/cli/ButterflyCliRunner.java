@@ -155,7 +155,8 @@ class ButterflyCliRunner extends ButterflyCliOption {
         try {
             if (optionSet.has(CLI_OPTION_INLINE_PROPERTIES)) {
                 String inlineProperties = (String) optionSet.valueOf(CLI_OPTION_INLINE_PROPERTIES);
-                try (StringReader stringReader = new StringReader(inlineProperties.replace(';', '\n'))) {
+                // Regex to ignore escaped semi-colons 
+                try (StringReader stringReader = new StringReader(inlineProperties.replaceAll("(?<!\\\\);", "\n"))) {
                     properties.load(stringReader);
                 }
             } else if (optionSet.has(CLI_OPTION_PROPERTIES_FILE)) {
