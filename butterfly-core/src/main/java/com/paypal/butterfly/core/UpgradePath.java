@@ -5,6 +5,7 @@ import com.paypal.butterfly.extensions.api.exception.ButterflyRuntimeException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.g00fy2.versioncompare.Version;
 
 /**
  * Upgrade paths enable upgrading an application from one version to a target version,
@@ -59,8 +60,13 @@ final class UpgradePath {
         }
         if (upgradeVersion == null || upgradeVersion.isEmpty()) {
             upgradeVersion = getLastVersion();
+        } else if(firstStep.getCurrentVersion().equals(upgradeVersion)){
+            throw new IllegalArgumentException("The requested upgrade version (" + upgradeVersion + ") is the same as the version the application is currently at");
+            //throw new IllegalArgumentException("The requested upgrade version is the same as the version the application is currently at");
+        } else if(isOlderTargetVersion(upgradeVersion)){
+            throw new IllegalArgumentException("The requested upgrade version (" + upgradeVersion + ") is older than the version the application is currently at (" + firstStep.getCurrentVersion() + ")");
         } else if(!upgradeVersionValidation(upgradeVersion)) {
-            throw new IllegalArgumentException("Upgrade version " + upgradeVersion + " is invalid");
+            throw new IllegalArgumentException("The requested upgrade version (" + upgradeVersion + ") is inexistent");
         }
         this.nextStep = firstStep;
         this.upgradeVersion = upgradeVersion;
@@ -94,6 +100,14 @@ final class UpgradePath {
         } while (us != null);
 
         return false;
+    }
+
+    /*
+     * Returns true if {@code targetVersion} is older than {@code currentVersion}
+     * of {@code firstStep}
+    */
+    private boolean isOlderTargetVersion(String targetVersion){
+        return new Version(targetVersion).isLowerThan(firstStep.getCurrentVersion());
     }
 
     /**
