@@ -24,7 +24,7 @@ class ConfigurationImpl implements Configuration {
     private boolean zipOutput = false;
     private boolean modifyOriginalFolder = true;
 
-    private static final Pattern propertyNameRegex = Pattern.compile("^[a-zA-Z\\._-]*$");
+    private static final Pattern propertyNameRegex = Pattern.compile("^[a-zA-Z-_.$][a-zA-Z_$0-9]*$");
 
     /**
      * Creates and returns a new {@link Configuration} object
