@@ -13,7 +13,8 @@ dependencies {
             lib.zip4j,
             lib.annotations,
             lib.commons_lang3,
-            lib.plexus_utils
+            lib.plexus_utils,
+            lib.version_compare
     testCompile project(':extensions-catalog:butterfly-springboot-extension')
     testCompile(lib.testng) {
         exclude(module: 'aopalliance')
