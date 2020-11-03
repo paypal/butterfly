@@ -60,12 +60,11 @@ final class UpgradePath {
         }
         if (upgradeVersion == null || upgradeVersion.isEmpty()) {
             upgradeVersion = getLastVersion();
-        } else if(firstStep.getCurrentVersion().equals(upgradeVersion)){
+        } else if (firstStep.getCurrentVersion().equals(upgradeVersion)) {
             throw new IllegalArgumentException("The requested upgrade version (" + upgradeVersion + ") is the same as the version the application is currently at");
-            //throw new IllegalArgumentException("The requested upgrade version is the same as the version the application is currently at");
-        } else if(isOlderTargetVersion(upgradeVersion)){
+        } else if (isOlderTargetVersion(upgradeVersion)) {
             throw new IllegalArgumentException("The requested upgrade version (" + upgradeVersion + ") is older than the version the application is currently at (" + firstStep.getCurrentVersion() + ")");
-        } else if(!upgradeVersionValidation(upgradeVersion)) {
+        } else if (!upgradeVersionValidation(upgradeVersion)) {
             throw new IllegalArgumentException("The requested upgrade version (" + upgradeVersion + ") is inexistent");
         }
         this.nextStep = firstStep;
