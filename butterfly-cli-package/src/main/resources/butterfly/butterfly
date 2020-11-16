@@ -4,4 +4,7 @@ if [[ -z "$BUTTERFLY_HOME" ]]; then
     BUTTERFLY_HOME=$(dirname "$SCRIPT_PATH")
     export BUTTERFLY_HOME
 fi
-java -cp $BUTTERFLY_HOME"/lib/*":$BUTTERFLY_HOME"/extensions/*" com.paypal.butterfly.cli.ButterflyCliApp $*
+
+java -cp $BUTTERFLY_HOME"/lib/*":$BUTTERFLY_HOME"/extensions/*" \
+    -Dloader.main=com.paypal.butterfly.cli.ButterflyCliApp \
+    org.springframework.boot.loader.PropertiesLauncher $*

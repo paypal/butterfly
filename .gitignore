@@ -8,6 +8,7 @@ gen-metrics/
 
 # Package Files #
 *.jar
+!spring-boot-uber-lib.jar
 
 # Gradle specific #
 .gradle/
