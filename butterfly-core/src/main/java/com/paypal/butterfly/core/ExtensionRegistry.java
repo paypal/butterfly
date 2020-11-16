@@ -1,17 +1,21 @@
 package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.api.Extension;
-import org.apache.commons.io.FilenameUtils;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toCollection;
 
 /**
  * Registry of all extensions. This class is used mostly for meta-data
@@ -25,14 +29,14 @@ class ExtensionRegistry {
 
     private static Logger logger = LoggerFactory.getLogger(ExtensionRegistry.class);
 
-    private List<Extension> extensions;
+    private List<Extension<?>> extensions;
 
-    private void setExtensions() {
+    private void initExtensions() {
         logger.debug("Searching for extensions");
-        Set<Class<? extends Extension>> extensionClasses = findExtensionClasses();
-        logger.debug("Number of extensions found: " + extensionClasses.size());
+        Set<Class<? extends Extension<?>>> extensionClasses = findExtensionClasses();
+        logger.debug("Number of extensions found: {}", extensionClasses.size());
 
-        if(extensionClasses.size() == 0) {
+        if (extensionClasses.isEmpty()) {
             extensions = Collections.emptyList();
             return;
         }
@@ -42,68 +46,41 @@ class ExtensionRegistry {
         logger.debug("Extensions have been registered");
     }
 
-    /**
-     * Copy all entries that are a JAR file or a directory
-     */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings (value="DMI_COLLECTION_OF_URLS", justification="All of type file")
-    private void copyValidClasspathEntries(Collection<URL> source, Set<URL> destination) {
-        String fileName;
-        boolean isJarFile;
-        boolean isDirectory;
+    private Set<Class<? extends Extension<?>>> findExtensionClasses() {
+        // Assumption here is that context loader is already a spring-boot ClassLoader and therefore is capable of
+        // loading classes from nested jars. If the assumption is not true, we can easily create such a ClassLoader
+        // with SpringBootClassLoaderFactory currently used only in tests.
+        ClassGraph classGraph = new ClassGraph()
+                .enableClassInfo()
+                .removeTemporaryFilesAfterScan();
 
-        for (URL url : source) {
-            if(destination.contains(url)) {
-                continue;
-            }
-
-            fileName = url.getFile();
-            isJarFile = FilenameUtils.isExtension(fileName, "jar");
-            isDirectory = new File(fileName).isDirectory();
-
-            if (isJarFile || isDirectory) {
-                destination.add(url);
-            } else if (logger.isDebugEnabled()) {
-                logger.debug("Ignored classpath entry: " + fileName);
-            }
+        try (ScanResult scanResult = classGraph.scan()) {
+            return scanResult.getSubclasses(Extension.class.getName())
+                    .stream()
+                    .map(ClassInfo::loadClass)
+                    .map(clazz -> asExtensionClass(clazz))
+                    .collect(toCollection(() -> new TreeSet<>(comparing(Class::getName))));
         }
     }
 
-    private Set<Class<? extends Extension>>  findExtensionClasses() {
-        final Collection<URL> systemPropertyURLs = ClasspathHelper.forJavaClassPath();
-        final Collection<URL> classLoaderURLs = ClasspathHelper.forClassLoader();
-
-        Set<URL> classpathURLs = new HashSet<>();
-
-        copyValidClasspathEntries(systemPropertyURLs, classpathURLs);
-        copyValidClasspathEntries(classLoaderURLs, classpathURLs);
-
-        logger.debug("Classpath URLs to be scanned: " + classpathURLs);
-
-        Reflections reflections = new Reflections(classpathURLs, new SubTypesScanner());
-
-        TreeSet<Class<? extends Extension>> extensionClasses = new TreeSet<>(Comparator.comparing(c -> c.getName()));
-        extensionClasses.addAll(reflections.getSubTypesOf(Extension.class));
-
-        return extensionClasses;
+    @SuppressWarnings("unchecked")
+    private Class<? extends Extension<?>> asExtensionClass(Class<?> clazz) {
+        return (Class<? extends Extension<?>>) clazz;
     }
 
-    private void registerExtensions(Set<Class<? extends Extension>> extensionClasses) {
-        Class<? extends Extension> extensionClass;
-        Extension extension;
+    private void registerExtensions(Set<Class<? extends Extension<?>>> extensionClasses) {
+        List<Extension<?>> newExtensions = new ArrayList<>();
 
-        List<Extension> _extensions = new ArrayList<>();
-
-        for(Object extensionClassObj : extensionClasses.toArray()) {
-            extensionClass = (Class<? extends Extension>) extensionClassObj;
+        for (Class<? extends Extension<?>> extensionClass : extensionClasses) {
             try {
-                extension = extensionClass.newInstance();
-                _extensions.add(extension);
+                final Extension<?> extension = extensionClass.getConstructor().newInstance();
+                newExtensions.add(extension);
             } catch (Exception e) {
-                logger.error("An exception happened when registering extension class " + extensionClass, e);
+                logger.error("Cannot register extension class {}", extensionClass, e);
             }
         }
 
-        this.extensions = Collections.unmodifiableList(_extensions);
+        this.extensions = newExtensions;
     }
 
     /**
@@ -111,9 +88,10 @@ class ExtensionRegistry {
      *
      * @return an immutable list with all registered extensions
      */
+    @SuppressWarnings("rawtypes")
     List<Extension> getExtensions() {
-        if(extensions == null) {
-            setExtensions();
+        if (extensions == null) {
+            initExtensions();
         }
         return Collections.unmodifiableList(extensions);
     }
