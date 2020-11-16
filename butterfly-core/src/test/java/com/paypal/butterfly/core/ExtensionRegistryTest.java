@@ -1,7 +1,6 @@
 package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.springboot.ButterflySpringBootExtension;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -57,9 +56,6 @@ public class ExtensionRegistryTest {
     }
 
     private URL findJar(String jarName) throws IOException {
-        URL url = new ClassPathResource("test-spring-boot-uber-lib/spring-boot-uber-lib.jar").getURL();
-        System.out.println("jar Url: " + url);
-
         Path root = Paths.get("..").toAbsolutePath().normalize();
         System.out.println("search root: " + root);
         try (Stream<Path> stream = Files.walk(root)) {
