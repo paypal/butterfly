@@ -16,7 +16,7 @@ branches:
   - master
 
 install:
-  - ./gradlew build jacocoRootReport jacocoTestCoverageVerification --scan
+  - ./gradlew build jacocoRootReport jacocoTestCoverageVerification --scan --info
 
 after_script:
   # Installing Codacy code coverage reporter upload tool and uploading Cobertura report to Codacy
