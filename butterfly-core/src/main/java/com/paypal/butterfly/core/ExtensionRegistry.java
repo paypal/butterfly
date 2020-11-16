@@ -73,7 +73,7 @@ class ExtensionRegistry {
 
         for (Class<? extends Extension<?>> extensionClass : extensionClasses) {
             try {
-                final Extension<?> extension = extensionClass.getConstructor().newInstance();
+                Extension<?> extension = extensionClass.getConstructor().newInstance();
                 newExtensions.add(extension);
             } catch (Exception e) {
                 logger.error("Cannot register extension class {}", extensionClass, e);

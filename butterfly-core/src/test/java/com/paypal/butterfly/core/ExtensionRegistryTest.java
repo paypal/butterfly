@@ -1,13 +1,16 @@
 package com.paypal.butterfly.core;
 
 import com.paypal.butterfly.extensions.springboot.ButterflySpringBootExtension;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -32,11 +35,11 @@ public class ExtensionRegistryTest {
 
     @Test
     public void testSpringBoot() throws IOException {
-        final ClassLoader original = Thread.currentThread().getContextClassLoader();
+        ClassLoader originalContextLoader = Thread.currentThread().getContextClassLoader();
 
-        final URL url = new ClassPathResource("test-spring-boot-uber-lib/spring-boot-uber-lib.jar").getURL();
-        final ClassLoader loader = SpringBootClassLoaderFactory.create(url);
-        Thread.currentThread().setContextClassLoader(loader);
+        URL url = findJar("spring-boot-uber-lib.jar");
+        ClassLoader springBootLoader = SpringBootClassLoaderFactory.create(url);
+        Thread.currentThread().setContextClassLoader(springBootLoader);
 
         try {
             ExtensionRegistry extensionRegistry = new ExtensionRegistry();
@@ -48,7 +51,16 @@ public class ExtensionRegistryTest {
             assertThat(extensionNames, is(expectedExtensionNames));
 
         } finally {
-            Thread.currentThread().setContextClassLoader(original);
+            Thread.currentThread().setContextClassLoader(originalContextLoader);
+        }
+    }
+
+    private URL findJar(String jarName) throws IOException {
+        try (Stream<Path> stream = Files.walk(Paths.get(".."))) {
+            Path jarPath = stream.filter(path -> path.endsWith(jarName))
+                    .findFirst()
+                    .orElseThrow(IllegalArgumentException::new);
+            return jarPath.toUri().toURL();
         }
     }
 
