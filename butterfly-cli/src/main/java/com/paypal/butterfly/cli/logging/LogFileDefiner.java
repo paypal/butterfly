@@ -1,19 +1,17 @@
 package com.paypal.butterfly.cli.logging;
 
-import ch.qos.logback.core.Context;
-import ch.qos.logback.core.spi.PropertyDefiner;
-import ch.qos.logback.core.status.Status;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.LogManager;
+
 /**
- * Application name Logback property definer
+ * Application name Log4j2 property definer
  *
- * @author facarvalho
  */
-public class LogFileDefiner implements PropertyDefiner {
+public class LogFileDefiner {
 
     private static final String LOG_FILE_NAME_SYNTAX = "%s_%s.log";
     private static final String DEBUG_LOG_FILE_NAME_SYNTAX = "%s_%s_debug.log";
@@ -47,48 +45,7 @@ public class LogFileDefiner implements PropertyDefiner {
         return logFile;
     }
 
-    @Override
-    public String getPropertyValue() {
-        return getLogFile().getAbsolutePath();
+    public static void updateLog4jConfigWithLogFile(){
+        System.setProperty("logFile",LogFileDefiner.getLogFile().getAbsolutePath());
     }
-
-    @Override
-    public void setContext(Context context) {
-        // Nothing to be done here
-    }
-    @Override
-    public Context getContext() {
-        // Nothing to be done here
-        return null;
-    }
-    @Override
-    public void addStatus(Status status) {
-        // Nothing to be done here
-    }
-    @Override
-    public void addInfo(String s) {
-        // Nothing to be done here
-    }
-    @Override
-    public void addInfo(String s, Throwable throwable) {
-        // Nothing to be done here
-    }
-    @Override
-    public void addWarn(String s) {
-        // Nothing to be done here
-    }
-    @Override
-    public void addWarn(String s, Throwable throwable) {
-        // Nothing to be done here
-    }
-
-    @Override
-    public void addError(String s) {
-        // Nothing to be done here
-    }
-    @Override
-    public void addError(String s, Throwable throwable) {
-        // Nothing to be done here
-    }
-
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<Appenders>
+		<Console name="CONSOLE" target="SYSTEM_OUT" follow="true">
+			<PatternLayout pattern="%msg%n" />
+		</Console>
+
+		<Routing name="Routing">
+			<Routes pattern="$${sys:logFile}">
+				<Route>
+					<RandomAccessFile name="File" fileName="${sys:logFile}" immediateFlush="false">
+						<PatternLayout>
+							<pattern>[%d{HH:mm:ss.SSS}] [%-4level] %msg%n</pattern>
+						</PatternLayout>
+					</RandomAccessFile>
+				</Route>
+			</Routes>
+		</Routing>
+	</Appenders>
+
+	<Loggers>
+		<AsyncLogger name="com.paypal.butterfly.cli" level="INFO">
+			<AppenderRef ref="CONSOLE" />
+		</AsyncLogger>
+		<AsyncRoot level="ERROR">
+			<AppenderRef ref="Routing" />
+		</AsyncRoot>
+	</Loggers>
+</configuration>

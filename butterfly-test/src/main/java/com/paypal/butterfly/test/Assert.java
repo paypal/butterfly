@@ -1,13 +1,10 @@
 package com.paypal.butterfly.test;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
 import com.paypal.butterfly.api.AbortDetails;
 import com.paypal.butterfly.api.ButterflyFacade;
 import com.paypal.butterfly.api.Configuration;
 import com.paypal.butterfly.api.TransformationResult;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +12,11 @@ import java.nio.file.Files;
 import java.nio.file.attribute.FileAttribute;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 
 /**
  * Assert class to test Butterfly transformations,
@@ -35,8 +37,10 @@ public abstract class Assert {
         boolean debug = debugProperty.equalsIgnoreCase("true");
 
         if (debug) {
-            LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-            loggerContext.getLogger("com.paypal.butterfly").setLevel(Level.DEBUG);
+            LoggerContext context = (LoggerContext)LogManager.getContext(false);
+            org.apache.logging.log4j.core.config.Configuration config = context.getConfiguration();
+            config.getLoggerConfig("com.paypal.butterfly").setLevel(Level.DEBUG);
+            context.updateLoggers();
         }
     }
 
