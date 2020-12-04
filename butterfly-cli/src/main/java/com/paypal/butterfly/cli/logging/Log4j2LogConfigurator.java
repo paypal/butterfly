@@ -75,7 +75,6 @@ public class Log4j2LogConfigurator extends LogConfigurator {
     @Override
     public void setLogToFile(boolean on) {
         config.getRootLogger().removeAppender("FILE");
-
     }
 
     @Override

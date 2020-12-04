@@ -7,9 +7,9 @@ dependencies {
     implementation project(':butterfly-core')
     implementation lib.guava,
                    lib.xmlunit,
-                    lib.log4j_api,
-                    lib.log4j_core,
-                    lib.log4j_slf4j_impl
+                   lib.log4j_api,
+                   lib.log4j_core,
+                   lib.log4j_slf4j_impl
 
     testImplementation project(':extensions-catalog:butterfly-springboot-extension')
     testImplementation(lib.testng) {

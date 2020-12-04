@@ -89,7 +89,6 @@ class ButterflyCliApp extends ButterflyCliOption {
                 System.exit(1);
             }
         }
-        LogFileDefiner.updateLog4jConfigWithLogFile();
     }
 
     /*

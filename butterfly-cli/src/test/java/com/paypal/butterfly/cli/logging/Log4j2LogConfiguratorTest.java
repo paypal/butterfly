@@ -49,7 +49,7 @@ public class Log4j2LogConfiguratorTest extends PowerMockTestCase {
         LogManager.getLogger("com.paypal.butterfly.cli");
         Assert.assertTrue(config.getLoggerConfig("com.paypal.butterfly.cli").getAppenders().isEmpty());
         Assert.assertTrue(config.getRootLogger().getAppenders().get("DefaultConsole-2").getName().compareTo("DefaultConsole-2") == 0);
-        Assert.assertTrue(config.getRootLogger().getAppenders().get("Routing").getName().compareTo("Routing") == 0);
+        Assert.assertTrue(config.getRootLogger().getAppenders().get("FILE").getName().compareTo("FILE") == 0);
     }
 
     @Test

@@ -1,29 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<!-- 
+Configuration for production.
+
+Configuration for test is located at /butterfly-cli/src/test/resources/log4j2-test.xml .
+The only difference between Test configuration and this configuration is that the loggers
+are asynchronous here whereas the loggers at Test configuration are synchronous.
+
+Except loggers, all other configuration must be in sync with Test configuration.
+-->
+
+<configuration name="Production" packages="com.paypal.butterfly.cli.logging">
 	<Appenders>
 		<Console name="CONSOLE" target="SYSTEM_OUT" follow="true">
 			<PatternLayout pattern="%msg%n" />
 		</Console>
 
-		<Routing name="Routing">
-			<Routes pattern="$${sys:logFile}">
-				<Route>
-					<RandomAccessFile name="File" fileName="${sys:logFile}" immediateFlush="false">
-						<PatternLayout>
-							<pattern>[%d{HH:mm:ss.SSS}] [%-4level] %msg%n</pattern>
-						</PatternLayout>
-					</RandomAccessFile>
-				</Route>
-			</Routes>
-		</Routing>
+		<RandomAccessFile name="FILE" fileName="${LogFileDefiner:logfile}" >
+			<PatternLayout>
+				<pattern>[%d{HH:mm:ss.SSS}] [%-4level] %msg%n</pattern>
+			</PatternLayout>
+		</RandomAccessFile>
 	</Appenders>
 
 	<Loggers>
 		<AsyncLogger name="com.paypal.butterfly.cli" level="INFO">
 			<AppenderRef ref="CONSOLE" />
 		</AsyncLogger>
+
 		<AsyncRoot level="ERROR">
-			<AppenderRef ref="Routing" />
+			<AppenderRef ref="FILE" />
 		</AsyncRoot>
 	</Loggers>
 </configuration>
