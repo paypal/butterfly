@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+Configuration for test purpose.
+
+Configuration for production is located at /butterfly-cli/src/main/resources/log4j2.xml .
+The only difference between production and this configuration is that the loggers are
+synchronous here whereas the loggers at production configuration are asynchronous.
+The loggers are synchronous to help with the testing.
+
+Except loggers, all other configuration must be in sync with production configuration.
+-->
+
+<configuration name="Test" packages="com.paypal.butterfly.cli.logging">
+	<Appenders>
+		<Console name="CONSOLE" target="SYSTEM_OUT" follow="true">
+			<PatternLayout pattern="%msg%n" />
+		</Console>
+
+		<RandomAccessFile name="FILE" fileName="${LogFileDefiner:logfile}" >
+			<PatternLayout>
+				<pattern>[%d{HH:mm:ss.SSS}] [%-4level] %msg%n</pattern>
+			</PatternLayout>
+		</RandomAccessFile>
+	</Appenders>
+
+	<Loggers>
+		<Logger name="com.paypal.butterfly.cli" level="INFO">
+			<AppenderRef ref="CONSOLE" />
+		</Logger>
+		<Root level="ERROR">
+			<AppenderRef ref="FILE" />
+		</Root>
+	</Loggers>
+</configuration>

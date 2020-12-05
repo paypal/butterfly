@@ -9,9 +9,14 @@ dependencies {
     runtime project(':butterfly-core')
     compile lib.jopt_simple,
             lib.gson,
-            lib.commons_io
+            lib.commons_io,
+            lib.log4j_api,
+            lib.log4j_core,
+            lib.log4j_slf4j_impl,
+            lib.disruptor
     compile (lib.spring_boot_starter) {
         exclude(module: 'commons-logging')
+        exclude(module:'logback-classic')
     }
     testCompile project(':butterfly-utilities')
     testCompile(lib.testng) {

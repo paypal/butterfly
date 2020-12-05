@@ -1,19 +1,22 @@
 package com.paypal.butterfly.cli.logging;
 
-import ch.qos.logback.core.Context;
-import ch.qos.logback.core.spi.PropertyDefiner;
-import ch.qos.logback.core.status.Status;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.config.plugins.Plugin;
+import org.apache.logging.log4j.core.lookup.StrLookup;
+
 /**
- * Application name Logback property definer
+ * Defines log file for the application. 
+ * Used as plugin in log4j2 configuration file to load
+ * the log file during initialization.
  *
- * @author facarvalho
  */
-public class LogFileDefiner implements PropertyDefiner {
+
+@Plugin(name="LogFileDefiner", category=StrLookup.CATEGORY)
+public class LogFileDefiner implements StrLookup{
 
     private static final String LOG_FILE_NAME_SYNTAX = "%s_%s.log";
     private static final String DEBUG_LOG_FILE_NAME_SYNTAX = "%s_%s_debug.log";
@@ -48,47 +51,12 @@ public class LogFileDefiner implements PropertyDefiner {
     }
 
     @Override
-    public String getPropertyValue() {
-        return getLogFile().getAbsolutePath();
+    public String lookup(LogEvent event, String key){
+        return LogFileDefiner.getLogFile().getAbsolutePath();
     }
 
     @Override
-    public void setContext(Context context) {
-        // Nothing to be done here
+    public String lookup(String key){
+        return LogFileDefiner.getLogFile().getAbsolutePath();
     }
-    @Override
-    public Context getContext() {
-        // Nothing to be done here
-        return null;
-    }
-    @Override
-    public void addStatus(Status status) {
-        // Nothing to be done here
-    }
-    @Override
-    public void addInfo(String s) {
-        // Nothing to be done here
-    }
-    @Override
-    public void addInfo(String s, Throwable throwable) {
-        // Nothing to be done here
-    }
-    @Override
-    public void addWarn(String s) {
-        // Nothing to be done here
-    }
-    @Override
-    public void addWarn(String s, Throwable throwable) {
-        // Nothing to be done here
-    }
-
-    @Override
-    public void addError(String s) {
-        // Nothing to be done here
-    }
-    @Override
-    public void addError(String s, Throwable throwable) {
-        // Nothing to be done here
-    }
-
 }
