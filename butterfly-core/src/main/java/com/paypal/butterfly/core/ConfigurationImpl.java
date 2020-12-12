@@ -24,7 +24,7 @@ class ConfigurationImpl implements Configuration {
     private boolean zipOutput = false;
     private boolean modifyOriginalFolder = true;
 
-    private static final Pattern propertyNameRegex = Pattern.compile("^[a-zA-Z\\._-]*$");
+    private static final Pattern propertyNameRegex = Pattern.compile("^[a-zA-Z][a-zA-Z0-9\\._-]*$");  
 
     /**
      * Creates and returns a new {@link Configuration} object
@@ -44,8 +44,9 @@ class ConfigurationImpl implements Configuration {
      *                   Properties are optional, so, if not desired, this parameter can be set to null.
      * @return a brand new {@link Configuration} object
      * @throws IllegalArgumentException if properties object is invalid. Properties name must
-     *                   be non blank and only contain alphabetical characters, dots, underscore or hyphen. Properties
-     *                   object must be Strings and cannot be null.
+     *                   be non blank and the first character must be an alphabet and the others may
+     *                   be alphabetic, numeric, dot, underscore, or hyphen.  Properties value
+     *                   must be Strings and cannot be null.
      */
     ConfigurationImpl(Properties properties) {
         if (properties != null && properties.size() > 0) {
