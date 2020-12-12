@@ -92,17 +92,23 @@ public class ButterflyFacadeImplTest extends PowerMockTestCase {
             Properties properties = new Properties();
             properties.put("", "v1");
             properties.put(" ", "v2");
+            properties.put("1a", "v3");
+            properties.put("-a", "v4");
+            properties.put("#a", "v5");
             properties.put("a", new Object());
-            properties.put("b%", "v4");
+            properties.put("b%", "v6");
+            System.err.println(properties);
             butterflyFacadeImpl.newConfiguration(properties);
             fail("IllegalArgumentException was supposed to be thrown due to invalid properties");
         } catch (IllegalArgumentException e) {
-            assertEquals(e.getMessage(), "The following properties are invalid: [ , a, b%]");
+            assertEquals(e.getMessage(), "The following properties are invalid: [1a,  , a, -a, b%, #a, ]");
         }
 
         Properties properties = new Properties();
         properties.put("a", "1");
         properties.put("b", "2");
+        properties.put("a2", "3");
+        properties.put("a2-", "4");
 
         Configuration c1 = butterflyFacadeImpl.newConfiguration(properties);
         assertEquals(c1.getProperties(), properties);
