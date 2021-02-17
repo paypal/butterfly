@@ -14,6 +14,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.times;
@@ -87,7 +88,7 @@ public class ButterflyFacadeImplTest extends PowerMockTestCase {
     public void newConfigurationTest() {
         assertNull(butterflyFacadeImpl.newConfiguration(null).getProperties());
         assertNull(butterflyFacadeImpl.newConfiguration(new Properties()).getProperties());
-
+        List<String> invalidProperties=null;
         try {
             Properties properties = new Properties();
             properties.put("", "v1");
@@ -97,11 +98,14 @@ public class ButterflyFacadeImplTest extends PowerMockTestCase {
             properties.put("#a", "v5");
             properties.put("a", new Object());
             properties.put("b%", "v6");
-            System.err.println(properties);
+            invalidProperties = properties.entrySet().stream()
+                    .map(e -> (String) e.getKey())
+                    .sorted()
+                    .collect(Collectors.toList());
             butterflyFacadeImpl.newConfiguration(properties);
             fail("IllegalArgumentException was supposed to be thrown due to invalid properties");
         } catch (IllegalArgumentException e) {
-            assertEquals(e.getMessage(), "The following properties are invalid: [1a,  , a, -a, b%, #a, ]");
+            assertEquals(e.getMessage(), "The following properties are invalid: "+invalidProperties);
         }
 
         Properties properties = new Properties();
