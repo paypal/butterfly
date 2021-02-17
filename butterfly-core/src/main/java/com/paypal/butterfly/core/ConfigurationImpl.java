@@ -55,6 +55,7 @@ class ConfigurationImpl implements Configuration {
             List<String> invalidProperties = properties.entrySet().stream()
                     .filter(e -> !propertyNameRegex.matcher((String) e.getKey()).matches() || !(e.getValue() instanceof String))
                     .map(e -> (String) e.getKey())
+                    .sorted()
                     .collect(Collectors.toList());
             if (!invalidProperties.isEmpty()) {
                 throw new IllegalArgumentException("The following properties are invalid: " + invalidProperties);
