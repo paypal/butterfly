@@ -12,11 +12,17 @@ dependencies {
             lib.commons_io,
             lib.log4j_api,
             lib.log4j_core,
-            lib.log4j_slf4j_impl,
             lib.disruptor
+    compile (lib.log4j_slf4j_impl) {
+        // favor newer 1.7.30
+        exclude(module: 'slf4j-api')
+    }
     compile (lib.spring_boot_starter) {
         exclude(module: 'commons-logging')
-        exclude(module:'logback-classic')
+        exclude(module: 'logback-classic')
+
+        // don't redirect log4j2 logs to slf4j because we bind slf4j to log4j2...
+        exclude(module: 'log4j-to-slf4j')
     }
     testCompile project(':butterfly-utilities')
     testCompile(lib.testng) {
@@ -24,8 +30,27 @@ dependencies {
         exclude(module: 'guava')
     }
     testCompile lib.mockito_all,
-            lib.powermock_module_testng,
-            lib.powermock_api_mockito
+                lib.hamcrest,
+                lib.javassist,
+                lib.objenesis
+    testCompile(lib.powermock_api_mockito) {
+        // favor version pulled in by lib.hamcrest
+        exclude(module: 'hamcrest-core')
+
+        // favor version pulled in by lib.javassist
+        exclude(module: 'javassist')
+
+        // favor version pulled in by lib.objenesis
+        exclude(module: 'objenesis')
+    }
+
+    testCompile(lib.powermock_module_testng) {
+        // favor version pulled in by lib.testng
+        exclude(module: 'testng')
+        
+        // favor version pulled in by lib.javassist
+        exclude(module: 'javassist')
+    }
 }
 
 jar {

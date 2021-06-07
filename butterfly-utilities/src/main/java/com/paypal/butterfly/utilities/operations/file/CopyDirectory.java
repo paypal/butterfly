@@ -54,7 +54,7 @@ public class CopyDirectory extends AbstractToOperation<CopyDirectory> {
             FileUtils.copyDirectory(filesFrom, fileTo);
             String details = String.format("Files from '%s' have been copied to '%s'", getRelativePath(transformedAppFolder, filesFrom), getRelativePath(transformedAppFolder, fileTo));
             result = TOExecutionResult.success(this, details);
-        } catch (IOException e) {
+        } catch (Exception e) {
             result = TOExecutionResult.error(this, new TransformationOperationException("Directory could not be copied", e));
         }
 

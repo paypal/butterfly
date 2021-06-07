@@ -76,7 +76,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         List<File> files = (List<File>) executionResult.getValue();
         Assert.assertEquals(files.size(), 1);
 
-        Assert.assertTrue(files.contains(new File(transformedAppFolder, "./pom.xml")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "pom.xml")));
 
         Assert.assertEquals(findFiles.getNameRegex(), "pom.xml");
         Assert.assertNull(findFiles.getPathRegex());
@@ -222,7 +222,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         List<File> files = (List<File>) executionResult.getValue();
         Assert.assertEquals(files.size(), 1);
 
-        Assert.assertTrue(files.contains(new File(transformedAppFolder, "./src")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "src")));
 
         Assert.assertEquals(findFiles.getNameRegex(), "(sr.)");
         Assert.assertNull(findFiles.getPathRegex());
@@ -391,7 +391,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         List<File> files = (List<File>) executionResult.getValue();
         Assert.assertEquals(files.size(), 1);
 
-        Assert.assertTrue(files.contains(new File(transformedAppFolder, "./blah")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "blah")));
 
         Assert.assertEquals(findFiles.getNameRegex(), "(bla.)");
         Assert.assertNull(findFiles.getPathRegex());

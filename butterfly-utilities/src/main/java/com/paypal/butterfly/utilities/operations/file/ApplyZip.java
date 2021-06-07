@@ -5,8 +5,7 @@ import com.paypal.butterfly.extensions.api.TransformationContext;
 import com.paypal.butterfly.extensions.api.TransformationOperation;
 import com.paypal.butterfly.extensions.api.exception.TransformationDefinitionException;
 import com.paypal.butterfly.extensions.api.exception.TransformationOperationException;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -99,7 +98,7 @@ public class ApplyZip extends TransformationOperation<ApplyZip> {
 
             String details = String.format("Zip file '%s' has been downloaded and decompressed into %s", zipFileUrl.getFile(), getRelativePath(transformedAppFolder, zipFileDescriptor.getParentFile()));
             result = TOExecutionResult.success(this, details);
-        } catch (ZipException | IOException e) {
+        } catch (IOException e) {
             result = TOExecutionResult.error(this, new TransformationOperationException("File could not be unzipped", e));
         } finally {
             if (fileOutputStream != null) {

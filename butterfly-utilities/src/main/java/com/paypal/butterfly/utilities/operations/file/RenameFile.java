@@ -60,7 +60,7 @@ public class RenameFile extends TransformationOperation<RenameFile> {
             FileUtils.moveFile(fileToBeRenamed, newNameFile);
             String details = String.format("File '%s' has been renamed to '%s'", getRelativePath(), newName);
             result = TOExecutionResult.success(this, details);
-        } catch (IOException e) {
+        } catch (Exception e) {
             result = TOExecutionResult.error(this, new TransformationOperationException("File could not be renamed", e));
         }
 

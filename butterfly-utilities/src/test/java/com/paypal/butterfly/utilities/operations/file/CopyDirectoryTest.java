@@ -50,7 +50,7 @@ public class CopyDirectoryTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
         assertEquals(executionResult.getException().getMessage(), "Directory could not be copied");
-        assertEquals(executionResult.getException().getCause().getMessage(), "Source '" + new File(transformedAppFolder, "nonExistentFolder").getAbsolutePath() + "' does not exist");
+        assertEquals(executionResult.getException().getCause().getMessage(), "File system element for parameter 'source' does not exist: '" + new File(transformedAppFolder, "nonExistentFolder").getAbsolutePath() + "'");
         assertEquals(copyDirectory.getDescription(), "Copy directory content from nonExistentFolder to src/main/resources");
         assertNull(executionResult.getDetails());
     }
@@ -64,7 +64,7 @@ public class CopyDirectoryTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
         assertEquals(executionResult.getException().getMessage(), "Directory could not be copied");
-        assertEquals(executionResult.getException().getCause().getMessage(), "Source '" + new File(transformedAppFolder, "pom.xml").getAbsolutePath() + "' exists but is not a directory");
+        assertEquals(executionResult.getException().getCause().getMessage(), "Parameter 'srcDir' is not a directory: '" + new File(transformedAppFolder, "pom.xml").getAbsolutePath() + "'");
         assertEquals(copyDirectory.getDescription(), "Copy directory content from pom.xml to src/main/resources");
         assertNull(executionResult.getDetails());
     }

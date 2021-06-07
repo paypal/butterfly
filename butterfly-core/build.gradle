@@ -8,6 +8,7 @@ dependencies {
     compile lib.annotation_api,
             lib.slf4j_api,
             lib.gson,
+            lib.guava,
             lib.spring_boot_loader,
             lib.classgraph,
             lib.reflections,

@@ -67,7 +67,7 @@ public class MoveDirectoryTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
         assertEquals(executionResult.getException().getMessage(), "Directory could not be moved");
-        assertEquals(executionResult.getException().getCause().getMessage(), "Destination '" + new File(transformedAppFolder, "src/main/resources").getAbsolutePath() + "' already exists");
+        assertEquals(executionResult.getException().getCause().getMessage(), "File element in parameter 'destDir' already exists: '" + new File(transformedAppFolder, "src/main/resources").getAbsolutePath() + "'");
         assertEquals(moveDirectory.getDescription(), "Move a directory from blah to src/main/resources");
         assertNull(executionResult.getDetails());
     }
@@ -81,7 +81,7 @@ public class MoveDirectoryTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
         assertEquals(executionResult.getException().getMessage(), "Directory could not be moved");
-        assertEquals(executionResult.getException().getCause().getMessage(), "Source '" + new File(transformedAppFolder, "pom.xml").getAbsolutePath() + "' is not a directory");
+        assertEquals(executionResult.getException().getCause().getMessage(), "Parameter 'srcDir' is not a directory: '" + new File(transformedAppFolder, "pom.xml").getAbsolutePath() + "'");
         assertEquals(moveDirectory.getDescription(), "Move a directory from pom.xml to src/main/resources");
         assertNull(executionResult.getDetails());
     }
