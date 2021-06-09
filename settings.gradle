@@ -1,3 +1,29 @@
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'org.kordamp.gradle:enforcer-gradle-plugin:0.9.0'
+    }
+}
+apply plugin: 'org.kordamp.gradle.enforcer'
+
+enforce {
+    // Run DependencyConvergence rule to make sure we aren't pulling in
+    // conflicting versions of dependencies.
+    //
+    // Should this rule detects conflict and fails the build, general strategy
+    // for fixing the conflict is to:
+    //     1) run: ./gradlew --scan
+    //     and/or
+    //     2) temporarily comment out this rule and run: gradle -q dependencies
+    //
+    // In fact, it is disabled right now because more effort is needed to fix 
+    // conflicts in test dependencies
+
+    // rule(enforcer.rules.DependencyConvergence)
+}
+
 rootProject.name = 'butterfly'
 
 include 'butterfly-bom'

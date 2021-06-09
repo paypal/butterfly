@@ -71,7 +71,7 @@ public class ApplyZipTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
         assertEquals(executionResult.getException().getMessage(), "File could not be unzipped");
-        assertEquals(executionResult.getException().getCause().getMessage(), "Probably not a zip file or a corrupted zip file");
+        assertEquals(executionResult.getException().getCause().getMessage(), "Zip headers not found. Probably not a zip file");
         assertEquals(applyZip.getDescription(), "Download, decompress and place contents of zip file " + zipFileUrl.getFile() + " at /src/main/resources");
         assertNull(executionResult.getDetails());
     }

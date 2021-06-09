@@ -61,14 +61,12 @@ public class Log4j2LogConfigurator extends LogConfigurator {
     public void setVerboseMode(boolean verboseMode) {
         this.verboseMode = verboseMode;
         if (verboseMode) {
-            Layout layout = PatternLayout.newBuilder().withConfiguration(config).withPattern("[%d{HH:mm:ss.SSS}] [%highlight(%level)] %msg%n").build();
+            Layout layout = PatternLayout.newBuilder().withConfiguration(config).withPattern("[%d{HH:mm:ss.SSS}] [%highlight{%level}] %msg%n").build();
             Appender consoleAppender = ConsoleAppender.createDefaultAppenderForLayout(layout);
             consoleAppender.start();
             config.getLoggerConfig("com.paypal.butterfly.cli").removeAppender("CONSOLE");
             config.getRootLogger().addAppender(consoleAppender,null,null);
             context.updateLoggers();
-      //  } else {
-          // TODO
         }
     }
 

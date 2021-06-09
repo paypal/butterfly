@@ -3,7 +3,7 @@
 	<Appenders>
 		<Console name="CONSOLE" target="SYSTEM_OUT" follow="true">
 			<PatternLayout>
-				<Pattern>[%d{HH:mm:ss.SSS}] [%highlight(%level)] %msg%n</Pattern>
+				<Pattern>[%d{HH:mm:ss.SSS}] [%highlight{%level}] %msg%n</Pattern>
 			</PatternLayout>
 		</Console>
 	</Appenders>

@@ -5,7 +5,7 @@ import com.paypal.butterfly.extensions.api.exception.ButterflyRuntimeException;
 import com.paypal.butterfly.extensions.api.upgrade.UpgradeStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.g00fy2.versioncompare.Version;
+import io.github.g00fy2.versioncompare.Version;
 
 /**
  * Upgrade paths enable upgrading an application from one version to a target version,
