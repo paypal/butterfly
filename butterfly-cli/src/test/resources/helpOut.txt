@@ -20,7 +20,7 @@ Option                           Description
                                    application is placed under a new folder    
                                    whose name is same as original folder, plus 
                                    "-transformed-yyyyMMddHHmmssSSS" suffix     
--p <inline properties>           Transformation specific properties, used to   
+-p <String: inline properties>   Transformation specific properties, used to   
                                    determine if certain operations should be   
                                    skipped or not, or how certain aspects of   
                                    the transformation should be executed. Use  
@@ -48,7 +48,7 @@ Option                           Description
                                    be upgraded all the way to the latest       
                                    version possible, unless upgrade version (- 
                                    u) is specified                             
--t <template>                    The Java class name of the transformation     
+-t <String: template>            The Java class name of the transformation     
                                    template to be executed. This option has    
                                    precedence over -s. If the chosen           
                                    transformation template is an upgrade       
@@ -56,7 +56,7 @@ Option                           Description
                                    upgraded all the way to the latest version  
                                    possible, unless upgrade version (-u) is    
                                    specified                                   
--u <upgrade version>             The version the application should be upgraded
+-u <String: upgrade version>     The version the application should be upgraded
                                    to. This option only makes sense if the     
                                    transformation template to be used is also  
                                    an upgrade template. If not, it is ignored. 
@@ -89,7 +89,7 @@ Option                           Description
                                    application is placed under a new folder    
                                    whose name is same as original folder, plus 
                                    "-transformed-yyyyMMddHHmmssSSS" suffix     
--p <inline properties>           Transformation specific properties, used to   
+-p <String: inline properties>   Transformation specific properties, used to   
                                    determine if certain operations should be   
                                    skipped or not, or how certain aspects of   
                                    the transformation should be executed. Use  
@@ -117,7 +117,7 @@ Option                           Description
                                    be upgraded all the way to the latest       
                                    version possible, unless upgrade version (- 
                                    u) is specified                             
--t <template>                    The Java class name of the transformation     
+-t <String: template>            The Java class name of the transformation     
                                    template to be executed. This option has    
                                    precedence over -s. If the chosen           
                                    transformation template is an upgrade       
@@ -125,7 +125,7 @@ Option                           Description
                                    upgraded all the way to the latest version  
                                    possible, unless upgrade version (-u) is    
                                    specified                                   
--u <upgrade version>             The version the application should be upgraded
+-u <String: upgrade version>     The version the application should be upgraded
                                    to. This option only makes sense if the     
                                    transformation template to be used is also  
                                    an upgrade template. If not, it is ignored. 
@@ -158,7 +158,7 @@ Option                           Description
                                    application is placed under a new folder    
                                    whose name is same as original folder, plus 
                                    "-transformed-yyyyMMddHHmmssSSS" suffix     
--p <inline properties>           Transformation specific properties, used to   
+-p <String: inline properties>   Transformation specific properties, used to   
                                    determine if certain operations should be   
                                    skipped or not, or how certain aspects of   
                                    the transformation should be executed. Use  
@@ -186,7 +186,7 @@ Option                           Description
                                    be upgraded all the way to the latest       
                                    version possible, unless upgrade version (- 
                                    u) is specified                             
--t <template>                    The Java class name of the transformation     
+-t <String: template>            The Java class name of the transformation     
                                    template to be executed. This option has    
                                    precedence over -s. If the chosen           
                                    transformation template is an upgrade       
@@ -194,7 +194,7 @@ Option                           Description
                                    upgraded all the way to the latest version  
                                    possible, unless upgrade version (-u) is    
                                    specified                                   
--u <upgrade version>             The version the application should be upgraded
+-u <String: upgrade version>     The version the application should be upgraded
                                    to. This option only makes sense if the     
                                    transformation template to be used is also  
                                    an upgrade template. If not, it is ignored. 

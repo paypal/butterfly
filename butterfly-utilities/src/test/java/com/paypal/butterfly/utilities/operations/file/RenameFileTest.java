@@ -66,7 +66,7 @@ public class RenameFileTest extends TransformationUtilityTestHelper {
         assertEquals(executionResult.getType(), TOExecutionResult.Type.ERROR);
         assertEquals(executionResult.getException().getClass(), TransformationOperationException.class);
         assertEquals(executionResult.getException().getMessage(), "File could not be renamed");
-        assertEquals(executionResult.getException().getCause().getMessage(), "Source '" + new File(transformedAppFolder, "blah").getAbsolutePath() + "' is a directory");
+        assertEquals(executionResult.getException().getCause().getMessage(), "Parameter 'srcFile' is not a file: " + new File(transformedAppFolder, "blah").getAbsolutePath());
         assertEquals(renameFile.getDescription(), "Rename file blah to boo");
         assertNull(executionResult.getDetails());
     }

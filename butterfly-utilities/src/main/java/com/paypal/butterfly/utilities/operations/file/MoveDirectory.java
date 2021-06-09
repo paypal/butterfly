@@ -52,7 +52,7 @@ public class MoveDirectory extends AbstractToOperation<MoveDirectory> {
             FileUtils.moveDirectory(filesFrom, fileTo);
             String details = String.format("Directory '%s' has been moved to '%s'", getRelativePath(transformedAppFolder, filesFrom), getRelativePath(transformedAppFolder, fileTo));
             result = TOExecutionResult.success(this, details);
-        } catch (IOException e) {
+        } catch (Exception e) {
             result = TOExecutionResult.error(this, new TransformationOperationException("Directory could not be moved", e));
         }
 

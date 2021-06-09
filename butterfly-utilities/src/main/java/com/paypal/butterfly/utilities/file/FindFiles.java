@@ -1,8 +1,11 @@
 package com.paypal.butterfly.utilities.file;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 import com.paypal.butterfly.extensions.api.exception.TransformationUtilityException;
 import org.apache.commons.io.FileUtils;
@@ -307,7 +310,12 @@ public class FindFiles extends TransformationUtility<FindFiles> {
 
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-        final File searchRootFolder = getAbsoluteFile(transformedAppFolder, transformationContext);
+        final File searchRootFolder;
+        try {
+            searchRootFolder = getAbsoluteFile(transformedAppFolder, transformationContext).getCanonicalFile();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
 
         String _pathRegex = pathRegex;
         if (pathRegex != null && File.separatorChar != '/') {
@@ -351,6 +359,7 @@ public class FindFiles extends TransformationUtility<FindFiles> {
             }
             files.addAll(folders);
         }
+        files = new ArrayList<>(new LinkedHashSet<>(files));
 
         TUExecutionResult result;
 

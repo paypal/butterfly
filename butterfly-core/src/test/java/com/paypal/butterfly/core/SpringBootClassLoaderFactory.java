@@ -9,6 +9,9 @@ import org.springframework.boot.loader.archive.JarFileArchive;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -21,8 +24,7 @@ public class SpringBootClassLoaderFactory {
 
     public static ClassLoader create(URL url) {
         try {
-            Archive archive = newArchive(url);
-            NoOpJarLauncher noOpJarLauncher = new NoOpJarLauncher(archive);
+            NoOpJarLauncher noOpJarLauncher = new NoOpJarLauncher(url);
             noOpJarLauncher.launch(new String[0]);
             return noOpJarLauncher.classLoader;
         } catch (Exception e) {
@@ -53,10 +55,12 @@ public class SpringBootClassLoaderFactory {
 
     private static class NoOpJarLauncher extends JarLauncher {
 
+        private final URL url;
         private ClassLoader classLoader;
 
-        public NoOpJarLauncher(Archive archive) {
-            super(archive);
+        public NoOpJarLauncher(URL url) throws IOException {
+            super(newArchive(url));
+            this.url = url;
         }
 
         @Override
@@ -65,13 +69,20 @@ public class SpringBootClassLoaderFactory {
         }
 
         @Override
-        public void launch(String[] args, String launchClass, ClassLoader classLoader) throws Exception {
+        public void launch(String[] args, String launchClass, ClassLoader classLoader) {
             this.classLoader = classLoader;
         }
 
         @Override
-        protected String getMainClass() throws Exception {
+        protected String getMainClass() {
             return "";
+        }
+
+        @Override
+        protected ClassLoader createClassLoader(URL[] urls) throws Exception {
+            List<URL> urlList = new ArrayList<>(Arrays.asList(urls));
+            urlList.add(url);
+            return super.createClassLoader(urlList.toArray(new URL[0]));
         }
     }
 }

@@ -1,17 +1,16 @@
 package com.paypal.butterfly.core;
 
-import java.io.File;
-
+import com.paypal.butterfly.api.TransformationResult;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.model.enums.CompressionLevel;
+import net.lingala.zip4j.model.enums.CompressionMethod;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.paypal.butterfly.api.TransformationResult;
-
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.model.ZipParameters;
-import net.lingala.zip4j.util.Zip4jConstants;
+import java.io.File;
 
 /**
  * This bean takes care of compressing the output folder,
@@ -34,8 +33,8 @@ class CompressionHandler {
             ZipFile zipFile = new ZipFile(compressedFile);
             ZipParameters parameters = new ZipParameters();
 
-            parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-            parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
+            parameters.setCompressionMethod(CompressionMethod.DEFLATE);
+            parameters.setCompressionLevel(CompressionLevel.NORMAL);
 
             zipFile.addFolder(inputFile, parameters);
             FileUtils.deleteDirectory(transformationResult.getTransformedApplicationDir());

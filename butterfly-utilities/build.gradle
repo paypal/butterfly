@@ -2,8 +2,11 @@ apply plugin: 'java-library'
 
 dependencies {
     api project(':butterfly-extensions-api')
-    api lib.maven_invoker
+    api (lib.maven_invoker) {
+        exclude(module: 'commons-io')
+    }
     implementation lib.commons_io,
+            lib.commons_lang3,
             lib.maven_model,
             lib.slf4j_api,
             lib.javaparser_core,
