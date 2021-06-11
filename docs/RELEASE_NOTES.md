@@ -4,13 +4,22 @@
 ## 3.1.0
 
 #### Release date
-TBD
+June 11th, 2021
 
 #### New features and enhancements
-TBD
+* [374 - Upgrade libraries to latest version](https://github.com/paypal/butterfly/issues/374)
+* [314 - Replace logback by log4j 2](https://github.com/paypal/butterfly/issues/314)
+* [364 - Add support for extensions packaged as spring-boot uber jar](https://github.com/paypal/butterfly/issues/364)
+* [278 - Add PomParentMatch single condition](https://github.com/paypal/butterfly/issues/278)
+* [244 - Add PomHasParent single condition](https://github.com/paypal/butterfly/issues/244)
 
 #### Bug fixes
-TBD
+* [372 - Update test case ButterflyFacadeImplTest](https://github.com/paypal/butterfly/issues/372)
+* [359 - Butterfly should allow numbers in the extension property names](https://github.com/paypal/butterfly/issues/359)
+* [368 - Guava library must be updated to version 24.1.1 (or later) due to security vulnerabilities](https://github.com/paypal/butterfly/issues/368)
+* [214 - Vague IllegalArgumentException if "version to" is older than current version](https://github.com/paypal/butterfly/issues/214)
+* [360 - Butterfly CLI should allow escaped semicolons and equals as extension property value when passed using -p](https://github.com/paypal/butterfly/issues/360)
+* [350 - CLI should never (or very rarely) output the string 'null'](https://github.com/paypal/butterfly/issues/350)
 
 ## 3.0.0
 

@@ -3,17 +3,18 @@
 1. Working from a feature branch (out of develop) in your fork:
    1. Rev up root build.gradle file to the release version
    1. Build and test it
+   1. In your terminal, set an environment with the new Butterfly version (necessary in next instructions): `export NEW_BUTTERFLY_VERSION=<new version>`
    1. javadoc
-      1. create javadocs folder: `mkdir -p docs/javadocs/<version>/butterfly-utilities; mkdir -p docs/javadocs/<version>/butterfly-extensions-api;`
+      1. create javadocs folder: `mkdir -p docs/javadocs/${NEW_BUTTERFLY_VERSION}/butterfly-utilities; mkdir -p docs/javadocs/${NEW_BUTTERFLY_VERSION}/butterfly-extensions-api;`
       1. generate javadocs for **utilities** and **extensions-api** projects: `./gradlew :butterfly-utilities:javadoc :butterfly-extensions-api:javadoc`
-      1. copy generated javadocs files to javadocs folder: `cp -r butterfly-utilities/build/docs/javadoc/ docs/javadocs/<version>/butterfly-utilities/;cp -r butterfly-extensions-api/build/docs/javadoc/ docs/javadocs/<version>/butterfly-extensions-api/;`
-      1. update **THREE** links in `Extension-development-guide.md`, pointing to latest javadoc
+      1. copy generated javadocs files to javadocs folder: `cp -r butterfly-utilities/build/docs/javadoc/ docs/javadocs/${NEW_BUTTERFLY_VERSION}/butterfly-utilities/;cp -r butterfly-extensions-api/build/docs/javadoc/ docs/javadocs/${NEW_BUTTERFLY_VERSION}/butterfly-extensions-api/;`
+      1. update **THREE** links in `Extension-development-guide.md`, pointing to latest javadoc (find and replace current version by the new version)
       1. commit only javadocs `Adding javadocs for version x`
    1. doc
-      1. update zip link (two places in the URL) in `Installing-Butterfly.md`
+      1. update zip link (two places in the URL) in `Installing-Butterfly.md` (find and replace current version by the new version)
    1. sample extension
-      1. replace the sample extension jar under `docs/jar`: `rm docs/jar/*; cp extensions-catalog/butterfly-springboot-extension/build/libs/butterfly-springboot-extension-<version>.jar docs/jar/`
-      1. update link in `QUICK_START.md` with new jar file name
+      1. replace the sample extension jar under `docs/jar`: `rm -f docs/jar/*; cp extensions-catalog/butterfly-springboot-extension/build/libs/butterfly-springboot-extension-${NEW_BUTTERFLY_VERSION}.jar docs/jar/`
+      1. update link in `QUICK_START.md` with new jar file name (find and replace current version by the new version)
    1. sample app (only if changed)
       1. zip `sample-app` folder
       1. place updated zip under `docs/zip`
