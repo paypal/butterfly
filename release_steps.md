@@ -39,16 +39,20 @@
    1. Staging Repositories
    1. Close (the one with sources and everything)
    1. Release
+   1. Wait a couple of hours and make sure new butterfly version shows at http://search.maven.org/#search|ga|1|g:com.paypal.butterfly
 1. Update [Homebrew formula](https://github.com/paypal/homebrew-butterfly/blob/master/Formula/butterfly.rb)
-   1. Update zip link
-   1. Update sha256
-   1. Verify brew can update or install new version
+   1. Run the following command: `brew create https://search.maven.org/remotecontent?filepath=com/paypal/butterfly/butterfly-cli-package/${NEW_BUTTERFLY_VERSION}/butterfly-cli-package-${NEW_BUTTERFLY_VERSION}.zip`
+      1. This new command will create a new brew Formula in your computer and automatically open it in a text editor
+      1. If you get an error message stating that formula already exists, remove it, and then run the command again 
+   1. Copy the `sha256` value from it and close the text editor
+   1. Change file https://github.com/paypal/homebrew-butterfly/blob/master/Formula/butterfly.rb providing the new Butterfly `VERSION` and `sha256` value
+   1. Test the new brew installation and make sure it works 
 1. Working from a feature branch (out of develop) in your fork:
    1. Rev up root build.gradle file to the next SNAPSHOT version
-   1. Build `butterlfy-parent` and make sure it builds fine
+   1. Build the whole project and make sure it builds fine
    1. Add new version empty section in release notes
    1. Commit `Preparing for version x`
    1. Push from feature branch to origin feature branch (`git push origin <branch name>`)
    1. Send and merge PR from origin feature branch to upstream develop
 1. Create new milestone
-1. Add issues to new milestone (if any)
+   1. Add issues to new milestone (if any)
