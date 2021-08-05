@@ -46,7 +46,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertNotNull(executionResult.getValue());
 
         List<File> files = (List<File>) executionResult.getValue();
-        Assert.assertEquals(files.size(), 25);
+        Assert.assertEquals(files.size(), 26);
 
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "/pom.xml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "/foo.xml")));
@@ -96,12 +96,13 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertNotNull(executionResult.getValue());
 
         List<File> files = (List<File>) executionResult.getValue();
-        Assert.assertEquals(files.size(), 4);
+        Assert.assertEquals(files.size(), 5);
 
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "pom.xml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "foo.xml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "foo1.xml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "pom_without_parent.xml")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "pomWithExclusion.xml")));
 
         Assert.assertEquals(findFiles.getNameRegex(), "(.*\\.xml)");
         Assert.assertNull(findFiles.getPathRegex());
@@ -410,7 +411,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertNotNull(executionResult.getValue());
 
         List<File> files = (List<File>) executionResult.getValue();
-        Assert.assertEquals(files.size(), 7);
+        Assert.assertEquals(files.size(), 8);
 
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "src")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "indentTests")));
@@ -419,6 +420,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "foo1.xml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "pom.xml")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "pom_without_parent.xml")));
+        Assert.assertTrue(files.contains(new File(transformedAppFolder, "pomWithExclusion.xml")));
 
         Assert.assertNull(findFiles.getNameRegex());
         Assert.assertNull(findFiles.getPathRegex());
@@ -437,7 +439,7 @@ public class FindFilesTest extends TransformationUtilityTestHelper {
         Assert.assertNotNull(executionResult.getValue());
 
         List<File> files = (List<File>) executionResult.getValue();
-        Assert.assertEquals(files.size(), 83);
+        Assert.assertEquals(files.size(), 84);
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "src")));
         Assert.assertTrue(files.contains(new File(transformedAppFolder, "blah")));
 
