@@ -32,10 +32,10 @@ public class PomRemoveDependencyExclusion extends AbstractArtifactPomOperation<P
     /**
      * Operation to remove an exclusion from a dependency in a POM file.
      *
-     * @param groupId group id of the dependency to be replaced
-     * @param artifactId artifact id of the dependency to be replaced
-     * @param exclusionGroupId group id of the exclusion to remove
-     * @param exclusionArtifactId artifact id of the exclusion to remove
+     * @param groupId group id of the dependency to be modified
+     * @param artifactId artifact id of the dependency to be modified
+     * @param exclusionGroupId group id of the exclusion to be removed
+     * @param exclusionArtifactId artifact id of the exclusion to be removed
      */
     public PomRemoveDependencyExclusion(String groupId, String artifactId, String exclusionGroupId, String exclusionArtifactId) {
         setGroupId(groupId);
@@ -57,8 +57,6 @@ public class PomRemoveDependencyExclusion extends AbstractArtifactPomOperation<P
         return this;
     }
 
-
-
     @Override
     public PomRemoveDependencyExclusion failIfNotPresent() {
         ifNotPresent = ChangeOrRemoveElement.IfNotPresent.Fail;
@@ -77,10 +75,6 @@ public class PomRemoveDependencyExclusion extends AbstractArtifactPomOperation<P
         return this;
     }
 
-    public Exclusion getExclusion() {
-        return this.exclusion;
-    }
-
     @Override
     public String getDescription() {
         return String.format(DESCRIPTION, exclusion.getGroupId(), exclusion.getArtifactId(), groupId,
@@ -94,7 +88,7 @@ public class PomRemoveDependencyExclusion extends AbstractArtifactPomOperation<P
 
         Dependency dependency = getDependency(model, groupId, artifactId);
         if(dependency == null) {
-            dependency = getDependencyFromDependencyManagement(model);
+            dependency = getManagedDependency(model, groupId, artifactId);
         }
         if (dependency != null) {
 
@@ -108,17 +102,17 @@ public class PomRemoveDependencyExclusion extends AbstractArtifactPomOperation<P
             } else {
                 details = String.format("Exclusion %s:%s not present in dependency %s:%s in POM file %s",
                         exclusion.getGroupId(), exclusion.getArtifactId(), groupId, artifactId, relativePomFile);
-                result = getTOExecutionResult(details);
+                result = getUnsuccessfulResult(details);
             }
         } else {
             details = String.format("Exclusion %s:%s has not been removed as dependency %s:%s in POM file %s because dependency is not present",
                     exclusion.getGroupId(), exclusion.getArtifactId(), groupId, artifactId, relativePomFile);
-            result = getTOExecutionResult(details);
+            result = getUnsuccessfulResult(details);
         }
         return result;
     }
 
-    private TOExecutionResult getTOExecutionResult(String details) {
+    private TOExecutionResult getUnsuccessfulResult(String details) {
         TOExecutionResult result;
         switch (ifNotPresent) {
             case Warn:
@@ -138,21 +132,6 @@ public class PomRemoveDependencyExclusion extends AbstractArtifactPomOperation<P
         return result;
     }
 
-    private Dependency getDependencyFromDependencyManagement(Model model) {
-        final Predicate<Dependency> matchesGroupId = de -> de.getGroupId().equals(groupId);
-        final Predicate<Dependency> matchesArtifactId = de -> de.getArtifactId().equals(artifactId);
-        Predicate<Dependency> matchesRequiredDependency = matchesGroupId.and(matchesArtifactId);
-        final List<Dependency> managedDependencies = model.getDependencyManagement()
-                .getDependencies()
-                .stream()
-                .filter(matchesRequiredDependency)
-                .collect(Collectors.toList());
-        if(managedDependencies.size() > 0) {
-            return managedDependencies.get(0);
-        }
-        return null;
-    }
-
     private void removeExclusionFromDependency(Dependency dependency, List<Exclusion> exclusions) {
         final Predicate<Exclusion> matchesGroupId = ex -> ex.getGroupId().equals(exclusion.getGroupId());
         final Predicate<Exclusion> matchesArtifactId = ex -> ex.getArtifactId().equals(exclusion.getArtifactId());
@@ -160,6 +139,4 @@ public class PomRemoveDependencyExclusion extends AbstractArtifactPomOperation<P
         dependency.setExclusions(exclusions.stream()
                 .filter(isExclusionToRemove.negate()).collect(Collectors.toList()));
     }
-
-
 }

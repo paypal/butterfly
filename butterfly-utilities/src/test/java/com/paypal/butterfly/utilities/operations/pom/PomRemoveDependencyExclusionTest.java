@@ -119,8 +119,6 @@ public class PomRemoveDependencyExclusionTest extends TransformationUtilityTestH
         Model pomModelBeforeChange = getOriginalPomModel(relativeFilePath);
 
         assertEquals(pomRemoveDependencyExclusion.getDescription(), expectedDescription);
-        assertEquals(pomRemoveDependencyExclusion.getExclusion().getGroupId(), expectedExclusion.getGroupId());
-        assertEquals(pomRemoveDependencyExclusion.getExclusion().getArtifactId(), expectedExclusion.getArtifactId());
         final Dependency dependencyBeforeChange;
         if(isManagedDependency) {
             dependencyBeforeChange = pomRemoveDependencyExclusion.getManagedDependency(pomModelBeforeChange);
@@ -159,5 +157,4 @@ public class PomRemoveDependencyExclusionTest extends TransformationUtilityTestH
                 { "xmlunit", "xmlunit", "pomWithExclusion.xml", "Remove the exclusion %s:%s if present in dependency %s:%s in POM file %s", false, 0, 0, TOExecutionResult.Type.ERROR }
         };
     }
-
 }
