@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/paypal/butterfly.svg?branch=master)](https://travis-ci.org/paypal/butterfly)
+[![Build Status](https://api.travis-ci.com/paypal/butterfly.svg?branch=master)](https://travis-ci.com/github/paypal/butterfly)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.paypal.butterfly/butterfly-core/badge.svg?style=flat)](http://search.maven.org/#search|ga|1|g:com.paypal.butterfly)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
