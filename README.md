@@ -1,6 +1,4 @@
 [![Build Status](https://travis-ci.org/paypal/butterfly.svg?branch=master)](https://travis-ci.org/paypal/butterfly)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6eaf95c2188d4eae85b0ee6d6c0feeaf)](https://www.codacy.com/app/fabiocarvalho777/butterfly?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=paypal/butterfly&amp;utm_campaign=Badge_Grade)
-[![Codacy Coverage](https://api.codacy.com/project/badge/coverage/6eaf95c2188d4eae85b0ee6d6c0feeaf)](https://www.codacy.com/app/fabiocarvalho777/butterfly)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.paypal.butterfly/butterfly-core/badge.svg?style=flat)](http://search.maven.org/#search|ga|1|g:com.paypal.butterfly)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
