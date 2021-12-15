@@ -10,7 +10,7 @@ allprojects {
     apply plugin: "jacoco"
 
     group = 'com.paypal.butterfly'
-    version = '3.1.0'
+    version = '3.2.0'
 
     repositories {
         mavenLocal()
@@ -262,9 +262,9 @@ ext.lib = [
         plexus_utils: "org.codehaus.plexus:plexus-utils:3.2.1",
         reflections: "org.reflections:reflections:0.9.12",
         slf4j_api: "org.slf4j:slf4j-api:1.7.30",
-        log4j_api: "org.apache.logging.log4j:log4j-api:2.14.1",
-        log4j_core:"org.apache.logging.log4j:log4j-core:2.14.1",
-        log4j_slf4j_impl: "org.apache.logging.log4j:log4j-slf4j-impl:2.14.1",
+        log4j_api: "org.apache.logging.log4j:log4j-api:2.16.0",
+        log4j_core:"org.apache.logging.log4j:log4j-core:2.16.0",
+        log4j_slf4j_impl: "org.apache.logging.log4j:log4j-slf4j-impl:2.16.0",
         //for async log4j2 logging
         disruptor: "com.lmax:disruptor:3.4.4",
         zip4j: "net.lingala.zip4j:zip4j:2.8.0",

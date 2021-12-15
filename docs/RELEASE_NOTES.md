@@ -1,6 +1,17 @@
 
 # Release notes
 
+## 3.2.0
+
+#### Release date
+December 15th, 2021
+
+#### New features and enhancements
+* [378 - Add an operation to remove an exclusion from a Maven dependency](https://github.com/paypal/butterfly/issues/378)
+
+#### Bug fixes
+* [382 - Upgrade log4j to version 2.16.0 quality](https://github.com/paypal/butterfly/issues/382)
+
 ## 3.1.0
 
 #### Release date
