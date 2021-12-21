@@ -4,12 +4,6 @@
    1. Rev up root build.gradle file to the release version
    1. Build and test it
    1. In your terminal, set an environment with the new Butterfly version (necessary in next instructions): `export NEW_BUTTERFLY_VERSION=<new version>`
-   1. javadoc
-      1. create javadocs folder: `mkdir -p docs/javadocs/${NEW_BUTTERFLY_VERSION}/butterfly-utilities; mkdir -p docs/javadocs/${NEW_BUTTERFLY_VERSION}/butterfly-extensions-api;`
-      1. generate javadocs for **utilities** and **extensions-api** projects: `./gradlew :butterfly-utilities:javadoc :butterfly-extensions-api:javadoc`
-      1. copy generated javadocs files to javadocs folder: `cp -r butterfly-utilities/build/docs/javadoc/ docs/javadocs/${NEW_BUTTERFLY_VERSION}/butterfly-utilities/;cp -r butterfly-extensions-api/build/docs/javadoc/ docs/javadocs/${NEW_BUTTERFLY_VERSION}/butterfly-extensions-api/;`
-      1. update **THREE** links in `Extension-development-guide.md`, pointing to latest javadoc (find and replace current version by the new version)
-      1. commit only javadocs `Adding javadocs for version x`
    1. doc
       1. update zip link (two places in the URL) in `Installing-Butterfly.md` (find and replace current version by the new version)
    1. sample extension
