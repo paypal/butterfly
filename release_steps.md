@@ -1,6 +1,6 @@
 # Release steps
 
-1. Working from a feature branch (out of develop) in your fork:
+1. Working from master branch:
    1. Rev up root build.gradle file to the release version
    1. Build and test it
    1. In your terminal, set an environment with the new Butterfly version (necessary in next instructions): `export NEW_BUTTERFLY_VERSION=<new version>`
@@ -21,9 +21,7 @@
       1. update link in `QUICK_START.md` if zip file name changed
    1. Update release notes
    1. Commit `Releasing x`
-   1. Push from local feature branch to origin feature branch (`git push origin <branch name>`)
-1. Send and merge PR from origin feature branch to upstream develop
-1. Send and merge PR from upstream develop to upstream master
+   1. Push your changes (`git push upstream master`)
 1. Tag new release from master
    1. Release title should be the version
    1. Add sections `New Features and enhancements` and `Bug fixes` from release notes to Release description
@@ -47,12 +45,11 @@
    1. Copy the `sha256` value from it and close the text editor
    1. Change file https://github.com/paypal/homebrew-butterfly/blob/master/Formula/butterfly.rb providing the new Butterfly `VERSION` and `sha256` value
    1. Test the new brew installation and make sure it works 
-1. Working from a feature branch (out of develop) in your fork:
+1. Working from master branch:
    1. Rev up root build.gradle file to the next SNAPSHOT version
    1. Build the whole project and make sure it builds fine
    1. Add new version empty section in release notes
    1. Commit `Preparing for version x`
-   1. Push from feature branch to origin feature branch (`git push origin <branch name>`)
-   1. Send and merge PR from origin feature branch to upstream develop
+   1. Push your changes (`git push upstream master`)
 1. Create new milestone
    1. Add issues to new milestone (if any)

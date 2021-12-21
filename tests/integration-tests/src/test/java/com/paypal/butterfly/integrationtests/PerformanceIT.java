@@ -40,7 +40,7 @@ public class PerformanceIT extends AbstractTestNGSpringContextTests {
 
     private static final int PARALLELISM = Runtime.getRuntime().availableProcessors();
     private static final int NUMBER_OF_PARALLEL_TRANSFORMATIONS = 200;
-    private static final float MINIMUM_ACCEPTABLE_EFFICIENCY = 40f; // In percentage
+    private static final float MINIMUM_ACCEPTABLE_EFFICIENCY = 30f; // In percentage
 
     @Autowired
     private ButterflyFacade facade;

@@ -12,7 +12,6 @@ jdk:
 
 branches:
   only:
-  - develop
   - master
 
 install:

@@ -5,7 +5,7 @@
 
 - If there is not one open already, open an issue in [GitHub issues](https://github.com/paypal/butterfly/issues)
 - Fork this repo
-- Checkout `develop` branch
+- Checkout `master` branch
 - Apply your changes
   - Make sure all projects build and all unit tests pass
   - Make sure code coverage doesn't drop (add extra unit tests if necessary)
@@ -13,7 +13,7 @@
   - If adding a new feature, make sure you add an unit or integration test to test the feature
   - If adding a new feature, add end user documentation as well
   - Add comments to the code explaining your changes if necessary
-- Create a pull request to the correct development branch (mention the issue id in the PR name)
+- Create a pull request to master branch (mention the issue id in the PR name)
 
 ## Code style
 
