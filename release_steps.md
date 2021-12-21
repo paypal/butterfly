@@ -31,7 +31,7 @@
    1. Go to TravisCI (click on its badge on butterfly repo README)
    1. Click on `More Options -> Trigger Build`
    1. Set `master` as branch
-   1. Set `Releasing <version number>` in `CUSTOM COMMIT MESSAGE` field
+   1. Set `Publishing <version number>` in `CUSTOM COMMIT MESSAGE` field
    1. Copy and paste the content of [.travis_release.yml](.travis_release.yml) in `CUSTOM CONFIG` field
 1. Manual sonatype release
    1. Staging Repositories
