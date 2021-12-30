@@ -1,16 +1,16 @@
 
 # Release notes
 
-## 3.3.0
+## 3.2.2
 
 #### Release date
-TBD
+December 30th, 2021
 
 #### New features and enhancements
-TBD
+None
 
 #### Bug fixes
-TBD
+* [387 - Upgrade log4j to version 2.17.1](https://github.com/paypal/butterfly/issues/387)
 
 ## 3.2.1
 

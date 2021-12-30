@@ -8,7 +8,7 @@ Follow the steps below.
 ### 1- Installing Butterfly
 
 * Install Butterfly following [this document](https://paypal.github.io/butterfly/Installing-Butterfly).
-* Following the same document, install [butterfly-springboot-extension-3.2.1.jar](https://paypal.github.io/butterfly/jar/butterfly-springboot-extension-3.2.1.jar) Butterfly extension, which will be used to transform the sample application.
+* Following the same document, install [butterfly-springboot-extension-3.2.2.jar](https://paypal.github.io/butterfly/jar/butterfly-springboot-extension-3.2.2.jar) Butterfly extension, which will be used to transform the sample application.
 
 ### 2- The sample application
 

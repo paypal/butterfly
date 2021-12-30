@@ -1,20 +1,15 @@
 # Release steps
 
 1. Working from master branch:
-   1. Rev up root build.gradle file to the release version
-   1. Build and test it
-   1. In your terminal, set an environment with the new Butterfly version (necessary in next instructions): `export NEW_BUTTERFLY_VERSION=<new version>`
-   1. doc
-      1. update zip link (two places in the URL) in `Installing-Butterfly.md` (find and replace current version by the new version)
-   1. sample extension
-      1. replace the sample extension jar under `docs/jar`: `rm -f docs/jar/*; cp extensions-catalog/butterfly-springboot-extension/build/libs/butterfly-springboot-extension-${NEW_BUTTERFLY_VERSION}.jar docs/jar/`
-      1. update link in `QUICK_START.md` with new jar file name (find and replace current version by the new version)
-   1. sample app (only if changed)
-      1. zip `sample-app` folder
-      1. place updated zip under `docs/zip`
+   1. Set the new version in `build.gradle`
+   1. Run `./gradlew clean build` and make sure it succeeds
+   1. Run `./prepare_release.sh`
+   1. If `tests/sample-apps` has changed, perform the following
+      1. zip `tests/sample-apps/echo` folder
+      1. replace zip under `docs/zip`
       1. update link in `QUICK_START.md` if zip file name changed
    1. Update release notes
-   1. Commit `Releasing x`
+   1. Commit `Releasing <version number>`
    1. Push your changes (`git push upstream master`)
 1. Tag new release from master
    1. Release title should be the version
@@ -43,7 +38,7 @@
    1. Rev up root build.gradle file to the next SNAPSHOT version
    1. Build the whole project and make sure it builds fine
    1. Add new version empty section in release notes
-   1. Commit `Preparing for version x`
+   1. Commit `Preparing for version <version number>`
    1. Push your changes (`git push upstream master`)
 1. Create new milestone
    1. Add issues to new milestone (if any)
