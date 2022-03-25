@@ -1,16 +1,16 @@
 
 # Release notes
 
-## 3.3.0
+## 3.2.3
 
 #### Release date
-TBD
+March 25th, 2022
 
 #### New features and enhancements
-TBD
+None
 
 #### Bug fixes
-TBD
+* [389 - Upgrade zip4j library from 2.8.0 to 2.9.1](https://github.com/paypal/butterfly/issues/389)
 
 ## 3.2.2
 
