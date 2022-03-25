@@ -1,6 +1,17 @@
 
 # Release notes
 
+## 3.2.4
+
+#### Release date
+TBD
+
+#### New features and enhancements
+TBD
+
+#### Bug fixes
+TBD
+
 ## 3.2.3
 
 #### Release date
