@@ -6,7 +6,7 @@ read CURRENT_VERSION
 echo Butterfly new version:
 read NEW_VERSION
 
-echo Setting the version escaping the dots to use it in a regular expression to edit text files
+# Setting the version by escaping the dots to use it in a regular expression to edit text files
 CURRENT_VERSION_REGEX=$(echo "$CURRENT_VERSION" | sed 's/\./\\./g')
 
 echo Applying new version in document files

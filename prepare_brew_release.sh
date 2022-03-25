@@ -9,9 +9,9 @@ echo Butterfly new version:
 read NEW_VERSION
 echo
 echo A new brew Formula will be created now in your computer and then a text editor will be automatically opened. Follow these instructions then:
-echo    1\. Copy the sha256 value from it echo and close the text editor.
+echo    1\. Copy the sha256 value from it and close the text editor.
 echo    1\. Change file https://github.com/paypal/homebrew-butterfly/blob/master/Formula/butterfly.rb providing the new Butterfly VERSION and sha256 value.
-echo    1\. Set commit message to \"Updating brew formula for 3.2.2 release\"
+echo    1\. Set commit message to \"Updating brew formula for X.Y.Z release\"
 echo    1\. Finally, test the new brew installation and make sure it works .
 echo
 echo "<Press enter to continue>"
