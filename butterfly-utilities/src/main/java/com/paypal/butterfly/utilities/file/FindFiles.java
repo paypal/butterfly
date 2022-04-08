@@ -1,6 +1,8 @@
 package com.paypal.butterfly.utilities.file;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -343,7 +345,7 @@ public class FindFiles extends TransformationUtility<FindFiles> {
             Collection<File> allFolders = FileUtils.listFilesAndDirs(searchRootFolder, new NotFileFilter(TrueFileFilter.INSTANCE), (recursive ? TrueFileFilter.INSTANCE : DirectoryFileFilter.DIRECTORY));
             allFolders.remove(searchRootFolder);
             for (File folder : allFolders) {
-                if (!recursive && !folder.getParentFile().equals(searchRootFolder)) {
+                if (!recursive && !fileEquals(folder.getParentFile(), searchRootFolder)) {
                     continue;
                 }
                 if (filter.accept(folder)) {
@@ -370,4 +372,16 @@ public class FindFiles extends TransformationUtility<FindFiles> {
         return result;
     }
 
+    private boolean fileEquals(File left, File right) {
+        if (left.equals(right)) {
+            return true;
+        }
+        try {
+            File canonicalLeft = left.getCanonicalFile();
+            File canonicalRight = right.getCanonicalFile();
+            return canonicalLeft.equals(canonicalRight);
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }
