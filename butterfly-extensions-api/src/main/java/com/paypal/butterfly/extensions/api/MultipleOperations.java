@@ -325,12 +325,14 @@ public class MultipleOperations extends TransformationUtility<MultipleOperations
                 File baselineApplicationFolder = (File) transformationContext.get(TransformationTemplate.BASELINE);
                 relativePath = TransformationUtility.getRelativePath(baselineApplicationFolder, targetFile);
                 if (targetFile.getAbsolutePath().equals(relativePath)) {
-                    throw new IllegalStateException("Illegal attempt to manipulate a file outside of transformed application and baseline application folders");
+                    throw new IllegalStateException("Illegal attempt to manipulate a file outside of transformed application and baseline application folders. "
+                            + "targetFile=" + targetFile.getAbsolutePath());
                 } else {
                     operation.absolute(TransformationTemplate.BASELINE, relativePath);
                 }
             } else {
-                throw new IllegalStateException("Illegal attempt to manipulate a file outside of transformed application folder");
+                throw new IllegalStateException("Illegal attempt to manipulate a file outside of transformed application folder. "
+                        + "targetFile=" + targetFile.getAbsolutePath());
             }
         } else {
             operation.relative(relativePath);
