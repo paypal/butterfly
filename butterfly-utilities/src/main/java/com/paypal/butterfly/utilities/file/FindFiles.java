@@ -1,8 +1,6 @@
 package com.paypal.butterfly.utilities.file;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
