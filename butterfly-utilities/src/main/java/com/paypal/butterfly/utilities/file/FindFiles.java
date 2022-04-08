@@ -310,12 +310,7 @@ public class FindFiles extends TransformationUtility<FindFiles> {
 
     @Override
     protected TUExecutionResult execution(File transformedAppFolder, TransformationContext transformationContext) {
-        final File searchRootFolder;
-        try {
-            searchRootFolder = getAbsoluteFile(transformedAppFolder, transformationContext).getCanonicalFile();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        final File searchRootFolder = getAbsoluteFile(transformedAppFolder, transformationContext);
 
         String _pathRegex = pathRegex;
         if (pathRegex != null && File.separatorChar != '/') {
