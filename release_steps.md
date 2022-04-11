@@ -29,8 +29,6 @@ This document explains how to release a new Butterfly version.
    1. Create a new release and tag from master branch
       1. New release title and tag name should be the new version
       1. Add sections `New Features and enhancements` and `Bug fixes` from release notes to Release description
-   1. Close Milestone
-      1. Set is due date to today
 1. Deploy artifacts to Maven Central
    1. Go to [butterfly project in TravisCI](https://travis-ci.com/github/paypal/butterfly)
    1. Click on `More Options -> Trigger Build`
@@ -51,5 +49,3 @@ This document explains how to release a new Butterfly version.
    1. Add the next new version (without SNAPSHOT) empty section in release notes
    1. Commit `Preparing for version <next new version>`
    1. Push your changes (`git push upstream master`)
-1. Create new milestone
-   1. Add issues to new milestone (if any)

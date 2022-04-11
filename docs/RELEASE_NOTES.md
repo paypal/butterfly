@@ -4,13 +4,14 @@
 ## 3.2.4
 
 #### Release date
-TBD
+April 11th, 2022
 
 #### New features and enhancements
-TBD
+None
 
 #### Bug fixes
-TBD
+* [392 - FindFiles files has a bug introduced in #375](https://github.com/paypal/butterfly/issues/392)
+* [393 - Upgrade dependencies to latest version](https://github.com/paypal/butterfly/issues/393)
 
 ## 3.2.3
 
