@@ -10,7 +10,6 @@ This document explains how to release a new Butterfly version.
 1. You must have:
    1. Admin rights to Butterfly GitHub repo.
    1. A [Nexus Repository Manager](https://oss.sonatype.org/#welcome) account with access to PayPal artifacts.
-   1. [Homebrew](https://docs.brew.sh/) installed in your MacOS.
 
 ## Release steps
 
@@ -41,8 +40,6 @@ This document explains how to release a new Butterfly version.
    1. Close the butterfly staging repository
    1. Release the butterfly staging repository
    1. Wait a couple of hours and make sure new butterfly version shows at http://search.maven.org/#search|ga|1|g:com.paypal.butterfly
-1. Updating Homebrew formula
-   1. Run `./prepare_brew_release.sh` and follow its instructions closely
 1. Working from master branch
    1. Set the new SNAPSHOT version in `build.gradle`
    1. Run `./gradlew clean build` and make sure it succeeds

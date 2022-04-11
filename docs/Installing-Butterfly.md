@@ -5,10 +5,6 @@
 
 Before installing Butterfly, make sure you have Java 7, or newer, installed (run `java -version` to check). Oracle HotSpot 7 or newer and Open JDK 8 or newer are supported. Open JDK 7 is not supported because of [this issue](https://answers.launchpad.net/ubuntu/+source/openjdk-7/+question/192941).
 
-## Installing Butterfly on Mac with Homebrew
-
-See [butterfly tap](https://github.com/paypal/homebrew-butterfly) for instructions.
-
 ## Installing Butterfly from zip file
 
 1. Download and extract [butterfly-cli-package.zip](https://repo1.maven.org/maven2/com/paypal/butterfly/butterfly-cli-package/3.2.4/butterfly-cli-package-3.2.4.zip) file
