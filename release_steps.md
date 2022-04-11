@@ -21,7 +21,7 @@ This document explains how to release a new Butterfly version.
       1. zip `tests/sample-apps/echo` folder
       1. replace zip under `docs/zip`
       1. update link in `docs/QUICK_START.md` if zip file name changed
-   1. Update `docs/RELEASE_NOTES.md` file
+   1. Add new version in `docs/RELEASE_NOTES.md` file
    1. Commit `Releasing <new version>`
    1. Push your changes (`git push upstream master`)
 1. Go to butterfly repo in GitHub
@@ -43,6 +43,5 @@ This document explains how to release a new Butterfly version.
 1. Working from master branch
    1. Set the new SNAPSHOT version in `build.gradle`
    1. Run `./gradlew clean build` and make sure it succeeds
-   1. Add the next new version (without SNAPSHOT) empty section in release notes
    1. Commit `Preparing for version <next new version>`
    1. Push your changes (`git push upstream master`)
