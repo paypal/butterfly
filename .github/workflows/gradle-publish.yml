@@ -30,11 +30,10 @@ jobs:
       # Secrets are managed by GitHub (see https://docs.github.com/en/actions/security-guides/encrypted-secrets)
       - name: Retrieve, decode, import and export secring
         env:
-          $SECRING_BASE64: ${{ secrets.SECRING_BASE64 }}
+          SECRING_BASE64: ${{ secrets.SECRING_BASE64 }}
         run: |
           echo $SECRING_BASE64 | base64 --decode > secring.gpg
-          gpg --import secring.gpg
-          export SECRING_FILE="$PWD/secring.gpg"
+          gpg --batch --import secring.gpg
 
       # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
       # the publishing section of your build.gradle
@@ -48,4 +47,4 @@ jobs:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           GPG_KEYNAME: ${{ secrets.GPG_KEYNAME }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-
+          SECRING_FILE: ${{ github.workspace }}/secring.gpg
