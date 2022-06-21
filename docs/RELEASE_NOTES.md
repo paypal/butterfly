@@ -1,6 +1,17 @@
 
 # Release notes
 
+## 3.2.5
+
+#### Release date
+June 21st, 2022
+
+#### New features and enhancements
+None
+
+#### Bug fixes
+* [395 - Upgrade dependencies to latest version](https://github.com/paypal/butterfly/issues/395)
+
 ## 3.2.4
 
 #### Release date
