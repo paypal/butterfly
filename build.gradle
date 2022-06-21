@@ -19,11 +19,6 @@ allprojects {
             url "https://repo.spring.io/plugins-release/"
         }
     }
-
-    buildScan {
-        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-        termsOfServiceAgree = 'yes'
-    }
 }
 
 Set testModules = [

@@ -28,12 +28,7 @@ This document explains how to release a new Butterfly version.
    1. Create a new release and tag from master branch
       1. New release title and tag name should be the new version
       1. Add sections `New Features and enhancements` and `Bug fixes` from release notes to Release description
-1. Deploy artifacts to Maven Central
-   1. Go to [butterfly project in TravisCI](https://travis-ci.com/github/paypal/butterfly)
-   1. Click on `More Options -> Trigger Build`
-   1. Set `master` as branch
-   1. Set `Publishing <new version>` in `CUSTOM COMMIT MESSAGE` field
-   1. Copy and paste the content of [.travis_release.yml](.travis_release.yml) in `CUSTOM CONFIG` field
+      1. Create the new release and make sure the GitHub action `Release Publishing` is automatically triggered and succeeds
 1. Manual sonatype release
    1. Go to [Nexus Repository Manager](https://oss.sonatype.org/#welcome)
    1. Go to `Staging Repositories`
