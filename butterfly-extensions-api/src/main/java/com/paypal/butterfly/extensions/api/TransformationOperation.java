@@ -6,6 +6,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 /**
  * Special type of {@link TransformationUtility} that applies a modification to the project.
@@ -79,7 +80,7 @@ public abstract class TransformationOperation<T extends TransformationOperation>
             if (originalFile.isDirectory()) {
                 throw new IOException("Specified file is a directory: " + originalFile.getAbsolutePath());
             }
-            readFile = File.createTempFile(READ_FILE_PREFIX, null);
+            readFile = Files.createTempFile(READ_FILE_PREFIX, null).toFile();
             FileUtils.copyFile(originalFile, readFile);
             readFile.setReadOnly();
         }

@@ -40,7 +40,7 @@ public class TransformIT {
 
         // Capturing the console output
         PrintStream systemOut = System.out;
-        File transformOut = File.createTempFile("butterfly-cli-transform-output-", null);
+        File transformOut = Files.createTempFile("butterfly-cli-transform-output-", null).toFile();
         PrintStream transformStream = new PrintStream(transformOut);
         System.setOut(transformStream);
 

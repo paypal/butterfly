@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.Collections;
 
 import static org.testng.Assert.*;
@@ -44,7 +45,7 @@ public class MiscIT {
 
         // Capturing the console output
         PrintStream systemOut = System.out;
-        File helpOut = File.createTempFile("butterfly-cli-help-output", null);
+        File helpOut = Files.createTempFile("butterfly-cli-help-output", null).toFile();
         PrintStream helpStream = new PrintStream(helpOut);
         System.setOut(helpStream);
 
@@ -67,7 +68,7 @@ public class MiscIT {
 
         // Capturing the console output
         PrintStream systemOut = System.out;
-        File listOut = File.createTempFile("butterfly-cli-list-output", null);
+        File listOut = Files.createTempFile("butterfly-cli-list-output", null).toFile();
         PrintStream listStream = new PrintStream(listOut);
         System.setOut(listStream);
 
