@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static org.testng.Assert.*;
 
@@ -29,7 +30,7 @@ public class MoveFileTest extends TransformationUtilityTestHelper {
         assertTrue(toDir.exists());
 
         // Saving original file as a temp file to have its content compared later
-        File tempOriginalFile = File.createTempFile("butterfly-test-file", null);
+        File tempOriginalFile = Files.createTempFile("butterfly-test-file", null).toFile();
         FileUtils.copyFile(originalFile, tempOriginalFile);
 
         Mockito.when(transformationContext.get("ATT")).thenReturn(new File(transformedAppFolder, "/src/main/resources"));
@@ -72,7 +73,7 @@ public class MoveFileTest extends TransformationUtilityTestHelper {
         assertFalse(toDir.exists());
 
         // Saving original file as a temp file to have its content compared later
-        File tempOriginalFile = File.createTempFile("butterfly-test-file", null);
+        File tempOriginalFile = Files.createTempFile("butterfly-test-file", null).toFile();
         FileUtils.copyFile(originalFile, tempOriginalFile);
 
         MoveFile moveFile = new MoveFile().relative("foo.xml").setToRelative("bar");
@@ -100,7 +101,7 @@ public class MoveFileTest extends TransformationUtilityTestHelper {
         assertTrue(new File(toDir, "dogs.yaml").exists());
 
         // Saving original file as a temp file to have its content compared later
-        File tempOriginalFile = File.createTempFile("butterfly-test-file", null);
+        File tempOriginalFile = Files.createTempFile("butterfly-test-file", null).toFile();
         FileUtils.copyFile(originalFile, tempOriginalFile);
 
         MoveFile moveFile = new MoveFile().relative("src/main/resources/dogs.yaml").setToRelative("src/main/resources/more_yaml");

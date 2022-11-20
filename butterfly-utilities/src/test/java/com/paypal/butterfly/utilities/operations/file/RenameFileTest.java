@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static org.testng.Assert.*;
 
@@ -26,7 +27,7 @@ public class RenameFileTest extends TransformationUtilityTestHelper {
         assertTrue(originalFile.isFile());
 
         // Saving original file as a temp file to have its content compared later
-        File tempOriginalFile = File.createTempFile("butterfly-test-file", null);
+        File tempOriginalFile = Files.createTempFile("butterfly-test-file", null).toFile();
         FileUtils.copyFile(originalFile, tempOriginalFile);
 
         RenameFile renameFile = new RenameFile("bar.xml").relative("foo.xml");

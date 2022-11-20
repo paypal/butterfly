@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 /**
  * Loads a resource from the classpath, writes it to a temporary file,
@@ -88,7 +89,7 @@ public class LoadFile extends TransformationUtility<LoadFile> {
                 result = TUExecutionResult.error(this, e);
             } else {
                 String fileNameSuffix = "_" + resource.replace('/', '_').replace('\\', '_');
-                File fileFromInputStream = File.createTempFile("butterfly_", fileNameSuffix);
+                File fileFromInputStream = Files.createTempFile("butterfly_", fileNameSuffix).toFile();
                 FileUtils.copyInputStreamToFile(inputStream, fileFromInputStream);
                 result = TUExecutionResult.value(this, fileFromInputStream);
             }
