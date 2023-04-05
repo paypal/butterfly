@@ -236,7 +236,7 @@ ext.lib = [
 
         // Parsers
         gson: "com.google.code.gson:gson:2.8.9",
-        woodstox_core: "com.fasterxml.woodstox:woodstox-core:6.2.6",
+        woodstox_core: "com.fasterxml.woodstox:woodstox-core:6.5.0",
         xmlunit: "xmlunit:xmlunit:1.5",
         yamlbeans: "com.esotericsoftware.yamlbeans:yamlbeans:1.15",
         javaparser_core: "com.github.javaparser:javaparser-core:3.24.2",
@@ -262,7 +262,7 @@ ext.lib = [
         log4j_slf4j_impl: "org.apache.logging.log4j:log4j-slf4j-impl:2.17.1",
         //for async log4j2 logging
         disruptor: "com.lmax:disruptor:3.4.4",
-        zip4j: "net.lingala.zip4j:zip4j:2.10.0",
+        zip4j: "net.lingala.zip4j:zip4j:2.11.5",
         version_compare :"io.github.g00fy2:versioncompare:1.4.1",
 
         // Swagger
