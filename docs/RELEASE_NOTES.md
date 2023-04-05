@@ -1,6 +1,18 @@
 
 # Release notes
 
+## 3.2.6
+
+#### Release date
+April 5th, 2023
+
+#### New features and enhancements
+None
+
+#### Bug fixes
+* [397 - Fix Temporary File Information Disclosure Vulnerability](https://github.com/paypal/butterfly/issues/397)
+* [402 - Update woodstox and zip4j to fix security vulnerabilities](https://github.com/paypal/butterfly/issues/402)
+
 ## 3.2.5
 
 #### Release date
