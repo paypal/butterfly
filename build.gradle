@@ -252,7 +252,7 @@ ext.lib = [
         commons_io: "commons-io:commons-io:2.9.0",
         commons_lang3: "org.apache.commons:commons-lang3:3.12.0",
         commons_collections4: "org.apache.commons:commons-collections4:4.4",
-        guava: "com.google.guava:guava:31.1-jre",
+        guava: "com.google.guava:guava:32.0.0",
         jopt_simple: "net.sf.jopt-simple:jopt-simple:5.0.4",
         plexus_utils: "org.codehaus.plexus:plexus-utils:3.2.1",
         reflections: "org.reflections:reflections:0.10.2",
