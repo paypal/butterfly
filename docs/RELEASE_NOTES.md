@@ -1,6 +1,17 @@
 
 # Release notes
 
+## 3.2.7
+
+#### Release date
+November 8th, 2023
+
+#### New features and enhancements
+None
+
+#### Bug fixes
+* [407 - Upgrading Spring, Spring Boot and other select libraries](https://github.com/paypal/butterfly/issues/407)
+
 ## 3.2.6
 
 #### Release date
