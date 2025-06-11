@@ -53,7 +53,7 @@ public class PomHasParentTest extends TransformationUtilityTestHelper {
         Assert.assertEquals(executionResult.getException().getMessage(), "Exception occurred while checking if parent POM exists in /src/main/resources/dogs.yaml");
         Assert.assertNotNull(executionResult.getException().getCause());
         Assert.assertEquals(executionResult.getException().getCause().getClass(), XmlPullParserException.class);
-        Assert.assertEquals(executionResult.getException().getCause().getMessage(), "only whitespace content allowed before start tag and not T (position: START_DOCUMENT seen T... @1:1) ");
+        Assert.assertEquals(executionResult.getException().getCause().getMessage(), "only whitespace content allowed before start tag and not T (position: START_DOCUMENT seen T... @1:2) ");
     }
 
     @Test
@@ -72,7 +72,7 @@ public class PomHasParentTest extends TransformationUtilityTestHelper {
         Assert.assertEquals(executionResult.getException().getMessage(), "Exception occurred while checking if parent POM exists in /src/main/resources/dogs.yaml");
         Assert.assertNotNull(executionResult.getException().getCause());
         Assert.assertEquals(executionResult.getException().getCause().getClass(), XmlPullParserException.class);
-        Assert.assertEquals(executionResult.getException().getCause().getMessage(), "only whitespace content allowed before start tag and not T (position: START_DOCUMENT seen T... @1:1) ");
+        Assert.assertEquals(executionResult.getException().getCause().getMessage(), "only whitespace content allowed before start tag and not T (position: START_DOCUMENT seen T... @1:2) ");
     }
 
 }
