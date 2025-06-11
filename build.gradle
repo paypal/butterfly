@@ -251,7 +251,7 @@ ext.lib = [
         commons_collections4: "org.apache.commons:commons-collections4:4.5.0",
         guava: "com.google.guava:guava:33.4.8-jre",
         jopt_simple: "net.sf.jopt-simple:jopt-simple:5.0.4",
-        plexus_utils: "org.codehaus.plexus:plexus-utils:3.2.1",
+        plexus_utils: "org.codehaus.plexus:plexus-utils:3.6.0",
         reflections: "org.reflections:reflections:0.10.2",
         slf4j_api: "org.slf4j:slf4j-api:1.7.36",
         log4j_api: "org.apache.logging.log4j:log4j-api:2.24.3",
