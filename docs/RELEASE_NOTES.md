@@ -1,6 +1,19 @@
 
 # Release notes
 
+## 3.2.8
+
+#### Release date
+June 10, 2025
+
+#### New features and enhancements
+* [413 - Upgrade various libraries to more recent versions](https://github.com/paypal/butterfly/pull/413)
+* [412 - Add logback support](https://github.com/paypal/butterfly/pull/412)
+* [411 - Upgrade to most recent spring-boot 2](https://github.com/paypal/butterfly/pull/411)
+
+#### Bug fixes
+* [407 - Upgrading Spring, Spring Boot and other select libraries](https://github.com/paypal/butterfly/issues/407)
+
 ## 3.2.7
 
 #### Release date

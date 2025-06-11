@@ -10,7 +10,7 @@ allprojects {
     apply plugin: "jacoco"
 
     group = 'com.paypal.butterfly'
-    version = '3.2.8-SNAPSHOT'
+    version = '3.2.8'
 
     repositories {
         mavenLocal()
@@ -87,6 +87,54 @@ subprojects {
 
         signing {
             sign configurations.archives
+        }
+    } else {
+        if (!name.equals("butterfly-cli-package")) {
+            task javadocJar(type: Jar) {
+                classifier = 'javadoc'
+                from javadoc
+            }
+
+            artifacts {
+                archives javadocJar, sourcesJar
+            }
+        }
+    }
+
+    task writeNewPom {
+        doLast {
+            pom {
+                project {
+                    name project.name
+                    description project.description ?: project.name
+                    packaging 'jar'
+
+                    url 'https://github.com/paypal/butterfly'
+
+                    scm {
+                        connection 'scm:git:git@github.com:paypal/butterfly.git'
+                        developerConnection 'scm:git:git@github.com:paypal/butterfly.git'
+                        url 'git@github.com:paypal/butterfly.git'
+                    }
+
+                    licenses {
+                        license {
+                            name 'MIT'
+                            url 'https://opensource.org/licenses/MIT'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'fabiocarvalho777'
+                            name 'Fabio Carvalho'
+                            email 'fabiocarvalho777@gmail.com'
+                            organization 'PayPal'
+                            organizationUrl 'http://www.paypal.com'
+                        }
+                    }
+                }.writeTo("pom.xml")
+            }
         }
     }
 
