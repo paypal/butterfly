@@ -5,12 +5,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.apache.logging.log4j.core.appender.ConsoleAppender;
-import org.apache.logging.log4j.core.layout.PatternLayout.Builder;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
+@ConditionalOnProperty(name = "butterfly.logging.system", havingValue = "log4j2", matchIfMissing = true)
 public class Log4j2LogConfigurator extends LogConfigurator {
 
     private static final LoggerContext context = (LoggerContext)LogManager.getContext(false); 

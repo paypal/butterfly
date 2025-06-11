@@ -4,7 +4,7 @@ import com.paypal.butterfly.api.ButterflyFacade;
 import com.paypal.butterfly.api.Configuration;
 import com.paypal.butterfly.api.TransformationResult;
 import com.paypal.butterfly.cli.logging.LogConfigurator;
-import com.paypal.butterfly.cli.logging.LogFileDefiner;
+import com.paypal.butterfly.cli.logging.LogFileDefinition;
 import com.paypal.butterfly.extensions.api.Extension;
 import com.paypal.butterfly.extensions.api.TransformationTemplate;
 import com.paypal.butterfly.extensions.api.exception.ButterflyRuntimeException;
@@ -207,7 +207,7 @@ class ButterflyCliRunner extends ButterflyCliOption {
                 transformationResult = butterflyFacade.transform(applicationFolder, templateClass, null, configuration).get();
             }
 
-            run.setLogFile(LogFileDefiner.getLogFile());
+            run.setLogFile(getLogFile());
 
             if (transformationResult.isSuccessful()) {
                 logger.info("");
@@ -215,7 +215,7 @@ class ButterflyCliRunner extends ButterflyCliOption {
                 logger.info("Application has been transformed successfully!");
                 logger.info("----------------------------------------------");
                 logger.info("Transformed application folder: {}", transformationResult.getTransformedApplicationDir());
-                logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
+                logger.info("Check log file for details: {}", getLogFile().getAbsolutePath());
 
                 if (transformationResult.hasManualInstructions()) {
                     logger.info("");
@@ -244,13 +244,19 @@ class ButterflyCliRunner extends ButterflyCliOption {
         return run;
     }
 
+    private static File getLogFile() {
+        return LogFileDefinition.getInstance().getLogFile();
+    }
+
     private void transformationAbort(ButterflyCliRun run, String abortMessage) {
         logger.info("");
         logger.info("--------------------------------------------------------------------------------------------");
         logger.error("*** Transformation has been aborted due to:");
         logger.error("*** {}", abortMessage);
         logger.info("--------------------------------------------------------------------------------------------");
-        logger.info("Check log file for details: {}", LogFileDefiner.getLogFile().getAbsolutePath());
+        if (getLogFile() != null) {
+            logger.info("Check log file for details: {}", getLogFile().getAbsoluteFile());
+        }
 
         run.setErrorMessage("Transformation has been aborted due to: " + abortMessage);
         run.setExceptionMessage(abortMessage);

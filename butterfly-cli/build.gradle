@@ -12,11 +12,13 @@ dependencies {
             lib.commons_io,
             lib.log4j_api,
             lib.log4j_core,
+            lib.commons_lang3,
             lib.disruptor
     compile (lib.log4j_slf4j_impl) {
         // favor newer 1.7.30
         exclude(module: 'slf4j-api')
     }
+    compileOnly (lib.logback_classic)
     compile (lib.spring_boot_starter) {
         exclude(module: 'commons-logging')
         exclude(module: 'logback-classic')

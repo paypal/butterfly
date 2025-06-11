@@ -6,14 +6,16 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.paypal.butterfly.api.ButterflyFacade;
-import com.paypal.butterfly.cli.logging.LogFileDefiner;
+import com.paypal.butterfly.cli.logging.LogFileDefinition;
 import joptsimple.OptionException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.function.Failable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -26,7 +28,7 @@ import java.util.List;
  *
  * @author facarvalho
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.paypal.butterfly")
 class ButterflyCliApp extends ButterflyCliOption {
 
     private File butterflyHome;
@@ -41,16 +43,21 @@ class ButterflyCliApp extends ButterflyCliOption {
         System.exit(exitStatus);
     }
 
+    private Class<?> getButterflyCliAppClass() {
+        final String className = System.getProperty("butterfly.config", "com.paypal.butterfly.cli.ButterflyCliApp");
+        return Failable.call(() -> Class.forName(className, true, ClassUtils.getDefaultClassLoader()));
+    }
+
     ButterflyCliRun run(String... arguments) {
         setButterflyHome();
 
-        LogFileDefiner.setButterflyHome(butterflyHome);
+        LogFileDefinition.getInstance().setButterflyHome(butterflyHome);
 
         setEnvironment(arguments);
 
         logger = LoggerFactory.getLogger(ButterflyCliApp.class);
 
-        ConfigurableApplicationContext applicationContext = SpringApplication.run(ButterflyCliApp.class, arguments);
+        ConfigurableApplicationContext applicationContext = SpringApplication.run(getButterflyCliAppClass(), arguments);
         ButterflyFacade butterflyFacade = applicationContext.getBean(ButterflyFacade.class);
 
         setBanner(butterflyFacade);
@@ -81,7 +88,8 @@ class ButterflyCliApp extends ButterflyCliOption {
                 setOptionSet(arguments);
                 File applicationFolder = getApplicationFolder();
                 boolean debug = optionSet.has(CLI_OPTION_DEBUG);
-                LogFileDefiner.setLogFileName(applicationFolder, debug);
+
+                LogFileDefinition.getInstance().setLogFileName(applicationFolder, debug);
             } catch (OptionException e) {
                 Logger logger = LoggerFactory.getLogger(ButterflyCliApp.class);
                 logger.info("Butterfly application transformation tool");
