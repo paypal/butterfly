@@ -293,7 +293,7 @@ ext.lib = [
 
         // Utilities
         annotations: "com.google.code.findbugs:annotations:3.0.0",
-        classgraph: "io.github.classgraph:classgraph:4.8.107",
+        classgraph: "io.github.classgraph:classgraph:4.8.112",
         commons_io: "commons-io:commons-io:2.9.0",
         commons_lang3: "org.apache.commons:commons-lang3:3.17.0",
         commons_collections4: "org.apache.commons:commons-collections4:4.5.0",
