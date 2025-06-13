@@ -12,6 +12,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 @ConditionalOnProperty(name = "butterfly.logging.system", havingValue = "logback")
 public class LogbackLogConfigurator extends LogConfigurator {
 
+    private boolean verboseMode;
+
     @Override
     public void setLoggerLevel(final String logger, final Level level) {
         final ch.qos.logback.classic.Level logbackLevel = ch.qos.logback.classic.Level.toLevel(level.toString());
@@ -24,18 +26,18 @@ public class LogbackLogConfigurator extends LogConfigurator {
     }
 
     @Override
-    public void setVerboseMode(final boolean on) {
-        setLoggerLevel("ROOT", Level.DEBUG);
-    }
-
-    @Override
     public void setLogToFile(final boolean on) {
         // no op
     }
 
     @Override
     public boolean isVerboseMode() {
-        return getLogbackLogger("ROOT").isDebugEnabled();
+        return verboseMode;
+    }
+
+    @Override
+    public void setVerboseMode(final boolean on) {
+        verboseMode = on;
     }
 
     private static Logger getLogbackLogger(final String loggerName) {

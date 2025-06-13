@@ -215,7 +215,9 @@ class ButterflyCliRunner extends ButterflyCliOption {
                 logger.info("Application has been transformed successfully!");
                 logger.info("----------------------------------------------");
                 logger.info("Transformed application folder: {}", transformationResult.getTransformedApplicationDir());
-                logger.info("Check log file for details: {}", getLogFile().getAbsolutePath());
+                if (getLogFile() != null) {
+                    logger.info("Check log file for details: {}", getLogFile().getAbsolutePath());
+                }
 
                 if (transformationResult.hasManualInstructions()) {
                     logger.info("");
