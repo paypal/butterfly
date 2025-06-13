@@ -6,8 +6,11 @@
         </encoder>
     </appender>
 
-    <root level="info">
+    <root level="${ROOT_LOG_LEVEL:-INFO}">
         <appender-ref ref="STDOUT"/>
     </root>
+
+    <logger name="org.reflections" level="WARN"/>
+
 
 </configuration>
