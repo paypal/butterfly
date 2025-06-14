@@ -7,14 +7,14 @@ Before installing Butterfly, make sure you have Java 7, or newer, installed (run
 
 ## Installing Butterfly from zip file
 
-1. Download and extract [butterfly-cli-package.zip](https://repo1.maven.org/maven2/com/paypal/butterfly/butterfly-cli-package/3.2.9/butterfly-cli-package-3.2.9.zip) file
+1. Download and extract [butterfly-cli-package.zip](https://repo1.maven.org/maven2/com/paypal/butterfly/butterfly-cli-package/3.2.10/butterfly-cli-package-3.2.10.zip) file
 1. Cd to the `butterfly` folder and run `butterfly`. If you see its help, Butterfly has been installed properly
 1. Run `butterfly –l` and notice that you have no Butterfly extensions at this point, as seen below
 
 ```
 No active profile set, falling back to default profiles: default
 Started ButterflyCliApp in 0.965 seconds (JVM running for 1.427)
-Butterfly application transformation tool (version 3.2.9)
+Butterfly application transformation tool (version 3.2.10)
 There are no registered extensions
 ```
 
@@ -32,7 +32,7 @@ You would get an output similar to the one below if you've installed the sample 
 ```
 No active profile set, falling back to default profiles: default
 Started ButterflyCliApp in 0.909 seconds (JVM running for 1.397)
-Butterfly application transformation tool (version 3.2.9)
+Butterfly application transformation tool (version 3.2.10)
 See registered extensions below (shortcut in parenthesis)
 
 - com.extensiontest.SampleExtension: Sample extension (version 1.0.0)
